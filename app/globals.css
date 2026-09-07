@@ -869,3 +869,42 @@ textarea.fld {
     transform: rotate(360deg);
   }
 }
+
+/* ── Pipeline : cartes deal et colonnes ── */
+.deal-card {
+  cursor: grab;
+  transition: box-shadow 160ms, transform 160ms, border-color 160ms;
+}
+.deal-card:hover {
+  box-shadow: 0 6px 22px -6px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+  border-color: var(--bd-strong);
+}
+.deal-card.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.col-body.over {
+  background: var(--bg-muted);
+  outline: 2px dashed var(--bd-strong);
+  outline-offset: -3px;
+}
+
+/* ── Workflow : lignes d'automatisation ── */
+.auto-row {
+  transition: box-shadow 160ms, border-color 160ms;
+}
+.auto-row:hover {
+  box-shadow: 0 6px 22px -8px rgba(0, 0, 0, 0.16);
+  border-color: var(--bd-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deal-card,
+  .auto-row {
+    transition: none;
+  }
+  .deal-card:hover {
+    transform: none;
+  }
+}
