@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuntPilot — Onboarding client</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base: #F2EFEA; --bg-solid: #FFFFFF; --bg-surface: rgba(255,255,255,0.54); --bg-muted: #E3DDD1;
+  --bd: rgba(0,0,0,0.075); --bd-solid: #D0CBBF; --bd-strong: #BAB4A6; --border: rgba(0,0,0,0.075);
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF; --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px; --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46; --border: rgba(255,255,255,0.08);
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching],[data-theme-switching] *,
+[data-theme-switching] *::before,[data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important;
+}
+body { font-family: var(--font); background: var(--bg-base); color: var(--fg1); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+body::before, body::after { content: ''; position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.55; }
+body::before { width: 44rem; height: 44rem; top: -16rem; left: 12rem; background: radial-gradient(circle, rgba(74,222,128,0.30) 0%, transparent 68%); }
+body::after { width: 34rem; height: 34rem; bottom: -10rem; right: -4rem; background: radial-gradient(circle, rgba(124,58,237,0.20) 0%, transparent 68%); }
+[data-theme="dark"] body::before { opacity: 0.30; }
+[data-theme="dark"] body::after { opacity: 0.28; }
+
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.nav-sidebar { width: 58px; flex-shrink: 0; background: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; position: relative; isolation: isolate; overflow: visible; }
+.nav-sidebar::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.nav-cpt { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; margin: 0.1rem auto; cursor: pointer; transition: all 150ms; color: var(--fg3); position: relative; }
+.nav-cpt:hover { background: rgba(0,0,0,0.06); color: var(--fg1); }
+[data-theme="dark"] .nav-cpt:hover { background: rgba(255,255,255,0.07); }
+.nav-cpt.active { background: var(--primary); color: var(--primary-fg); }
+.nav-cpt[data-label]:hover::after { content: attr(data-label); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: var(--fg1); color: var(--primary-fg); padding: 4px 10px; border-radius: 6px; font-size: 0.6875rem; font-weight: 500; white-space: nowrap; pointer-events: none; z-index: 400; }
+[data-theme="dark"] .nav-cpt[data-label]:hover::after { background: var(--fg2); color: var(--bg-base); }
+.crm-header { height: var(--header-h); flex-shrink: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.68); display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem; position: relative; isolation: isolate; box-shadow: 0 1px 0 var(--border), 0 2px 20px rgba(0,0,0,0.05); }
+.crm-header::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+.btn-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 160ms; position: relative; }
+.btn-icon:hover { color: var(--fg1); }
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.5rem 1.1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.8125rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-pri:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.5rem 1rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.8125rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+.sc { overflow-y: auto; }
+.sc::-webkit-scrollbar { width: 7px; }
+.sc::-webkit-scrollbar-thumb { background: var(--bd-strong); border-radius: 999px; }
+.sc::-webkit-scrollbar-track { background: transparent; }
+.fld { font-family: var(--font); font-size: 0.8125rem; color: var(--fg1); background: var(--bg-base); border: 1px solid var(--bd-solid); border-radius: 9px; padding: 0.55rem 0.75rem; outline: none; transition: border-color 150ms, box-shadow 150ms; width: 100%; }
+.fld:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.12); }
+.fld::placeholder { color: var(--fg4); }
+textarea.fld { resize: none; line-height: 1.5; }
+.opt { transition: border-color 150ms, background 150ms, box-shadow 150ms; cursor: pointer; }
+.opt:hover { border-color: var(--bd-strong); }
+.opt.on { border-color: var(--accent); background: var(--green-m); box-shadow: 0 0 0 3px rgba(22,163,74,0.1); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const I = {
+  Dash: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
+  Users: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>,
+  Pipe: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>,
+  Zap: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+  Tool: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
+  Cog: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+  Check: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>,
+  ArrowL: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>,
+  ArrowR: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>,
+  Spark: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.9 5.8a2 2 0 001.3 1.3L21 12l-5.8 1.9a2 2 0 00-1.3 1.3L12 21l-1.9-5.8a2 2 0 00-1.3-1.3L3 12l5.8-1.9a2 2 0 001.3-1.3L12 3z" /></svg>,
+};
+
+const STEPS = [
+  { id: 0, label: 'Informations', sub: 'Coordonnées de l\u2019entreprise', Icon: I.Users },
+  { id: 1, label: 'Services', sub: 'Modules & forfait', Icon: I.Pipe },
+  { id: 2, label: 'Objectifs', sub: 'Cibles & contexte', Icon: I.Zap },
+  { id: 3, label: 'Accès', sub: 'Intégrations data', Icon: I.Tool },
+  { id: 4, label: 'Récapitulatif', sub: 'Vérifier & créer', Icon: I.Check },
+];
+
+const SECTORS = ['E-commerce', 'SaaS B2B', 'Santé', 'Restauration', 'Immobilier', 'Juridique', 'Tourisme', 'Construction', 'Automobile', 'Éducation', 'Autre'];
+const SERVICES = [
+  { id: 'seotech', name: 'SEO Technique', desc: 'Performance, crawl, indexation', price: 400 },
+  { id: 'contenu', name: 'Contenu', desc: 'Rédaction & optimisation on-page', price: 350 },
+  { id: 'seolocal', name: 'SEO Local', desc: 'Google Business, citations locales', price: 250 },
+  { id: 'audit', name: 'Audits', desc: 'Audits techniques trimestriels', price: 200 },
+  { id: 'backlinks', name: 'Backlinks', desc: 'Netlinking & autorité de domaine', price: 450 },
+];
+const GOALS = ['Doubler le trafic organique', 'Top 3 sur requêtes transactionnelles', 'Augmenter le CTR', 'Améliorer la vitesse mobile', 'Développer la notoriété de marque', 'Générer plus de leads'];
+const INTEGRATIONS = [
+  { id: 'ga4', name: 'Google Analytics 4', desc: 'Trafic, sessions, conversions', color: '#E8710A', letter: 'GA' },
+  { id: 'gsc', name: 'Google Search Console', desc: 'Positions, impressions, CTR', color: '#4285F4', letter: 'SC' },
+  { id: 'gbp', name: 'Google Business Profile', desc: 'Fiche locale & avis', color: '#34A853', letter: 'GB' },
+  { id: 'semrush', name: 'Semrush', desc: 'Suivi de positions & concurrence', color: '#FF642D', letter: 'SR' },
+];
+
+const fmt = (n) => n.toLocaleString('fr-CA');
+
+const NavSidebar = () => {
+  const items = [
+    { id: 'dashboard', label: 'Dashboard', Icon: I.Dash, href: 'Dashboard.html' },
+    { id: 'clienthub', label: 'Client Hub', Icon: I.Users, href: 'Client Hub.html' },
+    { id: 'pipeline', label: 'Pipeline', Icon: I.Pipe, href: 'Pipeline.html' },
+    { id: 'workflow', label: 'Workflow', Icon: I.Zap, href: 'Workflow.html' },
+    { id: 'outil', label: 'Outil', Icon: I.Tool },
+  ];
+  return (
+    <div className="nav-sidebar">
+      <div style={{ padding: '15px 0 13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: 28, height: 28, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+        </div>
+      </div>
+      <div style={{ flex: 1, padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {items.map(({ id, label, Icon, href }) =>
+          <div key={id} className="nav-cpt" data-label={label} onClick={() => href && (window.location.href = href)}><Icon /></div>
+        )}
+      </div>
+      <div style={{ padding: '8px 0', borderTop: '1px solid var(--border)' }}>
+        <div className="nav-cpt" data-label="Paramètres" onClick={() => window.location.href = 'Parametres.html'}><I.Cog /></div>
+      </div>
+    </div>
+  );
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--fg1)', lineHeight: 1 }}>Nouveau client</div>
+      <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
+        <span>Client Hub</span><span style={{ color: 'var(--bd-strong)' }}>›</span><span style={{ color: 'var(--fg2)', fontWeight: 500 }}>Onboarding</span>
+      </div>
+    </div>
+    <button className="btn-icon"><I.Bell /></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>
+);
+
+const Field = ({ label, children, hint, required }) => (
+  <div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 6 }}>
+      <span className="lbl">{label}</span>
+      {required && <span style={{ color: 'var(--red)', fontSize: '0.625rem', fontWeight: 700 }}>*</span>}
+      {hint && <span style={{ fontSize: '0.5625rem', color: 'var(--fg4)', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>{hint}</span>}
+    </div>
+    {children}
+  </div>
+);
+
+const StepRail = ({ step, setStep, maxReached }) => (
+  <div style={{ width: 264, flexShrink: 0, borderRight: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', padding: '1.5rem 1.25rem', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: 'var(--green-m)', border: '1px solid var(--green-b)', marginBottom: 12 }}>
+        <span style={{ color: 'var(--green-fg)', display: 'flex' }}><I.Spark /></span>
+        <span style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--green-fg)' }}>Nouveau client</span>
+      </div>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.2 }}>Configurons le compte ensemble</div>
+      <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 5, lineHeight: 1.5 }}>5 étapes · environ 3 minutes</div>
+    </div>
+    <div style={{ position: 'relative', flex: 1 }}>
+      <div style={{ position: 'absolute', left: 15, top: 14, bottom: 28, width: 2, background: 'var(--bd-solid)' }}></div>
+      <div style={{ position: 'absolute', left: 15, top: 14, width: 2, background: 'var(--accent)', height: `calc(${(step / (STEPS.length - 1)) * 100}% - 0px)`, transition: 'height 300ms', maxHeight: 'calc(100% - 42px)' }}></div>
+      {STEPS.map((s) => {
+        const done = s.id < step, current = s.id === step, reachable = s.id <= maxReached;
+        return (
+          <div key={s.id} onClick={() => reachable && setStep(s.id)}
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 18, cursor: reachable ? 'pointer' : 'default', position: 'relative', opacity: reachable ? 1 : 0.5 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: done ? 'var(--accent)' : current ? 'var(--primary)' : 'var(--bg-base)', border: `2px solid ${done ? 'var(--accent)' : current ? 'var(--primary)' : 'var(--bd-solid)'}`, color: (done || current) ? (done ? '#fff' : 'var(--primary-fg)') : 'var(--fg4)', transition: 'all 200ms', zIndex: 1 }}>
+              {done ? <I.Check /> : <s.Icon />}
+            </div>
+            <div style={{ paddingTop: 3 }}>
+              <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: current ? 'var(--fg1)' : done ? 'var(--fg2)' : 'var(--fg3)' }}>{s.label}</div>
+              <div style={{ fontSize: '0.625rem', color: 'var(--fg4)', marginTop: 1 }}>{s.sub}</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    <div style={{ padding: '0.75rem 0.875rem', borderRadius: 10, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+      <span style={{ color: 'var(--violet-fg)', fontSize: 13, lineHeight: 1, marginTop: 1 }}>✦</span>
+      <div style={{ fontSize: '0.625rem', color: 'var(--fg2)', lineHeight: 1.5 }}>L'agent IA lancera un <b>premier audit automatique</b> dès la création du compte.</div>
+    </div>
+  </div>
+);
+
+/* ── STEP PANELS ── */
+const Step0 = ({ d, set }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <Field label="Nom de l'entreprise" required>
+      <input className="fld" value={d.company} onChange={(e) => set('company', e.target.value)} placeholder="ex. Boutique Lumière" />
+    </Field>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <Field label="Secteur d'activité" required>
+        <select className="fld" value={d.sector} onChange={(e) => set('sector', e.target.value)}>
+          <option value="">Sélectionner…</option>
+          {SECTORS.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </Field>
+      <Field label="Site web" required>
+        <input className="fld" value={d.website} onChange={(e) => set('website', e.target.value)} placeholder="exemple.ca" />
+      </Field>
+    </div>
+    <div style={{ height: 1, background: 'var(--bd)', margin: '2px 0' }}></div>
+    <Field label="Personne contact" required>
+      <input className="fld" value={d.contact} onChange={(e) => set('contact', e.target.value)} placeholder="Prénom Nom" />
+    </Field>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <Field label="Courriel" required>
+        <input className="fld" type="email" value={d.email} onChange={(e) => set('email', e.target.value)} placeholder="contact@exemple.ca" />
+      </Field>
+      <Field label="Téléphone">
+        <input className="fld" value={d.phone} onChange={(e) => set('phone', e.target.value)} placeholder="(514) 555-0000" />
+      </Field>
+    </div>
+    <Field label="Adresse" hint="(optionnel)">
+      <input className="fld" value={d.address} onChange={(e) => set('address', e.target.value)} placeholder="Ville, Province" />
+    </Field>
+  </div>
+);
+
+const Step1 = ({ d, toggleService }) => {
+  const total = SERVICES.filter((s) => d.services.includes(s.id)).reduce((sum, s) => sum + s.price, 0);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', lineHeight: 1.5 }}>Sélectionnez les modules inclus dans le forfait. Le MRR se calcule automatiquement.</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        {SERVICES.map((s) => {
+          const on = d.services.includes(s.id);
+          return (
+            <div key={s.id} className={`opt${on ? ' on' : ''}`} onClick={() => toggleService(s.id)}
+              style={{ border: '1px solid var(--bd-solid)', borderRadius: 11, padding: '0.875rem', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: on ? 'var(--accent)' : 'transparent', border: `1.5px solid ${on ? 'var(--accent)' : 'var(--bd-strong)'}`, color: '#fff' }}>
+                {on && <I.Check />}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 6 }}>
+                  <span style={{ fontSize: '0.8125rem', fontWeight: 700 }}>{s.name}</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: on ? 'var(--green-fg)' : 'var(--fg3)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{s.price} $</span>
+                </div>
+                <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 3, lineHeight: 1.4 }}>{s.desc}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.875rem 1rem', borderRadius: 11, background: 'var(--primary)', color: 'var(--primary-fg)' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.625rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 700 }}>MRR mensuel récurrent</div>
+          <div style={{ fontSize: '0.625rem', opacity: 0.7, marginTop: 2 }}>{d.services.length} module{d.services.length > 1 ? 's' : ''} sélectionné{d.services.length > 1 ? 's' : ''}</div>
+        </div>
+        <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>{fmt(total)} $<span style={{ fontSize: '0.75rem', fontWeight: 500, opacity: 0.7 }}>/mois</span></div>
+      </div>
+    </div>
+  );
+};
+
+const Step2 = ({ d, set, toggleGoal }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <Field label="Objectifs principaux" hint="(plusieurs choix possibles)">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 2 }}>
+        {GOALS.map((g) => {
+          const on = d.goals.includes(g);
+          return (
+            <button key={g} onClick={() => toggleGoal(g)}
+              style={{ fontFamily: 'var(--font)', fontSize: '0.75rem', fontWeight: 600, padding: '0.45rem 0.85rem', borderRadius: 999, cursor: 'pointer', transition: 'all 150ms', background: on ? 'var(--green-m)' : 'var(--bg-base)', border: `1px solid ${on ? 'var(--green-b)' : 'var(--bd-solid)'}`, color: on ? 'var(--green-fg)' : 'var(--fg2)', display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              {on && <I.Check />}{g}
+            </button>
+          );
+        })}
+      </div>
+    </Field>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+      <Field label="Trafic cible" hint="/ mois">
+        <input className="fld" value={d.kpiTraffic} onChange={(e) => set('kpiTraffic', e.target.value)} placeholder="ex. 60 000" />
+      </Field>
+      <Field label="Mots-clés top 3" hint="objectif">
+        <input className="fld" value={d.kpiKeywords} onChange={(e) => set('kpiKeywords', e.target.value)} placeholder="ex. 25" />
+      </Field>
+      <Field label="Échéance">
+        <select className="fld" value={d.deadline} onChange={(e) => set('deadline', e.target.value)}>
+          <option value="">Sélectionner…</option>
+          {['T3 2026', 'T4 2026', 'T1 2027', 'T2 2027'].map((q) => <option key={q} value={q}>{q}</option>)}
+        </select>
+      </Field>
+    </div>
+    <Field label="Contexte & notes" hint="(visible par toute l'équipe)">
+      <textarea className="fld" rows={4} value={d.context} onChange={(e) => set('context', e.target.value)} placeholder="Historique, contraintes, attentes particulières du client…" />
+    </Field>
+  </div>
+);
+
+const Step3 = ({ d, toggleIntegration }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', lineHeight: 1.5 }}>Connectez les sources de données pour alimenter les rapports et l'agent IA. Vous pourrez les ajouter plus tard.</div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+      {INTEGRATIONS.map((it) => {
+        const on = d.integrations.includes(it.id);
+        return (
+          <div key={it.id} className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.875rem 1rem' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, background: it.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 800 }}>{it.letter}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>{it.name}</div>
+              <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 1 }}>{it.desc}</div>
+            </div>
+            <button onClick={() => toggleIntegration(it.id)} className={on ? 'btn-out' : 'btn-pri'}
+              style={on ? { padding: '0.4rem 0.85rem', fontSize: '0.75rem', color: 'var(--green-fg)', borderColor: 'var(--green-b)', background: 'var(--green-m)' } : { padding: '0.4rem 0.85rem', fontSize: '0.75rem' }}>
+              {on ? <React.Fragment><I.Check />Connecté</React.Fragment> : 'Connecter'}
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
+const SummaryRow = ({ label, value, ok = true }) => (
+  <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '0.5rem 0', borderBottom: '1px solid var(--bd)' }}>
+    <span className="lbl" style={{ width: 120, flexShrink: 0 }}>{label}</span>
+    <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: ok ? 'var(--fg1)' : 'var(--fg4)', flex: 1 }}>{value || '—'}</span>
+  </div>
+);
+
+const Step4 = ({ d }) => {
+  const total = SERVICES.filter((s) => d.services.includes(s.id)).reduce((sum, s) => sum + s.price, 0);
+  const svcNames = SERVICES.filter((s) => d.services.includes(s.id)).map((s) => s.name).join(', ');
+  const intNames = INTEGRATIONS.filter((it) => d.integrations.includes(it.id)).map((it) => it.name).join(', ');
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '1rem', borderRadius: 12, background: 'var(--green-m)', border: '1px solid var(--green-b)' }}>
+        <div style={{ width: 46, height: 46, borderRadius: 12, flexShrink: 0, background: 'linear-gradient(140deg,#d4edda,#e3ddd1)', border: '1.5px solid var(--green-b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', fontWeight: 800, color: 'var(--green-fg)' }}>
+          {(d.company || 'NC').split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{d.company || 'Nouveau client'}</div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--green-fg)' }}>{d.sector || 'Secteur non défini'} · {fmt(total)} $/mois</div>
+        </div>
+        <span style={{ fontSize: '0.625rem', fontWeight: 700, padding: '3px 11px', borderRadius: 999, background: 'rgba(255,255,255,0.65)', color: 'var(--green-fg)', border: '1px solid var(--green-b)' }}>Prêt à créer</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div>
+          <div className="lbl" style={{ marginBottom: 4, color: 'var(--fg2)' }}>Coordonnées</div>
+          <SummaryRow label="Contact" value={d.contact} />
+          <SummaryRow label="Courriel" value={d.email} />
+          <SummaryRow label="Téléphone" value={d.phone} />
+          <SummaryRow label="Site web" value={d.website} />
+        </div>
+        <div>
+          <div className="lbl" style={{ marginBottom: 4, color: 'var(--fg2)' }}>Prestation</div>
+          <SummaryRow label="Services" value={svcNames} ok={!!svcNames} />
+          <SummaryRow label="MRR" value={`${fmt(total)} $ / mois`} />
+          <SummaryRow label="Objectifs" value={d.goals.length ? `${d.goals.length} défini(s)` : ''} ok={d.goals.length > 0} />
+          <SummaryRow label="Échéance" value={d.deadline} ok={!!d.deadline} />
+        </div>
+      </div>
+      <div>
+        <div className="lbl" style={{ marginBottom: 6, color: 'var(--fg2)' }}>Intégrations connectées</div>
+        {intNames
+          ? <div style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{intNames}</div>
+          : <div style={{ fontSize: '0.75rem', color: 'var(--fg4)' }}>Aucune — à configurer plus tard</div>}
+      </div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', padding: '0.75rem 0.875rem', borderRadius: 10, background: 'var(--violet-m)', border: '1px solid var(--violet-b)' }}>
+        <span style={{ color: 'var(--violet-fg)', fontSize: 13, lineHeight: 1, marginTop: 1 }}>✦</span>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5 }}>Dès la création : la fiche client sera générée, l'agent IA lancera un <b>premier audit</b>, et une checklist d'onboarding sera créée automatiquement.</div>
+      </div>
+    </div>
+  );
+};
+
+const Done = ({ company }) => (
+  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
+    <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--green-m)', border: '2px solid var(--green-b)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--green-fg)', marginBottom: 20 }}>
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+    </div>
+    <div style={{ fontSize: '1.375rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 8 }}>Compte créé avec succès</div>
+    <div style={{ fontSize: '0.875rem', color: 'var(--fg3)', maxWidth: 380, lineHeight: 1.5, marginBottom: 24 }}>
+      <b style={{ color: 'var(--fg1)' }}>{company || 'Le nouveau client'}</b> a été ajouté. L'agent IA a lancé le premier audit — les résultats seront prêts dans quelques minutes.
+    </div>
+    <div style={{ display: 'flex', gap: 10 }}>
+      <button className="btn-out" onClick={() => window.location.href = 'Client Hub.html'}>Retour au Client Hub</button>
+      <button className="btn-pri" onClick={() => window.location.href = 'Fiche Client v2.html'}>Ouvrir la fiche client <I.ArrowR /></button>
+    </div>
+  </div>
+);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('hp-theme') || 'light'; } catch { return 'light'; } });
+  const [step, setStep] = useState(0);
+  const [maxReached, setMaxReached] = useState(0);
+  const [created, setCreated] = useState(false);
+  const [d, setD] = useState({
+    company: '', sector: '', website: '', contact: '', email: '', phone: '', address: '',
+    services: ['seotech', 'contenu'], goals: [], kpiTraffic: '', kpiKeywords: '', deadline: '', context: '',
+    integrations: [],
+  });
+  useEffect(() => {
+    const h = document.documentElement;
+    h.setAttribute('data-theme-switching', '');
+    h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(t);
+  }, [theme]);
+  const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
+
+  const set = (k, v) => setD((p) => ({ ...p, [k]: v }));
+  const toggleService = (id) => setD((p) => ({ ...p, services: p.services.includes(id) ? p.services.filter((s) => s !== id) : [...p.services, id] }));
+  const toggleGoal = (g) => setD((p) => ({ ...p, goals: p.goals.includes(g) ? p.goals.filter((x) => x !== g) : [...p.goals, g] }));
+  const toggleIntegration = (id) => setD((p) => ({ ...p, integrations: p.integrations.includes(id) ? p.integrations.filter((x) => x !== id) : [...p.integrations, id] }));
+
+  const goStep = (n) => { setStep(n); setMaxReached((m) => Math.max(m, n)); };
+  const canNext = step === 0 ? (d.company && d.sector && d.website && d.contact && d.email) : step === 1 ? d.services.length > 0 : true;
+
+  const titles = ['Informations de l\u2019entreprise', 'Services & forfait', 'Objectifs & contexte', 'Accès & intégrations', 'Récapitulatif'];
+  const subs = ['Les coordonnées de base du nouveau client.', 'Ce que votre agence prendra en charge.', 'Ce que le client veut atteindre.', 'Connectez les sources de données.', 'Vérifiez avant de créer le compte.'];
+
+  return (
+    <div className="app-shell">
+      <NavSidebar />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={toggleTheme} />
+        {created
+          ? <Done company={d.company} />
+          : <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+              <StepRail step={step} setStep={goStep} maxReached={maxReached} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
+                <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
+                  <div style={{ maxWidth: 640, margin: '0 auto' }}>
+                    <div style={{ marginBottom: 22 }}>
+                      <div style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 }}>Étape {step + 1} sur {STEPS.length}</div>
+                      <div style={{ fontSize: '1.375rem', fontWeight: 800, letterSpacing: '-0.025em' }}>{titles[step]}</div>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)', marginTop: 4 }}>{subs[step]}</div>
+                    </div>
+                    {step === 0 && <Step0 d={d} set={set} />}
+                    {step === 1 && <Step1 d={d} toggleService={toggleService} />}
+                    {step === 2 && <Step2 d={d} set={set} toggleGoal={toggleGoal} />}
+                    {step === 3 && <Step3 d={d} toggleIntegration={toggleIntegration} />}
+                    {step === 4 && <Step4 d={d} />}
+                  </div>
+                </div>
+                {/* Footer nav */}
+                <div style={{ flexShrink: 0, borderTop: '1px solid var(--bd-solid)', background: 'rgba(255,255,255,0.6)', backdropFilter: 'var(--blur)', padding: '0.875rem 2rem', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <button className="btn-out" onClick={() => step === 0 ? (window.location.href = 'Client Hub.html') : goStep(step - 1)}>
+                    <I.ArrowL />{step === 0 ? 'Annuler' : 'Précédent'}
+                  </button>
+                  <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 6 }}>
+                    {STEPS.map((s) => <div key={s.id} style={{ width: step === s.id ? 22 : 7, height: 7, borderRadius: 999, background: s.id <= step ? 'var(--accent)' : 'var(--bd-solid)', transition: 'all 250ms' }}></div>)}
+                  </div>
+                  {step < STEPS.length - 1
+                    ? <button className="btn-pri" disabled={!canNext} onClick={() => goStep(step + 1)}>Continuer <I.ArrowR /></button>
+                    : <button className="btn-pri" onClick={() => setCreated(true)}><I.Check />Créer le compte</button>}
+                </div>
+              </div>
+            </div>}
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuntPilot — Paramètres</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base: #F2EFEA; --bg-solid: #FFFFFF; --bg-surface: rgba(255,255,255,0.54); --bg-muted: #E3DDD1;
+  --bd: rgba(0,0,0,0.075); --bd-solid: #D0CBBF; --bd-strong: #BAB4A6; --border: rgba(0,0,0,0.075);
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF; --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px; --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46; --border: rgba(255,255,255,0.08);
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching],[data-theme-switching] *,
+[data-theme-switching] *::before,[data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important;
+}
+body { font-family: var(--font); background: var(--bg-base); color: var(--fg1); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+body::before, body::after { content: ''; position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.5; }
+body::before { width: 40rem; height: 40rem; top: -16rem; left: 14rem; background: radial-gradient(circle, rgba(74,222,128,0.26) 0%, transparent 68%); }
+body::after { width: 32rem; height: 32rem; bottom: -12rem; right: -4rem; background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 68%); }
+[data-theme="dark"] body::before { opacity: 0.28; }
+[data-theme="dark"] body::after { opacity: 0.26; }
+
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.nav-sidebar { width: 58px; flex-shrink: 0; background: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; position: relative; isolation: isolate; overflow: visible; }
+.nav-sidebar::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.nav-cpt { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; margin: 0.1rem auto; cursor: pointer; transition: all 150ms; color: var(--fg3); position: relative; }
+.nav-cpt:hover { background: rgba(0,0,0,0.06); color: var(--fg1); }
+[data-theme="dark"] .nav-cpt:hover { background: rgba(255,255,255,0.07); }
+.nav-cpt.active { background: var(--primary); color: var(--primary-fg); }
+.nav-cpt[data-label]:hover::after { content: attr(data-label); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: var(--fg1); color: var(--primary-fg); padding: 4px 10px; border-radius: 6px; font-size: 0.6875rem; font-weight: 500; white-space: nowrap; pointer-events: none; z-index: 400; }
+[data-theme="dark"] .nav-cpt[data-label]:hover::after { background: var(--fg2); color: var(--bg-base); }
+.crm-header { height: var(--header-h); flex-shrink: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.68); display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem; position: relative; isolation: isolate; box-shadow: 0 1px 0 var(--border), 0 2px 20px rgba(0,0,0,0.05); }
+.crm-header::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+.btn-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 160ms; position: relative; }
+.btn-icon:hover { color: var(--fg1); }
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+.sc { overflow-y: auto; }
+.sc::-webkit-scrollbar { width: 7px; }
+.sc::-webkit-scrollbar-thumb { background: var(--bd-strong); border-radius: 999px; }
+.sc::-webkit-scrollbar-track { background: transparent; }
+.fld { font-family: var(--font); font-size: 0.8125rem; color: var(--fg1); background: var(--bg-base); border: 1px solid var(--bd-solid); border-radius: 9px; padding: 0.55rem 0.75rem; outline: none; transition: border-color 150ms, box-shadow 150ms; width: 100%; }
+.fld:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.12); }
+.fld::placeholder { color: var(--fg4); }
+.set-nav { display: flex; align-items: center; gap: 9px; padding: 0.5rem 0.7rem; border-radius: 9px; cursor: pointer; transition: all 140ms; color: var(--fg3); font-size: 0.8125rem; font-weight: 500; }
+.set-nav:hover { background: var(--bg-muted); color: var(--fg1); }
+.set-nav.on { background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+.tgl { width: 38px; height: 22px; border-radius: 999px; position: relative; cursor: pointer; flex-shrink: 0; transition: background 200ms; }
+.tgl-knob { position: absolute; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 200ms; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const I = {
+  Dash: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
+  Users: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>,
+  Pipe: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>,
+  Zap: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+  Tool: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
+  Cog: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+  Check: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>,
+  Building: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="9" y1="9" x2="9" y2="9.01" /><line x1="15" y1="9" x2="15" y2="9.01" /><line x1="9" y1="13" x2="9" y2="13.01" /><line x1="15" y1="13" x2="15" y2="13.01" /><line x1="9" y1="17" x2="15" y2="17" /></svg>,
+  Team: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>,
+  Plug: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22v-5" /><path d="M9 8V2" /><path d="M15 8V2" /><path d="M18 8v5a4 4 0 01-4 4h-4a4 4 0 01-4-4V8z" /></svg>,
+  Bell2: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Cards: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>,
+  Plus: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>,
+  More: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>,
+  Cam: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>,
+};
+
+const SECTIONS = [
+  { id: 'agence', label: 'Profil de l\u2019agence', Icon: I.Building },
+  { id: 'equipe', label: 'Membres d\u2019équipe', Icon: I.Team },
+  { id: 'integrations', label: 'Intégrations', Icon: I.Plug },
+  { id: 'notifications', label: 'Notifications', Icon: I.Bell2 },
+  { id: 'facturation', label: 'Abonnement', Icon: I.Cards },
+];
+
+const TEAM = [
+  { name: 'Marie Chen', email: 'marie@huntpilot.ca', role: 'Administratrice', clients: 8, av: 'MC', c: 'var(--green)', you: true },
+  { name: 'Julien Dubois', email: 'julien@huntpilot.ca', role: 'Chef de projet', clients: 6, av: 'JD', c: 'var(--blue)' },
+  { name: 'Aïcha Lemaire', email: 'aicha@huntpilot.ca', role: 'Spécialiste SEO', clients: 5, av: 'AL', c: 'var(--violet)' },
+  { name: 'Tom Bélanger', email: 'tom@huntpilot.ca', role: 'Rédacteur', clients: 3, av: 'TB', c: 'var(--yellow-fg)' },
+];
+const ROLES = { 'Administratrice': 'green', 'Chef de projet': 'blue', 'Spécialiste SEO': 'violet', 'Rédacteur': 'yellow' };
+
+const INTEGRATIONS = [
+  { id: 'ga4', name: 'Google Analytics 4', desc: 'Trafic, sessions & conversions', color: '#E8710A', letter: 'GA', connected: true, accounts: 8 },
+  { id: 'gsc', name: 'Google Search Console', desc: 'Positions, impressions, CTR', color: '#4285F4', letter: 'SC', connected: true, accounts: 8 },
+  { id: 'semrush', name: 'Semrush', desc: 'Suivi de positions & concurrence', color: '#FF642D', letter: 'SR', connected: true, accounts: 8 },
+  { id: 'gbp', name: 'Google Business Profile', desc: 'Fiches locales & avis', color: '#34A853', letter: 'GB', connected: false },
+  { id: 'pagespeed', name: 'PageSpeed Insights', desc: 'Core Web Vitals & performance', color: '#0F9D58', letter: 'PS', connected: true, accounts: 8 },
+  { id: 'stripe', name: 'Stripe', desc: 'Facturation & paiements récurrents', color: '#635BFF', letter: 'St', connected: false },
+];
+
+const NOTIFS = [
+  { id: 'n1', label: 'Chute de position détectée', desc: 'Quand un mot-clé stratégique recule', on: true },
+  { id: 'n2', label: 'Rapport mensuel généré', desc: 'À chaque envoi automatique de rapport', on: true },
+  { id: 'n3', label: 'Score santé sous le seuil', desc: 'Quand un compte passe sous 70', on: true },
+  { id: 'n4', label: 'Nouveau deal gagné', desc: 'À chaque signature dans le pipeline', on: true },
+  { id: 'n5', label: 'Facture en retard', desc: 'Quand un paiement dépasse l\u2019échéance', on: false },
+  { id: 'n6', label: 'Synthèse IA hebdomadaire', desc: 'Résumé de tous les comptes chaque lundi', on: true },
+];
+
+const NavSidebar = () => {
+  const items = [
+    { id: 'dashboard', label: 'Dashboard', Icon: I.Dash, href: 'Dashboard.html' },
+    { id: 'clienthub', label: 'Client Hub', Icon: I.Users, href: 'Client Hub.html' },
+    { id: 'pipeline', label: 'Pipeline', Icon: I.Pipe, href: 'Pipeline.html' },
+    { id: 'workflow', label: 'Workflow', Icon: I.Zap, href: 'Workflow.html' },
+    { id: 'outil', label: 'Outil', Icon: I.Tool },
+  ];
+  return (
+    <div className="nav-sidebar">
+      <div style={{ padding: '15px 0 13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: 28, height: 28, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+        </div>
+      </div>
+      <div style={{ flex: 1, padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {items.map(({ id, label, Icon, href }) =>
+          <div key={id} className="nav-cpt" data-label={label} onClick={() => href && (window.location.href = href)}><Icon /></div>
+        )}
+      </div>
+      <div style={{ padding: '8px 0', borderTop: '1px solid var(--border)' }}>
+        <div className="nav-cpt active" data-label="Paramètres"><I.Cog /></div>
+      </div>
+    </div>
+  );
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--fg1)', lineHeight: 1 }}>Paramètres</div>
+      <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2 }}>HuntPilot · Agence SEO</div>
+    </div>
+    <button className="btn-icon"><I.Bell /></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>
+);
+
+const Bdg = ({ label, t = 'neutral' }) => {
+  const M = { green: ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'], yellow: ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], blue: ['var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'], violet: ['var(--violet-m)', 'var(--violet-b)', 'var(--violet-fg)'], neutral: ['var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'] }[t];
+  return <span style={{ background: M[0], border: `1px solid ${M[1]}`, color: M[2], padding: '2px 9px', borderRadius: 999, fontSize: '0.5625rem', fontWeight: 700, whiteSpace: 'nowrap' }}>{label}</span>;
+};
+
+const Field = ({ label, children, span }) => (
+  <div style={{ gridColumn: span ? '1 / -1' : 'auto' }}>
+    <div className="lbl" style={{ marginBottom: 6 }}>{label}</div>
+    {children}
+  </div>
+);
+
+const SectionHead = ({ title, sub, action }) => (
+  <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, marginBottom: 18 }}>
+    <div style={{ flex: 1 }}>
+      <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.025em' }}>{title}</div>
+      <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)', marginTop: 3 }}>{sub}</div>
+    </div>
+    {action}
+  </div>
+);
+
+const Toggle = ({ on, onClick }) => (
+  <div className="tgl" onClick={onClick} style={{ background: on ? 'var(--green)' : 'var(--bd-strong)' }}><div className="tgl-knob" style={{ left: on ? 18 : 2 }}></div></div>
+);
+
+/* ── SECTIONS ── */
+const AgencePanel = () => (
+  <div>
+    <SectionHead title="Profil de l'agence" sub="Ces informations apparaissent sur les rapports envoyés aux clients." action={<button className="btn-pri"><I.Check />Enregistrer</button>} />
+    <div className="card" style={{ padding: '1.25rem', marginBottom: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, paddingBottom: 18, borderBottom: '1px solid var(--bd)', marginBottom: 18 }}>
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          <div style={{ position: 'absolute', bottom: -4, right: -4, width: 24, height: 24, borderRadius: '50%', background: 'var(--bg-solid)', border: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg3)', cursor: 'pointer' }}><I.Cam /></div>
+        </div>
+        <div>
+          <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>HuntPilot</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 2 }}>Logo affiché sur les rapports · PNG ou SVG, 512×512 px</div>
+          <button className="btn-out" style={{ marginTop: 8, padding: '0.3rem 0.75rem', fontSize: '0.6875rem' }}>Changer le logo</button>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <Field label="Nom de l'agence"><input className="fld" defaultValue="HuntPilot" /></Field>
+        <Field label="Site web"><input className="fld" defaultValue="huntpilot.ca" /></Field>
+        <Field label="Courriel de contact"><input className="fld" defaultValue="bonjour@huntpilot.ca" /></Field>
+        <Field label="Téléphone"><input className="fld" defaultValue="(514) 555-0100" /></Field>
+        <Field label="Adresse" span><input className="fld" defaultValue="1200 av. McGill College, Montréal, QC H3B 4G7" /></Field>
+        <Field label="Fuseau horaire"><select className="fld" defaultValue="et"><option value="et">(GMT-5) Heure de l'Est — Montréal</option><option value="pt">(GMT-8) Heure du Pacifique</option><option value="ce">(GMT+1) Europe centrale</option></select></Field>
+        <Field label="Devise"><select className="fld" defaultValue="cad"><option value="cad">CAD — Dollar canadien ($)</option><option value="usd">USD — Dollar américain ($)</option><option value="eur">EUR — Euro (€)</option></select></Field>
+      </div>
+    </div>
+  </div>
+);
+
+const EquipePanel = () => (
+  <div>
+    <SectionHead title="Membres d'équipe" sub="4 membres · 3 sièges utilisés sur 5 inclus dans votre forfait." action={<button className="btn-pri"><I.Plus />Inviter un membre</button>} />
+    <div className="card" style={{ padding: '0.5rem 1.125rem 0.875rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.3fr 0.8fr 60px', gap: '0 12px', alignItems: 'center' }}>
+        {['Membre', 'Rôle', 'Clients', ''].map((h, i) => <div key={i} className="lbl" style={{ padding: '10px 0', borderBottom: '1px solid var(--bd-solid)', textAlign: i === 3 ? 'right' : 'left' }}>{h}</div>)}
+        {TEAM.map((m) => (
+          <React.Fragment key={m.email}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '12px 0', borderBottom: '1px solid var(--bd)' }}>
+              <div style={{ width: 34, height: 34, borderRadius: '50%', background: m.c, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 800, flexShrink: 0 }}>{m.av}</div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>{m.name}{m.you && <span style={{ fontSize: '0.5rem', fontWeight: 700, color: 'var(--fg4)', background: 'var(--bg-muted)', borderRadius: 999, padding: '1px 6px' }}>VOUS</span>}</div>
+                <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{m.email}</div>
+              </div>
+            </div>
+            <div style={{ padding: '12px 0', borderBottom: '1px solid var(--bd)' }}><Bdg label={m.role} t={ROLES[m.role]} /></div>
+            <div style={{ padding: '12px 0', borderBottom: '1px solid var(--bd)', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg2)', fontVariantNumeric: 'tabular-nums' }}>{m.clients}</div>
+            <div style={{ padding: '12px 0', borderBottom: '1px solid var(--bd)', display: 'flex', justifyContent: 'flex-end' }}><button className="btn-icon"><I.More /></button></div>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, padding: '0.875rem 1rem', borderRadius: 12, background: 'var(--yellow-m)', border: '1px solid var(--yellow-b)' }}>
+      <span style={{ fontSize: '0.75rem', color: 'var(--yellow-fg)', flex: 1, fontWeight: 500 }}>Vous approchez de la limite de sièges. Passez au forfait Studio pour ajouter des membres illimités.</span>
+      <button className="btn-out" style={{ borderColor: 'var(--yellow-b)', color: 'var(--yellow-fg)' }}>Voir les forfaits</button>
+    </div>
+  </div>
+);
+
+const IntegrationsPanel = ({ ints, onToggle }) => (
+  <div>
+    <SectionHead title="Intégrations" sub="Connectez vos outils pour alimenter les rapports et l'agent IA." />
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      {ints.map((it) => (
+        <div key={it.id} className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+            <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: it.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8125rem', fontWeight: 800 }}>{it.letter}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>{it.name}</div>
+              <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 1 }}>{it.desc}</div>
+            </div>
+            {it.connected && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', flexShrink: 0 }}></span>}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 11, borderTop: '1px solid var(--bd)' }}>
+            {it.connected
+              ? <React.Fragment>
+                  <span style={{ fontSize: '0.625rem', color: 'var(--fg3)', flex: 1 }}>Connecté · <b style={{ color: 'var(--green-fg)' }}>{it.accounts} comptes</b></span>
+                  <button onClick={() => onToggle(it.id)} className="btn-out" style={{ padding: '0.3rem 0.75rem', fontSize: '0.6875rem' }}>Déconnecter</button>
+                </React.Fragment>
+              : <React.Fragment>
+                  <span style={{ fontSize: '0.625rem', color: 'var(--fg4)', flex: 1 }}>Non connecté</span>
+                  <button onClick={() => onToggle(it.id)} className="btn-pri" style={{ padding: '0.3rem 0.85rem', fontSize: '0.6875rem' }}>Connecter</button>
+                </React.Fragment>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const NotificationsPanel = ({ notifs, onToggle }) => (
+  <div>
+    <SectionHead title="Notifications" sub="Choisissez les événements qui déclenchent une alerte." />
+    <div className="card" style={{ padding: '0.5rem 1.125rem' }}>
+      {notifs.map((n, i) => (
+        <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.875rem 0', borderBottom: i < notifs.length - 1 ? '1px solid var(--bd)' : 'none' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg1)' }}>{n.label}</div>
+            <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 1 }}>{n.desc}</div>
+          </div>
+          <Toggle on={n.on} onClick={() => onToggle(n.id)} />
+        </div>
+      ))}
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 14 }}>
+      <div className="card" style={{ flex: 1, padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 600 }}>Canal de réception</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 1 }}>Où envoyer les alertes</div>
+        </div>
+        <select className="fld" style={{ width: 180 }} defaultValue="both"><option value="both">Courriel + dans l'app</option><option value="email">Courriel seulement</option><option value="app">Dans l'app seulement</option></select>
+      </div>
+    </div>
+  </div>
+);
+
+const FacturationPanel = () => (
+  <div>
+    <SectionHead title="Abonnement" sub="Gérez le forfait de votre agence et le mode de paiement." />
+    <div className="card" style={{ padding: '1.25rem', marginBottom: 14, borderTop: '3px solid var(--green)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: '1.125rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Forfait Croissance</span>
+            <Bdg label="Actif" t="green" />
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 4 }}>Jusqu'à 15 clients · 5 sièges · rapports illimités · agent IA inclus</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>149 $<span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg4)' }}>/mois</span></div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>Prochain prélèvement : 1 juil. 2026</div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--bd)' }}>
+        <button className="btn-pri">Passer à Studio</button>
+        <button className="btn-out">Gérer le forfait</button>
+      </div>
+    </div>
+    {/* Usage */}
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 14 }}>
+      {[['Clients actifs', 12, 15], ['Sièges d\u2019équipe', 4, 5], ['Stockage rapports', 2.4, 10, ' Go']].map(([l, v, max, unit]) => (
+        <div key={l} className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 8 }}>{l}</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+            <span style={{ fontSize: '1.125rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{v}{unit || ''}</span>
+            <span style={{ fontSize: '0.6875rem', color: 'var(--fg4)' }}>/ {max}{unit || ''}</span>
+          </div>
+          <div style={{ height: 5, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${(v / max) * 100}%`, background: (v / max) > 0.8 ? 'var(--yellow)' : 'var(--green)', borderRadius: 999 }}></div>
+          </div>
+        </div>
+      ))}
+    </div>
+    {/* Payment method */}
+    <div className="card" style={{ padding: '1rem 1.125rem', display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div style={{ width: 44, height: 30, borderRadius: 6, background: 'var(--primary)', color: 'var(--primary-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.5625rem', fontWeight: 700, letterSpacing: '0.06em' }}>VISA</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 600, letterSpacing: '0.06em' }}>•••• 4242</div>
+        <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>Expire 08/27 · Marie Chen</div>
+      </div>
+      <button className="btn-out">Mettre à jour</button>
+    </div>
+  </div>
+);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('hp-theme') || 'light'; } catch { return 'light'; } });
+  const [section, setSection] = useState('agence');
+  const [ints, setInts] = useState(INTEGRATIONS);
+  const [notifs, setNotifs] = useState(NOTIFS);
+  useEffect(() => {
+    const h = document.documentElement;
+    h.setAttribute('data-theme-switching', '');
+    h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(t);
+  }, [theme]);
+  const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
+  const toggleInt = (id) => setInts((p) => p.map((it) => it.id === id ? { ...it, connected: !it.connected, accounts: it.connected ? undefined : 8 } : it));
+  const toggleNotif = (id) => setNotifs((p) => p.map((n) => n.id === id ? { ...n, on: !n.on } : n));
+
+  return (
+    <div className="app-shell">
+      <NavSidebar />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={toggleTheme} />
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          {/* Settings sub-nav */}
+          <div style={{ width: 230, flexShrink: 0, borderRight: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', padding: '1.25rem 0.875rem', display: 'flex', flexDirection: 'column' }}>
+            <div className="lbl" style={{ padding: '0 0.7rem', marginBottom: 10 }}>Réglages</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {SECTIONS.map((s) => (
+                <div key={s.id} className={`set-nav${section === s.id ? ' on' : ''}`} onClick={() => setSection(s.id)}>
+                  <s.Icon />{s.label}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 'auto', padding: '0.875rem', borderRadius: 12, background: 'var(--bg-muted)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--green)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 800 }}>MC</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Marie Chen</div>
+                  <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)' }}>Administratrice</div>
+                </div>
+              </div>
+              <button className="btn-out" style={{ width: '100%', justifyContent: 'center', padding: '0.35rem', fontSize: '0.6875rem' }}>Se déconnecter</button>
+            </div>
+          </div>
+          {/* Content */}
+          <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
+            <div style={{ maxWidth: 760, margin: '0 auto' }}>
+              {section === 'agence' && <AgencePanel />}
+              {section === 'equipe' && <EquipePanel />}
+              {section === 'integrations' && <IntegrationsPanel ints={ints} onToggle={toggleInt} />}
+              {section === 'notifications' && <NotificationsPanel notifs={notifs} onToggle={toggleNotif} />}
+              {section === 'facturation' && <FacturationPanel />}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

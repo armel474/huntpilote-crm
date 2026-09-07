@@ -1,0 +1,513 @@
+# PRD UX — Fiche Client HuntPilote V0.1
+
+**Destinataire :** Armel Junior, Fondateur de DigiHunt
+
+**Produit :** HuntPilote
+
+**Surface concernée :** Fiche client
+
+**Version :** V0.1, cadrage UX avant design
+
+**Objectif du document :** Guider la prochaine itération de design dans Claude Design, sans entrer encore dans le développement backend.
+
+---
+
+## 1. Résumé exécutif
+
+La **fiche client** doit devenir le noyau opérationnel de HuntPilote. Elle ne doit pas être une simple page de profil client enrichie de quelques métriques SEO. Elle doit être conçue comme un **cockpit de livraison client** : un espace unique où DigiHunt comprend l’état d’un compte, repère les priorités SEO, transforme les diagnostics en actions, suit l’exécution et prépare les rapports client.
+
+Le rôle de cette page est donc stratégique. Quand un utilisateur ouvre un client, il doit savoir rapidement **où en est le client**, **ce qui mérite son attention**, **ce qui est déjà en cours**, **ce qui doit être livré**, et **quelle preuve de valeur pourra être communiquée au client**. Cette page doit relier la relation client, les données SEO et la production opérationnelle.
+
+> **Principe central :** la fiche client doit rendre visible la chaîne métier HuntPilote : donnée → diagnostic → priorité → recommandation → tâche → preuve → rapport.
+
+Ce PRD est volontairement orienté **UX et interface**. Il ne définit pas encore les tables de base de données, les endpoints API, les permissions avancées ou les intégrations techniques détaillées. En revanche, il précise les informations à afficher, les états à prévoir, les composants nécessaires, les interactions à designer et les limites à respecter.
+
+---
+
+## 2. Objectif de la page
+
+La fiche client doit permettre à un utilisateur DigiHunt de comprendre l’état d’un compte client en moins de 30 secondes, puis de passer à l’action sans devoir ouvrir plusieurs outils ou pages séparées.
+
+L’écran doit répondre à cinq questions immédiates :
+
+| Question utilisateur | Réponse attendue dans l’interface |
+| --- | --- |
+| **Quel est l’état général du client ?** | Score de santé, statut du client, modules actifs, objectif principal, tendance récente. |
+| **Qu’est-ce qui demande mon attention maintenant ?** | Priorités SEO critiques, tâches en retard, alerte IA, prochaines actions. |
+| **Quelle valeur est en train d’être livrée ?** | Actions complétées, progression des objectifs, rapports envoyés, améliorations mesurables. |
+| **Quelles sont les prochaines étapes ?** | Plan d’action priorisé, tâche principale, prochain rapport, prochain audit. |
+| **Quels éléments soutiennent le diagnostic ?** | Données SEO, audits récents, problèmes détectés, concurrents, historique d’activité. |
+
+La fiche client doit donc éviter une erreur classique : afficher beaucoup de métriques sans hiérarchie. Une bonne fiche client ne montre pas tout. Elle montre d’abord **ce qui aide à décider**.
+
+---
+
+## 3. Utilisateurs et contexte d’usage
+
+La fiche client est d’abord destinée à un usage interne DigiHunt. Elle doit être pensée pour un fondateur, un stratège SEO, un web designer ou un chargé de projet qui veut piloter un client sans perdre du temps à reconstituer le contexte.
+
+| Utilisateur | Besoin principal | Comportement attendu |
+| --- | --- | --- |
+| **Fondateur / dirigeant** | Voir l’état du portefeuille client et les comptes à risque | Ouvre la fiche pour comprendre vite, prioriser et prendre une décision. |
+| **Stratège SEO** | Diagnostiquer, prioriser et recommander les actions | Consulte les données, valide les problèmes, crée ou ajuste les tâches. |
+| **Chargé de projet** | Suivre les livrables et la progression | Vérifie les tâches, échéances, rapports et prochaines actions. |
+| **Designer / intégrateur Webflow** | Comprendre les actions liées au site | Consulte les tâches techniques ou contenu, puis livre une correction. |
+| **Future agence utilisatrice** | Standardiser la livraison client | Utilise la fiche comme centre de pilotage de comptes SEO. |
+
+Le contexte principal est une utilisation desktop, en mode professionnel, avec une forte densité d’informations. La densité est acceptable, mais elle doit rester lisible, structurée et actionnable.
+
+---
+
+## 4. Positionnement UX de la fiche client
+
+La fiche client doit être le **centre de gravité** de HuntPilote. Les autres sections de l’application, comme le dashboard, le pipeline, les automatisations ou les rapports globaux, doivent principalement servir à alimenter ou résumer ce qui se passe dans les fiches clients.
+
+| Élément produit | Rôle par rapport à la fiche client |
+| --- | --- |
+| **Client Hub** | Permet de sélectionner un client ou prospect et d’accéder à sa fiche. |
+| **Dashboard global** | Résume les urgences et performances issues des fiches clients. |
+| **Pipeline** | Suit l’avant-vente, mais une fois signé, le client bascule dans la fiche client active. |
+| **Outils SEO** | Fournissent des données qui deviennent des diagnostics et priorités dans la fiche client. |
+| **Automatisations** | Déclenchent des alertes, audits ou rapports visibles dans la fiche client. |
+| **Rapports** | Sont générés à partir des actions, données et preuves présentes dans la fiche client. |
+
+La fiche client ne doit donc pas être un onglet parmi d’autres. Elle doit être la page où le produit prouve sa valeur.
+
+---
+
+## 5. Périmètre de la V0.1
+
+La V0.1 doit couvrir la structure complète de la fiche client, mais sans chercher à résoudre tous les modules avancés. Le but est de produire une interface cohérente, réaliste et prête à orienter les prochaines itérations.
+
+| Inclus dans la V0.1 | Exclu ou repoussé |
+| --- | --- |
+| Architecture globale de la fiche client | Backend, base de données et API détaillées. |
+| Onglets principaux de la fiche | Permissions multi-utilisateurs avancées. |
+| Aperçu client actionnable | Facturation complète avec paiement réel. |
+| Priorités SEO / problèmes | Builder d’automatisations personnalisées. |
+| Plan d’action / tâches | Éditeur complet de rapport type Google Docs. |
+| Diagnostics / audits | Gestion avancée des documents contractuels. |
+| Rapports client mensuels | Portail client public. |
+| États vides, erreurs, données manquantes | Application mobile. |
+| Composants et interactions clés | Paramétrage exhaustif des intégrations. |
+
+La V0.1 doit rester centrée sur la logique de livraison : **comprendre, prioriser, agir, rapporter**.
+
+---
+
+## 6. Architecture globale de l’écran
+
+La fiche client doit conserver une structure en trois zones : une colonne de contexte à gauche, une zone principale au centre et un panneau d’intelligence à droite. Cette architecture fonctionne bien pour un outil dense, car elle sépare l’identité client, le travail actif et le contexte secondaire.
+
+| Zone | Rôle | Contenu recommandé |
+| --- | --- | --- |
+| **Colonne gauche, contexte client** | Identifier le client et ses paramètres de base | Logo, nom, secteur, statut, coordonnées, modules actifs, responsable, date de début, dernière activité. |
+| **Zone centrale, travail principal** | Permettre l’analyse et l’action | Onglets, aperçu, priorités, plan d’action, diagnostics, rapports, contrat léger. |
+| **Panneau droit, intelligence continue** | Fournir le contexte transversal | Modules inclus, concurrence, activité récente, prochaine action, alertes ou score résumé. |
+
+La zone centrale doit rester prioritaire visuellement. Les colonnes latérales doivent soutenir la décision, pas attirer toute l’attention.
+
+---
+
+## 7. Navigation interne de la fiche client
+
+La fiche client doit utiliser une navigation par onglets. Les onglets doivent être orientés métier, pas uniquement techniques. Il faut privilégier des termes que DigiHunt utilisera réellement dans son processus.
+
+| Onglet recommandé | Nom alternatif possible | Rôle |
+| --- | --- | --- |
+| **Aperçu** | Tableau de bord client | Résumer l’état actuel du client et les prochaines actions. |
+| **Priorités SEO** | Problèmes | Lister les enjeux détectés, classés par impact et criticité. |
+| **Plan d’action** | Tâches | Suivre les actions concrètes issues des priorités ou du service vendu. |
+| **Diagnostics** | Audits | Historiser les audits, scores et comparaisons. |
+| **Rapports client** | Rapports | Générer, prévisualiser et suivre les rapports envoyés. |
+| **Contrat** | Facturation légère | Suivre les services actifs, engagement, MRR et statut commercial. |
+
+Je recommande de ne pas nommer l’onglet principal “Problèmes” dans la version finale si tu veux donner une posture plus stratégique. **Priorités SEO** est plus fort, car le mot implique que l’outil aide à décider quoi traiter, pas seulement à lister ce qui va mal.
+
+---
+
+## 8. Onglet 1 — Aperçu
+
+L’onglet **Aperçu** est le plus important. Il doit fonctionner comme une synthèse actionnable du compte client. Il ne doit pas être une accumulation de cartes. Son rôle est de répondre à une question : **qu’est-ce que je dois comprendre et faire maintenant pour ce client ?**
+
+### 8.1 Objectif UX
+
+L’utilisateur doit pouvoir ouvrir l’aperçu et comprendre immédiatement l’état général du client, les risques, les opportunités, les actions en cours et la prochaine décision utile.
+
+### 8.2 Structure recommandée
+
+| Section | Contenu | Rôle UX |
+| --- | --- | --- |
+| **Bannière d’intelligence IA** | Synthèse courte, tendance, alerte principale, opportunité | Donne une lecture stratégique immédiate. |
+| **Score de santé client** | Score global, variation, niveau de confiance | Résume l’état du compte. |
+| **Modules actifs** | SEO technique, contenu, audits, backlinks, local SEO | Montre ce qui est réellement livré. |
+| **Objectif principal** | Objectif du trimestre ou du mois | Relie les métriques à une intention business. |
+| **KPIs essentiels** | Sessions, positions top 10, CTR, indexation, conversions si disponible | Donne les signaux principaux sans surcharge. |
+| **Priorités ouvertes** | 3 à 5 priorités les plus importantes | Oriente l’utilisateur vers l’action. |
+| **Plan d’action en cours** | Tâches critiques, en retard, à valider | Rend l’exécution visible. |
+| **Dernières preuves de valeur** | Actions complétées, gains observés, rapport envoyé | Prépare la narration client. |
+| **Trafic et tendance** | Graphique simple sur 3, 6 ou 12 mois | Montre l’évolution sans surcharger. |
+
+### 8.3 Règle de densité
+
+L’aperçu ne doit pas afficher plus de **trois niveaux de priorité** : critique, important, opportunité. Trop de statuts affaibliraient la lecture. De la même manière, les KPIs doivent être limités à ceux qui servent une décision.
+
+| KPI à privilégier | Pourquoi |
+| --- | --- |
+| Score santé SEO | Résume l’état global. |
+| Trafic organique | Montre la progression ou la baisse. |
+| Positions top 10 | Indique la visibilité utile. |
+| CTR moyen | Révèle les opportunités d’optimisation. |
+| Pages indexées | Donne un signal technique simple. |
+| Backlinks référents | Utile si le module backlinks est actif. |
+
+Les métriques commerciales comme le MRR ou le statut de contrat peuvent rester visibles, mais elles ne doivent pas dominer l’aperçu SEO.
+
+---
+
+## 9. Onglet 2 — Priorités SEO
+
+L’onglet **Priorités SEO** doit transformer les audits et données en éléments exploitables. Il ne suffit pas de lister des erreurs. Chaque priorité doit indiquer son impact, son niveau d’urgence, sa source et l’action recommandée.
+
+### 9.1 Objectif UX
+
+L’utilisateur doit pouvoir filtrer les enjeux, comprendre pourquoi ils sont importants et les convertir en tâches.
+
+### 9.2 Structure d’une priorité
+
+| Champ | Description |
+| --- | --- |
+| **Titre** | Formulation claire du problème ou de l’opportunité. |
+| **Type** | Technique, contenu, maillage, backlinks, local, performance, conversion. |
+| **Criticité** | Critique, important, opportunité. |
+| **Impact estimé** | Crawl, trafic, conversion, visibilité, expérience utilisateur, indexation. |
+| **Source** | Audit technique, analyse contenu, rapport IA, surveillance, saisie manuelle. |
+| **Recommandation** | Action proposée en langage clair. |
+| **Statut** | Nouveau, à valider, assigné, en cours, résolu, ignoré. |
+| **Responsable** | Personne ou rôle assigné. |
+| **Date détectée** | Repère temporel. |
+| **Preuve attendue** | Ce qui permettra de considérer la priorité comme corrigée. |
+
+### 9.3 Interactions clés
+
+| Action | Résultat attendu |
+| --- | --- |
+| **Assigner** | Crée ou lie une tâche dans le plan d’action. |
+| **Voir détail** | Ouvre une vue détaillée avec diagnostic, pages touchées, recommandation et historique. |
+| **Marquer comme ignoré** | Demande une raison courte pour garder la traçabilité. |
+| **Fusionner avec une autre priorité** | Évite les doublons issus de plusieurs audits. |
+| **Transformer en tâche** | Génère une tâche préremplie avec impact, contexte et preuve attendue. |
+
+Cette page est un point critique du produit. Si elle est bien conçue, HuntPilote devient actionnable. Si elle se contente de montrer des alertes, le produit restera superficiel.
+
+---
+
+## 10. Onglet 3 — Plan d’action
+
+Le **Plan d’action** doit être plus qu’une liste de tâches. Il doit représenter l’exécution concrète de la stratégie client. Chaque tâche doit idéalement être liée à une priorité SEO, un livrable, un objectif ou un rapport.
+
+### 10.1 Objectif UX
+
+L’utilisateur doit savoir ce qui doit être fait, pourquoi, par qui, pour quand, et comment cette action contribuera à la preuve de valeur client.
+
+### 10.2 Structure recommandée
+
+| Vue | Usage |
+| --- | --- |
+| **Liste priorisée** | Vue par défaut pour un client. Simple, lisible, orientée exécution. |
+| **Kanban léger** | Optionnel plus tard, utile si beaucoup de tâches. |
+| **Vue par module** | Regroupe les tâches par SEO technique, contenu, backlinks, audit, rapport. |
+| **Vue calendrier** | À repousser, sauf si l’agenda devient central. |
+
+### 10.3 Structure d’une tâche
+
+| Champ | Description |
+| --- | --- |
+| **Titre actionnable** | Verbe + objet, par exemple “Corriger les liens brisés prioritaires”. |
+| **Source** | Priorité SEO, audit, demande client, automatisation, manuel. |
+| **Impact** | Technique, trafic, conversion, contenu, réputation, reporting. |
+| **Statut** | À faire, en cours, en attente, à valider, terminé. |
+| **Priorité** | Critique, haute, normale, basse. |
+| **Responsable** | Personne ou rôle. |
+| **Échéance** | Date claire. |
+| **Preuve attendue** | Capture, métrique, lien, commentaire ou validation. |
+| **Lien rapport** | Indique si l’action doit apparaître dans le prochain rapport client. |
+
+La tâche doit être reliée à la narration de valeur. Une tâche terminée sans preuve devient difficile à valoriser dans un rapport.
+
+---
+
+## 11. Onglet 4 — Diagnostics
+
+L’onglet **Diagnostics** doit remplacer ou enrichir la logique “Audits”. Un audit ne doit pas être seulement un score dans une liste. Il doit être un événement d’analyse qui produit des constats, des priorités, des recommandations et une comparaison dans le temps.
+
+### 11.1 Objectif UX
+
+L’utilisateur doit pouvoir consulter les audits passés, comprendre les évolutions et lancer un nouveau diagnostic sans perdre le fil des actions déjà créées.
+
+### 11.2 Structure recommandée
+
+| Section | Contenu |
+| --- | --- |
+| **Historique des diagnostics** | Liste des audits avec date, type, score, statut, auteur/source. |
+| **Comparaison rapide** | Variation du score, problèmes résolus, nouveaux problèmes détectés. |
+| **Détail d’un diagnostic** | Résumé IA, scores par catégorie, priorités générées, recommandations. |
+| **Action principale** | Lancer un diagnostic ou comparer deux diagnostics. |
+
+### 11.3 Types de diagnostics à prévoir
+
+| Type | Description |
+| --- | --- |
+| **Diagnostic complet** | Analyse globale du site. |
+| **Diagnostic technique** | Performance, crawl, indexation, erreurs, structure. |
+| **Diagnostic contenu** | Pages, intention, titres, H1, cannibalisation, opportunités. |
+| **Diagnostic concurrence** | Comparaison avec concurrents organiques. |
+| **Diagnostic maillage** | Structure interne, profondeur, silos, liens entre pages. |
+
+Le diagnostic maillage peut être préparé comme module futur, mais il ne doit pas surcharger la V0.1. Il peut apparaître comme un type désactivé ou “à venir”, seulement si cela aide la vision produit.
+
+---
+
+## 12. Onglet 5 — Rapports client
+
+L’onglet **Rapports client** doit permettre de générer un livrable clair, utile et professionnel. Le rapport ne doit pas être un texte IA générique. Il doit être construit à partir des données, tâches complétées, problèmes résolus, objectifs et prochaines actions.
+
+### 12.1 Objectif UX
+
+L’utilisateur doit pouvoir préparer un rapport mensuel ou périodique en sélectionnant les sections pertinentes, prévisualiser le contenu, ajuster certains éléments et suivre l’envoi.
+
+### 12.2 Sections de rapport recommandées
+
+| Section | Source principale |
+| --- | --- |
+| **Synthèse exécutive** | Résumé IA encadré par les données et actions. |
+| **Évolution du trafic organique** | KPIs et graphiques. |
+| **Positions clés** | Mots-clés prioritaires et mouvements. |
+| **Santé technique** | Diagnostics et problèmes résolus. |
+| **Travail réalisé** | Tâches terminées et preuves. |
+| **Opportunités détectées** | Priorités ouvertes et recommandations. |
+| **Prochaines actions** | Plan d’action à venir. |
+
+### 12.3 Interactions clés
+
+| Action | Résultat attendu |
+| --- | --- |
+| **Générer le rapport** | Produit une première version structurée. |
+| **Prévisualiser** | Affiche le rapport avant export ou envoi. |
+| **Inclure/exclure une section** | Permet de garder un rapport pertinent. |
+| **Ajouter une note stratégique** | Permet à DigiHunt d’ajouter du jugement humain. |
+| **Marquer comme envoyé** | Archive le rapport dans l’historique. |
+
+Le rapport doit être conçu comme une preuve de valeur, pas comme un simple résumé mensuel.
+
+---
+
+## 13. Onglet 6 — Contrat et suivi commercial léger
+
+La fiche client peut inclure une section **Contrat**, mais elle ne doit pas devenir une solution de facturation complète en V0.1. Le risque est de disperser le produit vers des problèmes financiers complexes alors que le cœur est encore à stabiliser.
+
+### 13.1 Objectif UX
+
+L’utilisateur doit comprendre ce qui est vendu au client, depuis quand, à quel montant récurrent, et quels modules sont inclus.
+
+| Élément | Description |
+| --- | --- |
+| **Plan / offre active** | Exemple : Croissance, SEO local, Refonte + SEO. |
+| **MRR ou valeur mensuelle** | Indicateur de valeur commerciale. |
+| **Date de début** | Début du mandat. |
+| **Engagement / renouvellement** | Durée ou date de renouvellement. |
+| **Modules inclus** | Services réellement livrés. |
+| **Statut du compte** | À jour, en attente, à risque, renouvellement bientôt. |
+
+Les paiements réels, cartes bancaires, relances automatiques et exports comptables doivent être repoussés ou intégrés plus tard via un outil spécialisé.
+
+---
+
+## 14. Panneau gauche — Contexte client
+
+Le panneau gauche doit fournir le contexte stable du client. Il ne doit pas devenir un fourre-tout. Sa mission est de répondre à la question : **qui est ce client et dans quel cadre travaille-t-on avec lui ?**
+
+| Élément | Recommandation |
+| --- | --- |
+| Logo ou initiales | Visible en haut, taille modérée. |
+| Nom du client | Principal repère d’identité. |
+| Secteur | E-commerce, santé, services B2B, local, etc. |
+| Statut | Prospect, onboarding, actif, à risque, terminé. |
+| Coordonnées principales | Email, téléphone, site, localisation. |
+| Responsable DigiHunt | Nom ou avatar. |
+| Date de début | Repère relationnel. |
+| Dernier audit | Date du dernier diagnostic significatif. |
+| Modules actifs | Badges courts, sans surcharger. |
+
+Le panneau gauche doit rester lisible même lorsque le client possède beaucoup d’informations. Les informations secondaires peuvent être repliées dans une section “Voir détails”.
+
+---
+
+## 15. Panneau droit — Intelligence continue
+
+Le panneau droit doit afficher les éléments transversaux qui aident à décider sans quitter la fiche. Il ne doit pas répéter la zone centrale. Il doit compléter l’écran avec des signaux courts.
+
+| Bloc | Rôle |
+| --- | --- |
+| **Modules inclus** | Confirme ce qui doit être livré. |
+| **Concurrence** | Compare rapidement le client à quelques concurrents clés. |
+| **Activité récente** | Liste les derniers événements importants. |
+| **Prochaine action** | Montre l’action à ne pas oublier. |
+| **Score résumé** | Rappelle l’état global sans dominer. |
+
+Le panneau droit doit pouvoir être masqué ou réduit à moyen terme, car il peut devenir encombrant sur des écrans plus petits.
+
+---
+
+## 16. États UX obligatoires à designer
+
+La prochaine itération ne doit pas uniquement représenter un client parfait avec des données complètes. Il faut prévoir les états réalistes, car ce sont eux qui révéleront la solidité du produit.
+
+| État | Description | Comportement UX attendu |
+| --- | --- | --- |
+| **Nouveau prospect** | Le client n’a pas encore signé | Montrer informations commerciales, masquer modules SEO actifs, proposer de compléter la découverte. |
+| **Client en onboarding** | Le mandat commence, mais les intégrations ne sont pas complètes | Afficher checklist d’onboarding et prochaines connexions. |
+| **Client actif complet** | Données SEO, tâches et rapports disponibles | Afficher l’expérience complète. |
+| **Client sans intégration SEO** | Google Search Console, Analytics ou outil SEO non connecté | Expliquer ce qui manque et proposer l’action de connexion. |
+| **Audit en cours** | Diagnostic lancé, résultats non disponibles | Afficher progression ou état de traitement, sans spinner inutile au centre. |
+| **Données obsolètes** | Dernière donnée trop ancienne | Signaler la fraîcheur des données et proposer d’actualiser. |
+| **Aucune priorité ouverte** | Aucun problème majeur détecté | Valoriser l’état sain et proposer des opportunités. |
+| **Tâches en retard** | Actions non réalisées après échéance | Mettre en évidence sans dramatiser, proposer replanification. |
+| **Erreur de chargement** | Donnée indisponible | Message clair, action de réessai, conservation du reste de l’écran. |
+
+Ces états sont indispensables. Sans eux, le design donnera une illusion de maturité, mais ne préparera pas le vrai produit.
+
+---
+
+## 17. Règles d’interaction
+
+La fiche client doit obéir à des règles simples. Ces règles doivent guider Claude Design afin d’éviter des interfaces séduisantes mais incohérentes.
+
+| Règle | Application concrète |
+| --- | --- |
+| Une donnée importante doit être reliée à une action | Si le score chute, l’utilisateur doit voir pourquoi et quoi faire. |
+| Une priorité assignée doit créer ou lier une tâche | L’utilisateur ne doit pas recopier manuellement le problème. |
+| Une tâche terminée doit pouvoir devenir une preuve | Le rapport doit pouvoir réutiliser cette action. |
+| Une section IA doit citer ses signaux | L’IA ne doit pas produire une recommandation sans contexte visible. |
+| Une alerte doit avoir un niveau et une prochaine étape | Une alerte sans action est du bruit. |
+| Les éléments critiques doivent rester visibles | Ne pas cacher les risques majeurs dans un onglet secondaire. |
+
+La règle la plus importante est simple : **l’interface ne doit pas seulement informer, elle doit conduire à la prochaine bonne action**.
+
+---
+
+## 18. Rôle de l’IA dans la fiche client
+
+L’IA doit être présente, mais cadrée. Elle ne doit pas devenir une couche magique qui explique tout sans preuves. Son rôle est d’aider l’utilisateur à synthétiser, prioriser, formuler et préparer les rapports.
+
+| Fonction IA | Recommandation UX |
+| --- | --- |
+| **Synthèse client** | Résumé court sur l’aperçu, avec signaux utilisés. |
+| **Priorisation** | Classement des enjeux par impact et urgence. |
+| **Recommandation** | Proposition d’action à partir d’un problème détecté. |
+| **Génération de tâche** | Préremplissage d’une tâche à partir d’une priorité. |
+| **Rapport client** | Rédaction assistée à partir des données et preuves. |
+| **Surveillance** | Signalement de variations importantes. |
+
+La synthèse IA doit être courte. Idéalement, elle doit tenir en un paragraphe de 3 à 5 lignes, suivi de trois blocs : **à surveiller**, **à corriger**, **opportunité**.
+
+---
+
+## 19. Hiérarchie visuelle et style d’interface
+
+L’interface actuelle a une direction sombre, premium et cockpit. Cette direction peut être conservée, mais elle doit être disciplinée. La fiche client sera dense, donc la lisibilité est plus importante que l’effet visuel.
+
+| Principe visuel | Recommandation |
+| --- | --- |
+| **Mode sombre** | Conserver, mais renforcer les contrastes sur les textes secondaires. |
+| **Accent vert** | Utiliser pour succès, progression ou sélection, pas comme décoration permanente. |
+| **Rouge / jaune** | Réserver aux statuts critiques et importants. Ne pas dépendre uniquement de la couleur. |
+| **Cartes** | Utiliser avec retenue. Éviter les cartes imbriquées excessives. |
+| **Graphiques** | Simples, lisibles, liés à une décision. |
+| **Typographie** | Une famille sans-serif professionnelle, échelle compacte, labels lisibles. |
+| **Densité** | Acceptable, mais avec une hiérarchie nette et des respirations. |
+
+Il faut éviter que la fiche client ressemble à une démonstration de dashboard. Elle doit ressembler à un outil utilisé tous les jours pour livrer du travail.
+
+---
+
+## 20. Microcopy recommandé
+
+Les libellés doivent être concrets. Les boutons doivent décrire l’action réelle. Le vocabulaire doit être orienté travail, pas marketing.
+
+| Élément | Libellé recommandé | À éviter |
+| --- | --- | --- |
+| Bouton audit | **Lancer un diagnostic** | Run scan, Audit now, Analyse IA magique. |
+| Bouton tâche | **Créer une tâche** | Ajouter, Action, Go. |
+| Bouton priorité | **Assigner au plan d’action** | Fix, Resolve, Traiter. |
+| Bouton rapport | **Générer le rapport client** | Générer, Export, Rapport IA. |
+| État vide priorités | **Aucune priorité critique détectée** | Rien ici. |
+| État sans données | **Connecter les sources SEO pour activer le suivi** | Données manquantes. |
+| IA | **Synthèse HuntPilote** | Agent magique, AI Brain, Super Analyse. |
+
+Le ton doit rester direct, professionnel et rassurant.
+
+---
+
+## 21. Données visibles sans modèle technique détaillé
+
+Même si le backend n’est pas encore défini, le design doit anticiper les catégories de données nécessaires. Chaque composant doit correspondre à une donnée plausible.
+
+| Catégorie de données | Exemples à afficher |
+| --- | --- |
+| **Identité client** | Nom, secteur, site, ville, statut, contact principal. |
+| **Relation commerciale** | Offre active, MRR, date de début, modules inclus, responsable. |
+| **Santé SEO** | Score global, score technique, score contenu, score backlinks. |
+| **Trafic** | Sessions organiques, variation, période, source. |
+| **Mots-clés** | Positions top 10, mots-clés suivis, mouvements. |
+| **Priorités** | Criticité, impact, recommandation, statut, source. |
+| **Tâches** | Statut, responsable, échéance, source, preuve attendue. |
+| **Rapports** | Période, statut, sections incluses, date d’envoi. |
+| **Activité** | Audit lancé, rapport envoyé, tâche complétée, problème détecté. |
+| **Concurrence** | Domaines concurrents, trafic estimé, variation, écart. |
+
+Ce tableau ne remplace pas une structure de données technique. Il sert à empêcher le design de créer des composants impossibles à justifier.
+
+---
+
+## 22. Critères d’acceptation UX
+
+La prochaine version design de la fiche client sera considérée comme réussie si elle répond aux critères suivants.
+
+| Critère | Validation |
+| --- | --- |
+| L’utilisateur comprend l’état du client en moins de 30 secondes | L’aperçu montre score, objectif, alerte, priorité et prochaine action. |
+| Les priorités sont actionnables | Chaque priorité peut être assignée, détaillée ou ignorée. |
+| Les tâches ont un contexte | Une tâche indique sa source, son impact et sa preuve attendue. |
+| Les rapports sont reliés au travail effectué | Les sections de rapport peuvent reprendre les tâches et preuves. |
+| Les états réalistes sont prévus | Nouveau client, données manquantes, audit en cours, erreur et état vide. |
+| La fiche ne surcharge pas l’utilisateur | Les informations secondaires restent en panneaux ou sections repliables. |
+| Le vocabulaire est métier | Les noms d’onglets et boutons décrivent clairement l’usage. |
+| L’IA est cadrée | Les synthèses IA s’appuient sur des signaux visibles. |
+
+Si un design est beau mais ne permet pas de passer d’un problème à une tâche, puis à une preuve, il doit être considéré comme insuffisant.
+
+---
+
+## 23. Recommandation finale
+
+La prochaine étape ne devrait pas être de générer toute la fiche client avec tous ses onglets détaillés d’un seul coup. Ce serait trop large et Claude Design risque de produire une interface séduisante mais confuse. La bonne approche est de traiter la fiche client en trois itérations.
+
+| Itération | Objectif |
+| --- | --- |
+| **1** | Architecture complète de la fiche client + onglet Aperçu. |
+| **2** | Onglets Priorités SEO + Plan d’action, avec le lien problème → tâche. |
+| **3** | Onglets Diagnostics + Rapports client + Contrat léger. |
+
+Mon avis direct : commence par l’**architecture complète + Aperçu**. C’est la partie qui déterminera tout le reste. Si l’aperçu est clair, les autres onglets deviendront logiques. Si l’aperçu est flou, tu risques de continuer à empiler des écrans beaux mais difficiles à transformer en produit réel.
+
+---
+
+## 25. Décision à valider avant design
+
+Avant d’envoyer le prompt à Claude Design, une décision doit être prise : faut-il conserver l’onglet “Facturation” tel qu’il apparaît dans les écrans actuels, ou le renommer et le limiter à **Contrat** pour la V0.1 ?
+
+Ma recommandation est de le renommer **Contrat** pour l’instant. Ce choix réduit la complexité, garde l’information commerciale utile, et évite de laisser croire que HuntPilote doit gérer la facturation complète dès les premières versions.
+
+> **Décision recommandée :** utiliser les onglets suivants pour la fiche client V0.1 : Aperçu, Priorités SEO, Plan d’action, Diagnostics, Rapports client, Contrat.
+

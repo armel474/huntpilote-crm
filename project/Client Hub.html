@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuntPilot — Client Hub</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Consolas';
+  src: url('fonts/Consolas.ttf') format('truetype');
+  font-weight: 400 700; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font-sans: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Consolas', ui-monospace, Consolas, monospace;
+  --bg-base: #F2EFEA;
+  --bg-surface: rgba(255,255,255,0.54);
+  --bg-surface-solid: #FFFFFF;
+  --bg-muted: #E3DDD1;
+  --border: rgba(0,0,0,0.075);
+  --border-solid: #D0CBBF;
+  --border-strong: #BAB4A6;
+  --fg-1: #18181B; --fg-2: #3F3F46; --fg-3: #71717A; --fg-4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF;
+  --accent: #16A34A; --accent-muted: #DCEFD4; --accent-border: #BBE3AA; --accent-fg: #2D5A27;
+  --warm: #E5C66B; --warm-muted: #F5E8B5; --warm-fg: #7A5D14; --warm-border: #D4B24A;
+  --info: #3B82F6; --info-muted: #DBEAFE; --info-fg: #1D4ED8; --info-border: #93C5FD;
+  --error: #C44545; --error-bg: #F5C9C9;
+  --sidebar-w: 230px; --header-h: 58px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 9999px;
+  --shadow-md: inset 0 1px 0 rgba(255,255,255,0.88), 0 4px 24px -2px rgba(0,0,0,0.11), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-lg: inset 0 1px 0 rgba(255,255,255,0.88), 0 8px 32px -4px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.06);
+  --blur: blur(22px) saturate(175%);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-surface: rgba(255,255,255,0.06);
+  --bg-surface-solid: #1E1E22; --bg-muted: #27272A;
+  --border: rgba(255,255,255,0.08); --border-solid: #2A2A2D; --border-strong: #3F3F46;
+  --fg-1: #FAFAFA; --fg-2: #D4D4D8; --fg-3: #A1A1AA; --fg-4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --accent: #4ADE80; --accent-muted: rgba(74,222,128,0.14); --accent-border: rgba(74,222,128,0.3); --accent-fg: #A6E494;
+  --warm: #E5C66B; --warm-muted: rgba(229,198,107,0.14); --warm-fg: #E5C66B; --warm-border: rgba(229,198,107,0.35);
+  --info: #60A5FA; --info-muted: rgba(59,130,246,0.14); --info-fg: #93C5FD; --info-border: rgba(59,130,246,0.3);
+  --error: #F5A0A0; --error-bg: rgba(245,160,160,0.14);
+  --shadow-md: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching], [data-theme-switching] *, [data-theme-switching] *::before, [data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important;
+}
+body {
+  font-family: var(--font-sans); font-size: 0.875rem; color: var(--fg-1);
+  background: var(--bg-base); -webkit-font-smoothing: antialiased;
+  overflow: hidden; height: 100vh;
+}
+body::before, body::after {
+  content: ''; position: fixed; border-radius: 50%; pointer-events: none;
+  z-index: 0; filter: blur(80px); opacity: 0.72;
+}
+body::before {
+  width: 44rem; height: 44rem; top: -12rem; left: 10rem;
+  background: radial-gradient(circle, rgba(74,222,128,0.44) 0%, transparent 68%);
+}
+body::after {
+  width: 36rem; height: 36rem; bottom: -8rem; right: -2rem;
+  background: radial-gradient(circle, rgba(229,198,107,0.40) 0%, transparent 68%);
+}
+[data-theme="dark"] body::before { opacity: 0.45; }
+[data-theme="dark"] body::after  { opacity: 0.40; }
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  flex-shrink: 0; background: var(--bg-surface);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh;
+  box-shadow: 2px 0 24px rgba(0,0,0,0.06);
+  position: relative; isolation: isolate; overflow: hidden;
+}
+.sidebar::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.625rem;
+  padding: 0.45rem 0.75rem; border-radius: var(--radius-full);
+  font-size: 0.8125rem; font-weight: 500; color: var(--fg-3);
+  cursor: pointer; transition: all 150ms; margin: 0.1rem 0.5rem;
+}
+.nav-item:hover { background: rgba(0,0,0,0.04); color: var(--fg-1); }
+[data-theme="dark"] .nav-item:hover { background: rgba(255,255,255,0.05); }
+.nav-item.active { background: var(--primary); color: var(--primary-fg); }
+.nav-sub-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.3rem 0.75rem 0.3rem 2.125rem;
+  font-size: 0.75rem; color: var(--fg-4);
+  cursor: pointer; transition: color 140ms; border-radius: var(--radius-full); margin: 0.05rem 0.5rem;
+}
+.nav-sub-item:hover { color: var(--fg-1); }
+.nav-item-cpt {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: var(--radius-sm);
+  margin: 0.1rem auto; cursor: pointer; transition: all 150ms; color: var(--fg-3); position: relative;
+}
+.nav-item-cpt:hover { background: rgba(0,0,0,0.05); color: var(--fg-1); }
+[data-theme="dark"] .nav-item-cpt:hover { background: rgba(255,255,255,0.07); }
+.nav-item-cpt.active { background: var(--primary); color: var(--primary-fg); }
+.nav-item-cpt[data-label]:hover::after {
+  content: attr(data-label); position: absolute; left: calc(100% + 10px); top: 50%;
+  transform: translateY(-50%); background: var(--fg-1); color: var(--primary-fg);
+  padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 500;
+  white-space: nowrap; pointer-events: none; z-index: 300;
+}
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+/* ── HEADER ── */
+.header {
+  height: var(--header-h); flex-shrink: 0;
+  border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.65);
+  display: flex; align-items: center; padding: 0 1.25rem; gap: 0.75rem;
+  position: relative; isolation: isolate;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+  position: relative; isolation: isolate;
+  transition: box-shadow 160ms ease;
+}
+.card:hover {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), 0 8px 32px -4px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.07);
+}
+.card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+
+/* ── INPUT ── */
+.input {
+  font-family: var(--font-sans); font-size: 0.8125rem; color: var(--fg-1);
+  background: var(--bg-surface-solid); border: 1px solid var(--border-solid);
+  border-radius: var(--radius-full); padding: 0.4rem 0.875rem; outline: none; transition: border-color 150ms;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+.input::placeholder { color: var(--fg-4); }
+
+/* ── BTN ── */
+.btn-icon {
+  width: 1.875rem; height: 1.875rem; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg-surface-solid); border: 1px solid var(--border-solid); color: var(--fg-3);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 160ms;
+}
+.btn-icon:hover { color: var(--fg-1); }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.4rem 0.875rem; border-radius: var(--radius-full);
+  background: var(--primary); color: var(--primary-fg); border: none;
+  font-family: var(--font-sans); font-size: 0.75rem; font-weight: 600; cursor: pointer;
+  transition: opacity 150ms;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.4rem 0.875rem; border-radius: var(--radius-full);
+  background: transparent; color: var(--fg-2); border: 1px solid var(--border-strong);
+  font-family: var(--font-sans); font-size: 0.75rem; font-weight: 500; cursor: pointer;
+  transition: all 150ms;
+}
+.btn-outline:hover { background: var(--bg-muted); }
+
+/* ── CARD TYPE LABEL ── */
+.card-type-label {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 9999px;
+}
+.card-type-label.client   { background: var(--accent-muted); color: var(--accent-fg); border: 1px solid var(--accent-border); }
+.card-type-label.prospect { background: var(--warm-muted);   color: var(--warm-fg);   border: 1px solid var(--warm-border); }
+
+/* ── SPARKLINE ── */
+.progress-track { height: 0.25rem; background: rgba(0,0,0,0.10); border-radius: 9999px; overflow: hidden; }
+[data-theme="dark"] .progress-track { background: rgba(255,255,255,0.09); }
+.progress-fill { height: 100%; border-radius: 9999px; background: var(--accent); }
+
+/* ── CONTENT ── */
+.content { flex: 1; overflow-y: auto; padding: 1rem 1.125rem; }
+.content::-webkit-scrollbar { width: 0.25rem; }
+.content::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 9999px; }
+
+/* ── GRID / LIST ── */
+.cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.875rem; }
+.cards-list { display: flex; flex-direction: column; gap: 0.5rem; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+/* ── DATA ── */
+const CLIENTS = [
+  {
+    id: 1, type: 'client',
+    name: 'Acme Corp.', initials: 'AC', sector: 'E-commerce',
+    badge: 'Croissance', badgeType: 'accent',
+    services: ['SEO Tech.', 'Contenu', 'Audit'],
+    score: 92, scoreDelta: +5,
+    mrr: '1 200 $ CA', servicesCount: 3,
+    progress: 87,
+    sparkData: [40,44,42,49,53,51,58,62],
+    kw: '142', sessions: '34.8k', ctr: '3.4%',
+    visibility: '67 %', pages: '1 240', bounce: '42 %',
+  },
+  {
+    id: 2, type: 'prospect',
+    name: 'Novatech', initials: 'NT', sector: 'SaaS B2B',
+    badge: 'En cours', badgeType: 'warm',
+    devis: 'Devis envoyé · 8 mai',
+    resume: 'Refonte SEO complète + stratégie contenu éditoriale pour lancement produit Q3.',
+    budget: '4 500 $ CA', servicesCount: 3,
+    convProb: 72, nextAction: 'Appel de suivi · 28 mai', trafficPotential: '~18k sessions',
+  },
+  {
+    id: 3, type: 'client',
+    name: 'Dupont SAS', initials: 'DS', sector: 'Services B2B',
+    badge: 'Stable', badgeType: 'info',
+    services: ['SEO Local', 'Backlinks'],
+    score: 78, scoreDelta: -2,
+    mrr: '750 $ CA', servicesCount: 2,
+    progress: 61,
+    sparkData: [55,52,54,51,53,50,49,51],
+    kw: '89', sessions: '8.2k', ctr: '2.1%',
+    visibility: '41 %', pages: '380', bounce: '58 %',
+  },
+  {
+    id: 4, type: 'prospect',
+    name: 'Paris Médias', initials: 'PM', sector: 'Média',
+    badge: 'Nouveau', badgeType: 'info',
+    devis: 'Devis en préparation',
+    resume: 'Audit SEO + optimisation on-page pour 3 sites médias régionaux.',
+    budget: '2 800 $ CA', servicesCount: 2,
+    convProb: 45, nextAction: 'Envoi devis · 30 mai', trafficPotential: '~9k sessions',
+  },
+  {
+    id: 5, type: 'client',
+    name: 'Le Marché Bio', initials: 'MB', sector: 'Retail',
+    badge: 'Croissance', badgeType: 'accent',
+    services: ['SEO Tech.', 'Contenu'],
+    score: 85, scoreDelta: +8,
+    mrr: '950 $ CA', servicesCount: 2,
+    progress: 73,
+    sparkData: [30,35,33,40,44,48,52,57],
+    kw: '97', sessions: '12.1k', ctr: '4.2%',
+    visibility: '54 %', pages: '620', bounce: '37 %',
+  },
+  {
+    id: 6, type: 'prospect',
+    name: 'Vélo Urbain', initials: 'VU', sector: 'Mobilité',
+    badge: 'En cours', badgeType: 'warm',
+    devis: 'Devis envoyé · 15 mai',
+    resume: 'Stratégie SEO locale + création de contenu pour réseau de boutiques.',
+    budget: '1 900 $ CA', servicesCount: 2,
+    convProb: 58, nextAction: 'Présentation audit · 2 juin', trafficPotential: '~6k sessions',
+  },
+];
+
+const KPIS = [
+  { label: 'Clients actifs',     value: '12',           sub: '+2 ce mois', up: true },
+  { label: 'Prospects en cours', value: '8',            sub: '3 devis envoyés', up: null },
+  { label: 'MRR total',          value: '18 400 $ CA',  sub: '+12% vs avril', up: true },
+];
+
+/* ── ICONS ── */
+const IcoDashboard = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
+const IcoUsers    = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>;
+const IcoPipeline = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>;
+const IcoZap      = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
+const IcoTool     = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>;
+const IcoCalendar = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
+const IcoSettings = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>;
+const IcoBell     = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>;
+const IcoSearch   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
+const IcoGrid     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>;
+const IcoList     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>;
+const IcoDownload = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+const IcoChevron  = ({ deg = 0 }) => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ transform:`rotate(${deg}deg)`, transition:'transform 200ms' }}><polyline points="6 9 12 15 18 9"/></svg>;
+const IcoArrow    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
+const IcoUp       = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>;
+const IcoDown     = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>;
+const IcoSun      = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
+const IcoMoon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
+const IcoSidebarL = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><polyline points="15 9 12 12 15 15"/></svg>;
+const IcoSidebarR = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><polyline points="12 9 15 12 12 15"/></svg>;
+const IcoPlus     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoFilter   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>;
+
+/* ── MINI SPARKLINE ── */
+const MiniSparkline = ({ data, color = 'var(--accent)', h = 36 }) => {
+  const W = 120;
+  const max = Math.max(...data), min = Math.min(...data), range = max - min || 1;
+  const px = i => (i / (data.length - 1)) * W;
+  const py = v => h - 4 - ((v - min) / range) * (h - 8);
+  const pts = data.map((v, i) => ({ x: px(i), y: py(v) }));
+  const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area = `M 0,${h} ${line.slice(1)} L ${W},${h} Z`;
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id={`sg-${color.replace(/[^a-z]/gi,'')}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.18"/>
+          <stop offset="100%" stopColor={color} stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill={`url(#sg-${color.replace(/[^a-z]/gi,'')})`}/>
+      <path d={line} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx={pts[pts.length-1].x} cy={pts[pts.length-1].y} r="3" fill={color}/>
+    </svg>
+  );
+};
+
+/* ── BADGE ── */
+const badgeStyles = {
+  accent: { bg: 'var(--accent-muted)', border: 'var(--accent-border)', color: 'var(--accent-fg)' },
+  warm:   { bg: 'var(--warm-muted)',   border: 'var(--warm-border)',   color: 'var(--warm-fg)' },
+  info:   { bg: 'var(--info-muted)',   border: 'var(--info-border)',   color: 'var(--info-fg)' },
+};
+const Badge = ({ label, type = 'accent' }) => {
+  const s = badgeStyles[type] || badgeStyles.accent;
+  return (
+    <span style={{
+      fontSize: '0.625rem', fontWeight: 700, padding: '2px 8px', borderRadius: 9999,
+      background: s.bg, border: `1px solid ${s.border}`, color: s.color,
+      letterSpacing: '0.03em', whiteSpace: 'nowrap',
+    }}>{label}</span>
+  );
+};
+
+/* ── LOGO AVATAR ── */
+const Avatar = ({ initials, size = 38 }) => (
+  <div style={{
+    width: size, height: size, borderRadius: 10, flexShrink: 0,
+    background: 'var(--bg-muted)', border: '1px solid var(--border-solid)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: size < 36 ? '0.625rem' : '0.75rem', fontWeight: 800, color: 'var(--fg-3)',
+    letterSpacing: '-0.02em',
+  }}>{initials}</div>
+);
+
+/* ── CLIENT CARD ── */
+const ClientCard = ({ c, view }) => {
+  const scoreColor = s => s >= 85 ? 'var(--accent)' : s >= 70 ? 'var(--warm)' : 'var(--error)';
+  if (view === 'list') {
+    return (
+      <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem 1rem', borderTop: '3px solid var(--accent)' }}>
+        <Avatar initials={c.initials} size={34} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)' }}>{c.name}</span>
+            <Badge label={c.badge} type={c.badgeType} />
+            <span className="card-type-label client">Client</span>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 1 }}>{c.sector}</div>
+        </div>
+        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+          {c.services?.map(s => (
+            <span key={s} style={{ fontSize: '0.625rem', padding: '2px 7px', borderRadius: 9999, background: 'var(--bg-muted)', color: 'var(--fg-3)', border: '1px solid var(--border-solid)', fontWeight: 600 }}>{s}</span>
+          ))}
+        </div>
+        <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 60 }}>
+          <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: scoreColor(c.score), fontVariantNumeric: 'tabular-nums' }}>{c.score}</div>
+          <div style={{ fontSize: '0.625rem', color: c.scoreDelta > 0 ? 'var(--accent)' : 'var(--error)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2 }}>
+            {c.scoreDelta > 0 ? <IcoUp /> : <IcoDown />}{c.scoreDelta > 0 ? '+' : ''}{c.scoreDelta}
+          </div>
+        </div>
+        <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 60 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums' }}>{c.mrr}</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>/mois</div>
+        </div>
+        <button className="btn-outline" style={{ flexShrink: 0 }} onClick={() => window.location.href = 'Fiche Client v2.html'}>Voir fiche</button>
+      </div>
+    );
+  }
+  return (
+    <div className="card" style={{ display: 'flex', flexDirection: 'column', padding: '0.9375rem', borderTop: '3px solid var(--accent)' }}>
+      {/* Header card */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: '0.75rem' }}>
+        <Avatar initials={c.initials} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--fg-1)', letterSpacing: '-0.02em' }}>{c.name}</span>
+            <Badge label={c.badge} type={c.badgeType} />
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 2 }}>{c.sector}</div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5 }}>
+          <span className="card-type-label client">Client</span>
+          <div style={{ fontSize: '1.125rem', fontWeight: 800, color: scoreColor(c.score), fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{c.score}</div>
+          <div style={{ fontSize: '0.625rem', color: c.scoreDelta > 0 ? 'var(--accent)' : 'var(--error)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, fontWeight: 600 }}>
+            {c.scoreDelta > 0 ? <IcoUp /> : <IcoDown />}{c.scoreDelta > 0 ? '+' : ''}{c.scoreDelta}
+          </div>
+        </div>
+      </div>
+
+      {/* Services */}
+      <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: '0.875rem' }}>
+        {c.services.map(s => (
+          <span key={s} style={{ fontSize: '0.625rem', padding: '3px 9px', borderRadius: 9999, background: 'var(--bg-muted)', color: 'var(--fg-3)', border: '1px solid var(--border-solid)', fontWeight: 600 }}>{s}</span>
+        ))}
+      </div>
+
+      {/* Perf site — grille 2×3 */}
+      <div style={{ background: 'var(--bg-muted)', borderRadius: 10, padding: '0.6rem 0.75rem', marginBottom: '0.75rem' }}>
+        <div style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Performance du site</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem 0.25rem' }}>
+          {[
+            { l: 'Positions', v: c.kw },
+            { l: 'Sessions',  v: c.sessions },
+            { l: 'CTR',       v: c.ctr },
+            { l: 'Visibilité', v: c.visibility },
+            { l: 'Indexées',  v: c.pages },
+            { l: 'Rebond',    v: c.bounce },
+          ].map(({ l, v }) => (
+            <div key={l}>
+              <div style={{ fontSize: '0.5625rem', color: 'var(--fg-4)', marginBottom: 1, whiteSpace: 'nowrap' }}>{l}</div>
+              <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums' }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sparkline + Progrès */}
+      <div style={{ marginBottom: '0.875rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <span style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Progrès objectif</span>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>{c.progress}%</span>
+        </div>
+        <div className="progress-track" style={{ marginBottom: 8 }}>
+          <div className="progress-fill" style={{ width: `${c.progress}%` }}></div>
+        </div>
+        <MiniSparkline data={c.sparkData} />
+      </div>
+
+      {/* Footer */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '0.75rem', borderTop: '1px solid var(--border-solid)' }}>
+        <div>
+          <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em' }}>{c.mrr}<span style={{ fontSize: '0.6875rem', fontWeight: 500, color: 'var(--fg-4)', marginLeft: 3 }}>/mois</span></div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>{c.servicesCount} service{c.servicesCount > 1 ? 's' : ''}</div>
+        </div>
+        <button className="btn-outline" onClick={() => window.location.href = 'Fiche Client v2.html'}>Voir fiche</button>
+      </div>
+    </div>
+  );
+};
+
+/* ── PROSPECT CARD ── */
+const ProspectCard = ({ c, view }) => {
+  if (view === 'list') {
+    return (
+      <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem 1rem', borderTop: '3px solid var(--warm)' }}>
+        <Avatar initials={c.initials} size={34} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)' }}>{c.name}</span>
+            <Badge label={c.badge} type={c.badgeType} />
+            <span className="card-type-label prospect">Prospect</span>
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 1 }}>{c.sector}</div>
+        </div>
+        <div style={{ flex: 1, minWidth: 0, fontSize: '0.75rem', color: 'var(--fg-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.resume}</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', flexShrink: 0, whiteSpace: 'nowrap' }}>{c.devis}</div>
+        <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 60 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums' }}>{c.budget}</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>{c.servicesCount} services</div>
+        </div>
+        <button className="btn-primary" style={{ flexShrink: 0 }}>Voir infos</button>
+      </div>
+    );
+  }
+  return (
+    <div className="card" style={{ display: 'flex', flexDirection: 'column', padding: '0.9375rem', borderTop: '3px solid var(--warm)' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: '0.875rem' }}>
+        <Avatar initials={c.initials} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--fg-1)', letterSpacing: '-0.02em' }}>{c.name}</span>
+            <Badge label={c.badge} type={c.badgeType} />
+          </div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 2 }}>{c.sector}</div>
+        </div>
+        <span className="card-type-label prospect">Prospect</span>
+      </div>
+
+      {/* Devis */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.5rem 0.75rem', borderRadius: 8, background: 'var(--warm-muted)', border: '1px solid var(--warm-border)', marginBottom: '0.875rem' }}>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--warm-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--warm-fg)' }}>{c.devis}</span>
+      </div>
+
+      {/* Résumé projet */}
+      <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Résumé projet</div>
+        <p style={{ fontSize: '0.75rem', color: 'var(--fg-2)', lineHeight: 1.55, textWrap: 'pretty' }}>{c.resume}</p>
+      </div>
+
+      {/* KPIs prospect */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        {/* Probabilité */}
+        <div style={{ background: 'var(--bg-muted)', borderRadius: 8, padding: '0.5rem 0.625rem' }}>
+          <div style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Conversion</div>
+          <div style={{ fontSize: '1rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums', lineHeight: 1, color: c.convProb >= 65 ? 'var(--accent)' : c.convProb >= 45 ? 'var(--warm)' : 'var(--error)' }}>{c.convProb} %</div>
+          <div style={{ marginTop: 5 }}>
+            <div className="progress-track">
+              <div className="progress-fill" style={{ width: `${c.convProb}%`, background: c.convProb >= 65 ? 'var(--accent)' : c.convProb >= 45 ? 'var(--warm)' : 'var(--error)' }}></div>
+            </div>
+          </div>
+        </div>
+        {/* Trafic potentiel */}
+        <div style={{ background: 'var(--bg-muted)', borderRadius: 8, padding: '0.5rem 0.625rem' }}>
+          <div style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Trafic estimé</div>
+          <div style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>{c.trafficPotential}</div>
+          <div style={{ fontSize: '0.5625rem', color: 'var(--fg-4)', marginTop: 2 }}>après audit SEO</div>
+        </div>
+        {/* Prochaine action */}
+        <div style={{ background: 'var(--bg-muted)', borderRadius: 8, padding: '0.5rem 0.625rem' }}>
+          <div style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Prochaine action</div>
+          <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--fg-1)', lineHeight: 1.35 }}>{c.nextAction}</div>
+        </div>
+      </div>
+
+      {/* Separator */}
+      <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 0 0.75rem' }}></div>
+
+      {/* Footer */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em' }}>{c.budget}</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>{c.servicesCount} service{c.servicesCount > 1 ? 's' : ''}</div>
+        </div>
+        <button className="btn-primary">Voir infos</button>
+      </div>
+    </div>
+  );
+};
+
+/* ── ROUTING ── */
+const ROUTES = { dashboard: 'Dashboard.html', clienthub: 'Client Hub.html', pipeline: 'Pipeline.html', workflow: 'Workflow.html' };
+const PAGE_ID = 'clienthub';
+const navGo = (id, setActive) => { const r = ROUTES[id]; if (r && id !== PAGE_ID) { window.location.href = r; } else { setActive(id); } };
+
+/* ── SIDEBAR ── */
+const Sidebar = ({ active, setActive, compact, onToggleCompact }) => {
+  const [toolsOpen, setToolsOpen] = React.useState(false);
+  const topNav = [
+    { id: 'dashboard', label: 'Dashboard',  Icon: IcoDashboard },
+    { id: 'clienthub', label: 'Client hub', Icon: IcoUsers },
+    { id: 'pipeline',  label: 'Pipeline',   Icon: IcoPipeline },
+    { id: 'workflow',  label: 'Workflow',   Icon: IcoZap },
+    { id: 'agenda',    label: 'Agenda',     Icon: IcoCalendar },
+  ];
+  const tools = ['Keyword Hunter','Domain Overview','Organic Research','Keyword Gap','Position Tracking','Site Audite','Backlink Analyse'];
+  const LogoIcon = () => (
+    <div style={{ width: 28, height: 28, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </div>
+  );
+  if (compact) {
+    const allItems = [...topNav, { id: 'tools', label: 'Outil', Icon: IcoTool }];
+    return (
+      <div className="sidebar" style={{ width: 64, alignItems: 'center' }}>
+        <div style={{ padding: '15px 0', borderBottom: '1px solid var(--border)', width: '100%', display: 'flex', justifyContent: 'center' }}><LogoIcon /></div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          {allItems.map(({ id, label, Icon }) => (
+            <div key={id} className={`nav-item-cpt${active === id ? ' active' : ''}`} data-label={label} onClick={() => navGo(id, setActive)}><Icon /></div>
+          ))}
+        </div>
+        <div style={{ padding: '8px 0', borderTop: '1px solid var(--border)', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <div className="nav-item-cpt" data-label="Paramètres" onClick={() => window.location.href = 'Parametres.html'}><IcoSettings /></div>
+          <div className="nav-item-cpt" data-label="Agrandir" onClick={onToggleCompact}><IcoSidebarR /></div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="sidebar" style={{ width: 230 }}>
+      <div style={{ padding: '13px 14px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 9 }}>
+        <LogoIcon />
+        <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--fg-1)', letterSpacing: '-0.025em' }}>HuntPilot</span>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '6px 0' }}>
+        {topNav.map(({ id, label, Icon }) => (
+          <div key={id} className={`nav-item${active === id ? ' active' : ''}`} onClick={() => navGo(id, setActive)}><Icon />{label}</div>
+        ))}
+        <div className="nav-item" style={{ marginTop: '0.25rem' }} onClick={() => setToolsOpen(o => !o)}>
+          <IcoTool />Outil
+          <span style={{ marginLeft: 'auto', color: 'var(--fg-4)', display: 'flex' }}><IcoChevron deg={toolsOpen ? 180 : 0} /></span>
+        </div>
+        {toolsOpen && tools.map(label => (
+          <div key={label} className="nav-sub-item">
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--fg-4)', flexShrink: 0 }}></span>{label}
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: '6px 0', borderTop: '1px solid var(--border)' }}>
+        <div className="nav-item" onClick={() => setActive('settings')}><IcoSettings />Paramètre<span style={{ marginLeft: 'auto', color: 'var(--fg-4)', display: 'flex' }}><IcoArrow /></span></div>
+        <div className="nav-item" style={{ color: 'var(--fg-4)' }} onClick={onToggleCompact}><IcoSidebarL /><span style={{ fontSize: '0.8125rem' }}>Réduire</span></div>
+      </div>
+    </div>
+  );
+};
+
+/* ── APP ── */
+const App = () => {
+  const [active, setActive]       = React.useState('clienthub');
+  const [view, setView]           = React.useState('grid');
+  const [search, setSearch]       = React.useState('');
+  const [filter, setFilter]       = React.useState('all'); // all | client | prospect
+  const [theme, setTheme]         = React.useState(() => localStorage.getItem('hp-theme') || 'light');
+  const [compact, setCompact]     = React.useState(false);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    const html = document.documentElement;
+    html.setAttribute('data-theme-switching', '');
+    html.setAttribute('data-theme', next);
+    setTimeout(() => html.removeAttribute('data-theme-switching'), 500);
+    setTheme(next);
+    localStorage.setItem('hp-theme', next);
+  };
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, []);
+
+  const filtered = CLIENTS.filter(c => {
+    if (filter !== 'all' && c.type !== filter) return false;
+    if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
+
+  return (
+    <div className="app-shell">
+      {/* Sidebar */}
+      <div style={{ width: compact ? 64 : 230, transition: 'width 250ms', overflow: 'hidden', flexShrink: 0 }}>
+        <Sidebar active={active} setActive={setActive} compact={compact} onToggleCompact={() => setCompact(v => !v)} />
+      </div>
+
+      {/* Main */}
+      <div className="main">
+        {/* Header */}
+        <div className="header">
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--fg-1)', letterSpacing: '-0.02em' }}>Client Hub</div>
+            <div style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', marginTop: 1 }}>12 clients · 8 prospects · mai 2026</div>
+          </div>
+
+          {/* Search */}
+          <div style={{ position: 'relative' }}>
+            <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--fg-4)', display: 'flex', pointerEvents: 'none' }}><IcoSearch /></span>
+            <input className="input" placeholder="Rechercher un client…" value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ paddingLeft: 30, width: 200, fontSize: '0.75rem' }}/>
+          </div>
+
+          {/* Filter pill */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-solid)', background: 'var(--bg-surface-solid)', fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg-2)', cursor: 'pointer' }}>
+            <IcoFilter />Filtrer
+          </div>
+
+          {/* Theme */}
+          <button className="btn-icon" onClick={toggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
+            {theme === 'dark' ? <IcoSun /> : <IcoMoon />}
+          </button>
+
+          {/* Bell */}
+          <button className="btn-icon" style={{ position: 'relative' }}>
+            <IcoBell />
+            <span style={{ position: 'absolute', top: 3, right: 3, width: 7, height: 7, background: 'var(--error)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span>
+          </button>
+
+          {/* Avatar */}
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--accent-muted)', color: 'var(--accent-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--accent-border)' }}>MC</div>
+
+          {/* Settings */}
+          <button className="btn-icon"><IcoSettings /></button>
+        </div>
+
+        {/* Toolbar */}
+        <div style={{
+          padding: '0.625rem 1.125rem', borderBottom: '1px solid var(--border-solid)',
+          display: 'flex', alignItems: 'center', gap: '0.875rem', background: 'var(--bg-base)',
+        }}>
+          {/* KPI cards */}
+          <div style={{ display: 'flex', gap: '0.75rem', flex: 1 }}>
+            {KPIS.map(k => (
+              <div key={k.label} className="card" style={{ padding: '0.625rem 0.875rem', display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <div>
+                  <div style={{ fontSize: '0.625rem', fontWeight: 600, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>{k.label}</div>
+                  <div style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--fg-1)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{k.value}</div>
+                </div>
+                {k.up !== null && (
+                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 3, fontSize: '0.6875rem', fontWeight: 600, color: k.up ? 'var(--accent)' : 'var(--error)', background: k.up ? 'var(--accent-muted)' : 'var(--error-bg)', padding: '2px 7px', borderRadius: 9999 }}>
+                    {k.up ? <IcoUp /> : <IcoDown />}{k.sub}
+                  </div>
+                )}
+                {k.up === null && <div style={{ marginLeft: 'auto', fontSize: '0.6875rem', color: 'var(--fg-4)' }}>{k.sub}</div>}
+              </div>
+            ))}
+          </div>
+
+          {/* Filter tabs */}
+          <div style={{ display: 'flex', gap: 3, background: 'var(--bg-muted)', padding: 3, borderRadius: 'var(--radius-full)' }}>
+            {[{ v: 'all', l: 'Tous' }, { v: 'client', l: 'Clients' }, { v: 'prospect', l: 'Prospects' }].map(({ v, l }) => (
+              <button key={v} onClick={() => setFilter(v)} style={{
+                padding: '4px 12px', borderRadius: 9999, fontSize: '0.75rem', fontWeight: 500,
+                border: 'none', cursor: 'pointer', transition: 'all 140ms',
+                background: filter === v ? 'var(--bg-surface-solid)' : 'transparent',
+                color: filter === v ? 'var(--fg-1)' : 'var(--fg-4)',
+                boxShadow: filter === v ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              }}>{l}</button>
+            ))}
+          </div>
+
+          {/* View toggle */}
+          <div style={{ display: 'flex', gap: 2, background: 'var(--bg-muted)', padding: 3, borderRadius: 8 }}>
+            {[{ v: 'grid', I: IcoGrid }, { v: 'list', I: IcoList }].map(({ v, I }) => (
+              <button key={v} onClick={() => setView(v)} style={{
+                width: 28, height: 26, borderRadius: 6, border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 140ms',
+                background: view === v ? 'var(--bg-surface-solid)' : 'transparent',
+                color: view === v ? 'var(--fg-1)' : 'var(--fg-4)',
+                boxShadow: view === v ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+              }}><I /></button>
+            ))}
+          </div>
+
+          {/* Add + Export */}
+          <button className="btn-primary" onClick={() => window.location.href = 'Onboarding.html'}><IcoPlus />Ajouter</button>
+          <button className="btn-outline"><IcoDownload />Export CSV</button>
+        </div>
+
+        {/* Cards content */}
+        <div className="content">
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--fg-4)' }}>
+              <div style={{ fontSize: '2rem', marginBottom: 8 }}>🔍</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>Aucun résultat</div>
+            </div>
+          ) : (
+            <div className={view === 'grid' ? 'cards-grid' : 'cards-list'}>
+              {filtered.map(c =>
+                c.type === 'client'
+                  ? <ClientCard key={c.id} c={c} view={view} />
+                  : <ProspectCard key={c.id} c={c} view={view} />
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
