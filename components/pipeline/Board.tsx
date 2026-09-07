@@ -31,6 +31,21 @@ function Flame() {
   );
 }
 
+/** Bouton discret de passage à l'étape précédente / suivante. */
+const stepBtn: React.CSSProperties = {
+  width: 18,
+  height: 18,
+  borderRadius: 5,
+  border: '1px solid var(--bd-solid)',
+  background: 'transparent',
+  color: 'var(--fg4)',
+  fontSize: '0.6875rem',
+  lineHeight: 1,
+  cursor: 'pointer',
+  fontFamily: 'var(--font)',
+  padding: 0,
+};
+
 function DealCard({
   deal,
   dragging,
@@ -191,30 +206,29 @@ function DealCard({
         >
           {deal.prob} %
         </span>
-      </div>
 
-      {/* Alternative clavier au glisser-déposer. */}
-      <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
-        <button
-          type="button"
-          className="btn-sm"
-          style={{ flex: 1, justifyContent: 'center', border: '1px solid var(--bd-solid)' }}
-          onClick={() => onMove(deal.id, -1)}
-          disabled={stageIndex === 0}
-          aria-label={`Reculer ${deal.company} d'une étape`}
-        >
-          ←
-        </button>
-        <button
-          type="button"
-          className="btn-sm"
-          style={{ flex: 1, justifyContent: 'center', border: '1px solid var(--bd-solid)' }}
-          onClick={() => onMove(deal.id, 1)}
-          disabled={stageIndex === STAGES.length - 1}
-          aria-label={`Avancer ${deal.company} d'une étape`}
-        >
-          →
-        </button>
+        {/* Alternative clavier au glisser-déposer, discrète pour ne pas
+            alourdir la carte. */}
+        <span style={{ display: 'flex', gap: 2 }}>
+          <button
+            type="button"
+            style={stepBtn}
+            onClick={() => onMove(deal.id, -1)}
+            disabled={stageIndex === 0}
+            aria-label={`Reculer ${deal.company} d'une étape`}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            style={stepBtn}
+            onClick={() => onMove(deal.id, 1)}
+            disabled={stageIndex === STAGES.length - 1}
+            aria-label={`Avancer ${deal.company} d'une étape`}
+          >
+            ›
+          </button>
+        </span>
       </div>
     </article>
   );

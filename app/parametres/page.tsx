@@ -1,3 +1,8 @@
-export default function Page() {
-  return <div style={{ padding: 24 }}>parametres</div>;
+import type { Metadata } from 'next';
+import { ParametresView } from '@/app/parametres/ParametresView';
+
+export const metadata: Metadata = { title: 'Paramètres — HuntPilote' };
+
+export default function ParametresPage() {
+  return <ParametresView />;
 }

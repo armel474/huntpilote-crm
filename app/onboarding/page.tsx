@@ -1,3 +1,8 @@
-export default function Page() {
-  return <div style={{ padding: 24 }}>onboarding</div>;
+import type { Metadata } from 'next';
+import { OnboardingView } from '@/app/onboarding/OnboardingView';
+
+export const metadata: Metadata = { title: 'Onboarding client — HuntPilote' };
+
+export default function OnboardingPage() {
+  return <OnboardingView />;
 }

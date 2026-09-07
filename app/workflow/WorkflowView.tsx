@@ -217,13 +217,13 @@ function AutomationRow({ a, onToggle }: { a: Automation; onToggle: (id: number) 
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0 }}>
           <FlowChip kind="when" label={a.trigger} icon={a.icon} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', color: 'var(--fg4)', flexShrink: 0 }}>
           <Arrow />
         </div>
-        <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+        <div style={{ flex: '1 1 0', minWidth: 0 }}>
           <FlowChip
             kind="then"
             label={a.action}

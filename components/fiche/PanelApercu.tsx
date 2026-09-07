@@ -288,7 +288,7 @@ function NextActionsCard({ setTab }: { setTab: (t: FicheTab) => void }) {
                   fontWeight: 800,
                   padding: '1px 7px',
                   borderRadius: 999,
-                  background: 'rgba(255,255,255,0.75)',
+                  background: 'var(--bg-solid)',
                   color: lv.color,
                 }}
               >

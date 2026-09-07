@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Badge, CompBar, Feed, Gauge, Lbl } from '@/components/ui/Atoms';
 import {
   IcoCal,
@@ -80,23 +79,6 @@ export function LeftPanel({
       }}
       aria-label="Contexte client"
     >
-      <div
-        style={{
-          fontSize: '0.5625rem',
-          color: 'var(--fg4)',
-          marginBottom: '0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-        }}
-      >
-        <Link href="/clients" style={{ color: 'inherit', textDecoration: 'none' }}>
-          Client Hub
-        </Link>
-        <span>›</span>
-        <span style={{ color: 'var(--fg2)', fontWeight: 500 }}>{CLIENT.name}</span>
-      </div>
-
       <div
         style={{
           display: 'flex',

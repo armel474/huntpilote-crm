@@ -65,7 +65,7 @@ export function ClientHubView() {
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', gap: '0.75rem', flex: 1, minWidth: 320 }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flex: 1, minWidth: 460, flexWrap: 'wrap' }}>
           {HUB_KPIS.map((k) => (
             <div
               key={k.label}
@@ -75,8 +75,7 @@ export function ClientHubView() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
-                minWidth: 0,
-                flex: 1,
+                flex: '1 1 140px',
               }}
             >
               <div>
@@ -100,6 +99,7 @@ export function ClientHubView() {
                     letterSpacing: '-0.03em',
                     fontVariantNumeric: 'tabular-nums',
                     lineHeight: 1,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {k.value}
