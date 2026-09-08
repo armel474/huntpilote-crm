@@ -1,12 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { Badge, Gauge } from '@/components/ui/Atoms';
 import { IcoCheck, IcoPlus, IcoZap } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
 import { AUDITS, TASKS } from '@/lib/data/fiche-client';
 
 const STATUS_TONE = { 'En cours': 'yellow', 'À faire': 'blue', Terminé: 'green' } as const;
 
-export function PanelPlan() {
+export function PanelPlan({ clientId }: { clientId: string }) {
   return (
     <div style={{ paddingBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
@@ -17,7 +19,7 @@ export function PanelPlan() {
       </div>
 
       {TASKS.map((t) => (
-        <article key={t.title} className="card" style={{ padding: '13px 16px', marginBottom: 8 }}>
+        <article key={t.id} className="card" style={{ padding: '13px 16px', marginBottom: 8 }}>
           <div
             style={{
               display: 'flex',
@@ -39,9 +41,13 @@ export function PanelPlan() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
-              <button className="btn-sm" type="button" style={{ border: '1px solid var(--bd-solid)' }}>
+              <Link
+                className="btn-sm"
+                href={routes.tache(clientId, t.id)}
+                style={{ border: '1px solid var(--bd-solid)', textDecoration: 'none' }}
+              >
                 Voir détail
-              </button>
+              </Link>
               {/* Une tâche terminée alimente les preuves de valeur du rapport client. */}
               <button
                 className="btn-sm"

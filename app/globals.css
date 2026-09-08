@@ -1368,3 +1368,232 @@ textarea.fld {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ── Détail d'une tâche ──────────────────────────────────────────────────── */
+
+/* Panneau latéral resserré des écrans qui n'ont qu'un bloc d'origine. */
+.col-side.narrow {
+  flex-basis: 320px;
+}
+
+/* Zone d'action de l'en-tête d'une tâche — même gabarit que `.action-zone`. */
+.t-action {
+  flex-shrink: 0;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Métadonnées de la tâche : responsable, échéance, effort, création. */
+.t-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--bd);
+}
+
+/* Remontée vers la priorité qui a fait naître la tâche. */
+.prio-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg-muted);
+  border: 1px solid var(--bd-solid);
+  border-left: 3px solid var(--violet);
+  text-decoration: none;
+  color: var(--fg1);
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.prio-link:hover {
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.25);
+  border-color: var(--bd-strong);
+  border-left-color: var(--violet);
+  color: var(--fg1);
+}
+
+/* Sous-étape cochable. */
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--bg-muted);
+  border: 1px solid var(--bd);
+  font-family: var(--font);
+  cursor: pointer;
+  transition:
+    border-color 140ms,
+    background 140ms;
+}
+.step-row:hover {
+  border-color: var(--bd-strong);
+}
+
+/* Champ de saisie long (commentaire, libellé, mesure). */
+.fld-t {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--fg1);
+  background: var(--bg-surface);
+  border: 1px solid var(--bd-solid);
+  border-radius: 9px;
+  padding: 8px 10px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 150ms;
+}
+.fld-t:focus {
+  border-color: var(--accent);
+  background: var(--bg-solid);
+}
+
+/* Clôture en trois temps. */
+.close-flow {
+  padding: 1rem 1.125rem;
+  border-top: 2px solid var(--green);
+}
+.close-body {
+  margin-top: 12px;
+}
+.close-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--bd);
+  flex-wrap: wrap;
+}
+
+/* Indicateur d'étape de la clôture. */
+.steps-ind {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.step-ind {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--bd-solid);
+  background: transparent;
+}
+.step-ind[data-on='true'] {
+  border-color: var(--fg1);
+  background: var(--bg-solid);
+}
+.step-ind[data-done='true'] {
+  border-color: var(--green-b);
+  background: var(--green-m);
+}
+.step-num {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  background: var(--bg-muted);
+  color: var(--fg3);
+  flex-shrink: 0;
+}
+.step-ind[data-on='true'] .step-num {
+  background: var(--fg1);
+  color: var(--primary-fg);
+}
+.step-ind[data-done='true'] .step-num {
+  background: var(--green);
+  color: #fff;
+}
+.step-lab {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--fg3);
+}
+.step-ind[data-on='true'] .step-lab {
+  color: var(--fg1);
+}
+.step-ind[data-done='true'] .step-lab {
+  color: var(--green-fg);
+}
+
+/* Sélecteur segmenté. */
+.seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  width: fit-content;
+  flex-wrap: wrap;
+}
+.seg button {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--fg2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg button.on {
+  background: var(--bg-solid);
+  color: var(--fg1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
+}
+
+/* Saisie « avant → après » d'une mesure. */
+.measure-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 24px 1fr;
+  gap: 8px;
+  align-items: end;
+}
+
+@media (max-width: 1180px) {
+  .t-head {
+    flex-direction: column;
+  }
+  .t-action {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .t-meta {
+    grid-template-columns: 1fr 1fr;
+  }
+  .measure-row {
+    grid-template-columns: 1fr;
+  }
+  /* La flèche « avant → après » n'a plus de sens en colonne. */
+  .measure-row > .measure-arrow {
+    display: none;
+  }
+  .step-row,
+  .seg button {
+    min-height: 44px;
+  }
+  /* Les pastilles d'étape se réduisent à leur numéro. */
+  .step-lab {
+    display: none;
+  }
+}

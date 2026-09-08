@@ -266,6 +266,8 @@ export const PRIORITIES: Priority[] = [
 /* ── Plan d'action ── */
 
 export type PlanTask = {
+  /** Identifiant de la tâche — sert de segment d'URL vers son détail. */
+  id: string;
   title: string;
   due: string;
   status: 'En cours' | 'À faire' | 'Terminé';
@@ -275,6 +277,7 @@ export type PlanTask = {
 
 export const TASKS: PlanTask[] = [
   {
+    id: '142',
     title: 'Réviser les meta descriptions (18 pages)',
     due: '30 mai 2026',
     status: 'En cours',
@@ -282,6 +285,7 @@ export const TASKS: PlanTask[] = [
     source: 'Priorité SEO',
   },
   {
+    id: '151',
     title: 'Créer 5 articles blog longue traîne',
     due: '15 juin 2026',
     status: 'À faire',
@@ -289,6 +293,7 @@ export const TASKS: PlanTask[] = [
     source: 'Plan éditorial',
   },
   {
+    id: '160',
     title: 'Audit backlinks concurrents',
     due: '10 juin 2026',
     status: 'En cours',

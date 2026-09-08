@@ -51,7 +51,7 @@ export function FicheClientView({ clientId }: { clientId: string }) {
       case 'priorites':
         return <PanelPriorites clientId={clientId} />;
       case 'plan':
-        return <PanelPlan />;
+        return <PanelPlan clientId={clientId} />;
       case 'diagnostics':
         return <PanelDiagnostics onLaunchAudit={launchAudit} />;
       case 'rapports':
