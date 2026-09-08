@@ -95,3 +95,13 @@ node .next/standalone/server.js   # écoute sur PORT, 3000 par défaut
 
 À placer derrière Nginx en proxy inverse, avec PM2 ou une unité systemd pour
 la supervision.
+
+## Concevoir les écrans suivants
+
+La séquence de conception vit dans [`docs/briefs/`](docs/briefs/) : 21 sessions
+Claude Design couvrant les 35 écrans restants, un fichier par session, prêt à
+coller. L'ordre et les dépendances sont expliqués dans
+[`docs/briefs/README.md`](docs/briefs/README.md).
+
+Le cadrage de fond — treize décisions et trois règles spécifiées — est dans
+[`docs/decisions.md`](docs/decisions.md), qui fait foi en cas de doute.
