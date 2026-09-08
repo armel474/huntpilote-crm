@@ -178,32 +178,13 @@ export function NavSidebar() {
     const items: NavItem[] = [...TOP_NAV, { href: '/outils', label: 'Outil', Icon: IcoTool }];
     return (
       <nav className="sidebar compact" aria-label="Navigation principale">
-        <div
-          style={{
-            padding: '15px 0',
-            borderBottom: '1px solid var(--border)',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
+        <div className="sidebar-head">
           <Link href="/dashboard" aria-label="HuntPilote — accueil">
             <LogoMark />
           </Link>
         </div>
 
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '8px 0',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 2,
-          }}
-        >
+        <div className="sidebar-body">
           {items.map((item) => {
             const active = isActive(item);
             return (
@@ -221,17 +202,7 @@ export function NavSidebar() {
           })}
         </div>
 
-        <div
-          style={{
-            padding: '8px 0',
-            borderTop: '1px solid var(--border)',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 2,
-          }}
-        >
+        <div className="sidebar-foot">
           <Link
             href="/parametres"
             className={`nav-cpt${settingsActive ? ' active' : ''}`}
@@ -258,15 +229,7 @@ export function NavSidebar() {
   /* ── Vue dépliée ── */
   return (
     <nav className="sidebar" aria-label="Navigation principale">
-      <div
-        style={{
-          padding: '13px 14px',
-          borderBottom: '1px solid var(--border)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 9,
-        }}
-      >
+      <div className="sidebar-head">
         <Link
           href="/dashboard"
           style={{
@@ -290,7 +253,7 @@ export function NavSidebar() {
         </Link>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '6px 0' }}>
+      <div className="sidebar-body">
         {TOP_NAV.map((item) => {
           const active = isActive(item);
           return (
@@ -345,7 +308,7 @@ export function NavSidebar() {
         )}
       </div>
 
-      <div style={{ padding: '6px 0', borderTop: '1px solid var(--border)' }}>
+      <div className="sidebar-foot">
         <Link
           href="/parametres"
           className={`nav-item${settingsActive ? ' active' : ''}`}

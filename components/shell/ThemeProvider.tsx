@@ -41,6 +41,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (current === 'dark' || current === 'light') setTheme(current);
   }, []);
 
+  // Tant que l'utilisateur n'a pas choisi explicitement, l'interface suit le
+  // thème du système — y compris quand il change en cours de session.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = (e: MediaQueryListEvent) => {
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem(THEME_STORAGE_KEY);
+      } catch {
+        /* stockage indisponible : on suit le système */
+      }
+      if (stored === 'dark' || stored === 'light') return;
+      const next: Theme = e.matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      setTheme(next);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next: Theme = prev === 'dark' ? 'light' : 'dark';

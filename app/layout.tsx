@@ -11,6 +11,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  // Le contenu passe sous les encoches ; les zones sûres sont gérées en CSS.
+  viewportFit: 'cover',
+  colorScheme: 'light dark',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
