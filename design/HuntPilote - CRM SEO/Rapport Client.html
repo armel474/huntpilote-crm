@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Votre rapport SEO — Septembre 2026 · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="rp-data.jsx"></script>
+<style>
+@font-face{font-family:'Noto Sans';src:url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--font:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;--bg-base:#F2EFEA;--bg-solid:#FFFFFF;--bg-muted:#E3DDD1;--bd:rgba(0,0,0,0.075);--bd-solid:#D0CBBF;--bd-strong:#BAB4A6;--fg1:#18181B;--fg2:#3F3F46;--fg3:#5F5F६8;--fg3:#5F5F68;--fg4:#8A8A94;--green:#16A34A;--green-d:#15803D;--green-m:#DCEFD4;--green-b:#BBE3AA;--green-fg:#2D5A27;--yellow-m:#F5E8B5;--yellow-b:#D4B24A;--yellow-fg:#7A5D14;--blue-m:#DBEAFE;--blue-b:#93C5FD;--blue-fg:#1D4ED8;--shadow:0 1px 2px rgba(0,0,0,0.04),0 6px 24px -8px rgba(0,0,0,0.10)}
+[data-theme="dark"]{--bg-base:#131316;--bg-solid:#1E1E22;--bg-muted:#27272A;--bd:rgba(255,255,255,0.08);--bd-solid:#2A2A2D;--bd-strong:#3F3F46;--fg1:#FAFAFA;--fg2:#D4D4D8;--fg3:#A1A1AA;--fg4:#8A8A94;--green:#4ADE80;--green-d:#4ADE80;--green-m:rgba(74,222,128,0.13);--green-b:rgba(74,222,128,0.28);--green-fg:#86EFAC;--yellow-m:rgba(229,198,107,0.14);--yellow-b:rgba(229,198,107,0.28);--yellow-fg:#E5C66B;--blue-m:rgba(59,130,246,0.13);--blue-b:rgba(59,130,246,0.28);--blue-fg:#93C5FD;--shadow:0 4px 24px rgba(0,0,0,0.4)}
+[data-theme-switching],[data-theme-switching] *{transition:background-color 420ms ease,color 320ms ease,border-color 420ms ease !important}
+body{font-family:var(--font);background:var(--bg-base);color:var(--fg1);-webkit-font-smoothing:antialiased;line-height:1.6}
+a{color:var(--green-d)}a:hover{color:var(--green-fg)}
+.wrap{max-width:44rem;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.doc{background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.doc-head{padding:1.75rem 1.75rem 1.5rem;border-bottom:1px solid var(--bd)}
+.brand{display:flex;align-items:center;gap:9px;margin-bottom:1.5rem}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:#1F1F1F;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+[data-theme="dark"] .brand-mark{background:#FAFAFA}
+.eyebrow{font-size:0.75rem;font-weight:700;color:var(--green-d);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem}
+h1{font-size:2rem;font-weight:800;letterSpacing:-0.03em;letter-spacing:-0.03em;line-height:1.12;text-wrap:balance}
+h2{font-size:1.25rem;font-weight:800;letter-spacing:-0.02em;line-height:1.25;text-wrap:balance}
+h3{font-size:1rem;font-weight:700;line-height:1.35}
+.sect{padding:1.75rem;border-top:1px solid var(--bd)}
+.step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--bg-muted);color:var(--fg2);font-size:0.8125rem;font-weight:800;flex-shrink:0}
+.sect-head{display:flex;align-items:center;gap:11px;margin-bottom:1rem}
+p{font-size:1rem;color:var(--fg2);text-wrap:pretty}
+.lead{font-size:1.0625rem;line-height:1.7}
+.kpi{display:flex;gap:14px;align-items:flex-start;padding:1rem 0;border-top:1px solid var(--bd)}
+.kpi:first-child{border-top:none;padding-top:0}
+.kpi-val{font-size:1.625rem;font-weight:800;letter-spacing:-0.03em;line-height:1;font-variant-numeric:tabular-nums;min-width:5.5rem}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:0.8125rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--green-m);border:1px solid var(--green-b);color:var(--green-fg);white-space:nowrap}
+.proof{padding:1.125rem 1.25rem;border-radius:12px;background:var(--green-m);border:1px solid var(--green-b);margin-bottom:0.75rem}
+.workitem{padding:1.125rem 1.25rem;border-radius:12px;background:var(--bg-muted);border:1px solid var(--bd-solid);margin-bottom:0.75rem}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.track{height:7px;border-radius:999px;background:var(--bg-muted);overflow:hidden}
+[data-theme="dark"] .track{background:rgba(255,255,255,0.09)}
+.fill{height:100%;border-radius:999px;background:var(--green)}
+.nextitem{display:flex;gap:12px;align-items:flex-start;padding:0.875rem 0;border-top:1px solid var(--bd)}
+.nextitem:first-child{border-top:none;padding-top:0}
+.foot{padding:1.5rem 1.75rem;background:var(--bg-muted);border-top:1px solid var(--bd)}
+.demo{position:fixed;top:10px;right:10px;display:flex;gap:6px;align-items:center;z-index:50;background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:5px 8px;box-shadow:var(--shadow)}
+.demo select{font-family:var(--font);font-size:0.75rem;font-weight:600;color:var(--fg2);background:transparent;border:none;outline:none;cursor:pointer;min-height:32px}
+.demo button{width:32px;height:32px;border-radius:50%;border:1px solid var(--bd-solid);background:transparent;color:var(--fg3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+@media (max-width:768px){.wrap{padding:1rem 0.75rem 3rem}.doc{border-radius:12px}.doc-head,.sect,.foot{padding:1.25rem}h1{font-size:1.625rem}h2{font-size:1.125rem}.kpi{flex-direction:column;gap:4px}.kpi-val{min-width:0}.demo select,.demo button{min-height:44px}}
+@media print{.demo{display:none}body{background:#fff}.doc{border:none;box-shadow:none}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { RIco, REPORT } = window;
+
+const Delta = ({ d, up }) => <span className="delta" style={up ? null : { background: 'var(--yellow-m)', borderColor: 'var(--yellow-b)', color: 'var(--yellow-fg)' }}>{up ? <RIco.Up /> : <RIco.Down />}{d}</span>;
+
+const Expired = () => (
+  <div className="wrap" style={{ maxWidth: '30rem' }}>
+    <div className="doc" style={{ padding: '2rem 1.75rem', textAlign: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14, color: 'var(--fg3)' }}><RIco.Lock /></div>
+      <h2 style={{ marginBottom: 10 }}>Ce lien n’est plus valide</h2>
+      <p>Le lien de ce rapport a expiré ou a été révoqué par votre agence. Écrivez à <a href="mailto:marie@huntpilote.ca">marie@huntpilote.ca</a> pour en recevoir un nouveau.</p>
+      <div style={{ marginTop: 18, fontSize: '0.8125rem', color: 'var(--fg3)' }}>Rapport demandé : {REPORT.token}</div>
+    </div>
+  </div>);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [mode, setMode] = useState('normal');
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+
+  const first = mode === 'premier';
+  const proofs = REPORT.proofs.filter(p => p.on);
+  const R = REPORT;
+
+  const Demo = () => (
+    <div className="demo">
+      <select value={mode} onChange={e => setMode(e.target.value)} aria-label="État du rapport">
+        <option value="normal">Rapport normal</option>
+        <option value="premier">Premier rapport du client</option>
+        <option value="expire">Lien expiré ou révoqué</option>
+      </select>
+      <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'} aria-label="Changer de thème">{theme === 'dark' ? '☀' : '☾'}</button>
+    </div>);
+
+  if (mode === 'expire') return <React.Fragment><Demo /><Expired /></React.Fragment>;
+
+  return (
+    <React.Fragment>
+      <Demo />
+      <div className="wrap">
+        <div className="doc">
+          {/* En-tête */}
+          <div className="doc-head">
+            <div className="brand">
+              <span className="brand-mark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={theme === 'dark' ? '#18181B' : '#fff'} strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg></span>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 700, letterSpacing: '-0.02em' }}>HuntPilote</span>
+              <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--fg3)' }}>Publié le {R.publish}</span>
+            </div>
+            <div className="eyebrow">Votre rapport mensuel</div>
+            <h1>{R.period} — ce qui a changé sur votre site</h1>
+            <p style={{ marginTop: 12, fontSize: '0.9375rem' }}>Préparé pour <b style={{ color: 'var(--fg1)' }}>{R.client}</b> par {R.pm}, votre responsable de compte.</p>
+          </div>
+
+          {/* 1 — Où on en est */}
+          <div className="sect">
+            <div className="sect-head"><span className="step">1</span><h2>Où on en est</h2></div>
+            <p className="lead" style={{ marginBottom: 18 }}>{first ? 'Voici le premier état des lieux de votre site. Il servira de point de comparaison pour les mois suivants.' : R.objective.sentence}</p>
+            <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap', marginBottom: 18 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, color: 'var(--green-d)' }}>{R.score.now}</span>
+                <span style={{ fontSize: '1rem', color: 'var(--fg3)', fontWeight: 600 }}>/ 100</span>
+              </div>
+              <div style={{ minWidth: 0, flex: '1 1 14rem' }}>
+                <h3 style={{ marginBottom: 3 }}>Santé générale de votre site</h3>
+                <p style={{ fontSize: '0.9375rem', margin: 0 }}>{first ? 'Note de départ, calculée sur votre présence en ligne, votre référencement et votre design.' : `En hausse de ${R.score.now - R.score.prev} points depuis août. Cette note combine votre présence en ligne, votre référencement et votre design.`}</p>
+              </div>
+            </div>
+            {!first && (
+              <div style={{ padding: '1.125rem 1.25rem', borderRadius: 12, background: 'var(--bg-muted)', border: '1px solid var(--bd-solid)' }}>
+                <h3 style={{ marginBottom: 8 }}>Votre objectif : {R.objective.label}</h3>
+                <div className="track" style={{ marginBottom: 7 }}><div className="fill" style={{ width: `${R.objective.pct}%` }}></div></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', color: 'var(--fg2)', fontWeight: 600 }}><span>{R.objective.pct} % atteint</span><span style={{ color: 'var(--green-fg)' }}>+{R.objective.pct - R.objective.prevPct} points ce mois</span></div>
+              </div>)}
+          </div>
+
+          {/* 2 — Ce qui a bougé */}
+          <div className="sect">
+            <div className="sect-head"><span className="step">2</span><h2>Ce qui a bougé</h2></div>
+            <p style={{ marginBottom: 16 }}>{first ? 'Ce sont vos chiffres de départ. Le mois prochain, vous verrez l’évolution.' : 'Comparé au mois d’août.'}</p>
+            <div>
+              {R.kpis.map(k => (
+                <div className="kpi" key={k.label}>
+                  <div className="kpi-val" style={{ color: 'var(--fg1)' }}>{k.value}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap', marginBottom: 3 }}>
+                      <h3>{k.label}</h3>
+                      {first ? <span className="tag" style={{ background: 'var(--bg-muted)', border: '1px solid var(--bd-solid)', color: 'var(--fg3)' }}>Point de départ</span> : <Delta d={k.delta} up={k.up} />}
+                    </div>
+                    <p style={{ fontSize: '0.9375rem', margin: 0 }}>{k.sentence}{!first && <span style={{ color: 'var(--fg3)' }}> (août : {k.prev})</span>}</p>
+                  </div>
+                </div>))}
+            </div>
+          </div>
+
+          {/* 3 — Ce qu'on a fait */}
+          <div className="sect">
+            <div className="sect-head"><span className="step">3</span><h2>Ce qu’on a fait</h2></div>
+            {first && proofs.length === 0
+              ? <p>Le travail commence ce mois-ci : les premiers résultats apparaîtront dans le rapport d’octobre.</p>
+              : <React.Fragment>
+                  <p style={{ marginBottom: 16 }}>{proofs.length} chantiers terminés et vérifiés ce mois-ci.</p>
+                  {proofs.map(p => (
+                    <div className="proof" key={p.id}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+                        <span style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--green)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><RIco.Check /></span>
+                        <h3 style={{ color: 'var(--fg1)' }}>{p.title}</h3>
+                      </div>
+                      {p.before && (
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 9, marginBottom: 7 }}>
+                          <span style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--fg3)', textDecoration: 'line-through' }}>{p.before}</span>
+                          <span style={{ color: 'var(--fg3)', display: 'flex' }}><RIco.Arrow /></span>
+                          <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--green-fg)', letterSpacing: '-0.03em' }}>{p.after}</span>
+                        </div>)}
+                      <p style={{ fontSize: '0.9375rem', margin: 0 }}>{p.text}</p>
+                    </div>))}
+                </React.Fragment>}
+          </div>
+
+          {/* 4 — Ce sur quoi on travaille */}
+          <div className="sect">
+            <div className="sect-head"><span className="step">4</span><h2>Ce sur quoi on travaille</h2></div>
+            <p style={{ marginBottom: 16 }}>Les points connus, et où nous en sommes.</p>
+            {R.priorities.map(p => (
+              <div className="workitem" key={p.id}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 7, flexWrap: 'wrap' }}>
+                  <h3>{p.title}</h3>
+                  <span className="tag" style={p.state === 'traitement' ? { background: 'var(--blue-m)', border: '1px solid var(--blue-b)', color: 'var(--blue-fg)' } : { background: 'var(--yellow-m)', border: '1px solid var(--yellow-b)', color: 'var(--yellow-fg)' }}>{p.state === 'traitement' ? 'En cours de correction' : 'Repéré, pas encore planifié'}</span>
+                </div>
+                <p style={{ fontSize: '0.9375rem', marginBottom: p.doing ? 12 : 0 }}>{p.text}</p>
+                {p.doing && (
+                  <div>
+                    <div className="track" style={{ marginBottom: 6 }}><div className="fill" style={{ width: `${p.pct}%`, background: 'var(--blue-fg)' }}></div></div>
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--fg2)' }}><b>{p.pct} % fait</b> — {p.doing}</div>
+                  </div>)}
+              </div>))}
+          </div>
+
+          {/* 5 — La suite */}
+          <div className="sect">
+            <div className="sect-head"><span className="step">5</span><h2>La suite</h2></div>
+            <p style={{ marginBottom: 16 }}>Ce qui est prévu en octobre.</p>
+            {R.next.map(([t, d]) => (
+              <div className="nextitem" key={t}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green)', flexShrink: 0, marginTop: 8 }}></span>
+                <div style={{ minWidth: 0 }}><h3 style={{ marginBottom: 2 }}>{t}</h3><p style={{ fontSize: '0.9375rem', margin: 0 }}>{d}</p></div>
+              </div>))}
+          </div>
+
+          {/* Pied */}
+          <div className="foot">
+            <h3 style={{ marginBottom: 6 }}>Une question sur ce rapport ?</h3>
+            <p style={{ fontSize: '0.9375rem', marginBottom: 14 }}>Écrivez à {R.pm} — elle répond en général dans la journée.</p>
+            <div style={{ display: 'flex', gap: 9, flexWrap: 'wrap' }}>
+              <a href="mailto:marie@huntpilote.ca" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0.6rem 1.1rem', borderRadius: 999, background: '#15803D', color: '#fff', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 700 }}><RIco.Send />Écrire à {R.pm}</a>
+              <button onClick={() => window.print()} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0.6rem 1.1rem', borderRadius: 999, background: 'transparent', border: '1px solid var(--bd-strong)', color: 'var(--fg2)', fontFamily: 'var(--font)', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}><RIco.Doc />Enregistrer en PDF</button>
+            </div>
+            <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--bd)', fontSize: '0.75rem', color: 'var(--fg3)' }}>Rapport {R.period} · version {first ? 'v1' : R.versions[0].v} · publié le {R.publish}. Ce document ne change plus ; le prochain rapport arrivera début novembre.</div>
+          </div>
+        </div>
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Priorité P-0418 · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="pd-panels.jsx"></script>
+<script type="text/babel" src="pd-visibility.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<style>
+@font-face{font-family:'Noto Sans';src:url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--font:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;--bg-base:#F2EFEA;--bg-solid:#FFFFFF;--bg-surface:rgba(255,255,255,0.54);--bg-muted:#E3DDD1;--bd:rgba(0,0,0,0.075);--bd-solid:#D0CBBF;--bd-strong:#BAB4A6;--border:rgba(0,0,0,0.075);--fg1:#18181B;--fg2:#3F3F46;--fg3:#71717A;--fg4:#A1A1AA;--primary:#1F1F1F;--primary-fg:#FFFFFF;--accent:#16A34A;--green:#16A34A;--green-m:#DCEFD4;--green-b:#BBE3AA;--green-fg:#2D5A27;--yellow:#E5C66B;--yellow-m:#F5E8B5;--yellow-fg:#7A5D14;--yellow-b:#D4B24A;--blue:#3B82F6;--blue-m:#DBEAFE;--blue-fg:#1D4ED8;--blue-b:#93C5FD;--red:#C44545;--red-m:rgba(196,69,69,0.08);--red-b:rgba(196,69,69,0.28);--violet:#7C3AED;--violet-m:rgba(124,58,237,0.07);--violet-b:rgba(124,58,237,0.2);--violet-fg:#5B21B6;--sidebar-w:230px;--sidebar-w-compact:64px;--font-mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--header-h:58px;--blur:blur(22px) saturate(175%);--shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 4px 20px -2px rgba(0,0,0,0.10),0 1px 3px rgba(0,0,0,0.05)}
+[data-theme="dark"]{--bg-base:#131316;--bg-solid:#1E1E22;--bg-surface:rgba(255,255,255,0.06);--bg-muted:#27272A;--bd:rgba(255,255,255,0.08);--bd-solid:#2A2A2D;--bd-strong:#3F3F46;--border:rgba(255,255,255,0.08);--fg1:#FAFAFA;--fg2:#D4D4D8;--fg3:#A1A1AA;--fg4:#71717A;--primary:#FAFAFA;--primary-fg:#18181B;--green:#4ADE80;--green-m:rgba(74,222,128,0.13);--green-b:rgba(74,222,128,0.28);--green-fg:#86EFAC;--yellow:#E5C66B;--yellow-m:rgba(229,198,107,0.14);--yellow-fg:#E5C66B;--yellow-b:rgba(229,198,107,0.28);--blue-m:rgba(59,130,246,0.13);--blue-fg:#93C5FD;--blue-b:rgba(59,130,246,0.28);--red:#F5A0A0;--red-m:rgba(245,160,160,0.14);--red-b:rgba(245,160,160,0.32);--violet-m:rgba(124,58,237,0.12);--violet-b:rgba(124,58,237,0.3);--violet-fg:#C4B5FD;--shadow:0 1px 0 rgba(255,255,255,0.05) inset,0 4px 20px rgba(0,0,0,0.4)}
+[data-theme-switching],[data-theme-switching] *,[data-theme-switching] *::before,[data-theme-switching] *::after{transition:background-color 420ms ease,color 320ms ease,border-color 420ms ease,box-shadow 420ms ease !important}
+body{font-family:var(--font);background:var(--bg-base);color:var(--fg1);-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+body::before,body::after{content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:0.6}
+body::before{width:44rem;height:44rem;top:-12rem;left:12rem;background:radial-gradient(circle,rgba(74,222,128,0.4) 0%,transparent 68%)}
+body::after{width:36rem;height:36rem;bottom:-8rem;right:-2rem;background:radial-gradient(circle,rgba(229,198,107,0.36) 0%,transparent 68%)}
+[data-theme="dark"] body::before{opacity:0.32}[data-theme="dark"] body::after{opacity:0.30}
+a{color:var(--fg1)}a:hover{color:var(--green-fg)}
+.app-shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.crm-header{height:var(--header-h);flex-shrink:0;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.68);display:flex;align-items:center;padding:0 1.125rem;gap:0.625rem;position:relative;isolation:isolate;box-shadow:0 1px 0 var(--border),0 2px 20px rgba(0,0,0,0.05)}
+.crm-header::before{content:'';position:absolute;inset:0;z-index:-1;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+[data-theme="dark"] .crm-header{background:rgba(30,30,34,0.75)}
+.crumb{display:flex;align-items:center;gap:5px;font-size:0.6875rem;color:var(--fg3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb a{color:var(--fg3);text-decoration:none}.crumb a:hover{color:var(--fg1)}.crumb b{color:var(--fg1);font-weight:600}
+.btn-icon{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:var(--bg-solid);border:1px solid var(--bd-solid);color:var(--fg3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 160ms;position:relative}
+.btn-icon:hover{color:var(--fg1)}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-ico{position:absolute;left:9px;color:var(--fg4);pointer-events:none;display:flex}
+.search-inp{font-family:var(--font);font-size:0.75rem;color:var(--fg1);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:0.35rem 0.75rem 0.35rem 28px;outline:none;transition:border-color 150ms;width:170px}
+.search-inp:focus{border-color:var(--accent)}.search-inp::placeholder{color:var(--fg4)}[data-theme="dark"] .search-inp{background:var(--bg-muted)}
+.card{background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:14px;box-shadow:var(--shadow)}
+.btn-pri{display:inline-flex;align-items:center;gap:6px;padding:0.45rem 1rem;border-radius:999px;background:var(--primary);color:var(--primary-fg);border:none;font-family:var(--font);font-size:0.75rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity 150ms}
+.btn-pri:hover{opacity:0.84}
+.btn-main{width:100%;justify-content:center;padding:0.8rem 1rem;font-size:0.875rem;font-weight:700;background:#15803D;color:#fff;box-shadow:0 6px 18px -6px rgba(22,163,74,0.55)}
+[data-theme="dark"] .btn-main{background:var(--green);color:#0B2E17}
+.btn-out{display:inline-flex;align-items:center;gap:5px;padding:0.4rem 0.875rem;border-radius:999px;background:transparent;color:var(--fg2);border:1px solid var(--bd-strong);font-family:var(--font);font-size:0.75rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 150ms}
+.btn-out:hover{background:var(--bg-muted)}
+.lbl{font-size:0.5625rem;font-weight:700;color:var(--fg4);text-transform:uppercase;letter-spacing:0.07em}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap;line-height:1.6}
+.sc{overflow-y:auto}.sc::-webkit-scrollbar{width:7px}.sc::-webkit-scrollbar-thumb{background:var(--bd-strong);border-radius:999px}.sc::-webkit-scrollbar-track{background:transparent}
+.sel{font-family:var(--font);font-size:0.6875rem;color:var(--fg1);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:8px;padding:0.4rem 0.6rem;width:100%;outline:none;min-height:34px}
+.state-sel{font-family:var(--font);font-size:0.6875rem;font-weight:600;color:var(--fg2);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:0.3rem 0.7rem;outline:none;cursor:pointer}
+.td{padding:8px 0;border-bottom:1px solid var(--bd)}
+.vis-row{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;padding:9px 11px;border-radius:10px;border:1px solid;font-family:var(--font);color:var(--fg1);transition:border-color 140ms,background 140ms,box-shadow 140ms}
+.vis-row:not(:disabled):hover{border-color:var(--bd-strong);background:var(--bg-surface)}
+.client-doc{background:#FFFFFF;border:1px solid #E4E4E7;border-radius:10px;padding:12px 14px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+[data-theme="dark"] .client-doc{box-shadow:0 2px 14px rgba(0,0,0,0.5);border-color:#3F3F46}
+.lbl-edit{width:100%;font-family:var(--font);font-size:0.75rem;line-height:1.55;color:var(--fg1);background:var(--bg-surface);border:1px solid var(--bd-solid);border-radius:9px;padding:8px 10px;resize:vertical;outline:none;transition:border-color 150ms}
+.lbl-edit:focus{border-color:var(--accent);background:var(--bg-solid)}
+.menu{position:absolute;top:calc(100% + 6px);right:0;min-width:230px;background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:10px;box-shadow:var(--shadow);padding:4px;z-index:30;display:flex;flex-direction:column}
+.menu button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:8px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:0.6875rem;font-weight:500;color:var(--fg2);cursor:pointer;min-height:36px}
+.menu button:hover{background:var(--bg-muted);color:var(--fg1)}
+.content{flex:1;display:flex;gap:12px;align-items:flex-start;padding:1rem 1.125rem 1.5rem}
+.col-main{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:12px}
+.col-side{flex:0 0 340px;display:flex;flex-direction:column;gap:12px}
+.subbar{display:flex;align-items:center;gap:10px;padding:0.55rem 1.125rem;border-bottom:1px solid var(--bd-solid);background:rgba(255,255,255,0.6);backdrop-filter:var(--blur);flex-shrink:0;flex-wrap:wrap}
+[data-theme="dark"] .subbar{background:rgba(30,30,34,0.6)}
+@media (max-width:1180px){.col-side{width:100%}.constat-row{flex-direction:column}.action-zone{width:100% !important}}
+@media (max-width:768px){.vis-row{min-height:44px}.state-sel,.sel{min-height:44px}.subbar{padding:0.5rem 12px}.menu{left:0;right:auto}#root .hp-keep2[style*="grid-template-columns"]{grid-template-columns:1fr !important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { NavSidebar, PI, PD, PD_CLIENT, PagesCard, RecoCard, HistoryCard, ProvCard, VisibilityCard, LabelCard, ConstatCard } = window;
+
+const I = {
+  Dash: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
+  Users: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>,
+  Pipe: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>,
+  Zap: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+  Cog: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+  Cal: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>,
+  Tool: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
+  Back: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => {
+  const [s, setS] = useState('');
+  return (
+    <div className="crm-header">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>{PD_CLIENT.name}</div>
+        <div className="crumb"><a href="Client Hub.html">Client Hub</a><span>›</span><a href="Fiche Client v4.html">{PD_CLIENT.name}</a><span>›</span><a href="Fiche Client v4.html">Priorités SEO</a><span>›</span><b>{PD.id}</b></div>
+      </div>
+      <div className="search-wrap"><span className="search-ico"><I.Srch /></span><input className="search-inp" placeholder="Rechercher…" value={s} onChange={e => setS(e.target.value)} /></div>
+      <button className="btn-icon" title="Notifications"><I.Bell /><span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span></button>
+      <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>{PD_CLIENT.pmInit}</div>
+    </div>);
+};
+
+const UX_STATES = [
+  ['neuve', 'Neuve, non traitée'], ['arelire', 'Annoncée · libellé à relire'], ['assignee', 'Déjà assignée'], ['resolue', 'Résolue · preuve de valeur'],
+  ['recurrente', 'Récurrente'], ['ignoree', 'Ignorée'], ['fauxpositif', 'Faux positif'],
+];
+const DEFAULTS = {
+  neuve: { vis: 'interne', labelOk: false }, arelire: { vis: 'annonce', labelOk: false }, assignee: { vis: 'traitement', labelOk: true },
+  resolue: { vis: 'traitement', labelOk: true }, recurrente: { vis: 'interne', labelOk: true }, ignoree: { vis: 'interne', labelOk: false }, fauxpositif: { vis: 'interne', labelOk: false },
+};
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setStateRaw] = useState(() => { try { return localStorage.getItem('hp-pd-state') || 'neuve'; } catch { return 'neuve'; } });
+  const [vis, setVis] = useState(DEFAULTS[state].vis);
+  const [labelOk, setLabelOk] = useState(DEFAULTS[state].labelOk);
+  const [label, setLabel] = useState(PD.clientLabel);
+  const [deferred, setDeferred] = useState(false);
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const on = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', on); return () => mq.removeEventListener('change', on);
+  }, []);
+  const setState = s => { setStateRaw(s); setVis(DEFAULTS[s].vis); setLabelOk(DEFAULTS[s].labelOk); setDeferred(false); try { localStorage.setItem('hp-pd-state', s); } catch {} };
+  const assigned = state === 'assignee' || state === 'resolue', closed = state === 'ignoree' || state === 'fauxpositif';
+  const onAssign = () => { setStateRaw('assignee'); setVis('traitement'); setDeferred(false); try { localStorage.setItem('hp-pd-state', 'assignee'); } catch {} };
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="clienthub" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
+        <div className="subbar">
+          <a href="Fiche Client v4.html" className="btn-out" style={{ textDecoration: 'none', fontSize: '0.6875rem', padding: '0.3rem 0.75rem' }}><I.Back />Toutes les priorités SEO</a>
+          <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>3 critiques · 5 importantes · 8 opportunités</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => setState(e.target.value)} aria-label="État de démonstration">{UX_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+        </div>
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ padding: '1rem 1.125rem 0' }}>
+            <ConstatCard state={state} onAssign={onAssign} onClose={s => setState(s)} onReactivate={() => setState('neuve')} onDefer={() => setDeferred(true)} deferred={deferred} />
+          </div>
+          <div className="content">
+            <div className="col-main">
+              <PagesCard resolved={state === 'resolue'} />
+              <RecoCard />
+              <HistoryCard recurrent={state === 'recurrente'} resolved={state === 'resolue'} />
+            </div>
+            <div className="col-side">
+              <VisibilityCard vis={vis} setVis={setVis} assigned={assigned} closed={closed} labelOk={labelOk} label={label} />
+              <LabelCard label={label} setLabel={setLabel} labelOk={labelOk} setLabelOk={setLabelOk} vis={vis} />
+              <ProvCard />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

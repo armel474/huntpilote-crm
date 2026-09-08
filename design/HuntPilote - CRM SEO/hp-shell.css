@@ -1,0 +1,25 @@
+/* HuntPilote — barre latérale rétractable (dépliée 230px ↔ compacte 64px). Styles partagés. */
+.sidebar{width:var(--sidebar-w,230px);flex-shrink:0;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:relative;isolation:isolate;overflow:hidden;box-shadow:2px 0 24px rgba(0,0,0,0.06);transition:width 200ms ease}
+.sidebar::before{content:'';position:absolute;inset:0;z-index:-1;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+.sidebar.compact{width:var(--sidebar-w-compact,64px);align-items:center;overflow:visible}
+@media (prefers-reduced-motion:reduce){.sidebar{transition:none}}
+.nav-item{display:flex;align-items:center;gap:0.625rem;padding:0.45rem 0.75rem;border-radius:9999px;font-size:0.8125rem;font-weight:500;color:var(--fg3);cursor:pointer;transition:all 150ms;margin:0.1rem 0.5rem;background:transparent;border:none;width:calc(100% - 1rem);text-align:left;font-family:var(--font);text-decoration:none;min-height:34px}
+.nav-item:hover{background:rgba(0,0,0,0.04);color:var(--fg1)}
+[data-theme="dark"] .nav-item:hover{background:rgba(255,255,255,0.05)}
+.nav-item.active{background:var(--primary);color:var(--primary-fg)}
+.nav-sub-item{display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0.75rem 0.3rem 2.125rem;font-size:0.75rem;font-weight:400;color:var(--fg4);cursor:pointer;transition:all 140ms;border-radius:9999px;margin:0.05rem 0.5rem;background:transparent;border:none;width:calc(100% - 1rem);text-align:left;font-family:var(--font);text-decoration:none}
+.nav-sub-item:hover{color:var(--fg1)}
+.nav-cpt{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:8px;margin:0.1rem auto;cursor:pointer;transition:all 150ms;color:var(--fg3);position:relative;background:transparent;border:none;padding:0}
+.nav-cpt:hover{background:rgba(0,0,0,0.06);color:var(--fg1)}
+[data-theme="dark"] .nav-cpt:hover{background:rgba(255,255,255,0.07)}
+.nav-cpt.active{background:var(--primary);color:var(--primary-fg)}
+.nav-cpt[data-label]:hover::after,.nav-cpt[data-label]:focus-visible::after{content:attr(data-label);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:var(--fg1);color:var(--primary-fg);padding:4px 10px;border-radius:6px;font-size:0.6875rem;font-weight:500;white-space:nowrap;pointer-events:none;z-index:400;font-family:var(--font)}
+[data-theme="dark"] .nav-cpt[data-label]:hover::after,[data-theme="dark"] .nav-cpt[data-label]:focus-visible::after{background:var(--fg2);color:var(--bg-base)}
+.sidebar-head{padding:13px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;min-height:55px}
+.sidebar.compact .sidebar-head{padding:13px 0;width:100%;justify-content:center}
+.sidebar-body{flex:1;overflow-y:auto;padding:6px 0;width:100%}
+.sidebar.compact .sidebar-body{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;overflow:visible}
+.sidebar-foot{padding:6px 0;border-top:1px solid var(--border);width:100%}
+.sidebar.compact .sidebar-foot{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0}
+.side-toggle{color:var(--fg4) !important}
+@media (max-width:768px){.side-toggle,.sidebar-head{display:none !important}.sidebar .nav-sub-item{display:none !important}}

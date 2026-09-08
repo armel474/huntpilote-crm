@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuntPilot — Fiche Client · Acme Corp.</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base:   #F2EFEA;
+  --bg-solid:  #FFFFFF;
+  --bg-surface: rgba(255,255,255,0.54);
+  --bg-muted:  #E3DDD1;
+  --bd:        rgba(0,0,0,0.075);
+  --bd-solid:  #D0CBBF;
+  --bd-strong: #BAB4A6;
+  --border:    rgba(0,0,0,0.075);
+  --border-solid: #D0CBBF;
+  --border-strong: #BAB4A6;
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --fg-1:#18181B; --fg-2:#3F3F46; --fg-3:#71717A; --fg-4:#A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF;
+  --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px;
+  --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46;
+  --border: rgba(255,255,255,0.08); --border-solid: #2A2A2D; --border-strong: #3F3F46;
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --fg-1:#FAFAFA; --fg-2:#D4D4D8; --fg-3:#A1A1AA; --fg-4:#71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+
+[data-theme-switching],[data-theme-switching] *,
+[data-theme-switching] *::before,[data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease,
+    border-color 420ms ease, box-shadow 420ms ease !important;
+}
+
+body {
+  font-family: var(--font); background: var(--bg-base); color: var(--fg1);
+  -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh;
+}
+body::before, body::after {
+  content: ''; position: fixed; border-radius: 50%; pointer-events: none;
+  z-index: 0; filter: blur(80px); opacity: 0.65;
+}
+body::before {
+  width: 44rem; height: 44rem; top: -12rem; left: 12rem;
+  background: radial-gradient(circle, rgba(74,222,128,0.40) 0%, transparent 68%);
+}
+body::after {
+  width: 36rem; height: 36rem; bottom: -8rem; right: -2rem;
+  background: radial-gradient(circle, rgba(229,198,107,0.36) 0%, transparent 68%);
+}
+[data-theme="dark"] body::before { opacity: 0.38; }
+[data-theme="dark"] body::after  { opacity: 0.32; }
+
+/* ── Shell ── */
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main      { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+/* Compact nav sidebar */
+.nav-sidebar {
+  width: 58px; flex-shrink: 0;
+  background: var(--bg-surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; height: 100vh;
+  position: relative; isolation: isolate; overflow: visible;
+}
+.nav-sidebar::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.nav-cpt {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px;
+  margin: 0.1rem auto; cursor: pointer; transition: all 150ms;
+  color: var(--fg3); position: relative;
+}
+.nav-cpt:hover { background: rgba(0,0,0,0.06); color: var(--fg1); }
+[data-theme="dark"] .nav-cpt:hover { background: rgba(255,255,255,0.07); }
+.nav-cpt.active { background: var(--primary); color: var(--primary-fg); }
+.nav-cpt[data-label]:hover::after {
+  content: attr(data-label);
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+  background: var(--fg1); color: var(--primary-fg);
+  padding: 4px 10px; border-radius: 6px; font-size: 0.6875rem; font-weight: 500;
+  white-space: nowrap; pointer-events: none; z-index: 400; font-family: var(--font);
+}
+[data-theme="dark"] .nav-cpt[data-label]:hover::after { background: var(--fg-2); color: var(--bg-base); }
+
+/* Global header */
+.crm-header {
+  height: var(--header-h); flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.68);
+  display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem;
+  position: relative; isolation: isolate;
+  box-shadow: 0 1px 0 var(--border), 0 2px 20px rgba(0,0,0,0.05);
+}
+.crm-header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+
+.btn-icon {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 160ms; position: relative;
+}
+.btn-icon:hover { color: var(--fg1); }
+
+.search-wrap { position: relative; display: flex; align-items: center; }
+.search-ico  { position: absolute; left: 9px; color: var(--fg4); pointer-events: none; display: flex; }
+.search-inp  {
+  font-family: var(--font); font-size: 0.75rem; color: var(--fg1);
+  background: var(--bg-solid); border: 1px solid var(--bd-solid);
+  border-radius: 999px; padding: 0.35rem 0.75rem 0.35rem 28px;
+  outline: none; transition: border-color 150ms; width: 170px;
+}
+.search-inp:focus { border-color: var(--accent); }
+.search-inp::placeholder { color: var(--fg4); }
+[data-theme="dark"] .search-inp { background: var(--bg-muted); }
+
+/* Inner content */
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.btn-sm { display: inline-flex; align-items: center; gap: 4px; padding: 0.3rem 0.75rem; border-radius: 999px; border: 1px solid transparent; font-family: var(--font); font-size: 0.625rem; font-weight: 600; cursor: pointer; transition: opacity 150ms; }
+.btn-sm:hover { opacity: 0.78; }
+.tab { padding: 0.4rem 0.875rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500; border: none; cursor: pointer; transition: all 140ms; font-family: var(--font); color: var(--fg2); background: transparent; white-space: nowrap; }
+.tab.on { background: var(--bg-solid); color: var(--fg1); box-shadow: 0 1px 4px rgba(0,0,0,0.09); }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; }
+.sc { overflow-y: auto; }
+.sc::-webkit-scrollbar { width: 3px; }
+.sc::-webkit-scrollbar-thumb { background: var(--bd-strong); border-radius: 999px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect } = React;
+
+/* ── DATA ── */
+const CL = {
+  name: 'Acme Corp.', sector: 'E-commerce',
+  email: 'contact@acmecorp.fr', phone: '(514) 555-0182',
+  website: 'acmecorp.fr', address: 'Montréal, QC',
+  services: ['SEO Tech.', 'Contenu', 'Audit', 'Backlinks'],
+  score: 92, mrr: '1 200 $ CA', since: 'Janvier 2024',
+  pm: 'Marie Chen', lastAudit: '15 avr. 2026'
+};
+const KPIS = [
+{ l: 'Mots-clés', v: '142', sub: '+12 ce mois' },
+{ l: 'Sessions', v: '34.8k', sub: '+18% vs mars' },
+{ l: 'CTR moyen', v: '3.4%', sub: '+0.3 pt' },
+{ l: 'Visibilité', v: '67%', sub: 'vs 59% mars' },
+{ l: 'Pages indexées', v: '1 240', sub: '+34 pages' },
+{ l: 'Backlinks', v: '3 280', sub: '+12 nouveaux' }];
+
+const KW = [
+{ kw: 'agence seo montréal', pos: 2, vol: '2 400', d: +3 },
+{ kw: 'audit seo complet', pos: 5, vol: '1 800', d: +2 },
+{ kw: 'référencement naturel', pos: 8, vol: '4 200', d: 0 },
+{ kw: 'stratégie contenu', pos: 11, vol: '900', d: -1 },
+{ kw: 'backlink checker', pos: 14, vol: '1 200', d: +4 }];
+
+const AUDITS = [
+{ name: 'Audit Complet Q2', date: '15 avr. 2026', score: 87 },
+{ name: 'Audit Technique', date: '12 jan. 2026', score: 74 },
+{ name: 'Audit Contenu', date: '3 oct. 2025', score: 81 }];
+
+const TASKS = [
+{ name: 'Révision meta descriptions', due: '30 mai', status: 'En cours', t: 'yellow' },
+{ name: 'Création 5 articles blog', due: '15 juin', status: 'À faire', t: 'blue' },
+{ name: 'Audit backlinks concurrents', due: '10 mai', status: 'Terminé', t: 'green' }];
+
+const ACT = [
+{ label: 'Rapport mensuel envoyé', date: '1 mai', ic: 'doc' },
+{ label: 'Audit Q2 lancé', date: '14 avr.', ic: 'zap' },
+{ label: '12 nouveaux backlinks', date: '8 avr.', ic: 'link' },
+{ label: 'MRR renouvelé', date: '1 avr.', ic: 'check' }];
+
+const SPARK = [28, 32, 30, 35, 38, 34, 40, 43, 41, 48, 52, 49, 55, 58, 62, 64, 68, 66, 72, 75];
+const TECH = [
+{ label: 'Vitesse', score: 56 }, { label: 'On-page', score: 85 },
+{ label: 'Backlinks', score: 71 }, { label: 'SEO Tech.', score: 100 }];
+
+const AI_POS = [
+'Croissance de 12 nouvelles positions top 10 ce mois-ci',
+'CTR en hausse (+0.3 pt) grâce aux optimisations récentes',
+'Profil backlink sain — 3 280 liens actifs (DR moyen 58)'];
+
+const AI_NEG = [
+'Vitesse mobile insuffisante — LCP à 4.2s (objectif : < 2.5s)',
+'23 liens brisés détectés impactant le budget de crawl',
+'4 pages avec duplication de contenu (risque de cannibalisation)'];
+
+const ACTION_LEVELS = [
+{ id: 'critique', label: 'Critique', count: 3, color: 'var(--red)', bg: 'var(--red-m)', bd: 'var(--red-b)',
+  items: ['Corriger les 23 liens brisés et rediriger les 404', 'Améliorer la vitesse mobile — LCP 4.2s → objectif < 2.5s', 'Résoudre les erreurs 404 sur 8 pages stratégiques'] },
+{ id: 'important', label: 'Important', count: 5, color: 'var(--yellow-fg)', bg: 'var(--yellow-m)', bd: 'var(--yellow-b)',
+  items: ['Optimiser les balises title sur 12 pages clés', 'Corriger les 5 pages sans balise H1', 'Ajouter les attributs alt sur 34 images', 'Résoudre la duplication de contenu (4 pages)', 'Améliorer le maillage interne (23 pages orphelines)'] },
+{ id: 'opportunite', label: 'Opportunité', count: 8, color: 'var(--green)', bg: 'var(--green-m)', bd: 'var(--green-b)',
+  items: ['Cibler 45 mots-clés de longue traîne identifiés', 'Optimiser 12 requêtes pour les featured snippets', 'Créer 3 pages de service manquantes', 'Améliorer la structure FAQ sur 6 pages', 'Lancer une campagne de link building ciblée', 'Optimiser les images pour la recherche visuelle', 'Créer des études de cas clients (3 prévues)', 'Améliorer le balisage Schema.org sur le catalogue'] }];
+
+const PROBLEMS = [
+{ sev: 'critique', title: 'Vitesse mobile insuffisante (LCP 4.2s)', desc: 'Score PageSpeed Mobile: 56/100 · Objectif: > 90', status: 'Nouveau' },
+{ sev: 'critique', title: '23 liens brisés détectés', desc: 'Découverts le 27 mai 2026 · Impact fort sur le budget crawl', status: 'Nouveau' },
+{ sev: 'critique', title: 'Erreurs 404 non redirigées (8 pages)', desc: 'Pages perdant du jus de lien entrant — correctif urgent', status: 'En cours' },
+{ sev: 'important', title: '12 balises title non optimisées', desc: 'Manque de mots-clés cibles dans le title tag', status: 'Nouveau' },
+{ sev: 'important', title: '5 pages sans balise H1', desc: 'Structure de titre absente — impact SEO on-page direct', status: 'Nouveau' },
+{ sev: 'important', title: '34 images sans attribut alt', desc: 'Accessibilité et indexation image Google compromises', status: 'En cours' },
+{ sev: 'important', title: '4 pages avec contenu dupliqué', desc: 'Signaux confus pour Googlebot — risque cannibalisation', status: 'Nouveau' },
+{ sev: 'important', title: '23 pages orphelines (maillage faible)', desc: 'Pages peu accessibles depuis la navigation interne', status: 'Nouveau' },
+{ sev: 'opportunite', title: '45 mots-clés de longue traîne inexploités', desc: 'Volume cumulé estimé : ~8 400 req/mois · Difficulté faible', status: 'Nouveau' },
+{ sev: 'opportunite', title: '12 opportunités de featured snippets', desc: 'Requêtes en position 2–5 avec format question', status: 'Nouveau' },
+{ sev: 'opportunite', title: '3 pages de service manquantes', desc: 'Demande détectée sans page dédiée sur le site actuel', status: 'Nouveau' }];
+
+const COMPETITORS = [
+{ name: 'TechShop.ca', sessions: 52300, label: '52.3k/mois' },
+{ name: 'DigiMarket.ca', sessions: 41100, label: '41.1k/mois' },
+{ name: 'ShopNova.ca', sessions: 28700, label: '28.7k/mois' }];
+
+const CLIENT_SESSIONS = 34800;
+
+/* ── RAPPORTS ── */
+const REPORT_SECTIONS = [
+  { name: 'Synthèse exécutive', desc: 'Résumé IA du mois', ic: 'doc', on: true },
+  { name: 'Trafic organique', desc: 'Sessions & évolution', ic: 'chart', on: true },
+  { name: 'Positions clés', desc: 'Top mots-clés & mouvements', ic: 'search', on: true },
+  { name: 'Santé technique', desc: 'Core Web Vitals, audits', ic: 'zap', on: true },
+  { name: 'Backlinks', desc: 'Nouveaux liens & profil', ic: 'link', on: true },
+  { name: 'Prochaines actions', desc: 'Recommandations priorisées', ic: 'check', on: false }];
+
+const REPORTS = [
+  { period: 'Avril 2026', date: '2 mai 2026', status: 'Envoyé', t: 'green', score: 87, pages: 8 },
+  { period: 'Mars 2026', date: '3 avr. 2026', status: 'Envoyé', t: 'green', score: 82, pages: 8 },
+  { period: 'Février 2026', date: '2 mars 2026', status: 'Envoyé', t: 'green', score: 79, pages: 7 },
+  { period: 'Janvier 2026', date: '4 fév. 2026', status: 'Envoyé', t: 'green', score: 74, pages: 7 }];
+
+/* ── FACTURATION ── */
+const BILLING_STATS = [
+  { l: 'MRR actuel', v: '1 200 $', sub: 'CA / mois', t: 'green' },
+  { l: 'Facturé en 2026', v: '6 950 $', sub: '6 factures', t: 'neutral' },
+  { l: 'Prochain paiement', v: '1 juil.', sub: '1 200 $ · dans 27j', t: 'blue' },
+  { l: 'Statut du compte', v: 'À jour', sub: 'Aucun retard', t: 'green' }];
+
+const INVOICES = [
+  { num: 'INV-2026-006', date: '1 juin 2026', period: 'Juin 2026', amount: '1 200 $', status: 'En attente', t: 'yellow' },
+  { num: 'INV-2026-005', date: '1 mai 2026', period: 'Mai 2026', amount: '1 200 $', status: 'Payée', t: 'green' },
+  { num: 'INV-2026-004', date: '1 avr. 2026', period: 'Avril 2026', amount: '1 200 $', status: 'Payée', t: 'green' },
+  { num: 'INV-2026-003', date: '1 mars 2026', period: 'Mars 2026', amount: '1 200 $', status: 'Payée', t: 'green' },
+  { num: 'INV-2026-002', date: '1 fév. 2026', period: 'Février 2026', amount: '1 200 $', status: 'Payée', t: 'green' },
+  { num: 'INV-2026-001', date: '1 jan. 2026', period: 'Janvier 2026', amount: '950 $', status: 'Payée', t: 'green' }];
+
+/* ── ICONS (Fiche Client) ── */
+const Ico = {
+  Mail: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>,
+  Phone: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.21 2 2 0 012 0h3a2 2 0 012 1.72c.167.96.391 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.309 1.85.533 2.81.7A2 2 0 0122 14.92v2z" /></svg>,
+  Globe: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>,
+  Pin: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>,
+  User: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>,
+  Cal: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>,
+  Check: () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>,
+  Up: () => <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15" /></svg>,
+  Down: () => <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>,
+  Plus: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>,
+  Zap: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Link: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" /></svg>,
+  Doc: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>,
+  More: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>,
+  ChevD: () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9" /></svg>,
+  ChevU: () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15" /></svg>,
+  ChevR: () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6" /></svg>,
+  Warn: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
+  Spin: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" /></svg>,
+  Dl: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>,
+  Send: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>,
+  Eye: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>,
+  Card: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>,
+  File: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>,
+  Repeat: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 014-4h14" /><polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 01-4 4H3" /></svg>
+};
+
+/* ── ICONS (Shell) ── */
+const IcoDash = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>;
+const IcoUsers = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>;
+const IcoPipe = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>;
+const IcoZapS = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>;
+const IcoTool = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>;
+const IcoCog = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>;
+const IcoBell = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>;
+const IcoSrch2 = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>;
+const IcoChev = ({ deg = 0 }) => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ transform: `rotate(${deg}deg)` }}><polyline points="6 9 12 15 18 9" /></svg>;
+const IcoSun = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>;
+const IcoMoon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>;
+
+/* ── ATOMS ── */
+const Av = ({ s = 50, r = 12 }) =>
+<div style={{ width: s, height: s, borderRadius: r, flexShrink: 0, background: 'linear-gradient(140deg,#d4edda,#e3ddd1)', border: '1.5px solid var(--bd-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: s * .29, fontWeight: 800, color: 'var(--green-fg)', letterSpacing: '-0.02em' }}>AC</div>;
+
+const Bdg = ({ label, t = 'green', lg }) => {
+  const M = { green: ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'], yellow: ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], blue: ['var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'], red: ['var(--red-m)', 'var(--red-b)', 'var(--red)'], neutral: ['var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'], violet: ['var(--violet-m)', 'var(--violet-b)', 'var(--violet-fg)'] }[t] || ['var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'];
+  return <span style={{ background: M[0], border: `1px solid ${M[1]}`, color: M[2], padding: lg ? '3px 11px' : '2px 7px', borderRadius: 999, fontSize: lg ? '0.6875rem' : '0.5625rem', fontWeight: 700, letterSpacing: '0.03em', whiteSpace: 'nowrap' }}>{label}</span>;
+};
+const Gauge = ({ v, sz = 84 }) => {
+  const r = sz / 2 - 7,c = 2 * Math.PI * r;
+  const col = v >= 85 ? 'var(--green)' : v >= 70 ? 'var(--yellow)' : 'var(--red)';
+  return (
+    <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`}>
+      <circle cx={sz / 2} cy={sz / 2} r={r} fill="none" stroke="var(--bg-muted)" strokeWidth="6" />
+      <circle cx={sz / 2} cy={sz / 2} r={r} fill="none" stroke={col} strokeWidth="6"
+      strokeDasharray={`${v / 100 * c} ${c}`} strokeLinecap="round" transform={`rotate(-90 ${sz / 2} ${sz / 2})`} />
+      <text x={sz / 2} y={sz / 2 - 2} textAnchor="middle" dominantBaseline="middle"
+      style={{ fontFamily: 'var(--font)', fontSize: sz * .235, fontWeight: 800, fill: col }}>{v}</text>
+      <text x={sz / 2} y={sz / 2 + sz * .2} textAnchor="middle"
+      style={{ fontFamily: 'var(--font)', fontSize: sz * .115, fill: 'var(--fg4)' }}>/100</text>
+    </svg>);
+
+};
+const MiniGauge = ({ score, label, sz = 68 }) => {
+  const r = sz / 2 - 5,c = 2 * Math.PI * r;
+  const col = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--yellow)' : 'var(--red)';
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+      <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`}>
+        <circle cx={sz / 2} cy={sz / 2} r={r} fill="none" stroke="var(--bg-muted)" strokeWidth="5" />
+        <circle cx={sz / 2} cy={sz / 2} r={r} fill="none" stroke={col} strokeWidth="5"
+        strokeDasharray={`${score / 100 * c} ${c}`} strokeLinecap="round" transform={`rotate(-90 ${sz / 2} ${sz / 2})`} />
+        <text x={sz / 2} y={sz / 2} textAnchor="middle" dominantBaseline="middle"
+        style={{ fontFamily: 'var(--font)', fontSize: sz * .265, fontWeight: 800, fill: col }}>{score}</text>
+      </svg>
+      <span style={{ fontSize: '0.625rem', fontWeight: 600, color: 'var(--fg3)', textAlign: 'center' }}>{label}</span>
+    </div>);
+
+};
+const Spark = ({ data, h = 60 }) => {
+  const W = 400,mx = Math.max(...data),mn = Math.min(...data),rng = mx - mn || 1;
+  const px = (i) => i / (data.length - 1) * W;
+  const py = (vv) => h - 4 - (vv - mn) / rng * (h - 8);
+  const pts = data.map((vv, i) => ({ x: px(i), y: py(vv) }));
+  const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--green)" stopOpacity=".2" /><stop offset="100%" stopColor="var(--green)" stopOpacity="0" /></linearGradient></defs>
+      <path d={`M0,${h} ${line.slice(1)} L${W},${h} Z`} fill="url(#sg)" />
+      <path d={line} fill="none" stroke="var(--green)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="3.5" fill="var(--green)" />
+    </svg>);
+
+};
+const Delta = ({ d }) =>
+<span style={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.625rem', fontWeight: 600, color: d > 0 ? 'var(--green)' : d < 0 ? 'var(--red)' : 'var(--fg4)' }}>
+    {d > 0 ? <Ico.Up /> : d < 0 ? <Ico.Down /> : '—'}{d !== 0 && Math.abs(d)}
+  </span>;
+
+const STag = ({ status, t }) => {
+  const M = { green: ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'], yellow: ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], blue: ['var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'] }[t] || ['var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'];
+  return <span style={{ background: M[0], border: `1px solid ${M[1]}`, color: M[2], padding: '2px 8px', borderRadius: 999, fontSize: '0.5625rem', fontWeight: 700, whiteSpace: 'nowrap' }}>{status}</span>;
+};
+const Feed = ({ items }) =>
+<div>{items.map((a, i) =>
+  <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'flex-start' }}>
+      <div style={{ width: 24, height: 24, borderRadius: 6, background: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--fg3)' }}>
+        {a.ic === 'zap' ? <Ico.Zap /> : a.ic === 'link' ? <Ico.Link /> : a.ic === 'doc' ? <Ico.Doc /> : <Ico.Check />}
+      </div>
+      <div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.35, fontWeight: 500 }}>{a.label}</div>
+        <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 1 }}>{a.date}</div>
+      </div>
+    </div>
+  )}</div>;
+
+const CompBar = ({ name, sessions, label }) => {
+  const max = Math.max(sessions, CLIENT_SESSIONS) * 1.2;
+  const compPct = sessions / max * 100,clientPct = CLIENT_SESSIONS / max * 100;
+  const higher = sessions > CLIENT_SESSIONS,delta = Math.abs(sessions - CLIENT_SESSIONS);
+  const dl = delta >= 1000 ? `${(delta / 1000).toFixed(1)}k` : delta;
+  return (
+    <div style={{ marginBottom: 11 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg1)' }}>{name}</span>
+        <span style={{ fontSize: '0.5625rem', fontWeight: 700, color: higher ? 'var(--red)' : 'var(--green)' }}>{label}</span>
+      </div>
+      <div style={{ position: 'relative', height: 5, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'visible', marginBottom: 2 }}>
+        <div style={{ height: '100%', width: `${compPct}%`, background: higher ? 'rgba(196,69,69,0.55)' : 'rgba(22,163,74,0.55)', borderRadius: 999 }}></div>
+        <div style={{ position: 'absolute', left: `${clientPct}%`, top: -1, height: 7, width: 2, background: 'var(--green)', borderRadius: 1, transform: 'translateX(-50%)' }}></div>
+      </div>
+      <div style={{ fontSize: '0.5625rem', fontWeight: 600, color: higher ? 'var(--red)' : 'var(--green)' }}>{higher ? '+' : '-'}{dl} vs vous</div>
+    </div>);
+
+};
+
+/* ── SHELL: NAV SIDEBAR ── */
+const NavSidebar = ({ onNavigate }) => {
+  const LogoMark = () =>
+  <div style={{ width: 28, height: 28, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+    </div>;
+
+  const navItems = [
+  { id: 'dashboard', label: 'Dashboard', Icon: IcoDash, href: 'Dashboard.html' },
+  { id: 'clienthub', label: 'Client Hub', Icon: IcoUsers, href: 'Client Hub.html' },
+  { id: 'pipeline', label: 'Pipeline', Icon: IcoPipe, href: 'Pipeline.html' },
+  { id: 'workflow', label: 'Workflow', Icon: IcoZapS, href: 'Workflow.html' },
+  { id: 'outil', label: 'Outil', Icon: IcoTool }];
+
+  return (
+    <div className="nav-sidebar">
+      {/* Logo */}
+      <div style={{ padding: '15px 0 13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'center' }}>
+        <LogoMark />
+      </div>
+      {/* Nav items */}
+      <div style={{ flex: 1, padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {navItems.map(({ id, label, Icon, href }) =>
+        <div key={id}
+        className={`nav-cpt${id === 'clienthub' ? ' active' : ''}`}
+        data-label={label}
+        onClick={() => href && (window.location.href = href)}>
+            <Icon />
+          </div>
+        )}
+      </div>
+      {/* Bottom */}
+      <div style={{ padding: '8px 0', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className="nav-cpt" data-label="Paramètres" onClick={() => window.location.href = 'Parametres.html'}><IcoCog /></div>
+      </div>
+    </div>);
+
+};
+
+/* ── SHELL: GLOBAL HEADER ── */
+const CRMHeader = ({ theme, onToggleTheme }) => {
+  const [search, setSearch] = useState('');
+  return (
+    <div className="crm-header">
+      {/* Breadcrumb + title */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--fg1)', lineHeight: 1 }}>
+          Acme Corp.
+        </div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span>Client Hub</span>
+          <span style={{ color: 'var(--bd-strong)' }}>›</span>
+          <span style={{ color: 'var(--fg2)', fontWeight: 500 }}>Acme Corp.</span>
+          <span style={{ color: 'var(--bd-strong)' }}>·</span>
+          <span>E-commerce · MRR {CL.mrr}</span>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="search-wrap">
+        <span className="search-ico"><IcoSrch2 /></span>
+        <input className="search-inp" placeholder="Rechercher…"
+        value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+
+      {/* Period pill */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.325rem 0.7rem', borderRadius: 999, border: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg2)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+        Mai 2026 <IcoChev />
+      </div>
+
+      {/* Bell */}
+      <button className="btn-icon">
+        <IcoBell />
+        <span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span>
+      </button>
+
+      {/* Theme toggle */}
+      <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>
+        {theme === 'dark' ? <IcoSun /> : <IcoMoon />}
+      </button>
+
+      {/* Avatar */}
+      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+
+      {/* Settings */}
+      <button className="btn-icon"><IcoCog /></button>
+    </div>);
+
+};
+
+/* ── PANELS ── */
+const AIReportCard = () =>
+<div className="card" style={{ padding: '1rem', flex: '0 0 58%', display: 'flex', flexDirection: 'column', gap: 0, minWidth: 0, borderTop: '3px solid var(--violet)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+      <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--violet-fg)', fontSize: 14, lineHeight: 1 }}>✦</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Analyse + Rapport IA</div>
+        <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 1 }}>Agent HuntPilot · analysé le 27 mai 2026</div>
+      </div>
+      <Bdg label="✦ IA" t="violet" />
+      <button className="btn-sm" style={{ background: 'var(--bg-muted)', color: 'var(--fg3)', border: '1px solid var(--bd-solid)' }}><Ico.Spin />Relancer</button>
+    </div>
+    <div style={{ padding: '0.625rem 0.75rem', borderRadius: 8, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', marginBottom: 10, fontSize: '0.6875rem', lineHeight: 1.65, color: 'var(--fg2)' }}>
+      Le site affiche une croissance soutenue sur les mots-clés transactionnels. La refonte du maillage interne a porté ses fruits avec +12 nouvelles positions top 10. Attention aux Core Web Vitals — la vitesse mobile reste sous les seuils recommandés (LCP 4.2s).
+    </div>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, flex: 1 }}>
+      <div style={{ background: 'var(--green-m)', border: '1px solid var(--green-b)', borderRadius: 10, padding: '0.625rem 0.75rem' }}>
+        <div className="lbl" style={{ color: 'var(--green-fg)', marginBottom: 8 }}>✅ Ce qui va bien</div>
+        {AI_POS.map((item, i) =>
+      <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'flex-start' }}>
+            <div style={{ width: 16, height: 16, borderRadius: 5, background: 'var(--green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5625rem', fontWeight: 800, color: '#fff', flexShrink: 0, lineHeight: 1 }}>{i + 1}</div>
+            <div style={{ fontSize: '0.6875rem', color: 'var(--green-fg)', lineHeight: 1.45 }}>{item}</div>
+          </div>
+      )}
+        <button className="btn-sm" style={{ background: 'rgba(22,163,74,0.12)', color: 'var(--green-fg)', marginTop: 4 }}>Voir plus <Ico.ChevR /></button>
+      </div>
+      <div style={{ background: 'var(--red-m)', border: '1px solid var(--red-b)', borderRadius: 10, padding: '0.625rem 0.75rem' }}>
+        <div className="lbl" style={{ color: 'var(--red)', marginBottom: 8 }}>⚠ Ce qui va mal</div>
+        {AI_NEG.map((item, i) =>
+      <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'flex-start' }}>
+            <div style={{ width: 16, height: 16, borderRadius: 5, background: 'var(--red)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5625rem', fontWeight: 800, color: '#fff', flexShrink: 0, lineHeight: 1 }}>{i + 1}</div>
+            <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.45 }}>{item}</div>
+          </div>
+      )}
+        <button className="btn-sm" style={{ background: 'var(--red-m)', color: 'var(--red)', border: '1px solid var(--red-b)', marginTop: 4 }}>Voir + <Ico.ChevR /></button>
+      </div>
+    </div>
+  </div>;
+
+
+const NextActionsCard = ({ setTab }) => {
+  const [exp, setExp] = useState(null);
+  return (
+    <div className="card" style={{ padding: '1rem', flex: '1 1 0', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 12 }}>Prochaines Actions</div>
+      {ACTION_LEVELS.map((lv) =>
+      <div key={lv.id} style={{ marginBottom: 6 }}>
+          <div onClick={() => setExp(exp === lv.id ? null : lv.id)}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.625rem', borderRadius: 8, background: lv.bg, border: `1px solid ${lv.bd}`, cursor: 'pointer', userSelect: 'none' }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: lv.color, flexShrink: 0 }}></div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: lv.color, flex: 1 }}>{lv.label}</span>
+            <span style={{ fontSize: '0.5625rem', fontWeight: 800, padding: '1px 7px', borderRadius: 999, background: 'rgba(255,255,255,0.75)', color: lv.color }}>{lv.count}</span>
+            {exp === lv.id ? <Ico.ChevU /> : <Ico.ChevD />}
+          </div>
+          {exp === lv.id &&
+        <div style={{ padding: '0.5rem 0.75rem 0.25rem 1.375rem', borderRadius: '0 0 8px 8px', background: lv.bg, borderLeft: `1px solid ${lv.bd}`, borderRight: `1px solid ${lv.bd}`, borderBottom: `1px solid ${lv.bd}`, marginTop: -2 }}>
+              {lv.items.map((it, i) =>
+          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginBottom: 5 }}>
+                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: lv.color, flexShrink: 0, marginTop: 5 }}></div>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.4 }}>{it}</span>
+                </div>
+          )}
+            </div>
+        }
+        </div>
+      )}
+      <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid var(--bd-solid)' }}>
+        <button onClick={() => setTab('problemes')} className="btn-out" style={{ width: '100%', justifyContent: 'center', fontSize: '0.6875rem' }}>
+          Voir toutes les actions <Ico.ChevR />
+        </button>
+      </div>
+    </div>);
+
+};
+
+const TechHealthCard = () =>
+<div className="card" style={{ padding: '0.875rem 1rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Santé Technique du Site</div>
+        <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 1 }}>via PageSpeed Insights · 27 mai 2026</div>
+      </div>
+      <button className="btn-sm" style={{ background: 'var(--bg-muted)', color: 'var(--fg3)', border: '1px solid var(--bd-solid)' }}><Ico.Spin />Actualiser</button>
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
+      {TECH.map((t) => <MiniGauge key={t.label} score={t.score} label={t.label} sz={68} />)}
+    </div>
+  </div>;
+
+
+const PanelApercu = ({ setTab }) =>
+<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
+      <AIReportCard /><NextActionsCard setTab={setTab} />
+    </div>
+    <TechHealthCard />
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+      {KPIS.map((k) =>
+    <div key={k.l} className="card" style={{ padding: '0.75rem 0.875rem' }}>
+          <div className="lbl" style={{ marginBottom: 4 }}>{k.l}</div>
+          <div style={{ fontSize: '1.125rem', fontWeight: 800, color: 'var(--fg1)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.03em', lineHeight: 1 }}>{k.v}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginTop: 5, fontSize: '0.6rem', color: 'var(--green)', fontWeight: 600 }}><Ico.Up />{k.sub}</div>
+        </div>
+    )}
+    </div>
+    <div className="card" style={{ padding: '0.875rem 1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <div><div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Trafic organique</div><div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>Sessions · 20 semaines</div></div>
+        <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--green)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>+72%</span>
+      </div>
+      <Spark data={SPARK} h={54} />
+    </div>
+    <div className="card" style={{ padding: '0.875rem 1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Top Mots-clés</div>
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>142 positions totales</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 58px 68px 38px', gap: '0 10px' }}>
+        {['Mot-clé', 'Position', 'Vol./m', 'Δ 30j'].map((h) =>
+      <div key={h} className="lbl" style={{ paddingBottom: 5, borderBottom: '1px solid var(--bd-solid)' }}>{h}</div>
+      )}
+        {KW.map((k) =>
+      <React.Fragment key={k.kw}>
+            <div style={{ fontSize: '0.75rem', padding: '5px 0', borderBottom: '1px solid var(--bd)', fontWeight: 500 }}>{k.kw}</div>
+            <div style={{ fontSize: '0.75rem', padding: '5px 0', borderBottom: '1px solid var(--bd)', fontVariantNumeric: 'tabular-nums', fontWeight: 700, color: k.pos <= 3 ? 'var(--green)' : k.pos <= 10 ? 'var(--yellow-fg)' : 'var(--fg2)' }}>#{k.pos}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', padding: '5px 0', borderBottom: '1px solid var(--bd)', fontVariantNumeric: 'tabular-nums' }}>{k.vol}</div>
+            <div style={{ padding: '5px 0', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center' }}><Delta d={k.d} /></div>
+          </React.Fragment>
+      )}
+      </div>
+    </div>
+  </div>;
+
+
+const PanelProblemes = () => {
+  const [fil, setFil] = useState('tous');
+  const sevCfg = { critique: { label: 'Critique', color: 'var(--red)', bg: 'var(--red-m)', bd: 'var(--red-b)' }, important: { label: 'Important', color: 'var(--yellow-fg)', bg: 'var(--yellow-m)', bd: 'var(--yellow-b)' }, opportunite: { label: 'Opportunité', color: 'var(--green)', bg: 'var(--green-m)', bd: 'var(--green-b)' } };
+  const statusColors = { 'Nouveau': ['var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'], 'En cours': ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], 'Résolu': ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'] };
+  const counts = { critique: PROBLEMS.filter((p) => p.sev === 'critique').length, important: PROBLEMS.filter((p) => p.sev === 'important').length, opportunite: PROBLEMS.filter((p) => p.sev === 'opportunite').length };
+  const shown = fil === 'tous' ? PROBLEMS : PROBLEMS.filter((p) => p.sev === fil);
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.875rem 1rem', borderRadius: 12, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', marginBottom: 14 }}>
+        <span style={{ fontSize: 18, lineHeight: 1, color: 'var(--violet-fg)' }}>✦</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--violet-fg)' }}>Agent IA actif — Surveillance continue</div>
+          <div style={{ fontSize: '0.5625rem', color: 'var(--violet-fg)', opacity: .65 }}>Dernière analyse : 27 mai 2026 · Prochaine dans 6h</div>
+        </div>
+        <Bdg label={`${PROBLEMS.length} problèmes détectés`} t="violet" />
+      </div>
+      <div style={{ display: 'flex', gap: 4, padding: '4px', borderRadius: 999, background: 'var(--bg-muted)', width: 'fit-content', marginBottom: 14 }}>
+        {[['tous', 'Tous', null], ['critique', 'Critique', counts.critique], ['important', 'Important', counts.important], ['opportunite', 'Opportunité', counts.opportunite]].map(([id, l, cnt]) =>
+        <button key={id} onClick={() => setFil(id)} className={`tab${fil === id ? ' on' : ''}`} style={{ fontSize: '0.6875rem', padding: '0.35rem 0.75rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+            {l}{cnt !== null && <span style={{ fontSize: '0.5rem', fontWeight: 800, padding: '1px 5px', borderRadius: 999, background: fil === id ? sevCfg[id]?.color || 'var(--fg3)' : 'transparent', color: fil === id ? '#fff' : sevCfg[id]?.color || 'var(--fg3)' }}>{cnt}</span>}
+          </button>
+        )}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {shown.map((p, i) => {
+          const cf = sevCfg[p.sev],sc = statusColors[p.status] || statusColors['Nouveau'];
+          return (
+            <div key={i} className="card" style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '0.75rem 1rem', borderLeft: `3px solid ${cf.color}` }}>
+              <div style={{ width: 28, height: 28, borderRadius: 7, background: cf.bg, border: `1px solid ${cf.bd}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: cf.color }}><Ico.Warn /></div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg1)', marginBottom: 2 }}>{p.title}</div>
+                <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)' }}>{p.desc}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flexShrink: 0 }}>
+                <span style={{ fontSize: '0.5625rem', fontWeight: 700, padding: '2px 7px', borderRadius: 999, background: sc[0], border: `1px solid ${sc[1]}`, color: sc[2] }}>{p.status}</span>
+                <button className="btn-sm" style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}>Assigner</button>
+              </div>
+            </div>);
+
+        })}
+      </div>
+    </div>);
+
+};
+
+const PanelTaches = () =>
+<div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+      <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Tâches du client</div>
+      <button className="btn-pri"><Ico.Plus />Ajouter</button>
+    </div>
+    {TASKS.map((t, i) =>
+  <div key={i} className="card" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0.75rem 1rem', marginBottom: 7 }}>
+        <div style={{ width: 16, height: 16, borderRadius: 4, border: `1.5px solid ${t.t === 'green' ? 'var(--green)' : 'var(--bd-strong)'}`, flexShrink: 0, background: t.t === 'green' ? 'var(--green)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {t.t === 'green' && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>}
+        </div>
+        <div style={{ flex: 1, fontSize: '0.8125rem', fontWeight: 500, color: t.t === 'green' ? 'var(--fg4)' : 'var(--fg1)', textDecoration: t.t === 'green' ? 'line-through' : 'none' }}>{t.name}</div>
+        <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{t.due}</div>
+        <STag status={t.status} t={t.t} />
+      </div>
+  )}
+  </div>;
+
+
+const PanelAudits = () =>
+<div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+      <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Historique des audits</div>
+      <button className="btn-pri"><Ico.Zap />Lancer un Audit</button>
+    </div>
+    {AUDITS.map((a, i) =>
+  <div key={i} className="card" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.875rem 1rem', marginBottom: 7 }}>
+        <div style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg3)', flexShrink: 0 }}><Ico.Srch /></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>{a.name}</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg4)', marginTop: 2 }}>{a.date}</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '1rem', fontWeight: 800, color: a.score >= 85 ? 'var(--green)' : a.score >= 70 ? 'var(--yellow-fg)' : 'var(--red)', fontVariantNumeric: 'tabular-nums' }}>{a.score}/100</div>
+          <Bdg label="Complété" t="green" />
+        </div>
+      </div>
+  )}
+  </div>;
+
+
+/* ── PANEL: RAPPORTS ── */
+const ReportSectionIco = ({ ic }) => {
+  const m = { doc: <Ico.Doc />, chart: <Ico.Up />, search: <Ico.Srch />, zap: <Ico.Zap />, link: <Ico.Link />, check: <Ico.Check /> };
+  return m[ic] || <Ico.Doc />;
+};
+
+const ReportCover = () =>
+  <div className="card" style={{ flex: '0 0 36%', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+    <div style={{ padding: '0.5rem 0.75rem', borderBottom: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-muted)' }}>
+      <span className="lbl">Aperçu du document</span>
+      <span style={{ marginLeft: 'auto', fontSize: '0.5625rem', color: 'var(--fg4)' }}>5 sections · 8 pages</span>
+    </div>
+    <div style={{ flex: 1, padding: '1.5rem 1.25rem', background: 'var(--bg-solid)', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 'auto' }}>
+        <div style={{ width: 22, height: 22, background: 'var(--primary)', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+        </div>
+        <span style={{ fontSize: '0.75rem', fontWeight: 800, letterSpacing: '-0.02em' }}>HuntPilot</span>
+        <span style={{ marginLeft: 'auto', fontSize: '0.5rem', fontWeight: 700, color: 'var(--fg4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Confidentiel</span>
+      </div>
+      <div style={{ margin: '1.5rem 0' }}>
+        <div className="lbl" style={{ color: 'var(--green-fg)', marginBottom: 6 }}>Rapport de performance</div>
+        <div style={{ fontSize: '1.375rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05 }}>SEO Mensuel</div>
+        <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--fg2)', marginTop: 10 }}>{CL.name}</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2 }}>Mai 2026 · préparé par {CL.pm}</div>
+      </div>
+      <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 12, paddingTop: 14, borderTop: '1px solid var(--bd-solid)' }}>
+        <Gauge v={CL.score} sz={62} />
+        <div>
+          <div className="lbl" style={{ marginBottom: 3 }}>Score santé global</div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--green)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 3 }}><Ico.Up />+5 pts vs avril</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg4)', marginTop: 2 }}>Trafic +72% · 142 mots-clés</div>
+        </div>
+      </div>
+    </div>
+  </div>;
+
+const ReportGenerator = () => {
+  const [secs, setSecs] = useState(REPORT_SECTIONS.map((s) => s.on));
+  const count = secs.filter(Boolean).length;
+  return (
+    <div className="card" style={{ flex: '1 1 0', padding: '1rem', display: 'flex', flexDirection: 'column', minWidth: 0, borderTop: '3px solid var(--violet)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--violet-fg)', fontSize: 14, lineHeight: 1 }}>✦</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Générer le rapport · Mai 2026</div>
+          <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 1 }}>Synthèse rédigée automatiquement par l'agent HuntPilot</div>
+        </div>
+        <Bdg label="✦ IA" t="violet" />
+      </div>
+      <div className="lbl" style={{ marginBottom: 8 }}>Sections incluses · {count}/{REPORT_SECTIONS.length}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 12 }}>
+        {REPORT_SECTIONS.map((s, i) =>
+          <div key={s.name} onClick={() => setSecs((p) => p.map((v, j) => j === i ? !v : v))}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.5rem 0.625rem', borderRadius: 8, cursor: 'pointer', userSelect: 'none', background: secs[i] ? 'var(--green-m)' : 'var(--bg-muted)', border: `1px solid ${secs[i] ? 'var(--green-b)' : 'var(--bd-solid)'}`, transition: 'all 140ms' }}>
+            <div style={{ width: 17, height: 17, borderRadius: 5, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: secs[i] ? 'var(--green)' : 'transparent', border: `1.5px solid ${secs[i] ? 'var(--green)' : 'var(--bd-strong)'}`, color: '#fff' }}>
+              {secs[i] && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: secs[i] ? 'var(--green-fg)' : 'var(--fg2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
+              <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.desc}</div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.625rem 0.75rem', borderRadius: 8, background: 'var(--violet-m)', border: '1px solid var(--violet-b)', marginBottom: 12 }}>
+        <span style={{ color: 'var(--violet-fg)', flexShrink: 0 }}><Ico.Repeat /></span>
+        <div style={{ flex: 1, fontSize: '0.625rem', color: 'var(--fg2)', lineHeight: 1.4 }}>Envoi automatique programmé le <b>2 de chaque mois</b> à {CL.email}</div>
+        <div style={{ width: 30, height: 17, borderRadius: 999, background: 'var(--violet)', position: 'relative', flexShrink: 0, cursor: 'pointer' }}>
+          <div style={{ position: 'absolute', top: 2, right: 2, width: 13, height: 13, borderRadius: '50%', background: '#fff' }}></div>
+        </div>
+      </div>
+      <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
+        <button className="btn-pri" style={{ flex: 1, justifyContent: 'center' }}><Ico.Zap />Générer le rapport</button>
+        <button className="btn-out"><Ico.Eye />Aperçu</button>
+      </div>
+    </div>
+  );
+};
+
+const PanelRapports = () =>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
+      <ReportGenerator /><ReportCover />
+    </div>
+    <div className="card" style={{ padding: '0.875rem 1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Historique des rapports</div>
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{REPORTS.length} rapports envoyés</span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {REPORTS.map((r) =>
+          <div key={r.period} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem 0.875rem', borderRadius: 10, border: '1px solid var(--bd-solid)', background: 'var(--bg-base)' }}>
+            <div style={{ width: 36, height: 44, borderRadius: 6, background: 'var(--bg-solid)', border: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg3)', flexShrink: 0, position: 'relative' }}>
+              <Ico.File />
+              <span style={{ position: 'absolute', bottom: -5, right: -5, fontSize: '0.5rem', fontWeight: 800, color: r.score >= 85 ? 'var(--green)' : 'var(--yellow-fg)', background: 'var(--bg-solid)', border: '1px solid var(--bd-solid)', borderRadius: 999, padding: '0 4px' }}>{r.score}</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Rapport SEO · {r.period}</div>
+              <div style={{ fontSize: '0.625rem', color: 'var(--fg4)', marginTop: 2 }}>Envoyé le {r.date} · {r.pages} pages · à {CL.email}</div>
+            </div>
+            <Bdg label={r.status} t={r.t} />
+            <div style={{ display: 'flex', gap: 5 }}>
+              <button className="btn-icon" title="Voir"><Ico.Eye /></button>
+              <button className="btn-icon" title="Télécharger"><Ico.Dl /></button>
+              <button className="btn-icon" title="Renvoyer"><Ico.Send /></button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>;
+
+/* ── PANEL: FACTURATION ── */
+const PanelFacturation = () => {
+  const statusColors = { 'Payée': ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'], 'En attente': ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], 'En retard': ['var(--red-m)', 'var(--red-b)', 'var(--red)'] };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* Stat cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+        {BILLING_STATS.map((s) => {
+          const col = s.t === 'green' ? 'var(--green)' : s.t === 'blue' ? 'var(--blue-fg)' : 'var(--fg1)';
+          return (
+            <div key={s.l} className="card" style={{ padding: '0.75rem 0.875rem' }}>
+              <div className="lbl" style={{ marginBottom: 5 }}>{s.l}</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: col, letterSpacing: '-0.03em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{s.v}</div>
+              <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 5 }}>{s.sub}</div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Contract + payment method */}
+      <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
+        <div className="card" style={{ flex: '1 1 0', padding: '1rem', minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <div style={{ fontSize: '0.8125rem', fontWeight: 800, flex: 1 }}>Contrat actif</div>
+            <Bdg label="Plan Croissance" t="green" lg />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 10px' }}>
+            {[['Montant mensuel', '1 200 $ CA'], ['Engagement', '12 mois'], ['Début du contrat', '1 jan. 2024'], ['Renouvellement', '1 jan. 2027']].map(([l, v]) =>
+              <div key={l}>
+                <div className="lbl" style={{ marginBottom: 3 }}>{l}</div>
+                <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg1)' }}>{v}</div>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--bd-solid)' }}>
+            <span style={{ color: 'var(--green)' }}><Ico.Repeat /></span>
+            <span style={{ fontSize: '0.625rem', color: 'var(--fg3)', flex: 1 }}>Renouvellement automatique activé</span>
+            <button className="btn-out" style={{ fontSize: '0.625rem', padding: '0.3rem 0.7rem' }}>Modifier</button>
+          </div>
+          <div className="lbl" style={{ margin: '14px 0 8px' }}>Services facturés</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+            {CL.services.map((s) => <span key={s} style={{ fontSize: '0.5625rem', fontWeight: 600, padding: '3px 8px', borderRadius: 999, background: 'var(--bg-muted)', color: 'var(--fg2)', border: '1px solid var(--bd-solid)' }}>{s}</span>)}
+          </div>
+        </div>
+        <div className="card" style={{ flex: '0 0 33%', padding: '1rem', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 12 }}>Moyen de paiement</div>
+          <div style={{ padding: '0.875rem', borderRadius: 10, background: 'var(--primary)', color: 'var(--primary-fg)', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+              <Ico.Card />
+              <span style={{ fontSize: '0.625rem', fontWeight: 700, letterSpacing: '0.08em', opacity: 0.85 }}>VISA</span>
+            </div>
+            <div style={{ fontSize: '0.8125rem', fontWeight: 700, letterSpacing: '0.12em', fontVariantNumeric: 'tabular-nums' }}>•••• •••• •••• 4242</div>
+            <div style={{ fontSize: '0.5625rem', opacity: 0.7, marginTop: 6 }}>Expire 08/27</div>
+          </div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', lineHeight: 1.7, marginBottom: 'auto' }}>
+            <div>Facturé le <b style={{ color: 'var(--fg1)' }}>1er</b> de chaque mois</div>
+            <div>Reçu envoyé à {CL.email}</div>
+          </div>
+          <button className="btn-out" style={{ width: '100%', justifyContent: 'center', marginTop: 12 }}><Ico.Card />Mettre à jour</button>
+        </div>
+      </div>
+      {/* Invoice history */}
+      <div className="card" style={{ padding: '0.875rem 1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Historique des factures</div>
+          <button className="btn-out" style={{ fontSize: '0.625rem', padding: '0.3rem 0.7rem' }}><Ico.Dl />Tout exporter</button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr 1fr 0.8fr 0.9fr 70px', gap: '0 10px', alignItems: 'center' }}>
+          {['N° Facture', 'Période', 'Date', 'Montant', 'Statut', ''].map((h, i) =>
+            <div key={i} className="lbl" style={{ paddingBottom: 8, borderBottom: '1px solid var(--bd-solid)', textAlign: i === 5 ? 'right' : 'left' }}>{h}</div>
+          )}
+          {INVOICES.map((inv) => {
+            const sc = statusColors[inv.status] || statusColors['Payée'];
+            return (
+              <React.Fragment key={inv.num}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, padding: '10px 0', borderBottom: '1px solid var(--bd)', fontVariantNumeric: 'tabular-nums' }}>{inv.num}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--fg2)', padding: '10px 0', borderBottom: '1px solid var(--bd)' }}>{inv.period}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', padding: '10px 0', borderBottom: '1px solid var(--bd)' }}>{inv.date}</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, padding: '10px 0', borderBottom: '1px solid var(--bd)', fontVariantNumeric: 'tabular-nums' }}>{inv.amount}</div>
+                <div style={{ padding: '10px 0', borderBottom: '1px solid var(--bd)' }}>
+                  <span style={{ fontSize: '0.5625rem', fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: sc[0], border: `1px solid ${sc[1]}`, color: sc[2], whiteSpace: 'nowrap' }}>{inv.status}</span>
+                </div>
+                <div style={{ padding: '10px 0', borderBottom: '1px solid var(--bd)', display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+                  <button className="btn-icon" title="Voir"><Ico.Eye /></button>
+                  <button className="btn-icon" title="Télécharger"><Ico.Dl /></button>
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── LEFT PANEL (client sidebar) ── */
+const LeftPanel = () =>
+<div style={{ width: 250, flexShrink: 0, borderRight: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', display: 'flex', flexDirection: 'column', overflowY: 'auto', padding: '1rem 0.875rem' }} className="sc">
+    <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+      Client Hub <Ico.ChevR /> <span style={{ color: 'var(--fg2)', fontWeight: 500 }}>Acme Corp.</span>
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, paddingBottom: '1rem', borderBottom: '1px solid var(--bd-solid)', marginBottom: '1rem' }}>
+      <Av s={56} r={13} />
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '0.9375rem', fontWeight: 800, letterSpacing: '-0.02em' }}>{CL.name}</div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 2 }}>{CL.sector}</div>
+        <div style={{ display: 'flex', gap: 5, justifyContent: 'center', marginTop: 7 }}>
+          <Bdg label="Actif" t="green" /><Bdg label="Client" t="neutral" />
+        </div>
+      </div>
+    </div>
+    <div className="lbl" style={{ marginBottom: 8 }}>Contact</div>
+    {[[<Ico.Mail />, CL.email], [<Ico.Phone />, CL.phone], [<Ico.Globe />, CL.website], [<Ico.Pin />, CL.address]].map(([ico, val], i) =>
+  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: i < 3 ? 6 : 12, color: 'var(--fg3)', fontSize: '0.6875rem' }}>
+        <span style={{ color: 'var(--fg4)', flexShrink: 0 }}>{ico}</span>{val}
+      </div>
+  )}
+    <div className="lbl" style={{ marginBottom: 8 }}>Services actifs</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: '1rem' }}>
+      {CL.services.map((s) => <span key={s} style={{ fontSize: '0.5625rem', fontWeight: 600, padding: '3px 8px', borderRadius: 999, background: 'var(--bg-muted)', color: 'var(--fg2)', border: '1px solid var(--bd-solid)' }}>{s}</span>)}
+    </div>
+    <div style={{ padding: '0.75rem', borderRadius: 10, background: 'var(--bg-muted)', marginBottom: '1rem', backgroundColor: "rgb(255, 251, 244)" }}>
+      <div className="lbl" style={{ marginBottom: 6, color: "var(--fg1)" }}>Contexte & Objectif</div>
+      <p style={{ fontSize: '0.625rem', color: 'var(--fg2)', lineHeight: 1.65, textWrap: 'pretty' }}>
+        Doubler le trafic organique d'ici Q4 2026. Priorité au positionnement top 3 sur les requêtes transactionnelles.
+      </p>
+      <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        {['Trafic ×2', 'Top 3 KW', 'CTR +50%'].map((tag) =>
+      <span key={tag} style={{ fontSize: '0.5rem', fontWeight: 700, padding: '2px 7px', borderRadius: 999, background: 'rgba(22,163,74,0.12)', color: 'var(--green-fg)', border: '1px solid var(--green-b)' }}>{tag}</span>
+      )}
+      </div>
+    </div>
+    <div style={{ padding: '0.75rem', borderRadius: 10, background: 'var(--bg-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, marginBottom: '1rem', backgroundColor: "rgb(255, 251, 244)" }}>
+      <div className="lbl" style={{ marginBottom: 4, color: "var(--fg1)" }}>Score Santé SEO</div>
+      <Gauge v={CL.score} sz={76} />
+      <div style={{ fontSize: '0.5625rem', color: 'var(--fg3)' }}>Excellent · +5 pts vs mars</div>
+    </div>
+    {[[<Ico.User />, 'Chef de projet', CL.pm], [<Ico.Cal />, 'Client depuis', CL.since], [<Ico.Srch />, 'Dernier audit', CL.lastAudit]].map(([ico, l, v], i) =>
+  <div key={i} style={{ display: 'flex', gap: 7, marginBottom: 9, alignItems: 'flex-start' }}>
+        <span style={{ color: 'var(--fg4)', flexShrink: 0, marginTop: 1 }}>{ico}</span>
+        <div>
+          <div className="lbl" style={{ marginBottom: 2 }}>{l}</div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg1)', fontWeight: 600 }}>{v}</div>
+        </div>
+      </div>
+  )}
+    <button className="btn-pri" style={{ width: '100%', justifyContent: 'center', marginTop: 6, padding: '0.55rem', fontSize: '0.75rem' }}><Ico.Zap />Lancer un Audit</button>
+  </div>;
+
+
+/* ── RIGHT PANEL ── */
+const RightPanel = () =>
+<div style={{ width: 210, flexShrink: 0, borderLeft: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', overflowY: 'auto', padding: '1rem 0.875rem' }} className="sc">
+    <div className="lbl" style={{ marginBottom: 8 }}>Modules inclus</div>
+    {['SEO Technique', 'Contenu', 'Audits', 'Backlinks'].map((m) =>
+  <div key={m} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7, fontSize: '0.6875rem', color: 'var(--fg2)' }}>
+        <span style={{ color: 'var(--green)' }}><Ico.Check /></span>{m}
+      </div>
+  )}
+    <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 6, marginBottom: '1rem', fontSize: '0.6875rem', color: 'var(--fg4)', cursor: 'pointer' }}><Ico.Plus />Ajouter un module</div>
+    <div style={{ height: 1, background: 'var(--bd-solid)', marginBottom: '1rem' }} />
+    <div className="lbl" style={{ marginBottom: 8 }}>Concurrence</div>
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--green-fg)' }}>Acme Corp. <span style={{ fontSize: '0.5625rem', fontWeight: 600 }}>(vous)</span></span>
+        <span style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'var(--green)' }}>34.8k/mois</span>
+      </div>
+      <div style={{ height: 5, background: 'var(--green-m)', border: '1px solid var(--green-b)', borderRadius: 999, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: '58%', background: 'var(--green)', borderRadius: 999 }}></div>
+      </div>
+    </div>
+    {COMPETITORS.map((c) => <CompBar key={c.name} {...c} />)}
+    <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+      <span style={{ width: 10, height: 2, background: 'var(--green)', display: 'inline-block', borderRadius: 1 }}></span>= votre trafic
+    </div>
+    <div style={{ height: 1, background: 'var(--bd-solid)', marginBottom: '1rem' }} />
+    <div className="lbl" style={{ marginBottom: 8 }}>Activité récente</div>
+    <Feed items={ACT} />
+    <div style={{ height: 1, background: 'var(--bd-solid)', margin: '1rem 0' }} />
+    <div style={{ padding: '0.75rem', borderRadius: 10, background: 'var(--blue-m)', border: '1px solid var(--blue-b)' }}>
+      <div className="lbl" style={{ color: 'var(--blue-fg)', marginBottom: 4 }}>Prochaine action</div>
+      <div style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--blue-fg)' }}>Rapport mensuel · 2 juin</div>
+    </div>
+  </div>;
+
+
+/* ── APP ── */
+const App = () => {
+  const [tab, setTab] = useState('apercu');
+  const [theme, setTheme] = useState(() => {
+    try {return localStorage.getItem('hp-theme') || 'light';} catch {return 'light';}
+  });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute('data-theme-switching', '');
+    html.setAttribute('data-theme', theme);
+    try {localStorage.setItem('hp-theme', theme);} catch {}
+    const t = setTimeout(() => html.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(t);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
+
+  const critCount = PROBLEMS.filter((p) => p.sev === 'critique').length;
+  const tabs = [['apercu', 'Aperçu'], ['problemes', 'Problèmes'], ['taches', 'Tâches'], ['audits', 'Audits'], ['rapports', 'Rapports'], ['facturation', 'Facturation']];
+
+  return (
+    <div className="app-shell">
+      {/* Global nav sidebar */}
+      <NavSidebar />
+
+      {/* Main column */}
+      <div className="main">
+        {/* Global header bar */}
+        <CRMHeader theme={theme} onToggleTheme={toggleTheme} />
+
+        {/* Content row */}
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          {/* Client info sidebar */}
+          <LeftPanel />
+
+          {/* Center: page header + tabs + scrollable content */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
+            {/* Page sub-header */}
+            <div style={{ padding: '0.75rem 1.125rem', borderBottom: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.6)', backdropFilter: 'var(--blur)', flexShrink: 0 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.9375rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Acme Corp.</div>
+                <div style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>E-commerce · Client jan. 2024 · MRR {CL.mrr}</div>
+              </div>
+              <Bdg label="Actif" t="green" lg />
+              <button className="btn-out" style={{ padding: '0.4rem 0.6rem' }}><Ico.More /></button>
+            </div>
+
+            {/* Tab bar */}
+            <div style={{ padding: '0.35rem 1.125rem', borderBottom: '1px solid var(--bd-solid)', display: 'flex', gap: 2, background: 'var(--bg-base)', flexShrink: 0 }}>
+              {tabs.map(([id, l]) =>
+              <button key={id} className={`tab${tab === id ? ' on' : ''}`} onClick={() => setTab(id)}>
+                  {l}
+                  {id === 'problemes' && critCount > 0 &&
+                <span style={{ marginLeft: 4, fontSize: '0.5rem', fontWeight: 800, padding: '1px 5px', borderRadius: 999, background: 'var(--red)', color: '#fff', display: 'inline-block', verticalAlign: 'middle' }}>{critCount}</span>
+                }
+                </button>
+              )}
+            </div>
+
+            {/* Tab content */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }} className="sc">
+              {tab === 'apercu' && <PanelApercu setTab={setTab} />}
+              {tab === 'problemes' && <PanelProblemes />}
+              {tab === 'taches' && <PanelTaches />}
+              {tab === 'audits' && <PanelAudits />}
+              {tab === 'rapports' && <PanelRapports />}
+              {tab === 'facturation' && <PanelFacturation />}
+            </div>
+          </div>
+
+          {/* Right panel */}
+          <RightPanel />
+        </div>
+      </div>
+    </div>);
+
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

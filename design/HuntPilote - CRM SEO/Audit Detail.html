@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Audit A-0142 · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="au-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { NavSidebar, AIco, APill, AUDIT, ScoreCard, RunningCard, DimCard, DesignScoreCard, CharacterCard, AuditMetaCard, HistoryCard } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const AU_STATES = [['termine', 'Audit terminé'], ['encours', 'Audit en cours d’exécution'], ['partiel', 'Partiellement échoué (présence)'], ['premier', 'Premier audit du client'], ['ancien', 'Audit ancien · données périmées']];
+
+const Header = ({ theme, onToggleTheme, shown }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Audit {shown.id} — {shown.date}</div>
+      <div className="crumb"><a href="Client Hub.html">Client hub</a><span>›</span><a href="Fiche Client v4.html">{AUDIT.client}</a><span>›</span><a href="Fiche Client v4.html">Audits</a><span>›</span><b>{shown.id}</b></div>
+    </div>
+    <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>{AUDIT.pmInit}</div>
+  </div>);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setState] = useState('termine');
+  const [created, setCreated] = useState({});
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+
+  const running = state === 'encours', partial = state === 'partiel', first = state === 'premier', stale = state === 'ancien';
+  const shown = stale ? { ...AUDIT.staleShown } : { id: AUDIT.id, date: AUDIT.date, duration: AUDIT.duration };
+  const sd = stale ? AUDIT.staleShown.dims : null;
+  const dim = (d, key) => ({ ...d, score: sd ? sd[key][0] : d.score, prev: first ? null : sd ? sd[key][1] : d.prev });
+  const designDim = { id: 'design', name: 'Design', Icon: AIco.Pen, weight: AUDIT.design.weight, score: AUDIT.design.score, prev: AUDIT.design.prev };
+  const dims = [
+    { ...dim(AUDIT.dims[0], 'presence'), na: partial },
+    { ...dim(AUDIT.dims[1], 'seo'), na: running },
+    { ...dim(designDim, 'design'), na: running },
+  ];
+  const onCreate = c => setCreated(m => ({ ...m, [c]: `P-05${String(Object.keys(m).length + 1).padStart(2, '0')}` }));
+  const nCreated = Object.keys(created).length;
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="clienthub" />
+      <div className="main">
+        <Header theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} shown={shown} />
+        <div className="subbar">
+          <a href="Fiche Client v4.html" className="btn-out" style={{ textDecoration: 'none', fontSize: '0.6875rem', padding: '0.3rem 0.75rem' }}><AIco.Back />Tous les audits</a>
+          <a href="Audit Comparaison.html" className="btn-out" style={{ textDecoration: 'none', fontSize: '0.6875rem', padding: '0.3rem 0.75rem' }}><AIco.Cmp />Comparer deux audits</a>
+          {nCreated > 0 && <APill label={`${nCreated} priorité${nCreated > 1 ? 's' : ''} créée${nCreated > 1 ? 's' : ''} depuis cet audit`} tone="blue" sm />}
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => { setState(e.target.value); setCreated({}); }} aria-label="État de démonstration">{AU_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+        </div>
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div style={{ padding: '1rem 1.125rem 0', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {running && <RunningCard prog={AUDIT.running} />}
+            <ScoreCard dims={dims} running={running} failedDim={partial ? 'présence en ligne' : null} stale={stale} first={first} />
+          </div>
+          <div className="content">
+            <div className="col-main">
+              <DimCard dim={dims[0]} created={created} onCreate={onCreate} partial={partial} />
+              {!running && <DimCard dim={dims[1]} created={created} onCreate={onCreate} />}
+              {!running && <DesignScoreCard created={created} onCreate={onCreate} score={dims[2].score} />}
+              {!running && <CharacterCard />}
+              {running && (
+                <div className="card" style={{ padding: '0.875rem 1rem', fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5 }}>
+                  Les constats SEO et design apparaîtront ici dès que ces dimensions seront terminées. La présence en ligne est déjà exploitable : ses critères sous le seuil peuvent devenir des priorités maintenant.
+                </div>)}
+            </div>
+            <div className="col-side">
+              <AuditMetaCard state={state} shown={shown} />
+              <HistoryCard first={first} shownId={shown.id} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

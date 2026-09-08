@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuntPilot — Fiche Client</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base: #F2EFEA;
+  --bg-solid: #FFFFFF;
+  --bg-muted: #E3DDD1;
+  --bd: rgba(0,0,0,0.07);
+  --bd-solid: #D0CBBF;
+  --bd-strong: #BAB4A6;
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545;
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+body { font-family: var(--font); background: var(--bg-base); color: var(--fg1); -webkit-font-smoothing: antialiased; }
+
+/* Utilities */
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.btn-green { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--green); color: #fff; border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-green:hover { opacity: 0.88; }
+.tab { padding: 0.4rem 0.875rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500; border: none; cursor: pointer; transition: all 140ms; font-family: var(--font); color: var(--fg4); background: transparent; }
+.tab.on { background: var(--bg-solid); color: var(--fg1); box-shadow: 0 1px 4px rgba(0,0,0,0.09); }
+.ptrack { height: 4px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden; }
+.pfill  { height: 100%; border-radius: 999px; background: var(--green); }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+/* ── DATA ── */
+const CL = {
+  name:'Acme Corp.', initials:'AC', sector:'E-commerce',
+  email:'contact@acmecorp.fr', phone:'(514) 555-0182',
+  website:'acmecorp.fr', address:'Montréal, QC',
+  services:['SEO Tech.','Contenu','Audit','Backlinks'],
+  score:92, mrr:'1 200 $ CA', since:'Janvier 2024',
+  pm:'Marie Chen', lastAudit:'15 avr. 2026',
+  nextAction:'Rapport mensuel · 2 juin',
+};
+const KPIS = [
+  {l:'Mots-clés',v:'142',sub:'+12 ce mois'},
+  {l:'Sessions',v:'34.8k',sub:'+18% vs mars'},
+  {l:'CTR moyen',v:'3.4%',sub:'+0.3 pt'},
+  {l:'Visibilité',v:'67%',sub:'vs 59% mars'},
+  {l:'Pages indexées',v:'1 240',sub:'+34 pages'},
+  {l:'Backlinks',v:'3 280',sub:'+12 nouveaux'},
+];
+const KW = [
+  {kw:'agence seo montréal',pos:2,vol:'2 400',d:+3},
+  {kw:'audit seo complet',pos:5,vol:'1 800',d:+2},
+  {kw:'référencement naturel',pos:8,vol:'4 200',d:0},
+  {kw:'stratégie contenu',pos:11,vol:'900',d:-1},
+  {kw:'backlink checker',pos:14,vol:'1 200',d:+4},
+];
+const AUDITS = [
+  {name:'Audit Complet Q2',date:'15 avr. 2026',score:87},
+  {name:'Audit Technique',date:'12 jan. 2026',score:74},
+  {name:'Audit Contenu',date:'3 oct. 2025',score:81},
+];
+const TASKS = [
+  {name:'Révision meta descriptions',due:'30 mai',status:'En cours',t:'yellow'},
+  {name:'Création 5 articles blog',due:'15 juin',status:'À faire',t:'blue'},
+  {name:'Audit backlinks concurrents',due:'10 mai',status:'Terminé',t:'green'},
+];
+const ACT = [
+  {label:'Rapport mensuel envoyé',date:'1 mai',ic:'doc'},
+  {label:'Audit Q2 lancé',date:'14 avr.',ic:'zap'},
+  {label:'12 nouveaux backlinks',date:'8 avr.',ic:'link'},
+  {label:'MRR renouvelé',date:'1 avr.',ic:'check'},
+];
+const SPARK = [28,32,30,35,38,34,40,43,41,48,52,49,55,58,62,64,68,66,72,75];
+
+/* ── ICONS ── */
+const I = {
+  Mail:  ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  Phone: ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.21 2 2 0 012 0h3a2 2 0 012 1.72c.167.96.391 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.309 1.85.533 2.81.7A2 2 0 0122 14.92v2z"/></svg>,
+  Globe: ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>,
+  Pin:   ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+  User:  ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  Cal:   ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+  Check: ()=><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>,
+  Up:    ()=><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>,
+  Down:  ()=><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>,
+  Plus:  ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  Zap:   ()=><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  Srch:  ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+  Link:  ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
+  Doc:   ()=><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  More:  ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>,
+  Chev:  ()=><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>,
+};
+
+/* ── ATOMS ── */
+const Av = ({s=50,r=12})=>(
+  <div style={{width:s,height:s,borderRadius:r,flexShrink:0,background:'linear-gradient(140deg,#d4edda,#e3ddd1)',border:'1.5px solid var(--bd-solid)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:s*.29,fontWeight:800,color:'var(--green-fg)',letterSpacing:'-0.02em'}}>AC</div>
+);
+
+const Bdg = ({label,t='green',lg})=>{
+  const M={green:['var(--green-m)','var(--green-b)','var(--green-fg)'],yellow:['var(--yellow-m)','var(--yellow-b)','var(--yellow-fg)'],blue:['var(--blue-m)','var(--blue-b)','var(--blue-fg)'],neutral:['var(--bg-muted)','var(--bd-solid)','var(--fg3)']}[t]||['var(--bg-muted)','var(--bd-solid)','var(--fg3)'];
+  return <span style={{background:M[0],border:`1px solid ${M[1]}`,color:M[2],padding:lg?'3px 11px':'2px 7px',borderRadius:999,fontSize:lg?'0.6875rem':'0.5625rem',fontWeight:700,letterSpacing:'0.03em',whiteSpace:'nowrap'}}>{label}</span>;
+};
+
+const Gauge = ({v,sz=84})=>{
+  const r=sz/2-7, c=2*Math.PI*r;
+  const col=v>=85?'var(--green)':v>=70?'var(--yellow)':'var(--red)';
+  return(
+    <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`}>
+      <circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke="var(--bg-muted)" strokeWidth="6"/>
+      <circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke={col} strokeWidth="6"
+        strokeDasharray={`${(v/100)*c} ${c}`} strokeLinecap="round"
+        transform={`rotate(-90 ${sz/2} ${sz/2})`}/>
+      <text x={sz/2} y={sz/2-2} textAnchor="middle" dominantBaseline="middle"
+        style={{fontFamily:'var(--font)',fontSize:sz*.235,fontWeight:800,fill:col}}>{v}</text>
+      <text x={sz/2} y={sz/2+sz*.2} textAnchor="middle"
+        style={{fontFamily:'var(--font)',fontSize:sz*.115,fill:'var(--fg4)'}}>/100</text>
+    </svg>
+  );
+};
+
+const Spark = ({data,h=60})=>{
+  const W=400,mx=Math.max(...data),mn=Math.min(...data),rng=mx-mn||1;
+  const px=i=>(i/(data.length-1))*W;
+  const py=vv=>h-4-((vv-mn)/rng)*(h-8);
+  const pts=data.map((vv,i)=>({x:px(i),y:py(vv)}));
+  const line=pts.map((p,i)=>`${i===0?'M':'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  return(
+    <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--green)" stopOpacity=".2"/><stop offset="100%" stopColor="var(--green)" stopOpacity="0"/></linearGradient></defs>
+      <path d={`M0,${h} ${line.slice(1)} L${W},${h} Z`} fill="url(#sg)"/>
+      <path d={line} fill="none" stroke="var(--green)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx={pts[pts.length-1].x} cy={pts[pts.length-1].y} r="3.5" fill="var(--green)"/>
+    </svg>
+  );
+};
+
+const Delta = ({d})=>(
+  <span style={{display:'flex',alignItems:'center',gap:1,fontSize:'0.625rem',fontWeight:600,color:d>0?'var(--green)':d<0?'var(--red)':'var(--fg4)'}}>
+    {d>0?<I.Up/>:d<0?<I.Down/>:'—'}{d!==0&&Math.abs(d)}
+  </span>
+);
+
+const STag = ({status,t})=>{
+  const M={green:['var(--green-m)','var(--green-b)','var(--green-fg)'],yellow:['var(--yellow-m)','var(--yellow-b)','var(--yellow-fg)'],blue:['var(--blue-m)','var(--blue-b)','var(--blue-fg)']}[t]||['var(--bg-muted)','var(--bd-solid)','var(--fg3)'];
+  return <span style={{background:M[0],border:`1px solid ${M[1]}`,color:M[2],padding:'2px 8px',borderRadius:999,fontSize:'0.5625rem',fontWeight:700,whiteSpace:'nowrap'}}>{status}</span>;
+};
+
+const Feed = ({items})=>(
+  <div>{items.map((a,i)=>(
+    <div key={i} style={{display:'flex',gap:8,marginBottom:10,alignItems:'flex-start'}}>
+      <div style={{width:24,height:24,borderRadius:6,background:'var(--bg-muted)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'var(--fg3)'}}>
+        {a.ic==='zap'?<I.Zap/>:a.ic==='link'?<I.Link/>:a.ic==='doc'?<I.Doc/>:<I.Check/>}
+      </div>
+      <div>
+        <div style={{fontSize:'0.6875rem',color:'var(--fg2)',lineHeight:1.35,fontWeight:500}}>{a.label}</div>
+        <div style={{fontSize:'0.5625rem',color:'var(--fg4)',marginTop:1}}>{a.date}</div>
+      </div>
+    </div>
+  ))}</div>
+);
+
+const CRow = ({ico,val})=>(
+  <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:6,color:'var(--fg3)',fontSize:'0.75rem'}}>
+    <span style={{color:'var(--fg4)',flexShrink:0}}>{ico}</span>{val}
+  </div>
+);
+
+const InfoRow = ({ico,label,val})=>(
+  <div style={{display:'flex',gap:7,marginBottom:9,alignItems:'flex-start'}}>
+    <span style={{color:'var(--fg4)',flexShrink:0,marginTop:1}}>{ico}</span>
+    <div>
+      <div className="lbl" style={{marginBottom:2}}>{label}</div>
+      <div style={{fontSize:'0.75rem',color:'var(--fg1)',fontWeight:600}}>{val}</div>
+    </div>
+  </div>
+);
+
+const SvcChips = ()=>(
+  <div style={{display:'flex',flexWrap:'wrap',gap:5}}>
+    {CL.services.map(s=><span key={s} style={{fontSize:'0.625rem',fontWeight:600,padding:'3px 9px',borderRadius:999,background:'var(--bg-muted)',color:'var(--fg2)',border:'1px solid var(--bd-solid)'}}>{s}</span>)}
+  </div>
+);
+
+/* ── SHARED TAB PANELS ── */
+const PanelApercu = ({big})=>(
+  <div>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginBottom:12}}>
+      {KPIS.map(k=>(
+        <div key={k.l} className="card" style={{padding:big?'1rem 1.125rem':'0.75rem 0.875rem'}}>
+          <div className="lbl" style={{marginBottom:4}}>{k.l}</div>
+          <div style={{fontSize:big?'1.5rem':'1.125rem',fontWeight:800,color:'var(--fg1)',fontVariantNumeric:'tabular-nums',letterSpacing:'-0.03em',lineHeight:1}}>{k.v}</div>
+          <div style={{display:'flex',alignItems:'center',gap:2,marginTop:5,fontSize:'0.6rem',color:'var(--green)',fontWeight:600}}><I.Up/>{k.sub}</div>
+        </div>
+      ))}
+    </div>
+    <div className="card" style={{padding:'0.875rem 1rem',marginBottom:10}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+        <div>
+          <div style={{fontSize:'0.8125rem',fontWeight:700}}>Trafic organique</div>
+          <div style={{fontSize:'0.625rem',color:'var(--fg4)'}}>Sessions · 20 semaines</div>
+        </div>
+        <span style={{fontSize:'1.5rem',fontWeight:800,color:'var(--green)',letterSpacing:'-0.03em',fontVariantNumeric:'tabular-nums'}}>+72%</span>
+      </div>
+      <Spark data={SPARK} h={big?72:56}/>
+    </div>
+    <div className="card" style={{padding:'0.875rem 1rem'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+        <div style={{fontSize:'0.8125rem',fontWeight:700}}>Top Mots-clés</div>
+        <span style={{fontSize:'0.625rem',color:'var(--fg4)'}}>142 positions totales</span>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 58px 68px 38px',gap:'0 10px'}}>
+        {['Mot-clé','Position','Vol./m','Δ 30j'].map(h=>(
+          <div key={h} className="lbl" style={{paddingBottom:5,borderBottom:'1px solid var(--bd-solid)'}}>{h}</div>
+        ))}
+        {KW.map(k=>(
+          <React.Fragment key={k.kw}>
+            <div style={{fontSize:'0.75rem',padding:'5px 0',borderBottom:'1px solid var(--bd)',fontWeight:500}}>{k.kw}</div>
+            <div style={{fontSize:'0.75rem',padding:'5px 0',borderBottom:'1px solid var(--bd)',fontVariantNumeric:'tabular-nums',fontWeight:700,color:k.pos<=3?'var(--green)':k.pos<=10?'var(--yellow-fg)':'var(--fg2)'}}>#{k.pos}</div>
+            <div style={{fontSize:'0.75rem',color:'var(--fg3)',padding:'5px 0',borderBottom:'1px solid var(--bd)',fontVariantNumeric:'tabular-nums'}}>{k.vol}</div>
+            <div style={{padding:'5px 0',borderBottom:'1px solid var(--bd)',display:'flex',alignItems:'center'}}><Delta d={k.d}/></div>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const PanelTaches = ()=>(
+  <div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+      <div style={{fontSize:'0.8125rem',fontWeight:700}}>Tâches du client</div>
+      <button className="btn-pri"><I.Plus/>Ajouter</button>
+    </div>
+    {TASKS.map((t,i)=>(
+      <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:10,padding:'0.75rem 1rem',marginBottom:7}}>
+        <div style={{width:16,height:16,borderRadius:4,border:`1.5px solid ${t.t==='green'?'var(--green)':'var(--bd-strong)'}`,flexShrink:0,background:t.t==='green'?'var(--green)':'transparent',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          {t.t==='green'&&<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>}
+        </div>
+        <div style={{flex:1,fontSize:'0.8125rem',fontWeight:500,color:t.t==='green'?'var(--fg4)':'var(--fg1)',textDecoration:t.t==='green'?'line-through':'none'}}>{t.name}</div>
+        <div style={{fontSize:'0.625rem',color:'var(--fg4)'}}>{t.due}</div>
+        <STag status={t.status} t={t.t}/>
+      </div>
+    ))}
+  </div>
+);
+
+const PanelAudits = ()=>(
+  <div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+      <div style={{fontSize:'0.8125rem',fontWeight:700}}>Historique des audits</div>
+      <button className="btn-pri"><I.Zap/>Lancer un Audit</button>
+    </div>
+    {AUDITS.map((a,i)=>(
+      <div key={i} className="card" style={{display:'flex',alignItems:'center',gap:12,padding:'0.875rem 1rem',marginBottom:7}}>
+        <div style={{width:38,height:38,borderRadius:10,background:'var(--bg-muted)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--fg3)',flexShrink:0}}><I.Srch/></div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:'0.8125rem',fontWeight:700,color:'var(--fg1)'}}>{a.name}</div>
+          <div style={{fontSize:'0.625rem',color:'var(--fg4)',marginTop:2}}>{a.date}</div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div style={{fontSize:'1rem',fontWeight:800,color:a.score>=85?'var(--green)':a.score>=70?'var(--yellow-fg)':'var(--red)',fontVariantNumeric:'tabular-nums'}}>{a.score}/100</div>
+          <Bdg label="Complété" t="green"/>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT A — Trois colonnes · Bloom-inspired
+══════════════════════════════════════════════════════════ */
+const LayoutA = ()=>{
+  const [tab,setTab]=useState('apercu');
+  const tabs=[['apercu','Aperçu'],['taches','Tâches'],['audits','Audits'],['rapports','Rapports'],['facturation','Facturation']];
+  return(
+    <div style={{display:'flex',height:'100%',background:'var(--bg-base)',overflow:'hidden',fontFamily:'var(--font)'}}>
+      {/* LEFT */}
+      <div style={{width:256,flexShrink:0,borderRight:'1px solid var(--bd-solid)',background:'var(--bg-solid)',display:'flex',flexDirection:'column',overflowY:'auto',padding:'1.125rem 1rem'}}>
+        <div style={{fontSize:'0.6875rem',color:'var(--fg4)',marginBottom:'0.875rem',display:'flex',alignItems:'center',gap:4}}>
+          Client Hub <I.Chev/> <span style={{color:'var(--fg2)',fontWeight:500}}>Acme Corp.</span>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:8,paddingBottom:'1rem',borderBottom:'1px solid var(--bd-solid)',marginBottom:'1rem'}}>
+          <Av s={60} r={14}/>
+          <div style={{textAlign:'center'}}>
+            <div style={{fontSize:'1rem',fontWeight:800,letterSpacing:'-0.02em'}}>Acme Corp.</div>
+            <div style={{fontSize:'0.75rem',color:'var(--fg3)',marginTop:2}}>E-commerce</div>
+            <div style={{display:'flex',gap:5,justifyContent:'center',marginTop:7}}>
+              <Bdg label="Actif" t="green"/><Bdg label="Client" t="neutral"/>
+            </div>
+          </div>
+        </div>
+        <div className="lbl" style={{marginBottom:8}}>Contact</div>
+        <CRow ico={<I.Mail/>} val={CL.email}/>
+        <CRow ico={<I.Phone/>} val={CL.phone}/>
+        <CRow ico={<I.Globe/>} val={CL.website}/>
+        <CRow ico={<I.Pin/>} val={CL.address}/>
+        <div style={{height:'1rem'}}/>
+        <div className="lbl" style={{marginBottom:8}}>Services actifs</div>
+        <SvcChips/>
+        <div style={{marginTop:'1rem',padding:'0.875rem',borderRadius:10,background:'var(--bg-muted)',display:'flex',flexDirection:'column',alignItems:'center',gap:4,marginBottom:'1rem'}}>
+          <div className="lbl" style={{marginBottom:4}}>Score Santé SEO</div>
+          <Gauge v={CL.score} sz={80}/>
+          <div style={{fontSize:'0.6rem',color:'var(--fg3)'}}>Excellent · +5 pts vs mars</div>
+        </div>
+        <InfoRow ico={<I.User/>} label="Chef de projet" val={CL.pm}/>
+        <InfoRow ico={<I.Cal/>}  label="Client depuis"  val={CL.since}/>
+        <InfoRow ico={<I.Srch/>} label="Dernier audit"  val={CL.lastAudit}/>
+        <button className="btn-pri" style={{width:'100%',justifyContent:'center',marginTop:6,padding:'0.6rem',fontSize:'0.8125rem'}}><I.Zap/>Lancer un Audit</button>
+      </div>
+      {/* CENTER */}
+      <div style={{flex:1,display:'flex',flexDirection:'column',minWidth:0,overflow:'hidden'}}>
+        <div style={{padding:'0.875rem 1.25rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',alignItems:'center',gap:10,background:'rgba(255,255,255,0.9)',flexShrink:0}}>
+          <div style={{flex:1}}>
+            <div style={{fontSize:'1.0625rem',fontWeight:800,letterSpacing:'-0.025em'}}>Acme Corp.</div>
+            <div style={{fontSize:'0.6875rem',color:'var(--fg3)'}}>E-commerce · Client jan. 2024 · MRR {CL.mrr}</div>
+          </div>
+          <Bdg label="Actif" t="green" lg/>
+          <button className="btn-out" style={{padding:'0.4rem 0.6rem'}}><I.More/></button>
+        </div>
+        <div style={{padding:'0.4rem 1.25rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',gap:2,background:'var(--bg-base)',flexShrink:0}}>
+          {tabs.map(([id,l])=><button key={id} className={`tab${tab===id?' on':''}`} onClick={()=>setTab(id)}>{l}</button>)}
+        </div>
+        <div style={{flex:1,overflowY:'auto',padding:'1rem 1.25rem'}}>
+          {tab==='apercu'&&<PanelApercu/>}
+          {tab==='taches'&&<PanelTaches/>}
+          {tab==='audits'&&<PanelAudits/>}
+          {(tab==='rapports'||tab==='facturation')&&<div style={{textAlign:'center',color:'var(--fg4)',padding:'3rem',fontSize:'0.875rem'}}>Section en cours de développement</div>}
+        </div>
+      </div>
+      {/* RIGHT */}
+      <div style={{width:218,flexShrink:0,borderLeft:'1px solid var(--bd-solid)',background:'var(--bg-solid)',overflowY:'auto',padding:'1.125rem 1rem'}}>
+        <div className="lbl" style={{marginBottom:8}}>Modules inclus</div>
+        {['SEO Technique','Contenu','Audits','Backlinks'].map(m=>(
+          <div key={m} style={{display:'flex',alignItems:'center',gap:7,marginBottom:7,fontSize:'0.75rem',color:'var(--fg2)'}}>
+            <span style={{color:'var(--green)'}}><I.Check/></span>{m}
+          </div>
+        ))}
+        <div style={{display:'flex',alignItems:'center',gap:7,marginTop:6,marginBottom:'1rem',fontSize:'0.75rem',color:'var(--fg4)',cursor:'pointer'}}><I.Plus/>Ajouter un module</div>
+        <div style={{height:1,background:'var(--bd-solid)',marginBottom:'1rem'}}/>
+        <div className="lbl" style={{marginBottom:8}}>Activité récente</div>
+        <Feed items={ACT}/>
+        <div style={{height:1,background:'var(--bd-solid)',margin:'1rem 0'}}/>
+        <div style={{padding:'0.75rem',borderRadius:10,background:'var(--blue-m)',border:'1px solid var(--blue-b)'}}>
+          <div className="lbl" style={{color:'var(--blue-fg)',marginBottom:4}}>Prochaine action</div>
+          <div style={{fontSize:'0.75rem',fontWeight:600,color:'var(--blue-fg)'}}>{CL.nextAction}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT B — Hero panoramique + 2 colonnes
+══════════════════════════════════════════════════════════ */
+const LayoutB = ()=>{
+  const [tab,setTab]=useState('apercu');
+  const tabs=[['apercu','Aperçu SEO'],['taches','Tâches'],['audits','Audits'],['notes','Notes']];
+  return(
+    <div style={{display:'flex',flexDirection:'column',height:'100%',background:'var(--bg-base)',overflow:'hidden',fontFamily:'var(--font)'}}>
+      {/* HERO */}
+      <div style={{background:'var(--primary)',color:'var(--primary-fg)',padding:'1.125rem 1.5rem',display:'flex',alignItems:'center',gap:'1.125rem',flexShrink:0}}>
+        <Av s={54} r={13}/>
+        <div style={{flex:1}}>
+          <div style={{fontSize:'1.375rem',fontWeight:800,letterSpacing:'-0.03em',lineHeight:1.1}}>Acme Corp.</div>
+          <div style={{fontSize:'0.75rem',opacity:.55,marginTop:3}}>E-commerce · {CL.website} · Montréal, QC</div>
+        </div>
+        <Bdg label="Actif" t="green" lg/>
+        <span style={{opacity:.2,fontSize:'1.25rem',margin:'0 4px'}}>·</span>
+        <span style={{fontSize:'0.75rem',opacity:.5}}>MRR {CL.mrr}</span>
+        <button className="btn-green" style={{marginLeft:14,fontSize:'0.8125rem',fontWeight:700}}><I.Zap/>Lancer un Audit</button>
+        <button style={{width:32,height:32,borderRadius:8,background:'rgba(255,255,255,0.1)',border:'none',color:'rgba(255,255,255,0.6)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}><I.More/></button>
+      </div>
+      {/* KPI STRIP */}
+      <div style={{display:'flex',borderBottom:'1px solid var(--bd-solid)',background:'var(--bg-solid)',flexShrink:0}}>
+        {KPIS.map((k,i)=>(
+          <div key={k.l} style={{flex:1,padding:'0.75rem 1rem',borderRight:i<KPIS.length-1?'1px solid var(--bd-solid)':'none'}}>
+            <div className="lbl" style={{marginBottom:3}}>{k.l}</div>
+            <div style={{fontSize:'1.0625rem',fontWeight:800,color:'var(--fg1)',fontVariantNumeric:'tabular-nums',letterSpacing:'-0.025em',lineHeight:1}}>{k.v}</div>
+            <div style={{fontSize:'0.5625rem',color:'var(--green)',fontWeight:600,display:'flex',alignItems:'center',gap:2,marginTop:4}}><I.Up/>{k.sub}</div>
+          </div>
+        ))}
+      </div>
+      {/* BODY 2-col */}
+      <div style={{flex:1,display:'flex',overflow:'hidden'}}>
+        {/* Left col */}
+        <div style={{width:256,flexShrink:0,borderRight:'1px solid var(--bd-solid)',background:'var(--bg-solid)',overflowY:'auto',padding:'1.125rem 1rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:12,padding:'0.875rem',borderRadius:12,background:'var(--bg-muted)',marginBottom:'1.125rem'}}>
+            <Gauge v={CL.score} sz={68}/>
+            <div>
+              <div className="lbl" style={{marginBottom:3}}>Score SEO</div>
+              <div style={{fontSize:'0.875rem',fontWeight:800,color:'var(--green)'}}>Excellent</div>
+              <div style={{fontSize:'0.625rem',color:'var(--fg3)',marginTop:2}}>+5 pts vs mars</div>
+            </div>
+          </div>
+          <div className="lbl" style={{marginBottom:8}}>Contact</div>
+          <CRow ico={<I.Mail/>} val={CL.email}/>
+          <CRow ico={<I.Phone/>} val={CL.phone}/>
+          <CRow ico={<I.Globe/>} val={CL.website}/>
+          <CRow ico={<I.Pin/>} val={CL.address}/>
+          <div style={{height:'1rem'}}/>
+          <div className="lbl" style={{marginBottom:8}}>Services actifs</div>
+          <SvcChips/>
+          <div style={{height:'1rem'}}/>
+          <InfoRow ico={<I.User/>} label="Chef de projet" val={CL.pm}/>
+          <InfoRow ico={<I.Cal/>}  label="Client depuis"  val={CL.since}/>
+          <InfoRow ico={<I.Srch/>} label="Dernier audit"  val={CL.lastAudit}/>
+          <div style={{height:1,background:'var(--bd-solid)',margin:'0.875rem 0'}}/>
+          <div className="lbl" style={{marginBottom:8}}>Activité récente</div>
+          <Feed items={ACT.slice(0,3)}/>
+        </div>
+        {/* Right col */}
+        <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+          <div style={{padding:'0.4rem 1.25rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',gap:2,background:'var(--bg-base)',flexShrink:0}}>
+            {tabs.map(([id,l])=><button key={id} className={`tab${tab===id?' on':''}`} onClick={()=>setTab(id)}>{l}</button>)}
+          </div>
+          <div style={{flex:1,overflowY:'auto',padding:'1rem 1.25rem'}}>
+            {tab==='apercu'&&<PanelApercu big/>}
+            {tab==='taches'&&<PanelTaches/>}
+            {tab==='audits'&&<PanelAudits/>}
+            {tab==='notes'&&<div className="card" style={{padding:'1rem'}}><div style={{fontSize:'0.8125rem',color:'var(--fg3)',fontStyle:'italic'}}>Aucune note. Commencez à écrire…</div></div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT C — Sidebar minimaliste + Centre plein
+══════════════════════════════════════════════════════════ */
+const LayoutC = ()=>{
+  const [sec,setSec]=useState('seo');
+  const nav=[['seo','SEO',<I.Srch/>],['audits','Audits',<I.Zap/>],['taches','Tâches',<I.Check/>],['backlinks','Backlinks',<I.Link/>],['facturation','Facturation',<I.Doc/>]];
+  const secTitle=nav.find(n=>n[0]===sec)?.[1]||'';
+  return(
+    <div style={{display:'flex',height:'100%',background:'var(--bg-base)',overflow:'hidden',fontFamily:'var(--font)'}}>
+      {/* SIDEBAR */}
+      <div style={{width:196,flexShrink:0,background:'var(--bg-solid)',borderRight:'1px solid var(--bd-solid)',display:'flex',flexDirection:'column',overflowY:'auto'}}>
+        <div style={{padding:'1.125rem 1rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',flexDirection:'column',alignItems:'center',gap:7}}>
+          <Av s={52} r={13}/>
+          <div style={{textAlign:'center'}}>
+            <div style={{fontSize:'0.9375rem',fontWeight:800,letterSpacing:'-0.02em'}}>Acme Corp.</div>
+            <div style={{fontSize:'0.6875rem',color:'var(--fg3)',marginTop:2}}>E-commerce</div>
+          </div>
+          <Bdg label="Actif" t="green" lg/>
+        </div>
+        <div style={{padding:'1rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',flexDirection:'column',alignItems:'center',gap:5}}>
+          <div className="lbl" style={{marginBottom:3}}>Score Santé SEO</div>
+          <Gauge v={CL.score} sz={76}/>
+        </div>
+        <div style={{padding:'0.5rem 0.625rem',flex:1}}>
+          {nav.map(([id,l,ico])=>(
+            <button key={id} onClick={()=>setSec(id)} style={{
+              width:'100%',display:'flex',alignItems:'center',gap:8,padding:'0.5rem 0.75rem',
+              borderRadius:8,border:'none',cursor:'pointer',transition:'all 140ms',marginBottom:2,
+              background:sec===id?'var(--green-m)':'transparent',
+              color:sec===id?'var(--green-fg)':'var(--fg3)',
+              fontFamily:'var(--font)',fontSize:'0.8125rem',fontWeight:sec===id?700:500,
+            }}>{ico}{l}</button>
+          ))}
+        </div>
+        <div style={{padding:'0.875rem 1rem',borderTop:'1px solid var(--bd-solid)'}}>
+          <div className="lbl" style={{marginBottom:3}}>Client depuis</div>
+          <div style={{fontSize:'0.75rem',color:'var(--fg1)',fontWeight:600,marginBottom:8}}>{CL.since}</div>
+          <div className="lbl" style={{marginBottom:3}}>MRR</div>
+          <div style={{fontSize:'0.9375rem',color:'var(--fg1)',fontWeight:800,letterSpacing:'-0.02em',fontVariantNumeric:'tabular-nums'}}>{CL.mrr}</div>
+        </div>
+      </div>
+      {/* CENTER */}
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <div style={{padding:'0.875rem 1.375rem',borderBottom:'1px solid var(--bd-solid)',display:'flex',alignItems:'center',gap:10,background:'rgba(255,255,255,0.85)',flexShrink:0}}>
+          <div style={{flex:1}}>
+            <div style={{fontSize:'0.6875rem',color:'var(--fg4)'}}>Acme Corp. / {secTitle}</div>
+          </div>
+          <button className="btn-out"><I.Cal/>Planifier</button>
+          <button className="btn-green"><I.Zap/>Lancer un Audit</button>
+        </div>
+        <div style={{flex:1,overflowY:'auto',padding:'1.125rem 1.375rem'}}>
+          {sec==='seo'&&<PanelApercu big/>}
+          {sec==='audits'&&<PanelAudits/>}
+          {sec==='taches'&&<PanelTaches/>}
+          {(sec==='backlinks'||sec==='facturation')&&<div style={{textAlign:'center',color:'var(--fg4)',padding:'3rem',fontSize:'0.875rem'}}>Section en cours de développement</div>}
+        </div>
+      </div>
+      {/* RIGHT MICRO */}
+      <div style={{width:200,flexShrink:0,borderLeft:'1px solid var(--bd-solid)',background:'var(--bg-solid)',display:'flex',flexDirection:'column',overflowY:'auto',padding:'1.125rem 1rem'}}>
+        <div style={{padding:'0.75rem',borderRadius:10,background:'var(--green-m)',border:'1px solid var(--green-b)',marginBottom:'1.125rem'}}>
+          <div className="lbl" style={{color:'var(--green-fg)',marginBottom:4}}>Prochaine action</div>
+          <div style={{fontSize:'0.75rem',fontWeight:700,color:'var(--green-fg)'}}>{CL.nextAction}</div>
+        </div>
+        <div className="lbl" style={{marginBottom:8}}>Activité</div>
+        <Feed items={ACT}/>
+        <div style={{height:1,background:'var(--bd-solid)',margin:'0.875rem 0'}}/>
+        <div className="lbl" style={{marginBottom:8}}>Contact</div>
+        {[{ico:<I.Mail/>,val:CL.email},{ico:<I.Phone/>,val:CL.phone}].map(({ico,val})=>(
+          <div key={val} style={{display:'flex',alignItems:'center',gap:6,marginBottom:5,color:'var(--fg3)',fontSize:'0.6875rem'}}>
+            <span style={{color:'var(--fg4)',flexShrink:0}}>{ico}</span>
+            <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{val}</span>
+          </div>
+        ))}
+        <div style={{marginTop:8}}>
+          <div className="lbl" style={{marginBottom:3}}>Chef de projet</div>
+          <div style={{fontSize:'0.75rem',color:'var(--fg1)',fontWeight:600}}>{CL.pm}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── APP ── */
+const App = ()=>(
+  <DesignCanvas>
+    <DCSection id="fiche" title="Fiche Client — 3 directions">
+      <DCArtboard id="a1" label="A — Trois colonnes · Bloom-inspired" width={1440} height={900}><LayoutA/></DCArtboard>
+      <DCArtboard id="a2" label="B — Hero panoramique + 2 colonnes" width={1440} height={900}><LayoutB/></DCArtboard>
+      <DCArtboard id="a3" label="C — Sidebar minimaliste + Centre plein" width={1440} height={900}><LayoutC/></DCArtboard>
+    </DCSection>
+  </DesignCanvas>
+);
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
