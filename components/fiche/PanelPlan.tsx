@@ -69,7 +69,13 @@ export function PanelPlan({ clientId }: { clientId: string }) {
   );
 }
 
-export function PanelDiagnostics({ onLaunchAudit }: { onLaunchAudit: () => void }) {
+export function PanelDiagnostics({
+  clientId,
+  onLaunchAudit,
+}: {
+  clientId: string;
+  onLaunchAudit: () => void;
+}) {
   return (
     <div style={{ paddingBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
@@ -81,7 +87,7 @@ export function PanelDiagnostics({ onLaunchAudit }: { onLaunchAudit: () => void 
 
       {AUDITS.map((a) => (
         <article
-          key={a.name}
+          key={a.id}
           className="card"
           style={{
             padding: '13px 16px',
@@ -104,12 +110,20 @@ export function PanelDiagnostics({ onLaunchAudit }: { onLaunchAudit: () => void 
             </div>
           </div>
           <div style={{ display: 'flex', gap: 5 }}>
-            <button className="btn-sm" type="button" style={{ border: '1px solid var(--bd-solid)' }}>
+            <Link
+              className="btn-sm"
+              href={`${routes.audit(clientId, a.id)}/comparaison`}
+              style={{ border: '1px solid var(--bd-solid)', textDecoration: 'none' }}
+            >
               Comparer
-            </button>
-            <button className="btn-sm" type="button" style={{ border: '1px solid var(--bd-solid)' }}>
+            </Link>
+            <Link
+              className="btn-sm"
+              href={routes.audit(clientId, a.id)}
+              style={{ border: '1px solid var(--bd-solid)', textDecoration: 'none' }}
+            >
               Voir le détail
-            </button>
+            </Link>
           </div>
         </article>
       ))}

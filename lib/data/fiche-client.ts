@@ -349,9 +349,9 @@ export const KEYWORDS = [
 /* ── Diagnostics ── */
 
 export const AUDITS = [
-  { name: 'Audit Complet Q2', date: '15 avr. 2026', score: 87, type: 'Complet' },
-  { name: 'Audit Technique', date: '12 jan. 2026', score: 74, type: 'Technique' },
-  { name: 'Audit Contenu', date: '3 oct. 2025', score: 81, type: 'Contenu' },
+  { id: 'a-0142', name: 'Audit Complet Q2', date: '15 avr. 2026', score: 87, type: 'Complet' },
+  { id: 'a-0131', name: 'Audit Technique', date: '12 jan. 2026', score: 74, type: 'Technique' },
+  { id: 'a-0119', name: 'Audit Contenu', date: '3 oct. 2025', score: 81, type: 'Contenu' },
 ] as const;
 
 /* ── Rapports ── */

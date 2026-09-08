@@ -435,6 +435,25 @@ export const IcoLock = (p: IconProps) => (
   </Svg>
 );
 
+/* ── Audit ── */
+
+/** Prise électrique — état d'une connexion à une source de données. */
+export const IcoPlug = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 22v-5" />
+    <path d="M9 8V2M15 8V2" />
+    <path d="M18 8v3a6 6 0 01-12 0V8z" />
+  </Svg>
+);
+
+/** Deux barres inégales — comparaison. */
+export const IcoCompare = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="4" width="7" height="16" rx="1" />
+    <rect x="14" y="4" width="7" height="10" rx="1" />
+  </Svg>
+);
+
 /** Marque HuntPilote — éclair stylisé. */
 export const IcoLogo = (p: IconProps) => (
   <Svg size={13} strokeWidth={2.5} {...p}>
