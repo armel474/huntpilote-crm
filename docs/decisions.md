@@ -249,6 +249,36 @@ dernier ? »**
 Sans cette simulation, une automatisation puissante ne sera jamais activée avec
 confiance — et une automatisation qu'on n'ose pas activer ne sert à rien.
 
+### Une seule action principale par écran, en vert plein
+
+Les quatre écrans de la phase 1 ont convergé sans concertation : chaque écran de
+détail porte **une** action verte pleine, pleine largeur, qui fait avancer la
+boucle de livraison d'un cran.
+
+| Écran | Action principale |
+|---|---|
+| Détail d'une priorité | Assigner au plan d'action |
+| Détail d'une tâche | Terminer et produire la preuve |
+| Éditeur de rapport | Publier le rapport |
+
+Tout le reste est secondaire, en contour. Le vert plein n'est pas une couleur de
+confirmation : c'est la marque du geste qui fait passer le travail à l'étape
+suivante. Un écran qui en porterait deux aurait un problème de conception, pas de
+style.
+
+Corollaire : quand ce geste est bloqué, le bouton reste à sa place, verrouillé,
+et l'écran dit **ce qui manque et où** — il ne disparaît pas.
+
+### Une mesure s'affiche toujours avec son seuil
+
+Un chiffre seul ne se juge pas. Partout où l'application affiche une mesure —
+critère d'audit, page touchée, preuve de valeur — elle affiche à côté le seuil
+retenu et, quand il existe, le relevé précédent. « LCP 4,2 s » ne dit rien ;
+« 4,2 s · seuil ≤ 2,5 s · 3,6 s au dernier audit » se lit sans expertise.
+
+C'est ce qui permet à un statut de ne jamais reposer sur la seule couleur : le
+mot (« hors seuil »), l'icône et le chiffre disent la même chose trois fois.
+
 ### Un message d'erreur dit quoi faire
 
 Il nomme ce qui s'est passé **et** comment le réparer. Pas d'excuse, pas de vague.

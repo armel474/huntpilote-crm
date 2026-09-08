@@ -25,15 +25,23 @@ Rien ne sert d'ajouter des outils tant que le cockpit ne sait pas transformer un
 donnée en travail. Ces quatre sessions relient audit, priorité, tâche, preuve et
 rapport.
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 1.1 | Détail d'une priorité | [`1-1-detail-priorite.md`](1-1-detail-priorite.md) |
-| 1.2 | Détail d'une tâche | [`1-2-detail-tache.md`](1-2-detail-tache.md) |
-| 1.3 | Éditeur de rapport · rapport partageable | [`1-3-rapport.md`](1-3-rapport.md) |
-| 1.4 | Détail d'audit · comparaison d'audits | [`1-4-audits.md`](1-4-audits.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 1.1 | Détail d'une priorité | [`1-1-detail-priorite.md`](1-1-detail-priorite.md) | ✅ intégré |
+| 1.2 | Détail d'une tâche | [`1-2-detail-tache.md`](1-2-detail-tache.md) | ✅ intégré |
+| 1.3 | Éditeur de rapport · rapport partageable | [`1-3-rapport.md`](1-3-rapport.md) | ✅ intégré |
+| 1.4 | Détail d'audit · comparaison d'audits | [`1-4-audits.md`](1-4-audits.md) | ✅ intégré |
 
 > **Commence par 1.1 seule.** C'est l'écran le plus chargé en logique et celui
 > dont les deux suivants héritent. Valide-le avant d'enchaîner.
+
+**Phase 1 terminée et intégrée.** Les six écrans sont en ligne dans
+l'application, reliés à la fiche client : le bouton « Détail » d'une priorité,
+« Voir détail » d'une tâche, « Ouvrir l'éditeur » d'un rapport et « Voir le
+détail » d'un audit mènent désormais quelque part. Deux conventions nées de cette
+phase ont été promues dans [`../decisions.md`](../decisions.md) : *une seule
+action principale par écran, en vert plein* et *une mesure s'affiche toujours
+avec son seuil*.
 
 ### Phase 2 — Les outils
 
