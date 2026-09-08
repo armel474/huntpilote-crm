@@ -1,14 +1,19 @@
 # Séquence de conception — 21 sessions Claude Design
 
 Un fichier par session. Ouvre le fichier, copie tout son contenu, colle-le dans
-une session Claude Design du projet *HuntPilote - CRM SEO*. Chaque brief est
-autonome : il rappelle le contexte nécessaire, tu n'as rien à ajouter.
+une session Claude Design du projet *HuntPilote - CRM SEO*.
+
+**Depuis la phase 2, colle deux fichiers : le brief et
+[`socle-partage.md`](socle-partage.md).** Ce second fichier liste ce qui est déjà
+implémenté et se réutilise. Sans lui, chaque session redessine ce qui existe sous
+un nouveau nom — c'est arrivé trois fois en phase 1.
 
 **Une session = un prompt = un ou deux écrans.** Ne fusionne pas deux briefs dans
 la même session : au-delà de deux écrans, la qualité du détail chute et le shell
 commence à dériver d'un écran à l'autre.
 
-Le cadrage de fond — les treize décisions et les trois règles spécifiées — vit
+Le cadrage de fond — les treize décisions, les trois règles spécifiées et les
+cinq conventions d'interface — vit
 dans [`../decisions.md`](../decisions.md). Les briefs en reprennent ce qui les
 concerne ; en cas de doute, `decisions.md` fait foi.
 
@@ -99,11 +104,51 @@ Ce que voit le client. Dépend du rapport conçu en 1.3.
 
 ---
 
+## Ce que la phase 1 a changé dans la suite du plan
+
+Six écrans livrés, et trois conséquences sur les briefs qui restent.
+
+**Des sessions sont devenues plus légères.** Elles gardent leur place dans la
+séquence, mais une partie de leur contenu est déjà acquise :
+
+| Session | Ce qui n'est plus à concevoir |
+|---|---|
+| 2.2 Site Audit | Le score pondéré appartient à l'écran d'audit ; la ligne de constat existe |
+| 4.1 Vues transversales | Les détails de tâche et de priorité existent — ce sont deux listes filtrantes |
+| 4.2 Rapports à produire | L'éditeur et ses six états existent — c'est la liste du portefeuille |
+| 5.1 Portail · tableau de bord | Le corps du rapport existe et se reprend tel quel |
+| 5.2 Portail · ses rapports | « Ouvrir un rapport » réutilise la même page |
+
+**Des frontières ont été écrites** là où deux écrans risquaient de raconter la
+même chose avec un vocabulaire différent : Site Audit contre détail d'audit,
+section locale contre dimension *présence en ligne*, portail contre rapport
+publié. Chaque brief concerné porte maintenant sa section « frontière ».
+
+**Deux conventions se sont imposées** et sont remontées dans `decisions.md` :
+une seule action principale verte par écran, et une mesure ne s'affiche jamais
+sans son seuil.
+
+### Un arbitrage à faire, si tu veux
+
+La 4.1 — *mon plan de travail* et *priorités transversales* — est devenue bien
+moins chère qu'au moment où le plan a été écrit : ses deux écrans n'ont plus qu'à
+lister, trier et filtrer des objets qui existent tous. Ce sont aussi les écrans
+qu'on ouvre le matin.
+
+La remonter juste après la phase 2 donnerait un cockpit utilisable au quotidien
+plus tôt, au prix de repousser le SEO local d'une phase. À toi de voir selon
+qu'un client local est en attente ou non — ce n'est pas une question de
+conception.
+
+---
+
 ## Comment travailler chaque session
 
-1. **Colle le brief** dans une session Claude Design du projet.
+1. **Colle le brief et `socle-partage.md`** dans une session Claude Design du
+   projet.
 2. **Laisse-le produire**, puis regarde d'abord si le shell est intact — barre
-   latérale, header, palette. Une dérive du shell se corrige tout de suite, pas
+   latérale, header, palette — et si les classes du socle ont été reprises plutôt
+   que recréées sous un nouveau nom. Une dérive se corrige tout de suite, pas
    trois écrans plus tard.
 3. **Vérifie les états** listés en fin de brief. C'est là que les maquettes sont
    habituellement incomplètes, et c'est ce qui coûte le plus cher à rattraper.

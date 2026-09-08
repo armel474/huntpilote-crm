@@ -10,10 +10,16 @@ Reprends le design system existant du projet, sans le réinventer : base beige
 critique / important / opportunité, thème clair et sombre. Le shell CRM — barre
 latérale de navigation et header contextuel — existe déjà et se conserve tel quel.
 
+**Colle aussi [`socle-partage.md`](socle-partage.md) dans la session.** Il liste
+les classes déjà implémentées et réutilisables : la ligne de constat, les
+tableaux en grille, le document client, la sous-barre, les deux colonnes d'un
+écran de détail. Six écrans existent déjà — n'en redessine aucun morceau.
+
 Règles de fond, valables sur tous les écrans : interface dense mais lisible ;
 aucune métrique décorative — chaque bloc aide à comprendre, prioriser ou agir ;
 les statuts ne reposent jamais uniquement sur la couleur ; libellés de boutons
-concrets en français.
+concrets en français ; **une mesure ne s'affiche jamais sans son seuil** ; **une
+seule action principale verte par écran**, tout le reste en contour.
 
 L'application repose sur une boucle : **Audit → Priorité → Tâche → Preuve de
 valeur → Rapport client**. L'audit couvre trois dimensions — présence en ligne,
@@ -34,6 +40,38 @@ seulement à montrer comment le contenu s'y insère.
 
 Les outils sont **rattachés à un client**, pas autonomes. Mais on n'entre pas dans
 un outil depuis une fiche : on ouvre l'outil, puis on choisit le compte.
+
+## Frontière avec ce qui existe déjà
+
+La phase 1 a livré six écrans. Trois morceaux du cadre y sont **déjà dessinés et
+implémentés** — reprends-les, ne les réinvente pas :
+
+| Ce dont le cadre a besoin | Ce qui existe | Où le voir |
+|---|---|---|
+| La barre de contexte sous le header | `.subbar` | Détail d'une priorité, détail d'une tâche |
+| Une ligne de résultat qui devient une priorité | `.crit` | Détail d'audit |
+| Un tableau dense qui tient sur mobile | `.tbl` + `.tbl-4` | Pages touchées, détail d'une priorité |
+
+**La ligne de résultat est le point le plus important.** Un critère d'audit et une
+ligne d'outil font exactement la même chose : afficher une mesure avec son seuil,
+dire si elle passe, et offrir « créer la priorité » — en signalant celles qui en
+ont déjà une. C'est `.crit`, avec son icône de statut, ses trois états
+`fail / warn / ok` et son geste à droite. Le cadre des outils hérite de cette
+ligne ; il ne la redessine pas.
+
+## L'action principale — à trancher ici, une fois
+
+Le brief parlait de « deux actions constantes ». La règle figée en phase 1 dit
+qu'un écran ne porte **qu'une** action verte pleine. Les deux ne sont pas au même
+niveau, et il faut le montrer :
+
+- **« Enregistrer dans la fiche »** est l'action principale de l'écran : verte
+  pleine, en tête, une seule. C'est elle qui fait entrer un résultat d'outil dans
+  la boucle de livraison.
+- **« Créer la priorité »** est une action de ligne : en contour, discrète,
+  répétée sur chaque résultat. Elle est fréquente, pas principale.
+
+Ce partage vaut pour les sept outils. Ne le rejoue pas outil par outil.
 
 ## Le cadre — ce qu'il contient
 
@@ -77,9 +115,18 @@ ne pas lancer cinquante analyses sans y penser.
 
 ## États à prévoir
 
-- Aucun client sélectionné — état d'accueil de l'outil
+Les trois vides ne se confondent pas — un écran vide n'a pas toujours la même
+signification :
+
+- **Aucun client sélectionné** — vide initial : expliquer, proposer le premier
+  geste
+- **Résultat vide après filtrage** — proposer d'élargir la recherche
+- **Résultat vide, rien à corriger** — vide sain : le dire comme une bonne
+  nouvelle, pas comme une absence
+
+Puis :
+
 - Chargement des résultats
-- Résultat vide — le domaine n'a pas de données
 - Prospect sélectionné — bandeau « instantané, non historisé »
 - Intégration requise mais non connectée, avec le geste pour la connecter
 - Erreur du fournisseur de données, avec possibilité de réessayer
@@ -92,3 +139,5 @@ ne pas lancer cinquante analyses sans y penser.
 - Ne pas cacher le sélecteur de client dans un menu : c'est le premier geste.
 - Ne pas rendre les deux actions constantes dépendantes de l'outil : elles doivent
   être identiques partout.
+- Ne pas redessiner la sous-barre, la ligne de constat ni le tableau en grille :
+  ils existent, ils sont implémentés, ils se réutilisent.

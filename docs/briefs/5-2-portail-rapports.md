@@ -9,9 +9,13 @@ Reprends le design system existant du projet, sans le réinventer : base beige
 `#F2EFEA`, accent vert `#16A34A`, violet `#7C3AED` réservé à l'IA, sévérités
 critique / important / opportunité, thème clair et sombre.
 
+**Colle aussi [`socle-partage.md`](socle-partage.md) dans la session** — au moins
+pour les règles d'écriture du HTML et les jetons, même si les classes de densité
+du cockpit ne s'appliquent pas ici.
+
 Règles de fond : interface dense mais lisible ; aucune métrique décorative ; les
 statuts ne reposent jamais uniquement sur la couleur ; libellés de boutons
-concrets en français.
+concrets en français ; **une mesure ne s'affiche jamais sans son seuil**.
 
 > Même cadre que la session 5.1 : espace client séparé, sans le shell du cockpit,
 > aéré, lisible sur mobile.
@@ -28,6 +32,14 @@ concrets en français.
 ## Ses rapports
 
 L'historique complet, consultable et téléchargeable.
+
+> **« Ouvrir un rapport » affiche la page déjà conçue en 1.3** (`/r/[token]`),
+> dans sa version publiée de l'époque. Cet écran est la liste et la trajectoire —
+> pas un second gabarit de rapport.
+>
+> L'éditeur côté agence gère déjà l'historique des versions : une correction
+> publiée crée une v2, l'ancienne reste consultable. Ce que voit le client d'une
+> période à deux versions doit correspondre à ce que l'éditeur en dit.
 
 - **La liste par période**, du plus récent au plus ancien, avec le score de santé
   de chaque mois — la progression se lit dans la colonne.

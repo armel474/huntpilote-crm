@@ -10,10 +10,16 @@ Reprends le design system existant du projet, sans le réinventer : base beige
 critique / important / opportunité, thème clair et sombre. Le shell CRM — barre
 latérale de navigation et header contextuel — existe déjà et se conserve tel quel.
 
+**Colle aussi [`socle-partage.md`](socle-partage.md) dans la session.** Il liste
+les classes déjà implémentées et réutilisables : la ligne de constat, les
+tableaux en grille, le document client, la sous-barre, les deux colonnes d'un
+écran de détail. Six écrans existent déjà — n'en redessine aucun morceau.
+
 Règles de fond, valables sur tous les écrans : interface dense mais lisible ;
 aucune métrique décorative — chaque bloc aide à comprendre, prioriser ou agir ;
 les statuts ne reposent jamais uniquement sur la couleur ; libellés de boutons
-concrets en français.
+concrets en français ; **une mesure ne s'affiche jamais sans son seuil** ; **une
+seule action principale verte par écran**, tout le reste en contour.
 
 L'application repose sur une boucle : **Audit → Priorité → Tâche → Preuve de
 valeur → Rapport client**. L'audit couvre trois dimensions — présence en ligne,
@@ -32,6 +38,22 @@ SEO, design. Une priorité appartient toujours à l'une des trois.
 
 Un client peut avoir plusieurs établissements. La vue d'ensemble couvre tout le
 portefeuille.
+
+## Frontière avec la dimension « présence en ligne » de l'audit
+
+L'audit mensuel note déjà quatre critères qui vivent ici : complétude de la fiche
+Google Business, cohérence nom · adresse · téléphone, citations en annuaires,
+avis sans réponse. Ils sont visibles sur l'écran de détail d'audit, avec leur
+mesure et leur seuil.
+
+Ce sont **les mêmes critères vus de plus près**, pas d'autres critères. L'audit
+dit *« 6 champs remplis sur 9, seuil 9 sur 9 »* ; la section locale est l'endroit
+où on remplit les trois qui manquent. Garde les mêmes libellés et les mêmes
+seuils — un écart de vocabulaire entre les deux écrans donnerait l'impression de
+deux mesures différentes.
+
+Depuis un critère de la fiche d'établissement, prévois le lien de retour vers
+l'audit qui l'a relevé.
 
 ---
 

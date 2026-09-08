@@ -9,9 +9,13 @@ Reprends le design system existant du projet, sans le réinventer : base beige
 `#F2EFEA`, accent vert `#16A34A`, violet `#7C3AED` réservé à l'IA, sévérités
 critique / important / opportunité, thème clair et sombre.
 
+**Colle aussi [`socle-partage.md`](socle-partage.md) dans la session** — au moins
+pour les règles d'écriture du HTML et les jetons, même si les classes de densité
+du cockpit ne s'appliquent pas ici.
+
 Règles de fond : interface dense mais lisible ; aucune métrique décorative ; les
 statuts ne reposent jamais uniquement sur la couleur ; libellés de boutons
-concrets en français.
+concrets en français ; **une mesure ne s'affiche jamais sans son seuil**.
 
 ---
 
