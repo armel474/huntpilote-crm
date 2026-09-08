@@ -1597,3 +1597,236 @@ textarea.fld {
     display: none;
   }
 }
+
+/* ── Éditeur de rapport ──────────────────────────────────────────────────── */
+
+/* Certaines pages défilent dans le corps du document plutôt que dans la
+   coquille du CRM (le rapport tel que le client le lit, par exemple). */
+body:has(.page-scroll) {
+  overflow: auto;
+  height: auto;
+}
+
+/* Le sélecteur segmenté accepte l'état par classe ou par attribut. */
+.seg button[data-on='true'] {
+  background: var(--bg-solid);
+  color: var(--fg1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09);
+}
+
+/* Bandeau d'état du rapport. */
+.banner {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 0.75rem 0.9rem;
+  flex-wrap: wrap;
+}
+.banner-ico {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Ligne de section réordonnable. */
+.sec-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 7px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  transition:
+    border-color 140ms,
+    background 140ms;
+}
+.sec-row[data-on='true'] {
+  border-color: var(--bd-strong);
+  background: var(--bg-surface);
+}
+.sec-check {
+  width: 19px;
+  height: 19px;
+  border-radius: 6px;
+  border: 1.5px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 0;
+}
+.sec-main {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: transparent;
+  border: none;
+  font-family: var(--font);
+  color: var(--fg1);
+  cursor: pointer;
+  padding: 0;
+}
+.sec-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.sec-arrows button {
+  width: 20px;
+  height: 17px;
+  border-radius: 5px;
+  border: 1px solid var(--bd);
+  background: transparent;
+  color: var(--fg3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.sec-arrows button:hover:not(:disabled) {
+  background: var(--bg-muted);
+  color: var(--fg1);
+}
+.sec-arrows button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Preuve proposée, priorité visible. */
+.proof-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+}
+
+/* Ce qui bloque la publication. */
+.blk-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--yellow-b);
+  background: var(--yellow-m);
+  flex-wrap: wrap;
+}
+.blk-act {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.blk-act button {
+  font-size: 0.625rem;
+  padding: 0.25rem 0.7rem;
+}
+
+/* Champ d'édition d'un texte publié. */
+.fld-r {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--fg1);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 9px;
+  padding: 8px 10px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 150ms;
+}
+.fld-r:focus {
+  border-color: var(--accent);
+}
+
+.ed-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Lien public du rapport publié. */
+.link-box {
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: var(--bg-muted);
+  border: 1px solid var(--bd-solid);
+}
+
+/* Historique des versions. */
+.ver-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-top: 1px solid var(--bd);
+}
+.ver-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.ver-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+/* Aperçu du rapport client dans un cadre. */
+.frame-wrap {
+  border-radius: 12px;
+  border: 1px solid var(--bd-solid);
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+.frame-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--bd-solid);
+  flex-wrap: wrap;
+}
+.frame-wrap iframe {
+  display: block;
+  width: 100%;
+  height: min(70vh, 780px);
+  border: none;
+  background: var(--bg-base);
+}
+.frame-wrap[data-w='mobile'] iframe {
+  width: 390px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .ed-grid {
+    grid-template-columns: 1fr;
+  }
+  /* Cibles agrandies : les deux flèches empilées restent dans les 44px
+     de la ligne, elles ne peuvent donc pas les atteindre chacune. */
+  .sec-check {
+    width: 26px;
+    height: 26px;
+  }
+  .sec-arrows button {
+    width: 34px;
+    height: 26px;
+  }
+  .frame-wrap[data-w='mobile'] iframe {
+    width: 100%;
+  }
+}

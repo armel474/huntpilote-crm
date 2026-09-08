@@ -1,0 +1,346 @@
+/**
+ * Page du rapport telle que le client la lit.
+ *
+ * Ce document vit hors du cockpit : pas de barre latérale, pas de densité
+ * d'interface. Corps de texte à 16px, hiérarchie franche, largeur de lecture
+ * limitée. Les jetons sont redéfinis sous `.rapport` plutôt que sur `:root`
+ * pour ne pas déborder sur le reste de l'application.
+ */
+
+.rapport {
+  --bg-base: #f2efea;
+  --bg-solid: #ffffff;
+  --bg-muted: #e3ddd1;
+  --bd: rgba(0, 0, 0, 0.075);
+  --bd-solid: #d0cbbf;
+  --bd-strong: #bab4a6;
+  --fg1: #18181b;
+  --fg2: #3f3f46;
+  --fg3: #5f5f68;
+  --fg4: #8a8a94;
+  --green: #16a34a;
+  --green-d: #15803d;
+  --green-m: #dcefd4;
+  --green-b: #bbe3aa;
+  --green-fg: #2d5a27;
+  --yellow-m: #f5e8b5;
+  --yellow-b: #d4b24a;
+  --yellow-fg: #7a5d14;
+  --blue-m: #dbeafe;
+  --blue-b: #93c5fd;
+  --blue-fg: #1d4ed8;
+  --shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 6px 24px -8px rgba(0, 0, 0, 0.1);
+
+  background: var(--bg-base);
+  color: var(--fg1);
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+[data-theme='dark'] .rapport {
+  --bg-base: #131316;
+  --bg-solid: #1e1e22;
+  --bg-muted: #27272a;
+  --bd: rgba(255, 255, 255, 0.08);
+  --bd-solid: #2a2a2d;
+  --bd-strong: #3f3f46;
+  --fg1: #fafafa;
+  --fg2: #d4d4d8;
+  --fg3: #a1a1aa;
+  --fg4: #8a8a94;
+  --green: #4ade80;
+  --green-d: #4ade80;
+  --green-m: rgba(74, 222, 128, 0.13);
+  --green-b: rgba(74, 222, 128, 0.28);
+  --green-fg: #86efac;
+  --yellow-m: rgba(229, 198, 107, 0.14);
+  --yellow-b: rgba(229, 198, 107, 0.28);
+  --yellow-fg: #e5c66b;
+  --blue-m: rgba(59, 130, 246, 0.13);
+  --blue-b: rgba(59, 130, 246, 0.28);
+  --blue-fg: #93c5fd;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Les halos d'ambiance du cockpit n'ont pas leur place sur un document
+   client : ils teintent le texte et n'appartiennent pas à cette page. */
+body:has(.rapport)::before,
+body:has(.rapport)::after {
+  display: none;
+}
+
+.rapport a {
+  color: var(--green-d);
+}
+.rapport a:hover {
+  color: var(--green-fg);
+}
+
+.rapport .wrap {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+.rapport .doc {
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.rapport .doc-head {
+  padding: 1.75rem 1.75rem 1.5rem;
+  border-bottom: 1px solid var(--bd);
+}
+.rapport .brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 1.5rem;
+}
+.rapport .brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #1f1f1f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+[data-theme='dark'] .rapport .brand-mark {
+  background: #fafafa;
+  color: #18181b;
+}
+.rapport .eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--green-d);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.rapport h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.rapport h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.rapport h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.rapport p {
+  font-size: 1rem;
+  color: var(--fg2);
+  text-wrap: pretty;
+}
+.rapport .lead {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+.rapport .sect {
+  padding: 1.75rem;
+  border-top: 1px solid var(--bd);
+}
+.rapport .sect-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 1rem;
+}
+.rapport .step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-muted);
+  color: var(--fg2);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.rapport .kpi {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-top: 1px solid var(--bd);
+}
+.rapport .kpi:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.rapport .kpi-val {
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 5.5rem;
+  color: var(--fg1);
+}
+.rapport .delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--green-m);
+  border: 1px solid var(--green-b);
+  color: var(--green-fg);
+  white-space: nowrap;
+}
+.rapport .proof {
+  padding: 1.125rem 1.25rem;
+  border-radius: 12px;
+  background: var(--green-m);
+  border: 1px solid var(--green-b);
+  margin-bottom: 0.75rem;
+}
+.rapport .workitem {
+  padding: 1.125rem 1.25rem;
+  border-radius: 12px;
+  background: var(--bg-muted);
+  border: 1px solid var(--bd-solid);
+  margin-bottom: 0.75rem;
+}
+.rapport .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.rapport .track {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+[data-theme='dark'] .rapport .track {
+  background: rgba(255, 255, 255, 0.09);
+}
+.rapport .fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+}
+.rapport .nextitem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 0.875rem 0;
+  border-top: 1px solid var(--bd);
+}
+.rapport .nextitem:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.rapport .foot {
+  padding: 1.5rem 1.75rem;
+  background: var(--bg-muted);
+  border-top: 1px solid var(--bd);
+}
+
+/* Barre de démonstration — n'existe pas dans le rapport réellement envoyé. */
+.rapport .demo {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 50;
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 999px;
+  padding: 5px 8px;
+  box-shadow: var(--shadow);
+}
+.rapport .demo select {
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fg2);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  min-height: 32px;
+}
+.rapport .demo button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--bd-solid);
+  background: transparent;
+  color: var(--fg3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .rapport .wrap {
+    padding: 1rem 0.75rem 3rem;
+  }
+  .rapport .doc {
+    border-radius: 12px;
+  }
+  .rapport .doc-head,
+  .rapport .sect,
+  .rapport .foot {
+    padding: 1.25rem;
+  }
+  .rapport h1 {
+    font-size: 1.625rem;
+  }
+  .rapport h2 {
+    font-size: 1.125rem;
+  }
+  .rapport .kpi {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rapport .kpi-val {
+    min-width: 0;
+  }
+  .rapport .demo select,
+  .rapport .demo button {
+    min-height: 44px;
+  }
+}
+
+@media print {
+  .rapport .demo {
+    display: none;
+  }
+  .rapport {
+    background: #fff;
+  }
+  .rapport .doc {
+    border: none;
+    box-shadow: none;
+  }
+}

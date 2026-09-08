@@ -427,6 +427,14 @@ export const IcoPause = ({ size = 11, ...rest }: IconProps) => (
   </svg>
 );
 
+/** Cadenas — publication verrouillée, lien révoqué. */
+export const IcoLock = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="11" width="18" height="11" rx="2" />
+    <path d="M7 11V7a5 5 0 0110 0v4" />
+  </Svg>
+);
+
 /** Marque HuntPilote — éclair stylisé. */
 export const IcoLogo = (p: IconProps) => (
   <Svg size={13} strokeWidth={2.5} {...p}>

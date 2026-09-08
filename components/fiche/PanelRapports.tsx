@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Badge, Delta, Gauge, Lbl, Spark } from '@/components/ui/Atoms';
 import {
@@ -18,6 +19,8 @@ import {
   IcoX,
   IcoZap,
 } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
+import { REPORT } from '@/lib/data/rapport';
 import {
   AI_SUMMARY,
   CLIENT,
@@ -304,7 +307,7 @@ function ReportPreviewOverlay({
 
 /* ── Générateur ── */
 
-export function PanelRapports() {
+export function PanelRapports({ clientId }: { clientId: string }) {
   const [enabled, setEnabled] = useState<boolean[]>(REPORT_SECTIONS.map((s) => s.on));
   const [autoSend, setAutoSend] = useState(true);
   const [preview, setPreview] = useState(false);
@@ -480,6 +483,15 @@ export function PanelRapports() {
               <IcoEye size={12} />
               Voir le rapport complet
             </button>
+            {/* Composer et publier : l'éditeur de rapport. */}
+            <Link
+              className="btn-out"
+              href={routes.rapport(clientId, REPORT.slug)}
+              style={{ textDecoration: 'none' }}
+            >
+              <IcoDoc size={12} />
+              Ouvrir l’éditeur
+            </Link>
           </div>
         </section>
 
