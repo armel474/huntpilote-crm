@@ -16,6 +16,11 @@ export function generateStaticParams() {
   return CLIENTS.map((c) => ({ id: c.id }));
 }
 
-export default function FicheClientPage() {
-  return <FicheClientView />;
+export default async function FicheClientPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <FicheClientView clientId={id} />;
 }

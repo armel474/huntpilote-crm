@@ -16,7 +16,7 @@ import { CLIENT, PRIORITIES, UX_STATES, type UxState } from '@/lib/data/fiche-cl
 /** Durée simulée d'un audit avant que la fiche ne se remplisse. */
 const AUDIT_DURATION_MS = 4000;
 
-export function FicheClientView() {
+export function FicheClientView({ clientId }: { clientId: string }) {
   const [tab, setTab] = useState<FicheTab>('apercu');
   const [uxState, setUxState] = useState<UxState>('active');
   const auditTimer = useRef<number | null>(null);
@@ -49,7 +49,7 @@ export function FicheClientView() {
       case 'apercu':
         return <PanelApercu uxState={uxState} setTab={setTab} onLaunchAudit={launchAudit} />;
       case 'priorites':
-        return <PanelPriorites />;
+        return <PanelPriorites clientId={clientId} />;
       case 'plan':
         return <PanelPlan />;
       case 'diagnostics':

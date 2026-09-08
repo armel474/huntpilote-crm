@@ -478,6 +478,109 @@ export function ProgressBar({
 
 /* ── Libellé de section ── */
 
-export function Lbl({ children }: { children: React.ReactNode }) {
-  return <div className="lbl">{children}</div>;
+export function Lbl({
+  children,
+  mb,
+  style,
+}: {
+  children: React.ReactNode;
+  /** Marge basse en pixels — les cartes de détail la resserrent. */
+  mb?: number;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div className="lbl" style={{ marginBottom: mb, ...style }}>
+      {children}
+    </div>
+  );
+}
+
+/* ── Pastille ── */
+
+/**
+ * Étiquette arrondie des écrans de détail. Plus dense que `Badge`, elle
+ * accepte une icône en tête et se décline en deux tailles.
+ */
+export function Pill({
+  label,
+  tone = 'neutral',
+  icon,
+  sm,
+}: {
+  label: React.ReactNode;
+  tone?: Tone;
+  icon?: React.ReactNode;
+  sm?: boolean;
+}) {
+  const { bg, border, fg } = toneColors(tone);
+  return (
+    <span
+      className="pill"
+      style={{
+        background: bg,
+        border: `1px solid ${border}`,
+        color: fg,
+        fontSize: sm ? '0.5625rem' : '0.625rem',
+      }}
+    >
+      {icon}
+      {label}
+    </span>
+  );
+}
+
+/* ── Carte de section ── */
+
+/**
+ * Carte titrée des écrans de détail : titre, sous-titre explicatif et zone
+ * d'action à droite. `accent` colore un filet supérieur (violet pour l'IA).
+ */
+export function Sec({
+  title,
+  sub,
+  right,
+  children,
+  style,
+  accent,
+}: {
+  title: React.ReactNode;
+  sub?: React.ReactNode;
+  right?: React.ReactNode;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+  accent?: string;
+}) {
+  return (
+    <section
+      className="card"
+      style={{ padding: '0.875rem 1rem', borderTop: accent ? `2px solid ${accent}` : undefined, ...style }}
+    >
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 10 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h2 style={{ fontSize: '0.8125rem', fontWeight: 800, margin: 0 }}>{title}</h2>
+          {sub && <div style={{ fontSize: '0.625rem', color: 'var(--fg3)', marginTop: 2 }}>{sub}</div>}
+        </div>
+        {right}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/* ── Pastille de sévérité ── */
+
+export function SevDot({ color }: { color: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: color,
+        display: 'inline-block',
+        flexShrink: 0,
+      }}
+    />
+  );
 }

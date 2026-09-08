@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/Atoms';
+import { routes } from '@/lib/routes';
 import { PRIORITIES, type Severity } from '@/lib/data/fiche-client';
 
 const SEV_CONF: Record<
@@ -33,7 +35,7 @@ const SEV_CONF: Record<
 
 type Filter = 'tous' | Severity;
 
-export function PanelPriorites() {
+export function PanelPriorites({ clientId }: { clientId: string }) {
   const [filter, setFilter] = useState<Filter>('tous');
 
   const counts: Record<Severity, number> = {
@@ -130,7 +132,7 @@ export function PanelPriorites() {
           const conf = SEV_CONF[p.sev];
           return (
             <article
-              key={p.title}
+              key={p.id}
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -176,9 +178,13 @@ export function PanelPriorites() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
-                <button className="btn-sm" type="button" style={{ border: '1px solid var(--bd-solid)' }}>
+                <Link
+                  className="btn-sm"
+                  href={routes.priorite(clientId, p.id)}
+                  style={{ border: '1px solid var(--bd-solid)', textDecoration: 'none' }}
+                >
                   Détail
-                </button>
+                </Link>
                 {/* Une priorité doit pouvoir devenir une tâche du plan d'action. */}
                 <button
                   className="btn-sm"

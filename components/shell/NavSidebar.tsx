@@ -213,7 +213,7 @@ export function NavSidebar() {
           </Link>
           <button
             type="button"
-            className="nav-cpt"
+            className="nav-cpt side-toggle"
             data-label="Agrandir"
             aria-label="Agrandir la barre latérale"
             aria-expanded={false}
@@ -278,7 +278,7 @@ export function NavSidebar() {
         >
           <IcoTool size={15} />
           Outil
-          <span style={{ marginLeft: 'auto', color: 'var(--fg-4)', display: 'flex' }}>
+          <span className="nav-trail" style={{ marginLeft: 'auto', color: 'var(--fg-4)' }}>
             <IcoChevron deg={toolsOpen ? 180 : 0} />
           </span>
         </button>
@@ -316,13 +316,13 @@ export function NavSidebar() {
         >
           <IcoCog size={15} />
           Paramètres
-          <span style={{ marginLeft: 'auto', color: 'var(--fg-4)', display: 'flex' }}>
+          <span className="nav-trail" style={{ marginLeft: 'auto', color: 'var(--fg-4)' }}>
             <IcoArrow />
           </span>
         </Link>
         <button
           type="button"
-          className="nav-item"
+          className="nav-item side-toggle"
           style={{ color: 'var(--fg-4)' }}
           onClick={toggleCompact}
           aria-label="Réduire la barre latérale"

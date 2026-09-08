@@ -340,6 +340,73 @@ export const IcoClock = (p: IconProps) => (
   </Svg>
 );
 
+/* ── Écrans de détail (priorité, tâche, audit) ── */
+
+export const IcoEyeOff = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" />
+    <line x1="1" y1="1" x2="23" y2="23" />
+  </Svg>
+);
+
+/** Base de données — marque une source de mesure. */
+export const IcoDb = (p: IconProps) => (
+  <Svg {...p}>
+    <ellipse cx="12" cy="5" rx="9" ry="3" />
+    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+  </Svg>
+);
+
+export const IcoTask = (p: IconProps) => (
+  <Svg {...p}>
+    <polyline points="9 11 12 14 22 4" />
+    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+  </Svg>
+);
+
+/** Trophée — preuve de valeur. */
+export const IcoTrophy = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
+    <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
+    <path d="M4 22h16" />
+    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+    <path d="M18 2H6v7a6 6 0 0012 0V2z" />
+  </Svg>
+);
+
+export const IcoArrowR = (p: IconProps) => (
+  <Svg strokeWidth={2.2} {...p}>
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </Svg>
+);
+
+export const IcoArrowL = (p: IconProps) => (
+  <Svg strokeWidth={2.2} {...p}>
+    <line x1="19" y1="12" x2="5" y2="12" />
+    <polyline points="12 19 5 12 12 5" />
+  </Svg>
+);
+
+export const IcoPen = (p: IconProps) => (
+  <Svg size={11} {...p}>
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+  </Svg>
+);
+
+/** Lien sortant. */
+export const IcoExt = (p: IconProps) => (
+  <Svg size={11} {...p}>
+    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </Svg>
+);
+
 /** Marque HuntPilote — éclair stylisé. */
 export const IcoLogo = (p: IconProps) => (
   <Svg size={13} strokeWidth={2.5} {...p}>

@@ -151,6 +151,8 @@ export const TECH_HEALTH = [
 export type Severity = 'critique' | 'important' | 'opportunite';
 
 export type Priority = {
+  /** Identifiant de la priorité — sert de segment d'URL vers son détail. */
+  id: string;
   sev: Severity;
   title: string;
   source: string;
@@ -161,6 +163,7 @@ export type Priority = {
 
 export const PRIORITIES: Priority[] = [
   {
+    id: 'p-0418',
     sev: 'critique',
     title: 'Vitesse mobile insuffisante (LCP 4,2 s)',
     source: 'Audit tech. · 27 mai',
@@ -169,6 +172,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0419',
     sev: 'critique',
     title: '23 liens brisés détectés',
     source: 'Surveillance · 27 mai',
@@ -177,6 +181,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0420',
     sev: 'critique',
     title: 'Erreurs 404 non redirigées (8 pages)',
     source: 'Audit tech. · 27 mai',
@@ -185,6 +190,7 @@ export const PRIORITIES: Priority[] = [
     status: 'En cours',
   },
   {
+    id: 'p-0421',
     sev: 'important',
     title: '12 balises title non optimisées',
     source: 'Analyse · 22 mai',
@@ -193,6 +199,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0422',
     sev: 'important',
     title: '5 pages sans balise H1',
     source: 'Audit tech. · 27 mai',
@@ -201,6 +208,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0423',
     sev: 'important',
     title: '34 images sans attribut alt',
     source: 'Audit tech. · 27 mai',
@@ -209,6 +217,7 @@ export const PRIORITIES: Priority[] = [
     status: 'En cours',
   },
   {
+    id: 'p-0424',
     sev: 'important',
     title: '4 pages avec contenu dupliqué',
     source: 'Analyse · 22 mai',
@@ -217,6 +226,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0425',
     sev: 'important',
     title: '23 pages orphelines (maillage faible)',
     source: 'Audit tech. · 27 mai',
@@ -225,6 +235,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0426',
     sev: 'opportunite',
     title: '45 mots-clés longue traîne inexploités',
     source: 'Analyse IA · 25 mai',
@@ -233,6 +244,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0427',
     sev: 'opportunite',
     title: '12 opportunités de featured snippets',
     source: 'Analyse IA · 25 mai',
@@ -241,6 +253,7 @@ export const PRIORITIES: Priority[] = [
     status: 'Nouveau',
   },
   {
+    id: 'p-0428',
     sev: 'opportunite',
     title: '3 pages de service manquantes',
     source: 'Analyse IA · 25 mai',

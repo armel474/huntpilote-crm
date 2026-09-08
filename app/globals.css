@@ -150,8 +150,9 @@
   --blue-m: rgba(59, 130, 246, 0.13);
   --blue-fg: #93c5fd;
   --blue-b: rgba(59, 130, 246, 0.28);
-  --red-m: rgba(196, 69, 69, 0.13);
-  --red-b: rgba(196, 69, 69, 0.28);
+  --red: #f5a0a0;
+  --red-m: rgba(245, 160, 160, 0.14);
+  --red-b: rgba(245, 160, 160, 0.32);
   --violet-m: rgba(124, 58, 237, 0.1);
   --violet-b: rgba(124, 58, 237, 0.28);
   --violet-fg: #c4b5fd;
@@ -312,6 +313,11 @@ body::after {
 .nav-item.active {
   background: var(--primary);
   color: var(--primary-fg);
+}
+
+/* Affordance de fin de ligne d'une entrée de navigation (chevron, flèche). */
+.nav-trail {
+  display: flex;
 }
 
 .nav-sub-item {
@@ -1003,10 +1009,12 @@ textarea.fld {
     transition: none;
   }
 
-  /* Le logo, le repli et les sous-entrées n'ont pas leur place dans une barre d'onglets. */
+  /* Le logo, le repli, les sous-entrées et les affordances de fin de ligne
+     n'ont pas leur place dans une barre d'onglets. */
   .sidebar-head,
   .side-toggle,
-  .nav-sub-item {
+  .nav-sub-item,
+  .nav-trail {
     display: none;
   }
 
@@ -1101,5 +1109,262 @@ textarea.fld {
 
   .cards-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Écrans de détail — priorité, tâche, audit, rapport
+   ============================================================ */
+
+/* Barre secondaire sous le header : retour, contexte, sélecteur d'état. */
+.subbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.55rem 1.125rem;
+  border-bottom: 1px solid var(--bd-solid);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+[data-theme='dark'] .subbar {
+  background: rgba(30, 30, 34, 0.6);
+}
+
+/* Deux colonnes : contenu qui s'étire, panneau latéral fixe.
+   Les écrans de détail n'utilisent pas `.content` : leur zone défilante est
+   le conteneur parent, cette rangée n'a donc qu'à répartir les colonnes. */
+.detail-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 1rem 1.125rem 1.5rem;
+}
+@media (max-width: 1180px) {
+  .detail-row {
+    flex-wrap: wrap;
+  }
+}
+.col-main {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.col-side {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Étiquette compacte — sévérité, dimension, statut. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* Action principale d'un écran : verte pleine, distincte du primaire noir. */
+.btn-main {
+  width: 100%;
+  justify-content: center;
+  padding: 0.8rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 6px 18px -6px rgba(22, 163, 74, 0.55);
+}
+[data-theme='dark'] .btn-main {
+  color: #0b2e17;
+}
+
+/* Choix de visibilité client — une ligne par état. */
+.vis-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid;
+  font-family: var(--font);
+  color: var(--fg1);
+  transition: border-color 140ms, background 140ms, box-shadow 140ms;
+}
+.vis-row:not(:disabled):hover {
+  border-color: var(--bd-strong);
+  background: var(--bg-surface);
+}
+
+/* Aperçu du document client : toujours sur fond clair, même en thème sombre —
+   c'est ce que le client verra, pas ce que voit l'agence. */
+.client-doc {
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+[data-theme='dark'] .client-doc {
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+  border-color: #3f3f46;
+}
+
+.lbl-edit {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--fg1);
+  background: var(--bg-surface);
+  border: 1px solid var(--bd-solid);
+  border-radius: 9px;
+  padding: 8px 10px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 150ms;
+}
+.lbl-edit:focus {
+  border-color: var(--accent);
+  background: var(--bg-solid);
+}
+
+.sel {
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  color: var(--fg1);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  width: 100%;
+  outline: none;
+  min-height: 34px;
+}
+.state-sel {
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--fg2);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Menu contextuel des actions secondaires. */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 230px;
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 4px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+}
+.menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--fg2);
+  cursor: pointer;
+  min-height: 36px;
+}
+.menu button:hover {
+  background: var(--bg-muted);
+  color: var(--fg1);
+}
+
+/* Cellule de tableau en grille. */
+.td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bd);
+}
+
+@media (max-width: 1180px) {
+  .col-side {
+    flex: none;
+    width: 100%;
+  }
+  .constat-row {
+    flex-direction: column;
+  }
+  .action-zone {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .vis-row,
+  .state-sel,
+  .sel {
+    min-height: 44px;
+  }
+  .subbar {
+    padding: 0.5rem 12px;
+  }
+  .menu {
+    left: 0;
+    right: auto;
+  }
+}
+
+/* ── Tableaux en grille ──────────────────────────────────────────────────
+   Les écrans de détail affichent leurs tableaux en `display:grid` plutôt
+   qu'en `<table>` : l'alignement des colonnes reste sous contrôle et les
+   cellules peuvent contenir des jauges. Sous 900px, les colonnes
+   secondaires disparaissent au lieu de comprimer les libellés.
+   `.keep-2` marque les grilles à ne jamais réduire à une seule colonne. */
+.tbl {
+  display: grid;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .tbl-4 {
+    grid-template-columns: 2fr 1fr 44px !important;
+  }
+  /* 3ᵉ colonne (sessions) masquée : l'info reste dans le sous-titre. */
+  .tbl-4 > :nth-child(4n + 3) {
+    display: none !important;
+  }
+  .tbl-6 {
+    grid-template-columns: 1.6fr 1fr !important;
+  }
+  .tbl-6 > :nth-child(6n + 3),
+  .tbl-6 > :nth-child(6n + 4),
+  .tbl-6 > :nth-child(6n + 5),
+  .tbl-6 > :nth-child(6n + 6) {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .keep-2 {
+    grid-template-columns: 1fr !important;
   }
 }
