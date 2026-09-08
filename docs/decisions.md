@@ -143,6 +143,18 @@ Le libellé client **passe par une relecture humaine** avant publication. L'écr
 détail affiche les deux côte à côte, avec un état « à relire » qui bloque la
 publication du rapport tant qu'il subsiste.
 
+**La règle est générale, pas propre aux priorités.** Tout texte rédigé par l'agent
+et destiné à sortir de l'agence passe par une relecture avant publication :
+
+- le libellé client d'une **priorité** ;
+- le libellé client d'une **preuve de valeur**, produit à la clôture d'une tâche ;
+- la **réponse à un avis** Google — une réponse publiée engage la marque du client,
+  elle ne part jamais sans validation humaine.
+
+Partout, le même état « à relire » et le même blocage. Une relecture systématique
+est une corvée assumée tant qu'il s'agit de vrais clients : elle sert aussi à
+calibrer l'agent.
+
 ---
 
 ## Règle 2 — La grille d'audit design
@@ -194,9 +206,59 @@ est perdu.
 Les seuils sont des **réglages d'agence, pas des constantes** — ils se révisent
 quand la facture DataForSEO parlera.
 
-**Deux conséquences sur les écrans :** le cadre commun des outils doit distinguer
-visuellement ce qui sera conservé de ce qui ne l'est pas ; l'écran de consommation
-doit ventiler par client.
+### Le marqueur de conservation
+
+**Le cadre commun des outils doit distinguer visuellement ce qui sera conservé de
+ce qui ne l'est pas.** Sans ce marqueur, l'utilisateur ne sait jamais si un
+résultat qu'il consulte existera encore demain — et il enregistre tout par
+précaution, ce qui annule la politique.
+
+Le marqueur signale aussi le cas du prospect, qui n'a droit qu'à un instantané.
+
+**Seconde conséquence :** l'écran de consommation ventile par client. Les zones
+locales et le nombre de mots-clés suivis varient d'un compte à l'autre, et un
+client peut coûter cinq fois plus qu'un autre.
+
+---
+
+## Conventions d'interface
+
+Ces conventions traversent tous les écrans. Elles sont apparues en écrivant les
+briefs de conception, quand une décision manquait manifestement.
+
+### Trois états vides, pas un
+
+Un écran sans contenu n'a pas toujours la même signification, et un état vide
+générique les confond :
+
+| Vide | Ce que ça veut dire | Ce que l'écran doit faire |
+|---|---|---|
+| **Initial** | Rien n'a encore été créé | Expliquer, proposer le premier geste |
+| **De filtre** | Il y a des données, mais pas avec ces critères | Proposer d'élargir la recherche |
+| **Sain** | Aucune priorité critique, aucune facture en retard | Le dire comme une bonne nouvelle |
+
+Le vide sain est le plus souvent raté : ce n'est pas une absence de données, c'est
+un résultat. Le ton doit le refléter.
+
+### Un test à blanc avant d'activer une automatisation
+
+Une règle mal réglée peut créer cent tâches d'un coup. Avant activation,
+l'automatisation doit pouvoir répondre à : **« qu'aurait fait cette règle le mois
+dernier ? »**
+
+Sans cette simulation, une automatisation puissante ne sera jamais activée avec
+confiance — et une automatisation qu'on n'ose pas activer ne sert à rien.
+
+### Un message d'erreur dit quoi faire
+
+Il nomme ce qui s'est passé **et** comment le réparer. Pas d'excuse, pas de vague.
+
+> « Impossible de charger les positions : Search Console n'est plus connecté.
+> Reconnecter. »
+
+vaut mieux que « une erreur est survenue ». Le cas le plus fréquent en production
+est l'intégration déconnectée : elle dégrade les rapports silencieusement, elle
+doit donc être bruyante.
 
 ---
 
