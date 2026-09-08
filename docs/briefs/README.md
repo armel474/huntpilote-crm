@@ -19,6 +19,23 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ---
 
+## Où on en est
+
+**Phase 1 construite et en ligne — 6 écrans sur 37.** Tout le reste reste à
+concevoir puis à intégrer. Prochaine étape : **2.1**, seule, avant tout le reste
+de la phase 2.
+
+| Phase | Écrans | État |
+|---|---|---|
+| 1 — Boucle de livraison | 6 | ✅ intégrée |
+| 2 — Les outils | 9 | ⬜ à concevoir · **2.1 ensuite** |
+| 3 — SEO local | 6 | ⬜ à concevoir |
+| 4 — Le quotidien de l'agence | 8 | ⬜ à concevoir |
+| 5 — Le portail client | 4 | ⬜ à concevoir |
+| 6 — Contenu et socle | 4 | ⬜ à concevoir |
+
+---
+
 ## L'ordre, et pourquoi
 
 La séquence n'est pas arbitraire. Chaque phase produit les objets dont la
@@ -53,14 +70,14 @@ avec son seuil*.
 La valeur ajoutée du produit. La session 2.1 est la plus importante de toute la
 séquence : elle définit un cadre réutilisé par sept écrans.
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 2.1 | Cadre commun des outils | [`2-1-cadre-outils.md`](2-1-cadre-outils.md) |
-| 2.2 | Site Audit | [`2-2-site-audit.md`](2-2-site-audit.md) |
-| 2.3 | Position Tracking · Backlink Analyse | [`2-3-positions-backlinks.md`](2-3-positions-backlinks.md) |
-| 2.4 | Keyword Hunter · Keyword Gap | [`2-4-mots-cles.md`](2-4-mots-cles.md) |
-| 2.5 | Organic Research · Domain Overview | [`2-5-prospection.md`](2-5-prospection.md) |
-| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 2.1 | Cadre commun des outils | [`2-1-cadre-outils.md`](2-1-cadre-outils.md) | ⬜ **prochaine session** |
+| 2.2 | Site Audit | [`2-2-site-audit.md`](2-2-site-audit.md) | ⬜ à concevoir |
+| 2.3 | Position Tracking · Backlink Analyse | [`2-3-positions-backlinks.md`](2-3-positions-backlinks.md) | ⬜ à concevoir |
+| 2.4 | Keyword Hunter · Keyword Gap | [`2-4-mots-cles.md`](2-4-mots-cles.md) | ⬜ à concevoir |
+| 2.5 | Organic Research · Domain Overview | [`2-5-prospection.md`](2-5-prospection.md) | ⬜ à concevoir |
+| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) | ⬜ à concevoir |
 
 > **2.1 avant tout le reste**, sans exception. Si le cadre change après avoir
 > dessiné trois outils, tu redessines trois outils.
@@ -69,38 +86,38 @@ séquence : elle définit un cadre réutilisé par sept écrans.
 
 Une section complète, au même niveau que les outils.
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 3.1 | Vue d'ensemble · fiche d'établissement | [`3-1-local-etablissement.md`](3-1-local-etablissement.md) |
-| 3.2 | Avis · citations et annuaires | [`3-2-avis-citations.md`](3-2-avis-citations.md) |
-| 3.3 | Positions locales · concurrence locale | [`3-3-positions-locales.md`](3-3-positions-locales.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 3.1 | Vue d'ensemble · fiche d'établissement | [`3-1-local-etablissement.md`](3-1-local-etablissement.md) | ⬜ à concevoir |
+| 3.2 | Avis · citations et annuaires | [`3-2-avis-citations.md`](3-2-avis-citations.md) | ⬜ à concevoir |
+| 3.3 | Positions locales · concurrence locale | [`3-3-positions-locales.md`](3-3-positions-locales.md) | ⬜ à concevoir |
 
 ### Phase 4 — Le quotidien de l'agence
 
 Les vues transversales, et les éditeurs manquants des écrans déjà livrés.
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 4.1 | Mon plan de travail · priorités transversales | [`4-1-vues-transversales.md`](4-1-vues-transversales.md) |
-| 4.2 | Agenda · rapports à produire | [`4-2-agenda-rapports.md`](4-2-agenda-rapports.md) |
-| 4.3 | Recherche globale · notifications | [`4-3-recherche-notifications.md`](4-3-recherche-notifications.md) |
-| 4.4 | Détail de deal · éditeur d'automatisation | [`4-4-deal-automatisation.md`](4-4-deal-automatisation.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 4.1 | Mon plan de travail · priorités transversales | [`4-1-vues-transversales.md`](4-1-vues-transversales.md) | ⬜ à concevoir · à sa place dans l'ordre |
+| 4.2 | Agenda · rapports à produire | [`4-2-agenda-rapports.md`](4-2-agenda-rapports.md) | ⬜ à concevoir |
+| 4.3 | Recherche globale · notifications | [`4-3-recherche-notifications.md`](4-3-recherche-notifications.md) | ⬜ à concevoir |
+| 4.4 | Détail de deal · éditeur d'automatisation | [`4-4-deal-automatisation.md`](4-4-deal-automatisation.md) | ⬜ à concevoir |
 
 ### Phase 5 — Le portail client
 
 Ce que voit le client. Dépend du rapport conçu en 1.3.
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 5.1 | Connexion · tableau de bord client | [`5-1-portail-accueil.md`](5-1-portail-accueil.md) |
-| 5.2 | Ses rapports · échanges | [`5-2-portail-rapports.md`](5-2-portail-rapports.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 5.1 | Connexion · tableau de bord client | [`5-1-portail-accueil.md`](5-1-portail-accueil.md) | ⬜ à concevoir |
+| 5.2 | Ses rapports · échanges | [`5-2-portail-rapports.md`](5-2-portail-rapports.md) | ⬜ à concevoir |
 
 ### Phase 6 — Contenu et socle
 
-| Session | Écrans | Fichier |
-|---|---|---|
-| 6.1 | Calendrier éditorial · brief d'article | [`6-1-contenu.md`](6-1-contenu.md) |
-| 6.2 | Connexion agence · états système | [`6-2-socle.md`](6-2-socle.md) |
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 6.1 | Calendrier éditorial · brief d'article | [`6-1-contenu.md`](6-1-contenu.md) | ⬜ à concevoir |
+| 6.2 | Connexion agence · états système | [`6-2-socle.md`](6-2-socle.md) | ⬜ à concevoir |
 
 ---
 
@@ -128,17 +145,10 @@ publié. Chaque brief concerné porte maintenant sa section « frontière ».
 une seule action principale verte par écran, et une mesure ne s'affiche jamais
 sans son seuil.
 
-### Un arbitrage à faire, si tu veux
-
-La 4.1 — *mon plan de travail* et *priorités transversales* — est devenue bien
-moins chère qu'au moment où le plan a été écrit : ses deux écrans n'ont plus qu'à
-lister, trier et filtrer des objets qui existent tous. Ce sont aussi les écrans
-qu'on ouvre le matin.
-
-La remonter juste après la phase 2 donnerait un cockpit utilisable au quotidien
-plus tôt, au prix de repousser le SEO local d'une phase. À toi de voir selon
-qu'un client local est en attente ou non — ce n'est pas une question de
-conception.
+**La 4.1 reste à sa place.** Elle est devenue moins chère à concevoir — ses deux
+écrans n'ont plus qu'à lister, trier et filtrer des objets qui existent déjà —
+mais ça ne suffit pas à justifier de la devancer : pas de client local en
+attente, et l'ordre du plan reste le bon.
 
 ---
 
