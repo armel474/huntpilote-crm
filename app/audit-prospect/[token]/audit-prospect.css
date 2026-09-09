@@ -1,0 +1,176 @@
+/**
+ * Audit de prospect — document partageable, hors cockpit.
+ *
+ * Palette figée, volontairement indépendante des jetons de thème de
+ * l'application : ce document est envoyé tel quel à un prospect (courriel,
+ * impression), il n'a pas de lecteur qui bascule en mode sombre au fil des
+ * semaines comme un rapport client suivi dans la durée.
+ */
+
+.audit-prospect {
+  --ap-beige: #f2efea;
+  --ap-green: #16a34a;
+  --ap-green-d: #15803d;
+  --ap-green-bg: #eaf7ef;
+  --ap-green-b: #bee3c8;
+  --ap-ink: #1c1c1c;
+  --ap-ink2: #55534c;
+  --ap-ink3: #8a8778;
+  --ap-line: #dedacd;
+  --ap-line2: #eeebe1;
+  --ap-red: #b91c1c;
+  --ap-red-bg: #fbe9e7;
+  --ap-red-b: #f0b8b0;
+
+  background: var(--ap-beige);
+  color: var(--ap-ink);
+  font-family:
+    -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+}
+
+.audit-prospect .doc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.audit-prospect .ap-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 2rem;
+}
+.audit-prospect .ap-brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: var(--ap-green-d);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.audit-prospect .ap-brand-name {
+  font-weight: 800;
+  font-size: 0.9375rem;
+  letter-spacing: -0.02em;
+}
+.audit-prospect .ap-tag {
+  margin-left: auto;
+  font-size: 0.6875rem;
+  color: var(--ap-ink3);
+  font-weight: 600;
+}
+
+.audit-prospect h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 6px;
+}
+.audit-prospect .ap-sub {
+  color: var(--ap-ink2);
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+}
+
+.audit-prospect .ap-card {
+  background: #fff;
+  border: 1px solid var(--ap-line);
+  border-radius: 14px;
+  padding: 1.25rem 1.375rem;
+  margin-bottom: 1rem;
+}
+.audit-prospect .ap-lbl {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ap-ink3);
+  margin-bottom: 10px;
+}
+
+.audit-prospect .ap-pot {
+  background: var(--ap-green-bg);
+  border: 1.5px solid var(--ap-green-b);
+  border-radius: 14px;
+  padding: 1.25rem 1.375rem;
+  margin-bottom: 1rem;
+}
+.audit-prospect .ap-pot-num {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--ap-green-d);
+  line-height: 1;
+}
+.audit-prospect .ap-pot-lbl {
+  font-size: 0.8125rem;
+  color: var(--ap-ink2);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.audit-prospect .ap-drop {
+  background: var(--ap-red-bg);
+  border: 1.5px solid var(--ap-red-b);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+.audit-prospect .ap-drop b {
+  color: var(--ap-red);
+}
+
+.audit-prospect table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.audit-prospect th {
+  text-align: left;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ap-ink3);
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--ap-line);
+  font-weight: 700;
+}
+.audit-prospect td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ap-line2);
+}
+.audit-prospect tr:last-child td {
+  border-bottom: none;
+}
+.audit-prospect .ap-pos {
+  font-weight: 700;
+  color: var(--ap-green-d);
+}
+
+.audit-prospect .ap-foot {
+  margin-top: 2rem;
+  font-size: 0.6875rem;
+  color: var(--ap-ink3);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .audit-prospect .doc {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .audit-prospect h1 {
+    font-size: 1.375rem;
+  }
+  .audit-prospect .ap-pot-num {
+    font-size: 2rem;
+  }
+}

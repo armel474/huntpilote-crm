@@ -17,4 +17,6 @@ export const routes = {
   outil: (slug: string) => `/outils/${slug}`,
   pipeline: () => '/pipeline',
   parametres: (section?: string) => (section ? `/parametres?section=${section}` : '/parametres'),
+  /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
+  auditProspect: (token: string) => `/audit-prospect/${token}`,
 } as const;

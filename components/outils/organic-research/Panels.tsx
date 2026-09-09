@@ -10,7 +10,7 @@
  */
 import { Pill, Sec } from '@/components/ui/Atoms';
 import { IcoDown, IcoUp, IcoWarn } from '@/components/ui/Icons';
-import type { OrDrop, OrPageMove, OrQuery } from '@/lib/data/organic-research';
+import { computePotentialGain, type OrDrop, type OrPageMove, type OrQuery } from '@/lib/data/organic-research';
 
 function path(pts: readonly number[], W: number, H: number, invert?: boolean) {
   const max = Math.max(...pts);
@@ -181,7 +181,7 @@ export function PagesCard({ up, down }: { up: readonly OrPageMove[]; down: reado
 /* ── Potentiel estimé — le chiffre qui va dans la proposition ── */
 
 export function PotentialCard({ rows, mult }: { rows: readonly OrQuery[]; mult: number }) {
-  const gain = Math.round(rows.reduce((s, r) => s + r.vol * 0.06 * (mult - 1), 0));
+  const gain = computePotentialGain(rows, mult);
   return (
     <div className="pot-card">
       <div className="lbl" style={{ marginBottom: 4, color: 'var(--green-fg)' }}>

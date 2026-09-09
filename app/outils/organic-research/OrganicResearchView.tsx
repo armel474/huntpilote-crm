@@ -18,6 +18,7 @@ import { KeepCard, SavesCard } from '@/components/outils/SideCards';
 import { Lbl } from '@/components/ui/Atoms';
 import { IcoCheck, IcoDoc } from '@/components/ui/Icons';
 import { NEAR_LIMIT_QUOTA, readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
+import { AUDIT_PROSPECT } from '@/lib/data/audit-prospect';
 import { routes } from '@/lib/routes';
 import { EvolutionCard, PagesCard, PotentialCard, QueriesTable } from '@/components/outils/organic-research/Panels';
 import {
@@ -92,7 +93,12 @@ export function OrganicResearchView() {
   ];
 
   const action = generated ? (
-    <Link href={acctId ? routes.client(acctId) : '#'} style={{ textDecoration: 'none' }}>
+    <Link
+      href={routes.auditProspect(AUDIT_PROSPECT.token)}
+      target="_blank"
+      rel="noreferrer"
+      style={{ textDecoration: 'none' }}
+    >
       <span className="btn-out">
         <IcoCheck />
         Audit généré · voir le document

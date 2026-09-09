@@ -59,6 +59,11 @@ export const PAGES_DOWN: readonly OrPageMove[] = [
 export const POTENTIAL_ROWS: readonly OrQuery[] = QUERIES.filter((q) => q.pos >= 4 && q.pos <= 10);
 export const CTR_MULT = 2.4;
 
+/** Gain de trafic estimé si `rows` passait en top 3 — le chiffre qui va dans la proposition commerciale. */
+export function computePotentialGain(rows: readonly OrQuery[], mult: number): number {
+  return Math.round(rows.reduce((s, r) => s + r.vol * 0.06 * (mult - 1), 0));
+}
+
 export const OR_SAVES: readonly SaveEntry[] = [
   { date: '20 juil. 2026', tool: 'Organic Research', what: 'Audit de prospect généré et partagé' },
 ];
