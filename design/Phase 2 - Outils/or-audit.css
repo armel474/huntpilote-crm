@@ -1,0 +1,16 @@
+/* HuntPilote — Organic Research : styles propres à l'outil. */
+.or-chart{width:100%;height:130px;display:block}
+.or-legend{display:flex;gap:14px;font-size:0.5625rem;color:var(--fg3);margin-top:6px}
+.or-legend span{display:inline-flex;align-items:center;gap:5px}
+.or-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pot-card{border:1.5px solid var(--green-b);background:var(--green-m);border-radius:14px;padding:1rem 1.125rem}
+.pot-num{font-size:2.25rem;font-weight:800;letter-spacing:-0.04em;line-height:1;color:var(--green-fg)}
+.or-q-table{display:flex;flex-direction:column;gap:2px}
+.or-q-head{display:grid;grid-template-columns:1.6fr 70px 90px 1.2fr;gap:0 10px;padding:0 6px 6px;border-bottom:1px solid var(--bd-solid)}
+.or-q-row{display:grid;grid-template-columns:1.6fr 70px 90px 1.2fr;gap:2px 10px;align-items:center;padding:7px 6px;border-radius:8px}
+.or-q-row:hover{background:var(--bg-muted)}
+.or-q-url{font-family:var(--font-mono);font-size:0.625rem;color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--bd)}
+.page-row:first-child{border-top:none;padding-top:0}
+.page-u{flex:1;min-width:0;font-family:var(--font-mono);font-size:0.625rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:900px){.or-q-head{display:none}.or-q-row{grid-template-columns:1fr 1fr;row-gap:4px}.or-q-row>:nth-child(4){grid-column:1 / -1}}

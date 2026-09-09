@@ -1,0 +1,22 @@
+/* HuntPilote — Backlink Analyse : styles propres à l'outil. Dépend d'au-audit.css et de to-shell.css. */
+.dist-cell{padding:9px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg-surface)}
+.sum-val{font-size:1.5rem;font-weight:800;letter-spacing:-0.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:0.5625rem;font-weight:700;font-variant-numeric:tabular-nums}
+.mov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mov-col-head{display:flex;align-items:center;gap:6px;font-size:0.625rem;font-weight:700;color:var(--fg2);margin-bottom:7px}
+.prof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:11px}
+.anchor-row{display:flex;align-items:center;gap:8px;font-size:0.6875rem;padding:5px 0}
+.anchor-bar{flex:1;height:7px;border-radius:999px;background:var(--bg-muted);overflow:hidden}
+.anchor-bar>span{display:block;height:100%;background:var(--fg4)}
+.link-row{display:flex;align-items:center;gap:9px;padding:8px 0;border-top:1px solid var(--bd)}
+.link-row:first-child{border-top:none;padding-top:0}
+.link-ico{width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--bd-solid)}
+.link-dom{font-size:0.75rem;font-weight:700}
+.link-meta{font-size:0.625rem;color:var(--fg3);margin-top:2px}
+.auth-pill{font-size:0.5625rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:5px;background:var(--bg-muted);color:var(--fg2);white-space:nowrap}
+.comp-row{display:grid;grid-template-columns:11rem 1fr 3.5rem;gap:10px;align-items:center;padding:6px 0}
+.comp-bar{height:9px;border-radius:999px;background:var(--bg-muted);overflow:hidden}
+.comp-bar>span{display:block;height:100%;background:var(--fg4)}
+.comp-bar[data-self="true"]>span{background:var(--green)}
+@media (max-width:900px){.prof-grid{grid-template-columns:1fr 1fr}.mov-grid{grid-template-columns:1fr}}
+@media (max-width:768px){.prof-grid{grid-template-columns:1fr}.comp-row{grid-template-columns:1fr;row-gap:4px}.link-row{flex-wrap:wrap}.link-row .btn-out{min-height:40px}}

@@ -1,0 +1,33 @@
+/* HuntPilote — Site Audit : styles propres à l'outil. Dépend d'au-audit.css et de to-shell.css.
+   Ne redessine ni .subbar, ni .crit, ni .card. */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.sum-cell{padding:9px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg-surface)}
+.sum-val{font-size:1.5rem;font-weight:800;letter-spacing:-0.035em;line-height:1.05;font-variant-numeric:tabular-nums}
+.sum-thr{font-size:0.5625rem;color:var(--fg3);margin-top:3px;font-variant-numeric:tabular-nums}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:0.5625rem;font-weight:700;font-variant-numeric:tabular-nums}
+.diff-col{display:flex;flex-direction:column;gap:4px;min-width:0}
+.diff-li{font-family:var(--font-mono);font-size:0.5625rem;color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fam{border:1px solid var(--bd-solid);border-radius:12px;background:var(--bg-solid);overflow:hidden}
+.fam[data-sev="critique"]{border-left:3px solid var(--red)}
+.fam[data-sev="important"]{border-left:3px solid var(--yellow-b)}
+.fam[data-sev="opportunite"]{border-left:3px solid var(--blue-b)}
+.fam-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding-right:11px}
+.fam-head{display:flex;align-items:center;gap:9px;flex:1 1 20rem;min-width:0;padding:10px 11px;background:transparent;border:none;font-family:var(--font);color:var(--fg1);text-align:left;cursor:pointer;flex-wrap:wrap}
+.fam-head:hover{background:var(--bg-muted)}
+.fam-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.fam-ico{width:24px;height:24px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--bd-solid);background:var(--bg-surface);color:var(--fg2)}
+.fam-act{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.chev{color:var(--fg3);display:flex;transition:transform 170ms ease}
+.chev[data-open="true"]{transform:rotate(90deg)}
+.fam-body{padding:0 11px 11px;display:flex;flex-direction:column;gap:7px}
+.crit-more{flex-basis:100%;border-top:1px dashed var(--bd-strong);margin-top:8px;padding-top:6px;display:flex;flex-direction:column;gap:1px}
+.pg{display:grid;grid-template-columns:1fr auto auto;gap:9px;align-items:center;padding:5px 6px;border-radius:7px}
+.pg:hover{background:var(--bg-muted)}
+.pg-url{font-family:var(--font-mono);font-size:0.625rem;color:var(--fg1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.pg-meas{font-size:0.5625rem;color:var(--fg2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pg-btn{display:inline-flex;align-items:center;gap:4px;padding:0.16rem 0.5rem;border-radius:999px;border:1px solid var(--bd-strong);background:var(--bg-solid);color:var(--fg2);font-family:var(--font);font-size:0.5rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.pg-btn:hover{color:var(--fg1);border-color:var(--accent)}
+.pg-rest{font-size:0.5625rem;color:var(--fg3);padding:4px 6px}
+.prog-row{display:flex;align-items:center;gap:8px;font-size:0.625rem;color:var(--fg2);margin-bottom:5px}
+@media (max-width:900px){.sum-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:768px){.sum-grid{grid-template-columns:1fr}.fam-head{min-height:44px}.fam-act{width:100%;padding:0 11px 10px}.fam-act .btn-out{flex:1;justify-content:center;min-height:44px}.pg{grid-template-columns:1fr;row-gap:3px}.pg-btn{min-height:44px;justify-content:center}}

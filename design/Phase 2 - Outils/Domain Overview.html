@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Domain Overview</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="au-panels.jsx"></script>
+<script type="text/babel" src="to-panels.jsx"></script>
+<script type="text/babel" src="to-results.jsx"></script>
+<script type="text/babel" src="do-data.jsx"></script>
+<script type="text/babel" src="do-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="do-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const { NavSidebar, AIco, APill, TI, DOI, TOOL_ACCOUNTS, readLastAcct, writeLastAcct, ContextBar, Banner, CostCard, TrafficCard, KeywordsCard, AuthorityCard, TopPagesCard, TopQueriesCard, GeoCard, DoKeepCard, OVERVIEW, CHUTE_HISTORY, CHUTE_DATE } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.79" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const DO_STATES = [['ok', 'Résultats disponibles'], ['sansdonnees', 'Domaine sans données'], ['chute', 'Chute brutale détectée'], ['pipeline', 'Prospect déjà au pipeline'], ['nosel', 'Aucun compte sélectionné'], ['prospect', 'Prospect · instantané']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setState] = useState('ok');
+  const [acctId, setAcctId] = useState('');
+  const [filter, setFilter] = useState('prospects');
+  const [domain, setDomain] = useState('quincaillerie-fortin.ca');
+  const [created, setCreated] = useState(false);
+  const [attached, setAttached] = useState(null);
+  const selRef = useRef(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const fn = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', fn); return () => mq.removeEventListener('change', fn);
+  }, []);
+
+  const acct = TOOL_ACCOUNTS.find(a => a.id === acctId) || null;
+
+  const pickState = s => {
+    setState(s); setCreated(false); setAttached(null);
+    if (s === 'pipeline') { setAcctId('nordik'); setDomain('spanordik-estrie.ca'); }
+    else if (s === 'nosel') { setAcctId(''); setDomain(''); }
+    else if (s === 'prospect') { setAcctId('nordik'); setDomain('spanordik-estrie.ca'); }
+    else { setAcctId(''); setDomain('quincaillerie-fortin.ca'); }
+  };
+  const pickAcct = id => { setAcctId(id); const a = TOOL_ACCOUNTS.find(x => x.id === id); setDomain(a ? a.domain : domain); if (id && state === 'nosel') setState('ok'); if (!id) setState('nosel'); };
+
+  const chute = state === 'chute';
+  const sansdonnees = state === 'sansdonnees';
+  const alreadyPipeline = !!acct && acct.type === 'prospect' && domain === acct.domain;
+  const prospectAccounts = TOOL_ACCOUNTS.filter(a => a.type === 'prospect');
+  const quota = { used: 8240, max: 10000 };
+  const cost = { credits: 6, dollars: '0,03 $' };
+
+  const action = alreadyPipeline
+    ? <a href="Pipeline.html" style={{ textDecoration: 'none' }}><span className="btn-out"><AIco.Check />Déjà au pipeline · {acct.plan.split('· ')[1] || acct.plan}</span></a>
+    : created
+      ? <a href="Pipeline.html" style={{ textDecoration: 'none' }}><span className="btn-out"><AIco.Check />Prospect créé · voir le pipeline</span></a>
+      : <button className="btn-go" onClick={() => setCreated(true)} disabled={!domain || sansdonnees}><DOI.UserPlus />Créer un prospect</button>;
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="outil" activeTool="Domain Overview" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Domain Overview</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><a href="Cadre Outils.html">Outils</a><span>›</span><b>Domain Overview</b></div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => pickState(e.target.value)} aria-label="État de démonstration">{DO_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MB</div>
+        </div>
+
+        <ContextBar acct={acct} onAcct={pickAcct} filter={filter} onFilter={setFilter} domain={domain} onDomain={setDomain}
+          period="Analyse ponctuelle" onPeriod={() => {}} periods={['Analyse ponctuelle']} periodLabel="Analyse"
+          cost={cost} action={action} selRef={selRef} />
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          {(state === 'nosel' || chute || (!acct && !domain) || (attached)) && (
+            <div style={{ padding: '0.75rem 1.125rem 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {!acct && !domain && <Banner kind="nosel" onFocusAcct={() => selRef.current && selRef.current.focus()} />}
+              {chute && (
+                <div className="banner" data-tone="red">
+                  <span className="banner-ico"><AIco.Warn /></span>
+                  <div style={{ flex: 1, minWidth: '14rem' }}><b>Chute de 65 % du trafic estimé, datée du {CHUTE_DATE}.</b> C’est un signal à exploiter en prospection : un décrochage aussi net évoque une migration ratée, une pénalité ou un problème technique majeur — pas une erreur de mesure.</div>
+                </div>)}
+              {attached && <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}><APill label={`Rattaché à ${attached}`} tone="blue" sm icon={<AIco.Check />} /><a href="Pipeline.html" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Voir le pipeline</a></div>}
+            </div>)}
+
+          <div className="content">
+            <div className="col-main" style={{ gap: 10 }}>
+              {!domain && (
+                <div className="card" style={{ padding: '1.25rem 1.125rem' }}>
+                  <div className="empty" style={{ border: 'none', padding: 0 }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 800, marginBottom: 5 }}>Entrez un domaine à qualifier</div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, maxWidth: '28rem', margin: '0 auto' }}>Tapez un domaine dans le champ ci-dessus, ou choisissez un compte existant.</div>
+                  </div>
+                </div>)}
+
+              {domain && sansdonnees && (
+                <div className="card" style={{ padding: '1.25rem 1.125rem' }}>
+                  <div className="empty" style={{ border: 'none', padding: 0 }}>
+                    <div style={{ fontSize: '0.9375rem', fontWeight: 800, marginBottom: 5 }}>Aucune donnée pour {domain}</div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.55, maxWidth: '30rem', margin: '0 auto' }}>Site neuf ou trop petit pour être mesuré par le fournisseur. Ce n’est pas nécessairement un mauvais prospect — revenez dans quelques mois, ou qualifiez-le par un autre canal.</div>
+                  </div>
+                </div>)}
+
+              {domain && !sansdonnees && (
+                <div className="do-grid">
+                  <TrafficCard traffic={chute ? CHUTE_HISTORY[11] : OVERVIEW.traffic} prev={OVERVIEW.trafficPrev} history={chute ? CHUTE_HISTORY : OVERVIEW.trafficHistory} chute={chute} />
+                  <KeywordsCard n={OVERVIEW.keywords} buckets={OVERVIEW.buckets} />
+                  <AuthorityCard authority={OVERVIEW.authority} refDomains={OVERVIEW.refDomains} />
+                  <TopPagesCard rows={OVERVIEW.topPages} />
+                  <TopQueriesCard rows={OVERVIEW.topQueries} />
+                  <GeoCard rows={OVERVIEW.geo} />
+                </div>)}
+
+              {domain && !sansdonnees && !alreadyPipeline && !created && (
+                <div className="card" style={{ padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--fg2)' }}>Déjà en discussion avec ce domaine ?</span>
+                  <select className="attach-sel" defaultValue="" onChange={e => { if (e.target.value) { setAttached(TOOL_ACCOUNTS.find(a => a.id === e.target.value).name); e.target.value = ''; } }} aria-label="Rattacher à un prospect existant">
+                    <option value="" disabled>Rattacher à un prospect existant…</option>
+                    {prospectAccounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                  </select>
+                </div>)}
+            </div>
+            <div className="col-side">
+              <DoKeepCard prospect={!!acct && acct.type === 'prospect'} />
+              <CostCard cost={cost} quota={quota} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

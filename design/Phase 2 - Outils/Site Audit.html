@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Site Audit</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="au-panels.jsx"></script>
+<script type="text/babel" src="to-panels.jsx"></script>
+<script type="text/babel" src="to-results.jsx"></script>
+<script type="text/babel" src="sa-data.jsx"></script>
+<script type="text/babel" src="sa-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="sa-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+const { NavSidebar, AIco, APill, TI, SAI, TOOL_ACCOUNTS, readLastAcct, writeLastAcct, ContextBar, Banner, CostCard, SavesCard, CrawlSummary, CrawlRunning, FamilyGroup, FeedsCard, SaKeepCard, CRAWL, FAMILIES, SA_SEV, SA_SCOPES, SA_COSTS } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const SA_STATES = [['ok', 'Crawl terminé · problèmes détectés'], ['jamais', 'Jamais exploré sur ce domaine'], ['encours', 'Exploration en cours'], ['sain', 'Terminé sans problème détecté'], ['partiel', 'Exploration partielle · site bloquant'], ['volumineux', 'Site trop volumineux pour le quota'], ['nosel', 'Aucun compte sélectionné'], ['prospect', 'Prospect · instantané']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setState] = useState('ok');
+  const [acctId, setAcctId] = useState(() => readLastAcct() || 'acme');
+  const [filter, setFilter] = useState('tous');
+  const [scope, setScope] = useState(SA_SCOPES[0]);
+  const [domain, setDomain] = useState('');
+  const [q, setQ] = useState('');
+  const [sev, setSev] = useState('toutes');
+  const [open, setOpen] = useState(() => ({ indexation: false, erreurs: true, onpage: false, perf: true, structure: false }));
+  const [created, setCreated] = useState({});
+  const [saved, setSaved] = useState(false);
+  const [pct, setPct] = useState(18);
+  const selRef = useRef(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+  useEffect(() => {
+    if (state !== 'encours') return;
+    const t = setInterval(() => setPct(p => (p >= 96 ? 18 : p + 2)), 900); return () => clearInterval(t);
+  }, [state]);
+
+  const acct = TOOL_ACCOUNTS.find(a => a.id === acctId) || null;
+  useEffect(() => { setDomain(acct ? acct.domain : ''); setSaved(false); }, [acctId]);
+
+  const pickState = s => {
+    setState(s); setSaved(false); setCreated({}); setQ(''); setSev('toutes'); setPct(18);
+    if (s === 'nosel') setAcctId('');
+    else if (s === 'prospect') setAcctId('nordik');
+    else setAcctId(readLastAcct() || 'acme');
+  };
+  const pickAcct = id => {
+    setAcctId(id); setSaved(false);
+    if (id) { writeLastAcct(id); if (state === 'nosel') setState('ok'); } else setState('nosel');
+  };
+  const create = key => setCreated(m => ({ ...m, [key]: `P-05${String(Object.keys(m).length + 1).padStart(2, '0')}` }));
+
+  /* Filtrage vivant : la recherche porte sur les constats et sur les URL. */
+  const term = q.trim().toLowerCase();
+  const fams = useMemo(() => FAMILIES.map(f => ({
+    fam: f,
+    rows: f.rows.filter(r => (sev === 'toutes' || f.sev === sev) &&
+      (!term || r.c.toLowerCase().includes(term) || r.pgs.some(p => p[0].toLowerCase().includes(term)))),
+  })).filter(g => g.rows.length > 0), [term, sev]);
+
+  const nRows = fams.reduce((n, g) => n + g.rows.length, 0);
+  const nPages = fams.reduce((n, g) => n + g.rows.reduce((s, r) => s + r.n, 0), 0);
+  const prospect = !!acct && acct.type === 'prospect';
+  const running = state === 'encours';
+  const partial = state === 'partiel';
+  const noCrawl = state === 'jamais' || state === 'volumineux';
+  const showFams = (state === 'ok' || state === 'partiel' || state === 'prospect') && !!acct;
+  const bannerKind = prospect ? 'prospect' : !acct ? 'nosel' : null;
+  const cost = SA_COSTS[scope];
+  const quota = state === 'volumineux' ? { used: 9720, max: 10000 } : { used: 8240, max: 10000 };
+  const canSave = (state === 'ok' || state === 'sain' || state === 'prospect') && !!acct;
+  const saveHint = partial ? 'Relevé partiel : relancez une exploration complète avant d’enregistrer' : running ? 'Exploration en cours' : 'Aucun relevé complet à enregistrer';
+  const nCreated = Object.keys(created).length;
+  const allOpen = fams.length > 0 && fams.every(g => open[g.fam.id]);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="outil" activeTool="Site Audit" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Site Audit</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><a href="Cadre Outils.html">Outils</a><span>›</span><b>Site Audit</b>{acct && <><span>›</span><span>{acct.name}</span></>}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => pickState(e.target.value)} aria-label="État de démonstration">{SA_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MB</div>
+        </div>
+
+        <ContextBar acct={acct} onAcct={pickAcct} filter={filter} onFilter={setFilter} domain={domain} onDomain={setDomain}
+          period={scope} onPeriod={setScope} periods={SA_SCOPES} periodLabel="Portée de l’exploration" cost={cost}
+          saved={saved} onSave={() => setSaved(true)} canSave={canSave} saveHint={saveHint} selRef={selRef} />
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          {(bannerKind || partial || state === 'volumineux' || nCreated > 0) && (
+            <div style={{ padding: '0.75rem 1.125rem 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {bannerKind && <Banner kind={bannerKind} quota={quota} onFocusAcct={() => selRef.current && selRef.current.focus()} onRetry={() => pickState('encours')} />}
+              {partial && !bannerKind && (
+                <div className="banner" data-tone="yellow">
+                  <span className="banner-ico"><AIco.Warn /></span>
+                  <div style={{ flex: 1, minWidth: '14rem' }}><b>Le site a interrompu l’exploration après 128 pages (HTTP 429).</b> Les constats sont réels mais incomplets — ils ne peuvent pas être versés à la fiche comme un relevé du site entier.</div>
+                  <div className="banner-act"><button className="btn-out" onClick={() => pickState('encours')}><AIco.Refresh />Relancer plus lentement</button></div>
+                </div>)}
+              {state === 'volumineux' && !bannerKind && (
+                <div className="banner" data-tone="yellow">
+                  <span className="banner-ico"><TI.Coin /></span>
+                  <div style={{ flex: 1, minWidth: '14rem' }}><b>Site estimé à 4 100 pages — au-delà du quota disponible ({(quota.max - quota.used).toLocaleString('fr-CA')} crédits restants).</b> Réduisez la portée ou attendez le renouvellement du 1<sup>er</sup> octobre.</div>
+                  <div className="banner-act"><a href="Parametres.html" className="btn-out" style={{ textDecoration: 'none' }}>Voir la consommation</a></div>
+                </div>)}
+              {nCreated > 0 && <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}><APill label={`${nCreated} priorité${nCreated > 1 ? 's' : ''} créée${nCreated > 1 ? 's' : ''} depuis ce crawl`} tone="blue" sm icon={<AIco.Plus />} /><a href="Fiche Client v4.html" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Voir le plan d’action</a></div>}
+            </div>)}
+
+          <div className="content">
+            <div className="col-main">
+              {running && <CrawlRunning pct={pct} onStop={() => pickState('ok')} />}
+              {(state === 'ok' || state === 'sain' || state === 'partiel' || state === 'prospect') && acct &&
+                <CrawlSummary crawl={CRAWL} partial={partial} onRelaunch={() => pickState('encours')} />}
+
+              {noCrawl && acct && (
+                <div className="card" style={{ padding: '1.25rem 1.125rem' }}>
+                  <div className="empty" style={{ border: 'none', padding: 0 }}>
+                    <div style={{ fontSize: '0.9375rem', fontWeight: 800, marginBottom: 5 }}>{state === 'jamais' ? `Aucune exploration de ${domain || 'ce domaine'}` : 'Site trop volumineux pour une exploration complète'}</div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.55, maxWidth: '34rem', margin: '0 auto 12px' }}>
+                      {state === 'jamais'
+                        ? 'Le premier passage découvre les URL, relève les réponses HTTP, les balises on-page et les Core Web Vitals par gabarit. Comptez une dizaine de minutes pour un site de cette taille.'
+                        : 'Une exploration complète des 4 100 pages estimées dépasse le quota restant. Limitez la portée à 3 ou 5 niveaux de profondeur : les gabarits et les erreurs structurelles ressortent dès les premiers niveaux.'}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+                      <button className="btn-go" onClick={() => pickState('encours')} disabled={state === 'volumineux' && scope === SA_SCOPES[0]}><SAI.Play />{state === 'jamais' ? 'Lancer la première exploration' : 'Lancer avec la portée réduite'}</button>
+                      {state === 'volumineux' && <button className="btn-out" onClick={() => setScope(SA_SCOPES[2])}>Limiter à 3 niveaux · {SA_COSTS[SA_SCOPES[2]].credits} crédits</button>}
+                    </div>
+                    <div style={{ fontSize: '0.5625rem', color: 'var(--fg3)', marginTop: 9 }}>Portée choisie : {scope} · {cost.credits} crédits · {cost.dollars}</div>
+                  </div>
+                </div>)}
+
+              {state === 'sain' && (
+                <div className="empty" style={{ borderColor: 'var(--green-b)', background: 'var(--green-m)' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+                    <span className="crit-ico" data-st="ok"><AIco.Check /></span>
+                    <span style={{ fontSize: '0.8125rem', fontWeight: 800 }}>Aucun problème détecté sur les 412 pages</span>
+                  </div>
+                  <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, maxWidth: '32rem', margin: '0 auto' }}>Les cinq familles sont au seuil : indexation, erreurs, on-page, performance, structure. Rien à transformer en priorité — à verser au prochain rapport client comme preuve de valeur.</div>
+                </div>)}
+
+              {!acct && (
+                <div className="card" style={{ padding: '1.25rem 1.125rem' }}>
+                  <div className="empty" style={{ border: 'none', padding: 0 }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 800, marginBottom: 5 }}>Choisissez un compte pour explorer son site</div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, maxWidth: '30rem', margin: '0 auto 11px' }}>Le compte pré-remplit le domaine, fournit le crawl précédent comme référence et reçoit le relevé enregistré.</div>
+                    <button className="btn-out" onClick={() => selRef.current && selRef.current.focus()}>Choisir un compte</button>
+                  </div>
+                </div>)}
+
+              {showFams && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div className="res-bar">
+                    <input className="inp" value={q} onChange={e => setQ(e.target.value)} placeholder="Filtrer un constat ou une URL…" aria-label="Filtrer les constats" style={{ width: '13rem' }} />
+                    <select className="inp" value={sev} onChange={e => setSev(e.target.value)} aria-label="Filtrer par sévérité">
+                      <option value="toutes">Toutes les sévérités</option>
+                      <option value="critique">Critique</option>
+                      <option value="important">Important</option>
+                      <option value="opportunite">Opportunité</option>
+                    </select>
+                    <span style={{ fontSize: '0.625rem', color: 'var(--fg3)', fontVariantNumeric: 'tabular-nums' }}>{nRows} constats · {nPages} pages touchées</span>
+                    <button className="btn-out" onClick={() => setOpen(FAMILIES.reduce((m, f) => ({ ...m, [f.id]: !allOpen }), {}))}>{allOpen ? 'Tout replier' : 'Tout déplier'}</button>
+                    <button className="btn-out" style={{ marginLeft: 'auto' }}><TI.Export />Exporter en CSV</button>
+                  </div>
+
+                  {fams.length === 0
+                    ? (<div className="empty">
+                        <div style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 4 }}>Aucun constat pour ces filtres</div>
+                        <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, marginBottom: 10 }}>17 constats existent sur ce crawl, aucun ne correspond à la combinaison actuelle.</div>
+                        <button className="btn-out" onClick={() => { setQ(''); setSev('toutes'); }}><AIco.Refresh />Élargir la recherche</button>
+                      </div>)
+                    : fams.map(g => (
+                      <FamilyGroup key={g.fam.id} fam={g.fam} rows={g.rows} open={!!open[g.fam.id]}
+                        onToggle={() => setOpen(m => ({ ...m, [g.fam.id]: !m[g.fam.id] }))}
+                        created={created} onCreate={create} onCreatePage={create} />))}
+
+                  <div className="note-box" style={{ marginTop: 0 }}>
+                    <span style={{ color: 'var(--fg3)', display: 'flex', marginTop: 1 }}><TI.Info /></span>
+                    <span><b>Créer la priorité</b> existe à trois échelles : la famille entière, un constat (« les 23 liens brisés »), ou une page isolée. Les lignes déjà reprises affichent leur priorité ouverte plutôt qu’un bouton, pour éviter les doublons. <b>Enregistrer dans la fiche</b>, en haut, verse le relevé complet — c’est la seule action principale de l’écran.</span>
+                  </div>
+                </div>)}
+            </div>
+
+            <div className="col-side">
+              <FeedsCard />
+              <SaKeepCard prospect={prospect} />
+              <CostCard cost={cost} quota={quota} />
+              <SavesCard acct={acct} justSaved={saved} prospect={prospect} items={window.SA_SAVES} toolName="Site Audit" savedWhat={`${CRAWL.pages} pages · ${nRows} constats · dimension SEO`} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

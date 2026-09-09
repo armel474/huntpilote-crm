@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Cadre des outils</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="au-panels.jsx"></script>
+<script type="text/babel" src="to-panels.jsx"></script>
+<script type="text/babel" src="to-results.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+const { NavSidebar, AIco, APill, TI, TOOL_ACCOUNTS, TOOL_ROWS, readLastAcct, writeLastAcct, ContextBar, Banner, ResultsRegion, KeepCard, CostCard, SavesCard } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const TO_STATES = [['ok', 'Résultats disponibles'], ['nosel', 'Aucun compte sélectionné'], ['loading', 'Chargement des résultats'], ['prospect', 'Prospect sélectionné · instantané'], ['filtre', 'Résultat vide après filtrage'], ['sain', 'Résultat vide · rien à corriger'], ['nonconnecte', 'Intégration non connectée'], ['erreur', 'Erreur du fournisseur'], ['quota', 'Quota proche de la limite']];
+const COSTS = { '30 derniers jours': { credits: 12, dollars: '0,06 $', weight: 'Requête légère' }, '3 derniers mois': { credits: 26, dollars: '0,13 $', weight: 'Requête moyenne' }, '12 derniers mois': { credits: 48, dollars: '0,24 $', weight: 'Requête lourde' } };
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setState] = useState('ok');
+  const [acctId, setAcctId] = useState(() => readLastAcct() || 'acme');
+  const [filter, setFilter] = useState('tous');
+  const [period, setPeriod] = useState('30 derniers jours');
+  const [domain, setDomain] = useState('');
+  const [q, setQ] = useState('');
+  const [only, setOnly] = useState('tous');
+  const [created, setCreated] = useState({});
+  const [saved, setSaved] = useState(false);
+  const selRef = useRef(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+
+  const acct = TOOL_ACCOUNTS.find(a => a.id === acctId) || null;
+  useEffect(() => { setDomain(acct ? acct.domain : ''); setSaved(false); }, [acctId]);
+
+  const pickState = s => {
+    setState(s); setSaved(false); setCreated({}); setQ(''); setOnly('tous');
+    if (s === 'nosel') setAcctId('');
+    else if (s === 'prospect') setAcctId('nordik');
+    else setAcctId(readLastAcct() || 'acme');
+  };
+  const pickAcct = id => {
+    setAcctId(id); setSaved(false);
+    if (id) { writeLastAcct(id); if (state === 'nosel') setState('ok'); } else setState('nosel');
+  };
+
+  const rows = useMemo(() => TOOL_ROWS.filter(r =>
+    (!q.trim() || r.c.toLowerCase().includes(q.trim().toLowerCase())) &&
+    (only === 'tous' || (only === 'ok' ? r.st === 'ok' : r.st !== 'ok'))), [q, only]);
+
+  let status = state === 'prospect' || state === 'quota' ? 'ok' : state;
+  if (status === 'ok' && rows.length === 0) status = 'filtre';
+  const prospect = !!acct && acct.type === 'prospect';
+  const bannerKind = state === 'nonconnecte' ? 'nonconnecte' : state === 'erreur' ? 'erreur' : state === 'quota' ? 'quota' : prospect ? 'prospect' : !acct ? 'nosel' : null;
+  const cost = COSTS[period];
+  const quota = state === 'quota' ? { used: 9610, max: 10000 } : { used: 8240, max: 10000 };
+  const canSave = (status === 'ok' || status === 'sain') && !!acct;
+  const nCreated = Object.keys(created).length;
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="outil" activeTool="Outil de démonstration" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Outil de démonstration</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><span>Outil</span><span>›</span><b>Cadre commun</b>{acct && <><span>›</span><span>{acct.name}</span></>}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => pickState(e.target.value)} aria-label="État de démonstration">{TO_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MB</div>
+        </div>
+
+        <ContextBar acct={acct} onAcct={pickAcct} filter={filter} onFilter={setFilter} domain={domain} onDomain={setDomain}
+          period={period} onPeriod={setPeriod} cost={cost} saved={saved} onSave={() => setSaved(true)} canSave={canSave} selRef={selRef} />
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          {(bannerKind || nCreated > 0) && (
+            <div style={{ padding: '0.75rem 1.125rem 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {bannerKind && <Banner kind={bannerKind} quota={quota} onRetry={() => pickState('loading')} onFocusAcct={() => selRef.current && selRef.current.focus()} />}
+              {nCreated > 0 && <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}><APill label={`${nCreated} priorité${nCreated > 1 ? 's' : ''} créée${nCreated > 1 ? 's' : ''} depuis cet outil`} tone="blue" sm icon={<AIco.Plus />} /><a href="Fiche Client v4.html" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Voir le plan d’action</a></div>}
+            </div>)}
+          <div className="content">
+            <div className="col-main">
+              <ResultsRegion status={status} rows={rows} created={created} onCreate={c => setCreated(m => ({ ...m, [c]: `P-05${String(Object.keys(m).length + 1).padStart(2, '0')}` }))}
+                q={q} onQ={setQ} only={only} onOnly={setOnly} onWiden={() => { setQ(''); setOnly('tous'); }}
+                onFocusAcct={() => selRef.current && selRef.current.focus()} onRetry={() => pickState('loading')} />
+            </div>
+            <div className="col-side">
+              <KeepCard prospect={prospect} />
+              <CostCard cost={cost} quota={quota} />
+              <SavesCard acct={acct} justSaved={saved} prospect={prospect} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

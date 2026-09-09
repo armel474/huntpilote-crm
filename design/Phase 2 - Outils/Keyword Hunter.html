@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Keyword Hunter</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="au-panels.jsx"></script>
+<script type="text/babel" src="to-panels.jsx"></script>
+<script type="text/babel" src="to-results.jsx"></script>
+<script type="text/babel" src="kh-data.jsx"></script>
+<script type="text/babel" src="kh-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="kh-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+const { NavSidebar, AIco, APill, TI, KHI, TOOL_ACCOUNTS, readLastAcct, writeLastAcct, ContextBar, Banner, SavesCard, SeedFilters, ThemeGroup, KhKeepCard, SUGGESTIONS, KH_SAVES } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.79" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const KH_STATES = [['ok', 'Résultats disponibles'], ['recherche', 'Exploration en cours'], ['vide', 'Aucun résultat pour ce départ'], ['nosel', 'Aucun compte sélectionné'], ['prospect', 'Prospect · instantané']];
+const F0 = { volMin: 0, diffMax: 100, intent: 'toutes', length: 'toutes', question: false };
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [state, setState] = useState('ok');
+  const [acctId, setAcctId] = useState(() => readLastAcct() || 'acme');
+  const [filter, setFilter] = useState('tous');
+  const [domain, setDomain] = useState('');
+  const [seed, setSeed] = useState('toiture montréal');
+  const [f, setF] = useState(F0);
+  const [open, setOpen] = useState({});
+  const [sel, setSel] = useState(() => new Set());
+  const [briefs, setBriefs] = useState({});
+  const [tracked, setTracked] = useState(0);
+  const [saved, setSaved] = useState(false);
+  const selRef = useRef(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const fn = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', fn); return () => mq.removeEventListener('change', fn);
+  }, []);
+
+  const acct = TOOL_ACCOUNTS.find(a => a.id === acctId) || null;
+  useEffect(() => { setDomain(acct ? acct.domain : ''); setSaved(false); }, [acctId]);
+
+  const pickState = s => {
+    setState(s); setSaved(false); setSel(new Set()); setBriefs({}); setTracked(0);
+    setF(s === 'vide' ? { ...F0, volMin: 950 } : F0);
+    if (s === 'nosel') setAcctId('');
+    else if (s === 'prospect') setAcctId('nordik');
+    else setAcctId(readLastAcct() || 'acme');
+  };
+  const pickAcct = id => {
+    setAcctId(id); setSaved(false);
+    if (id) { writeLastAcct(id); if (state === 'nosel') setState('ok'); } else setState('nosel');
+  };
+
+  const words = c => c.trim().split(/\s+/).length;
+  const filtered = useMemo(() => SUGGESTIONS.filter(r =>
+    r.vol >= f.volMin && r.diff <= f.diffMax &&
+    (f.intent === 'toutes' || r.intent === f.intent) &&
+    (f.length === 'toutes' || (f.length === 'courte' ? words(r.c) <= 3 : words(r.c) >= 5)) &&
+    (!f.question || r.question)), [f]);
+  const themes = useMemo(() => [...new Set(filtered.map(r => r.theme))], [filtered]);
+
+  const toggleRow = c => setSel(s => { const n = new Set(s); n.has(c) ? n.delete(c) : n.add(c); return n; });
+  const toggleAll = (rows, on) => setSel(s => { const n = new Set(s); rows.forEach(r => on ? n.add(r.c) : n.delete(r.c)); return n; });
+  const makeBrief = th => setBriefs(m => ({ ...m, [th]: `B-021${Object.keys(m).length + 1}` }));
+  const addTracking = () => { setTracked(t => t + sel.size); setSel(new Set()); };
+
+  const prospect = !!acct && acct.type === 'prospect';
+  const bannerKind = prospect ? 'prospect' : !acct ? 'nosel' : null;
+  const canSave = !!acct && sel.size > 0;
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="outil" activeTool="Keyword Hunter" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Keyword Hunter</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><a href="Cadre Outils.html">Outils</a><span>›</span><b>Keyword Hunter</b>{acct && <><span>›</span><span>{acct.name}</span></>}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={state} onChange={e => pickState(e.target.value)} aria-label="État de démonstration">{KH_STATES.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MB</div>
+        </div>
+
+        <ContextBar acct={acct} onAcct={pickAcct} filter={filter} onFilter={setFilter} domain={domain} onDomain={setDomain}
+          period="Point de départ" onPeriod={() => {}} periods={[seed]} periodLabel="Point de départ"
+          costText={`${filtered.length} suggestions`} costTitle="Nombre de suggestions après filtrage"
+          saved={saved} onSave={() => setSaved(true)} canSave={canSave} saveHint="Sélectionnez au moins une requête" selRef={selRef} />
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          {(bannerKind || tracked > 0) && (
+            <div style={{ padding: '0.75rem 1.125rem 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {bannerKind && <Banner kind={bannerKind} onFocusAcct={() => selRef.current && selRef.current.focus()} />}
+              {tracked > 0 && <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}><APill label={`${tracked} mot${tracked > 1 ? 's' : ''}-clé${tracked > 1 ? 's' : ''} ajouté${tracked > 1 ? 's' : ''} au suivi de positions`} tone="blue" sm icon={<AIco.Plus />} /><a href="Position Tracking.html" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Voir le suivi</a></div>}
+            </div>)}
+
+          <div className="content">
+            <div className="col-main">
+              {!acct && (
+                <div className="card" style={{ padding: '1.25rem 1.125rem' }}>
+                  <div className="empty" style={{ border: 'none', padding: 0 }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 800, marginBottom: 5 }}>Choisissez un compte pour lancer une exploration</div>
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, maxWidth: '30rem', margin: '0 auto 11px' }}>Le compte reçoit la sélection enregistrée et le suivi de positions ajouté.</div>
+                    <button className="btn-out" onClick={() => selRef.current && selRef.current.focus()}>Choisir un compte</button>
+                  </div>
+                </div>)}
+
+              {acct && (
+                <SeedFilters seed={seed} onSeed={setSeed} onExplore={() => pickState('recherche')} f={f} onF={setF} />)}
+
+              {acct && state === 'recherche' && (
+                <div className="card" style={{ padding: '0.875rem 1rem' }} aria-live="polite">
+                  <div className="lbl" style={{ marginBottom: 6 }}>Exploration de « {seed} »…</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>{[0, 1, 2].map(i => <div key={i} className="skel" style={{ height: 40, opacity: 1 - i * 0.22 }}></div>)}</div>
+                </div>)}
+
+              {acct && state !== 'recherche' && (<>
+                {sel.size > 0 && (
+                  <div className="sel-bar">
+                    <AIco.Check /><b style={{ fontSize: '0.75rem' }}>{sel.size} requête{sel.size > 1 ? 's' : ''} sélectionnée{sel.size > 1 ? 's' : ''}</b>
+                    <button className="btn-out" onClick={addTracking}><KHI.Srch />Ajouter au suivi de positions</button>
+                    <span style={{ fontSize: '0.625rem', color: 'var(--fg2)' }}>ou enregistrez la sélection dans la fiche, en haut</span>
+                  </div>)}
+
+                {themes.length === 0
+                  ? (<div className="empty">
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 4 }}>Aucune suggestion pour « {seed} »</div>
+                      <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.5, marginBottom: 10 }}>Les filtres actifs excluent tous les résultats, ou ce départ n’a rien renvoyé chez le fournisseur.</div>
+                      <button className="btn-out" onClick={() => setF(F0)}><AIco.Refresh />Réinitialiser les filtres</button>
+                    </div>)
+                  : themes.map(th => {
+                    const rows = filtered.filter(r => r.theme === th);
+                    return <ThemeGroup key={th} theme={th} rows={rows} open={open[th] !== false} onToggle={() => setOpen(o => ({ ...o, [th]: o[th] === false }))}
+                      sel={sel} onToggleRow={toggleRow} onToggleAll={toggleAll} brief={briefs[th]} onBrief={makeBrief} f={f} />;
+                  })}
+              </>)}
+            </div>
+            <div className="col-side">
+              <KhKeepCard prospect={prospect} />
+              <SavesCard acct={acct} justSaved={saved} prospect={prospect} items={KH_SAVES} toolName="Keyword Hunter" savedWhat={`${sel.size || 8} requêtes sélectionnées`} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

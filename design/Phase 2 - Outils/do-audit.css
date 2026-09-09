@@ -1,0 +1,17 @@
+/* HuntPilote — Domain Overview : styles propres à l'outil. Vue dense, sans défilement. */
+.do-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.do-card{padding:0.875rem 1rem;display:flex;flex-direction:column;gap:8px}
+.do-big{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.do-num{font-size:1.75rem;font-weight:800;letter-spacing:-0.035em;line-height:1;font-variant-numeric:tabular-nums}
+.spark{width:100%;height:44px;display:block}
+.bkt-row{display:flex;align-items:center;gap:8px;font-size:0.6875rem}
+.bkt-bar{flex:1;height:8px;border-radius:999px;background:var(--bg-muted);overflow:hidden}
+.bkt-bar>span{display:block;height:100%}
+.top-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:0.6875rem}
+.top-row .u{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-mono);font-size:0.625rem}
+.geo-row{display:grid;grid-template-columns:7rem 1fr 3rem;gap:8px;align-items:center;padding:3px 0;font-size:0.6875rem}
+.geo-bar{height:8px;border-radius:999px;background:var(--bg-muted);overflow:hidden}
+.geo-bar>span{display:block;height:100%;background:var(--green-b)}
+.attach-sel{font-family:var(--font);font-size:0.6875rem;font-weight:600;color:var(--fg2);background:var(--bg-solid);border:1px solid var(--bd-strong);border-radius:999px;padding:0.42rem 0.7rem;outline:none;cursor:pointer}
+@media (max-width:1180px){.do-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:768px){.do-grid{grid-template-columns:1fr}}
