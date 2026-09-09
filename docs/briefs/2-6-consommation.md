@@ -29,10 +29,23 @@ SEO, design. Une priorité appartient toujours à l'une des trois.
 
 ## L'écran à concevoir
 
-**Suivi de consommation**, route `/outils/consommation`.
+**Suivi de consommation**, dans **Paramètres** — 6ᵉ onglet de la nav secondaire
+(`.set-nav`), à côté de Profil, Équipe, Intégrations, Notifications, Abonnement.
+Une seule route, `/parametres` ; l'onglet change une section affichée, comme les
+cinq autres (voir `Parametres.html`, déjà dans le projet).
 
 Les données SEO sont facturées à l'appel. Cet écran répond à : *où part l'argent,
 et est-ce que ça vaut le coup ?*
+
+## Pourquoi ce n'est pas un outil
+
+**Cet écran n'est pas rattaché au cadre commun de 2.1.** Aucun sélecteur de
+client en tête, aucune des deux actions constantes : ce n'est pas un outil qu'on
+interroge, c'est une vue agence sur tous les comptes à la fois. Ne le mets ni
+dans le dropdown « Outil » de la barre latérale, ni derrière la route
+`/outils/...` — les deux laisseraient croire qu'il suit les mêmes règles que
+Site Audit ou Keyword Hunter. Le fil d'Ariane doit lire
+« HuntPilote › Paramètres › Consommation », jamais « › Outils › … ».
 
 ## Le point structurant
 
@@ -70,3 +83,5 @@ réglage sur la facture.
 
 - Ne pas en faire une page de facturation : c'est un outil de pilotage.
 - Ne pas afficher des unités d'API brutes sans les traduire en dollars.
+- Ne pas le placer dans le dropdown « Outil » de la barre latérale, ni sous
+  `/outils/...` : ce n'est pas un des sept outils du cadre commun.
