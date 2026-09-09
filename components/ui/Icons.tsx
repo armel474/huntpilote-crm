@@ -547,11 +547,11 @@ export const IcoLogo = (p: IconProps) => (
   </Svg>
 );
 
-/* ── Position Tracking / Backlink Analyse ── */
+/* ── Position Tracking / Backlink Analyse / Keyword Hunter / Keyword Gap ── */
 
 /** Trait plat — variation stable, ni hausse ni baisse. */
 export const IcoFlat = (p: IconProps) => (
-  <Svg size={9} strokeWidth={2.5} {...p}>
+  <Svg size={11} strokeWidth={2.4} {...p}>
     <line x1="5" y1="12" x2="19" y2="12" />
   </Svg>
 );
@@ -581,5 +581,21 @@ export const IcoBan = (p: IconProps) => (
   <Svg size={12} {...p}>
     <circle cx="12" cy="12" r="9" />
     <line x1="5.5" y1="18.5" x2="18.5" y2="5.5" />
+  </Svg>
+);
+
+/** Tendance saisonnière — pic en hiver. */
+export const IcoSnow = (p: IconProps) => (
+  <Svg size={11} {...p}>
+    <line x1="12" y1="2" x2="12" y2="22" />
+    <line x1="4.9" y1="7" x2="19.1" y2="17" />
+    <line x1="4.9" y1="17" x2="19.1" y2="7" />
+  </Svg>
+);
+
+/** Requête où seul le compte suit — Keyword Gap. */
+export const IcoStar = (p: IconProps) => (
+  <Svg size={12} {...p}>
+    <path d="M12 2l2.4 7.4H22l-6 4.4 2.4 7.4L12 16.8l-6.4 4.4L8 13.8l-6-4.4h7.6z" />
   </Svg>
 );
