@@ -599,3 +599,31 @@ export const IcoStar = (p: IconProps) => (
     <path d="M12 2l2.4 7.4H22l-6 4.4 2.4 7.4L12 16.8l-6.4 4.4L8 13.8l-6-4.4h7.6z" />
   </Svg>
 );
+
+/* ── Domain Overview / Organic Research ── */
+
+/** Bouclier — autorité du domaine. */
+export const IcoShield = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </Svg>
+);
+
+/** Carte — répartition géographique du trafic. */
+export const IcoMap = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+    <line x1="8" y1="2" x2="8" y2="18" />
+    <line x1="16" y1="6" x2="16" y2="22" />
+  </Svg>
+);
+
+/** Personne avec plus — créer un prospect. */
+export const IcoUserPlus = (p: IconProps) => (
+  <Svg size={12} {...p}>
+    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+    <circle cx="8.5" cy="7" r="4" />
+    <line x1="20" y1="8" x2="20" y2="14" />
+    <line x1="17" y1="11" x2="23" y2="11" />
+  </Svg>
+);
