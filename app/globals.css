@@ -2688,3 +2688,217 @@ body:has(.page-scroll) {
     justify-content: center;
   }
 }
+
+/* ============================================================
+   Domain Overview — session 2.5. Vue dense, sans défilement :
+   six cartes de mesure sur une grille de trois colonnes.
+   ============================================================ */
+.do-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.do-card {
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.do-big {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.do-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.spark {
+  width: 100%;
+  height: 44px;
+  display: block;
+}
+.bkt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+}
+.bkt-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+.bkt-bar > span {
+  display: block;
+  height: 100%;
+}
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.6875rem;
+}
+.top-row .u {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+}
+.geo-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr 3rem;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 0.6875rem;
+}
+.geo-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+.geo-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--green-b);
+}
+/* Rattacher à un prospect existant — sélecteur ponctuel, sous la grille de résultats. */
+.attach-sel {
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--fg2);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-strong);
+  border-radius: 999px;
+  padding: 0.42rem 0.7rem;
+  outline: none;
+  cursor: pointer;
+}
+@media (max-width: 1180px) {
+  .do-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .do-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   Organic Research — session 2.5. Exploration approfondie :
+   évolution datée, requêtes filtrables, potentiel chiffré.
+   ============================================================ */
+.or-chart {
+  width: 100%;
+  height: 130px;
+  display: block;
+}
+.or-legend {
+  display: flex;
+  gap: 14px;
+  font-size: 0.5625rem;
+  color: var(--fg3);
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.or-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.or-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pot-card {
+  border: 1.5px solid var(--green-b);
+  background: var(--green-m);
+  border-radius: 14px;
+  padding: 1rem 1.125rem;
+}
+.pot-num {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--green-fg);
+}
+.or-q-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.or-q-head {
+  display: grid;
+  grid-template-columns: 1.6fr 70px 90px 1.2fr;
+  gap: 0 10px;
+  padding: 0 6px 6px;
+  border-bottom: 1px solid var(--bd-solid);
+}
+.or-q-row {
+  display: grid;
+  grid-template-columns: 1.6fr 70px 90px 1.2fr;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 7px 6px;
+  border-radius: 8px;
+}
+.or-q-row:hover {
+  background: var(--bg-muted);
+}
+.or-q-url {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--fg2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.page-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--bd);
+}
+.page-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.page-u {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 900px) {
+  .or-q-head {
+    display: none;
+  }
+  .or-q-row {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 4px;
+  }
+  .or-q-row > :nth-child(4) {
+    grid-column: 1 / -1;
+  }
+}
