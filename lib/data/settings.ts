@@ -1,8 +1,15 @@
-/** Paramètres de l'agence — équipe, intégrations, notifications, abonnement. */
+/** Paramètres de l'agence — équipe, intégrations, notifications, abonnement, consommation. */
 
 import type { Tone } from '@/components/ui/Atoms';
+import { CLIENTS } from '@/lib/data/clients';
 
-export type SectionId = 'agence' | 'equipe' | 'integrations' | 'notifications' | 'facturation';
+export type SectionId =
+  | 'agence'
+  | 'equipe'
+  | 'integrations'
+  | 'notifications'
+  | 'facturation'
+  | 'consommation';
 
 export const TEAM = [
   {
@@ -84,3 +91,83 @@ export const PLAN_USAGE: [string, number, number, string][] = [
   ["Sièges d'équipe", 4, 5, ''],
   ['Stockage rapports', 2.4, 10, ' Go'],
 ];
+
+/* ── Suivi de consommation — appels facturés aux outils SEO ── */
+
+export const fmt$ = (n: number) => `${n.toLocaleString('fr-CA')} $`;
+
+/** Budget mensuel de l'agence pour les appels aux outils SEO. */
+export const CONSO_BUDGET = 380;
+/** Consommation d'un mois « normal », référence pour la mise à l'échelle des états de démo. */
+export const CONSO_BASE_USED = 296;
+
+/** Coût de base (mois « normal ») par compte suivi — rattaché à un vrai compte de `CLIENTS`. */
+export const CONSO_CLIENT_COSTS: { clientId: string; base: number }[] = [
+  { clientId: 'acme-corp', base: 74 },
+  { clientId: 'boreal-immobilier', base: 96 },
+  { clientId: 'clinique-lavoie', base: 88 },
+  { clientId: 'spa-nordik-estrie', base: 22 },
+  { clientId: 'quincaillerie-fortin', base: 16 },
+];
+
+/** Résout un coût de compte vers le vrai enregistrement client, avec son MRR numérique. */
+export function resolveConsoClient(clientId: string) {
+  const entry = CLIENTS.find((c) => c.id === clientId);
+  if (!entry) throw new Error(`Compte inconnu pour la consommation : ${clientId}`);
+  const mrr = entry.type === 'client' ? Number(entry.mrr.replace(/[^\d]/g, '')) : 0;
+  return { name: entry.name, type: entry.type, mrr };
+}
+
+export type ConsoCallType = { id: string; label: string; base: number };
+
+export const CONSO_TYPES: ConsoCallType[] = [
+  { id: 'crawl', label: 'Crawl de sites', base: 118 },
+  { id: 'positions', label: 'Suivi de positions', base: 92 },
+  { id: 'backlinks', label: 'Backlink Analyse', base: 52 },
+  { id: 'serp', label: 'SERP locales', base: 34 },
+];
+
+export type ConsoMonth = { m: string; used: number };
+
+export const CONSO_HISTORY: ConsoMonth[] = [
+  { m: 'oct. 25', used: 268 },
+  { m: 'nov. 25', used: 302 },
+  { m: 'déc. 25', used: 341 },
+  { m: 'janv. 26', used: 289 },
+  { m: 'févr. 26', used: 274 },
+  { m: 'mars 26', used: 296 },
+  { m: 'avr. 26', used: 310 },
+  { m: 'mai 26', used: 288 },
+  { m: 'juin 26', used: 322 },
+  { m: 'juil. 26', used: 265 },
+  { m: 'août 26', used: 301 },
+  { m: 'sept. 26', used: CONSO_BASE_USED },
+];
+
+/** Réglages qui pilotent le coût — modifiables dans l'écran, effet visible en direct. */
+export const CONSO_SETTINGS = {
+  freq: { options: ['Mensuel', 'Bihebdomadaire', 'Hebdomadaire'] as const, mult: [0.6, 1, 1.6] },
+  kw: { min: 10, max: 100, step: 5 },
+  zones: { options: ['1 zone', '3 zones', '5 zones'] as const, mult: [0.5, 1, 1.8] },
+};
+
+export type ConsoStateId = 'ok' | 'approche' | 'depasse' | 'premier' | 'clientover';
+
+/** États de démonstration, dans l'ordre du sélecteur. */
+export const CONSO_STATES: [ConsoStateId, string][] = [
+  ['ok', 'Consommation normale'],
+  ['approche', 'Approche du budget'],
+  ['depasse', 'Budget dépassé'],
+  ['premier', 'Premier mois'],
+  ['clientover', 'Client au-dessus du MRR'],
+];
+
+export type ConsoScenario = { used: number; day: number; history: ConsoMonth[] };
+
+export const CONSO_SCENARIOS: Record<ConsoStateId, ConsoScenario> = {
+  ok: { used: 210, day: 20, history: CONSO_HISTORY },
+  approche: { used: 350, day: 28, history: CONSO_HISTORY },
+  depasse: { used: 395, day: 26, history: CONSO_HISTORY },
+  premier: { used: 42, day: 6, history: [] },
+  clientover: { used: 210, day: 20, history: CONSO_HISTORY },
+};

@@ -8,19 +8,31 @@ import {
   IcoBell,
   IcoCard,
   IcoCheck,
+  IcoCoin,
   IcoLogo,
   IcoMore,
   IcoPlus,
   IcoTool,
   IcoUsers,
+  IcoWarn,
   type IconProps,
 } from '@/components/ui/Icons';
 import {
   AGENCY_INTEGRATIONS,
+  CONSO_BUDGET,
+  CONSO_BASE_USED,
+  CONSO_CLIENT_COSTS,
+  CONSO_SCENARIOS,
+  CONSO_SETTINGS,
+  CONSO_STATES,
+  CONSO_TYPES,
   NOTIFICATIONS,
   PLAN_USAGE,
   ROLE_TONES,
   TEAM,
+  fmt$,
+  resolveConsoClient,
+  type ConsoStateId,
   type Integration,
   type Notification,
   type SectionId,
@@ -55,6 +67,7 @@ const SECTIONS: { id: SectionId; label: string; Icon: (p: IconProps) => React.Re
   { id: 'integrations', label: 'Intégrations', Icon: IcoTool },
   { id: 'notifications', label: 'Notifications', Icon: IcoBell },
   { id: 'facturation', label: 'Abonnement', Icon: IcoCard },
+  { id: 'consommation', label: 'Consommation', Icon: IcoCoin },
 ];
 
 function Field({
@@ -665,12 +678,468 @@ function FacturationPanel() {
   );
 }
 
+function ConsommationPanel({
+  state,
+  onState,
+  freq,
+  onFreq,
+  kw,
+  onKw,
+  zones,
+  onZones,
+  saved,
+  onSave,
+}: {
+  state: ConsoStateId;
+  onState: (s: ConsoStateId) => void;
+  freq: (typeof CONSO_SETTINGS.freq.options)[number];
+  onFreq: (v: (typeof CONSO_SETTINGS.freq.options)[number]) => void;
+  kw: number;
+  onKw: (v: number) => void;
+  zones: (typeof CONSO_SETTINGS.zones.options)[number];
+  onZones: (v: (typeof CONSO_SETTINGS.zones.options)[number]) => void;
+  saved: boolean;
+  onSave: () => void;
+}) {
+  const scen = CONSO_SCENARIOS[state];
+  const scale = scen.used / CONSO_BASE_USED;
+  const clients = CONSO_CLIENT_COSTS.map((c) => {
+    const info = resolveConsoClient(c.clientId);
+    let cost = Math.round(c.base * scale);
+    if (state === 'clientover' && info.name === 'Boréal Immobilier') cost = Math.round(cost * 3.2);
+    return { ...info, cost };
+  });
+  const types = CONSO_TYPES.map((t) => ({ ...t, cost: Math.round(t.base * scale) }));
+  const totalTypes = types.reduce((s, t) => s + t.cost, 0);
+  const projection = Math.round((scen.used / scen.day) * 30);
+  const pct = Math.round((scen.used / CONSO_BUDGET) * 100);
+  const overClient = clients.find((c) => c.mrr > 0 && c.cost >= c.mrr);
+  const S = CONSO_SETTINGS;
+  const impactFreq = Math.round(
+    CONSO_TYPES.find((t) => t.id === 'crawl')!.base *
+      (S.freq.mult[S.freq.options.indexOf(freq)] - S.freq.mult[1]),
+  );
+  const impactKw = Math.round(CONSO_TYPES.find((t) => t.id === 'positions')!.base * ((kw - 30) / 30));
+  const impactZones = Math.round(
+    CONSO_TYPES.find((t) => t.id === 'serp')!.base *
+      (S.zones.mult[S.zones.options.indexOf(zones)] - S.zones.mult[1]),
+  );
+  const impact = impactFreq + impactKw + impactZones;
+  const alert: 'red' | 'yellow' | null =
+    state === 'depasse' ? 'red' : state === 'approche' ? 'yellow' : overClient ? 'red' : null;
+
+  return (
+    <div>
+      <SectionHead
+        title="Consommation"
+        sub="Où part l'argent, et est-ce que ça vaut le coup ?"
+        action={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <select
+              className="fld"
+              style={{ width: 'auto', padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}
+              value={state}
+              onChange={(e) => onState(e.target.value as ConsoStateId)}
+              aria-label="État de démonstration"
+            >
+              {CONSO_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+            {saved ? (
+              <Badge label="Réglages à jour" tone="green" />
+            ) : (
+              <button className="btn-pri" type="button" onClick={onSave}>
+                <IcoCheck size={12} />
+                Enregistrer les réglages
+              </button>
+            )}
+          </div>
+        }
+      />
+
+      {alert && (
+        <div
+          className="card"
+          style={{
+            padding: '1rem 1.125rem',
+            marginBottom: 14,
+            borderTop: `3px solid ${alert === 'red' ? 'var(--red-b)' : 'var(--yellow-b)'}`,
+            background: alert === 'red' ? 'var(--red-m)' : 'var(--yellow-m)',
+          }}
+        >
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <span
+              aria-hidden="true"
+              style={{ color: alert === 'red' ? 'var(--red)' : 'var(--yellow-fg)', flexShrink: 0, marginTop: 1 }}
+            >
+              <IcoWarn />
+            </span>
+            <p style={{ fontSize: '0.8125rem', lineHeight: 1.55 }}>
+              {state === 'depasse' && (
+                <span>
+                  <b>
+                    Budget mensuel dépassé — {fmt$(scen.used)} sur {fmt$(CONSO_BUDGET)}.
+                  </b>{' '}
+                  Les requêtes lourdes (crawl complet, analyse approfondie) sont mises en file
+                  d&apos;attente jusqu&apos;au renouvellement du 1<sup>er</sup> octobre. Les
+                  requêtes légères continuent normalement.
+                </span>
+              )}
+              {state === 'approche' && (
+                <span>
+                  <b>Approche du budget mensuel — {pct} % consommé.</b> Au rythme actuel, le budget
+                  sera atteint avant la fin du mois.
+                </span>
+              )}
+              {state !== 'depasse' && state !== 'approche' && overClient && (
+                <span>
+                  <b>
+                    {overClient.name} coûte {fmt$(overClient.cost)} ce mois, pour{' '}
+                    {fmt$(overClient.mrr)} de MRR.
+                  </b>{' '}
+                  Ce compte consomme plus qu&apos;il ne rapporte — vérifiez le nombre de
+                  mots-clés suivis ou la densité des zones locales pour ce client.
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 8 }}>
+            Consommation du mois
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+            <span style={{ fontSize: '1.125rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>
+              {fmt$(scen.used)}
+            </span>
+            <span style={{ fontSize: '0.6875rem', color: 'var(--fg4)' }}>/ {fmt$(CONSO_BUDGET)}</span>
+          </div>
+          <div
+            role="progressbar"
+            aria-valuenow={Math.min(pct, 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Consommation du mois : ${pct} % du budget`}
+            style={{ height: 5, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                height: '100%',
+                width: `${Math.min(pct, 100)}%`,
+                background: pct > 100 ? 'var(--red)' : pct > 85 ? 'var(--yellow)' : 'var(--green)',
+                borderRadius: 999,
+              }}
+            />
+          </div>
+        </div>
+        <div className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 8 }}>
+            Projection fin de mois
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+            <span style={{ fontSize: '1.125rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>
+              {fmt$(projection)}
+            </span>
+            <span style={{ fontSize: '0.6875rem', color: 'var(--fg4)' }}>/ {fmt$(CONSO_BUDGET)}</span>
+          </div>
+          <div
+            role="progressbar"
+            aria-valuenow={Math.min(Math.round((projection / CONSO_BUDGET) * 100), 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Projection de fin de mois : ${fmt$(projection)} sur ${fmt$(CONSO_BUDGET)}`}
+            style={{ height: 5, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                height: '100%',
+                width: `${Math.min((projection / CONSO_BUDGET) * 100, 100)}%`,
+                background: projection > CONSO_BUDGET ? 'var(--red)' : 'var(--green)',
+                borderRadius: 999,
+              }}
+            />
+          </div>
+        </div>
+        <div className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 8 }}>
+            Jour du mois
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+            <span style={{ fontSize: '1.125rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>
+              {scen.day}
+            </span>
+            <span style={{ fontSize: '0.6875rem', color: 'var(--fg4)' }}>/ 30</span>
+          </div>
+          <div style={{ height: 5, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}>
+            <div
+              style={{
+                height: '100%',
+                width: `${(scen.day / 30) * 100}%`,
+                background: 'var(--fg4)',
+                borderRadius: 999,
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: 3 }}>
+        Répartition par client
+      </h3>
+      <p style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginBottom: 10 }}>
+        Coût du mois rapporté au MRR — un compte qui coûte plus qu&apos;il ne rapporte doit sauter
+        aux yeux.
+      </p>
+      <div className="card" style={{ padding: '0.5rem 1.125rem 0.875rem', marginBottom: 14, overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}>
+          <thead>
+            <tr>
+              {['Compte', 'Coût du mois', 'Coût / MRR', 'MRR'].map((h) => (
+                <th
+                  key={h}
+                  className="lbl"
+                  style={{ padding: '10px 0', borderBottom: '1px solid var(--bd-solid)', textAlign: 'left' }}
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {clients.map((c) => {
+              const ratio = c.mrr > 0 ? c.cost / c.mrr : null;
+              const over = ratio !== null && ratio >= 1;
+              return (
+                <tr key={c.name}>
+                  <td
+                    style={{
+                      padding: '9px 0',
+                      borderBottom: '1px solid var(--bd)',
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 7,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    {c.name}
+                    {c.type === 'prospect' && <Badge label="Prospect" tone="yellow" />}
+                    {over && <Badge label="Coûte plus qu'il ne rapporte" tone="red" />}
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 0',
+                      borderBottom: '1px solid var(--bd)',
+                      fontSize: '0.8125rem',
+                      fontWeight: 700,
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    {fmt$(c.cost)}
+                  </td>
+                  <td style={{ padding: '9px 0', borderBottom: '1px solid var(--bd)' }}>
+                    {ratio !== null ? (
+                      <div
+                        role="progressbar"
+                        aria-valuenow={Math.min(Math.round(ratio * 100), 100)}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`${c.name} : coût à ${Math.round(ratio * 100)} % du MRR`}
+                        style={{ height: 6, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}
+                      >
+                        <div
+                          style={{
+                            height: '100%',
+                            width: `${Math.min(ratio * 100, 100)}%`,
+                            background: over ? 'var(--red)' : 'var(--green)',
+                            borderRadius: 999,
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '0.6875rem', color: 'var(--fg4)' }}>
+                        Sans MRR · prospection
+                      </span>
+                    )}
+                  </td>
+                  <td
+                    style={{
+                      padding: '9px 0',
+                      borderBottom: '1px solid var(--bd)',
+                      fontSize: '0.8125rem',
+                      color: 'var(--fg2)',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}
+                  >
+                    {c.mrr > 0 ? fmt$(c.mrr) : '—'}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 10 }}>
+            Répartition par type d&apos;appel
+          </div>
+          {types.map((t) => (
+            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.75rem', marginBottom: 7 }}>
+              <span style={{ width: '7.5rem', color: 'var(--fg2)', fontWeight: 600, flexShrink: 0 }}>
+                {t.label}
+              </span>
+              <div style={{ flex: 1, height: 6, background: 'var(--bg-muted)', borderRadius: 999, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${(t.cost / totalTypes) * 100}%`,
+                    background: 'var(--blue-fg)',
+                    borderRadius: 999,
+                  }}
+                />
+              </div>
+              <span style={{ width: '3.2rem', textAlign: 'right', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+                {fmt$(t.cost)}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="card" style={{ padding: '0.875rem 1rem' }}>
+          <div className="lbl" style={{ marginBottom: 10 }}>
+            Historique · 12 mois
+          </div>
+          {scen.history.length === 0 ? (
+            <p style={{ fontSize: '0.75rem', color: 'var(--fg4)', padding: '18px 0', textAlign: 'center' }}>
+              Premier mois d&apos;utilisation · aucun historique encore
+            </p>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 80 }}>
+              {scen.history.map((h) => (
+                <div
+                  key={h.m}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    gap: 3,
+                    height: '100%',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      borderRadius: '3px 3px 0 0',
+                      background: h.used > CONSO_BUDGET ? 'var(--red)' : 'var(--green-b)',
+                      height: `${Math.min((h.used / (CONSO_BUDGET * 1.3)) * 100, 100)}%`,
+                    }}
+                  />
+                  <span style={{ fontSize: '0.4375rem', color: 'var(--fg4)' }}>{h.m}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: 3 }}>
+        Réglages qui pilotent le coût
+      </h3>
+      <p style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginBottom: 10 }}>
+        Ces seuils se règlent au niveau de l&apos;agence, pas dans le code.
+      </p>
+      <div className="card" style={{ padding: '1rem 1.125rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 14 }}>
+          <Field label="Fréquence des relevés (crawl)" htmlFor="conso-freq">
+            <select
+              id="conso-freq"
+              className="fld"
+              value={freq}
+              onChange={(e) => onFreq(e.target.value as typeof freq)}
+            >
+              {CONSO_SETTINGS.freq.options.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Densité des zones locales (SERP)" htmlFor="conso-zones">
+            <select
+              id="conso-zones"
+              className="fld"
+              value={zones}
+              onChange={(e) => onZones(e.target.value as typeof zones)}
+            >
+              {CONSO_SETTINGS.zones.options.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <Field label={`Mots-clés suivis par client (défaut) · ${kw}`} htmlFor="conso-kw">
+          <input
+            id="conso-kw"
+            type="range"
+            min={CONSO_SETTINGS.kw.min}
+            max={CONSO_SETTINGS.kw.max}
+            step={CONSO_SETTINGS.kw.step}
+            value={kw}
+            onChange={(e) => onKw(Number(e.target.value))}
+            style={{ width: '100%', accentColor: 'var(--green)' }}
+          />
+        </Field>
+        <div
+          style={{
+            marginTop: 14,
+            padding: '0.6rem 0.875rem',
+            borderRadius: 9,
+            background: impact >= 0 ? 'var(--yellow-m)' : 'var(--green-m)',
+            fontSize: '0.75rem',
+          }}
+        >
+          <b>
+            {impact >= 0 ? '+' : ''}
+            {impact} $/mois estimé
+          </b>{' '}
+          avec ces réglages, par rapport à la configuration actuelle.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Page ── */
 
 export function ParametresView() {
   const [section, setSection] = useState<SectionId>('agence');
   const [ints, setInts] = useState<Integration[]>(AGENCY_INTEGRATIONS);
   const [notifs, setNotifs] = useState<Notification[]>(NOTIFICATIONS);
+  const [consoState, setConsoState] = useState<ConsoStateId>('ok');
+  const [freq, setFreq] = useState<(typeof CONSO_SETTINGS.freq.options)[number]>('Bihebdomadaire');
+  const [kw, setKw] = useState(30);
+  const [zones, setZones] = useState<(typeof CONSO_SETTINGS.zones.options)[number]>('3 zones');
+  const [consoSaved, setConsoSaved] = useState(true);
+
+  const pickConsoState = (s: ConsoStateId) => {
+    setConsoState(s);
+    setFreq('Bihebdomadaire');
+    setKw(30);
+    setZones('3 zones');
+    setConsoSaved(true);
+  };
 
   const toggleInt = (id: string) =>
     setInts((p) =>
@@ -686,7 +1155,22 @@ export function ParametresView() {
 
   return (
     <AppShell
-      header={<CRMHeader title="Paramètres" subtitle="Configuration de l'agence" period="" />}
+      header={
+        <CRMHeader
+          title="Paramètres"
+          period=""
+          subtitle={section === 'consommation' ? undefined : "Configuration de l'agence"}
+          crumbs={
+            section === 'consommation'
+              ? [
+                  { label: 'HuntPilote', href: '/dashboard' },
+                  { label: 'Paramètres', href: '/parametres' },
+                  { label: 'Consommation' },
+                ]
+              : undefined
+          }
+        />
+      }
     >
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <nav
@@ -779,6 +1263,29 @@ export function ParametresView() {
               <NotificationsPanel notifs={notifs} onToggle={toggleNotif} />
             )}
             {section === 'facturation' && <FacturationPanel />}
+            {section === 'consommation' && (
+              <ConsommationPanel
+                state={consoState}
+                onState={pickConsoState}
+                freq={freq}
+                onFreq={(v) => {
+                  setFreq(v);
+                  setConsoSaved(false);
+                }}
+                kw={kw}
+                onKw={(v) => {
+                  setKw(v);
+                  setConsoSaved(false);
+                }}
+                zones={zones}
+                onZones={(v) => {
+                  setZones(v);
+                  setConsoSaved(false);
+                }}
+                saved={consoSaved}
+                onSave={() => setConsoSaved(true)}
+              />
+            )}
           </div>
         </div>
       </div>
