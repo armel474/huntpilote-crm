@@ -21,10 +21,10 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**14 écrans construits et en ligne sur 37** (phase 1 complète, plus le cadre
-commun et 6 des 7 outils SEO en phase 2). Toute la phase 2 est déjà conçue par
-Claude Design ; reste à intégrer la Consommation dans Paramètres (2.6) et
-l'Audit Prospect (page publique statique, hors 2.5).
+**15 écrans construits et en ligne sur 37** (phase 1 complète, plus les 7
+outils SEO et la Consommation en phase 2). Il ne reste que l'Audit Prospect —
+une page publique statique hors du cadre commun, un peu comme `/r/[token]` —
+pour clore entièrement la phase 2.
 
 | Phase | Écrans | État |
 |---|---|---|
@@ -78,24 +78,27 @@ séquence : elle définit un cadre réutilisé par sept écrans.
 | 2.3 | Position Tracking · Backlink Analyse | [`2-3-positions-backlinks.md`](2-3-positions-backlinks.md) | ✅ intégré |
 | 2.4 | Keyword Hunter · Keyword Gap | [`2-4-mots-cles.md`](2-4-mots-cles.md) | ✅ intégré |
 | 2.5 | Organic Research · Domain Overview | [`2-5-prospection.md`](2-5-prospection.md) | ✅ intégré |
-| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) | 🟡 conçu · à intégrer dans Paramètres |
+| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) | ✅ intégré |
 
 > **2.1 avant tout le reste**, sans exception. Si le cadre change après avoir
 > dessiné trois outils, tu redessines trois outils.
 
-**Les 7 outils SEO sont en ligne.** Le cadre commun (`ContextBar`, `Banner`,
-cartes de côté) est réutilisé à l'identique par Site Audit, Position Tracking,
-Backlink Analyse, Keyword Hunter, Keyword Gap, Domain Overview et Organic
-Research. Un bug hérité de la phase 1 a été corrigé au passage : `prioHref`
-était une string constante partagée par toutes les lignes d'un tableau au lieu
-d'une fonction par ligne — corrigé dans le détail et la comparaison d'audits
-aussi, puis reproduit correctement (une fonction par ligne) dans les six
-outils. Les comptes fictifs des outils (Boréal Immobilier, Clinique Lavoie,
-Spa Nordik Estrie, Quincaillerie Fortin) sont maintenant de vrais
-enregistrements `CLIENTS` avec un domaine, pour que « Enregistrer dans la
-fiche » résolve vraiment quelque part. Reste à porter la Consommation dans
-Paramètres (2.6) et l'Audit Prospect (page publique statique, un peu comme
-`/r/[token]`).
+**Les 7 outils SEO et la Consommation sont en ligne.** Le cadre commun
+(`ContextBar`, `Banner`, cartes de côté) est réutilisé à l'identique par Site
+Audit, Position Tracking, Backlink Analyse, Keyword Hunter, Keyword Gap,
+Domain Overview et Organic Research. Un bug hérité de la phase 1 a été corrigé
+au passage : `prioHref` était une string constante partagée par toutes les
+lignes d'un tableau au lieu d'une fonction par ligne — corrigé dans le détail
+et la comparaison d'audits aussi, puis reproduit correctement (une fonction
+par ligne) dans les six outils. Les comptes fictifs des outils (Boréal
+Immobilier, Clinique Lavoie, Spa Nordik Estrie, Quincaillerie Fortin) sont
+maintenant de vrais enregistrements `CLIENTS` avec un domaine, pour que
+« Enregistrer dans la fiche » résolve vraiment quelque part. La Consommation
+(2.6) vit dans Paramètres — 6ᵉ onglet, fil d'Ariane « HuntPilote › Paramètres
+› Consommation », hors du cadre commun et de la barre latérale « Outil » —
+et sa ventilation par client s'appuie sur ces mêmes vrais comptes plutôt
+qu'une liste inventée. Reste l'Audit Prospect (page publique statique, un peu
+comme `/r/[token]`) pour clore la phase 2.
 
 ### Phase 3 — SEO local
 
