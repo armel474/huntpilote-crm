@@ -34,14 +34,15 @@ const TOP_NAV: NavItem[] = [
   { href: '/agenda', label: 'Agenda', Icon: IcoCal },
 ];
 
-const TOOLS = [
-  'Keyword Hunter',
-  'Domain Overview',
-  'Organic Research',
-  'Keyword Gap',
-  'Position Tracking',
-  'Site Audite',
-  'Backlink Analyse',
+/** Les sept outils du cadre commun (session 2.1) — ordre validé en revue de design. */
+const TOOLS: { label: string; slug: string }[] = [
+  { label: 'Keyword Hunter', slug: 'keyword-hunter' },
+  { label: 'Domain Overview', slug: 'domain-overview' },
+  { label: 'Organic Research', slug: 'organic-research' },
+  { label: 'Keyword Gap', slug: 'keyword-gap' },
+  { label: 'Position Tracking', slug: 'position-tracking' },
+  { label: 'Site Audit', slug: 'site-audit' },
+  { label: 'Backlink Analyse', slug: 'backlink-analyse' },
 ];
 
 function LogoMark() {
@@ -285,25 +286,29 @@ export function NavSidebar() {
 
         {toolsOpen && (
           <div>
-            {TOOLS.map((label) => (
-              <Link
-                key={label}
-                href={`/outils?t=${encodeURIComponent(label)}`}
-                className="nav-sub-item"
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: '50%',
-                    background: 'var(--fg-4)',
-                    flexShrink: 0,
-                  }}
-                />
-                {label}
-              </Link>
-            ))}
+            {TOOLS.map((tool) => {
+              const active = pathname.startsWith(`/outils/${tool.slug}`);
+              return (
+                <Link
+                  key={tool.slug}
+                  href={`/outils/${tool.slug}`}
+                  className={`nav-sub-item${active ? ' active' : ''}`}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: '50%',
+                      background: active ? 'var(--green-fg)' : 'var(--fg-4)',
+                      flexShrink: 0,
+                    }}
+                  />
+                  {tool.label}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

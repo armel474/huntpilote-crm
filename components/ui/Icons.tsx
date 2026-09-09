@@ -454,6 +454,92 @@ export const IcoCompare = (p: IconProps) => (
   </Svg>
 );
 
+/* ── Cadre des outils ── */
+
+/** Disquette — enregistrer dans la fiche. */
+export const IcoSave = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
+  </Svg>
+);
+
+/** Appareil photo — instantané non historisé (prospect). */
+export const IcoSnap = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+    <circle cx="12" cy="13" r="4" />
+  </Svg>
+);
+
+/** Pièce — coût facturé par le fournisseur de données. */
+export const IcoCoin = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M15 9.5A3 3 0 0012 8h-1a2 2 0 000 4h2a2 2 0 010 4h-1a3 3 0 01-3-1.5" />
+  </Svg>
+);
+
+export const IcoInfo = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="11" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </Svg>
+);
+
+/* ── Site Audit (familles de constats) ── */
+
+export const IcoIndex = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+  </Svg>
+);
+
+/** Constat en anomalie — famille « Erreurs ». */
+export const IcoAlert = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <line x1="12" y1="8" x2="12" y2="13" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </Svg>
+);
+
+/** Bloc de texte — famille « On-page ». */
+export const IcoType = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <polyline points="4 7 4 4 20 4 20 7" />
+    <line x1="9" y1="20" x2="15" y2="20" />
+    <line x1="12" y1="4" x2="12" y2="20" />
+  </Svg>
+);
+
+/** Compteur — famille « Performance ». */
+export const IcoGauge = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <path d="M3.5 18a9 9 0 1117 0" />
+    <line x1="12" y1="14" x2="16" y2="9.5" />
+  </Svg>
+);
+
+/** Arborescence de pages — famille « Structure ». */
+export const IcoSitemap = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <rect x="9" y="2" width="6" height="5" rx="1" />
+    <rect x="2" y="17" width="6" height="5" rx="1" />
+    <rect x="16" y="17" width="6" height="5" rx="1" />
+    <path d="M12 7v4M5 17v-3h14v3" />
+  </Svg>
+);
+
+export const IcoStop = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="6" y="6" width="12" height="12" rx="2" />
+  </Svg>
+);
+
 /** Marque HuntPilote — éclair stylisé. */
 export const IcoLogo = (p: IconProps) => (
   <Svg size={13} strokeWidth={2.5} {...p}>

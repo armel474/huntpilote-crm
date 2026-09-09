@@ -304,7 +304,8 @@ export function CritRow({
   it: Criterion;
   created: Record<string, string>;
   onCreate: (criterion: string) => void;
-  prioHref: string;
+  /** Reçoit l'identifiant de la priorité de la ligne (ex. « P-0421 ») — chaque ligne mène à sa propre priorité, pas à une seule constante. */
+  prioHref: (prio: string) => string;
 }) {
   const s = A_STATUS[it.st];
   const Icon = STATUS_ICON[it.st];
@@ -333,7 +334,7 @@ export function CritRow({
       </div>
       <div className="crit-act">
         {prio ? (
-          <Link href={prioHref} style={{ textDecoration: 'none' }}>
+          <Link href={prioHref(prio)} style={{ textDecoration: 'none' }}>
             <Pill label={`Priorité ${prio} ouverte`} tone="blue" sm icon={<IcoArrowR />} />
           </Link>
         ) : actionable ? (
@@ -367,7 +368,7 @@ export function DimCard({
   created: Record<string, string>;
   onCreate: (criterion: string) => void;
   partial: boolean;
-  prioHref: string;
+  prioHref: (prio: string) => string;
   settingsHref: string;
 }) {
   const Icon = DIM_ICON[dim.id];

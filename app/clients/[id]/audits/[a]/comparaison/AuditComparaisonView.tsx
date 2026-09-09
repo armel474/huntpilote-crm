@@ -32,7 +32,7 @@ export function AuditComparaisonView({ clientId }: { clientId: string }) {
   const rows = (kind: ChangeKind) => CMP.rows.filter((r) => r.kind === kind);
   const nCreated = Object.keys(created).length;
   const auditHref = routes.audit(clientId, AUDIT.slug);
-  const prioHref = routes.priorite(clientId, 'p-0418');
+  const prioHref = (prio: string) => routes.priorite(clientId, prio.toLowerCase());
 
   const header = (
     <CRMHeader

@@ -74,7 +74,7 @@ export function AuditDetailView({ clientId }: { clientId: string }) {
     }));
 
   const nCreated = Object.keys(created).length;
-  const prioHref = routes.priorite(clientId, 'p-0418');
+  const prioHref = (prio: string) => routes.priorite(clientId, prio.toLowerCase());
   const compareHref = `${routes.audit(clientId, AUDIT.slug)}/comparaison`;
 
   const header = (

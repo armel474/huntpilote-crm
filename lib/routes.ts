@@ -14,4 +14,7 @@ export const routes = {
   tache: (id: string, t: string) => `/clients/${id}/taches/${t}`,
   rapport: (id: string, r: string) => `/clients/${id}/rapports/${r}`,
   audit: (id: string, a: string) => `/clients/${id}/audits/${a}`,
+  outil: (slug: string) => `/outils/${slug}`,
+  pipeline: () => '/pipeline',
+  parametres: (section?: string) => (section ? `/parametres?section=${section}` : '/parametres'),
 } as const;

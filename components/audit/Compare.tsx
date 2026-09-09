@@ -43,7 +43,7 @@ function CmpRow({
   r: CmpRowData;
   created: Record<string, string>;
   onCreate: (criterion: string) => void;
-  prioHref: string;
+  prioHref: (prio: string) => string;
 }) {
   const k = KIND[r.kind];
   const Icon = KIND_ICON[r.kind];
@@ -75,7 +75,7 @@ function CmpRow({
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         {prio ? (
-          <Link href={prioHref} style={{ textDecoration: 'none' }}>
+          <Link href={prioHref(prio)} style={{ textDecoration: 'none' }}>
             <Pill label={`Priorité ${prio}`} tone="blue" sm icon={<IcoArrowR />} />
           </Link>
         ) : (
@@ -100,7 +100,7 @@ export function CmpGroup({
   rows: readonly CmpRowData[];
   created: Record<string, string>;
   onCreate: (criterion: string) => void;
-  prioHref: string;
+  prioHref: (prio: string) => string;
 }) {
   const k = KIND[kind];
   const Icon = KIND_ICON[kind];

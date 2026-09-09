@@ -342,6 +342,10 @@ body::after {
 .nav-sub-item:hover {
   color: var(--fg-1);
 }
+.nav-sub-item.active {
+  color: var(--green-fg);
+  font-weight: 600;
+}
 
 /* Entrée de nav — vue compacte (icône seule + tooltip) */
 .nav-cpt {
@@ -2173,5 +2177,514 @@ body:has(.page-scroll) {
   }
   .score-row {
     gap: 12px;
+  }
+}
+
+/* ── Cadre commun des outils ─────────────────────────────────────────────── */
+
+/* Bandeaux d'état des outils : le ton se pose sur `.banner` via `data-tone`,
+   sans toucher le `.banner` du rapport (qui colore par style en ligne). */
+.banner[data-tone] {
+  border: 1px solid var(--bd-solid);
+  background: var(--bg-surface);
+  color: var(--fg2);
+}
+.banner[data-tone='yellow'] {
+  background: var(--yellow-m);
+  border-color: var(--yellow-b);
+}
+.banner[data-tone='red'] {
+  background: var(--red-m);
+  border-color: var(--red-b);
+}
+.banner[data-tone='blue'] {
+  background: var(--blue-m);
+  border-color: var(--blue-b);
+}
+.banner[data-tone] b {
+  color: var(--fg1);
+}
+/* Badge d'icône neutre, distinct du badge coloré du bandeau de rapport. */
+.banner[data-tone] .banner-ico {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid var(--bd-strong);
+  color: var(--fg2);
+  background: var(--bg-solid);
+}
+.banner-act {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Groupe de la barre de contexte (compte, domaine) + séparateur vertical. */
+.ctx-g {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.ctx-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--bd-solid);
+  flex-shrink: 0;
+}
+
+/* Sélecteur de compte — clients et prospects distingués dans deux groupes. */
+.acct-sel {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fg1);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-strong);
+  border-radius: 999px;
+  padding: 0.33rem 0.7rem;
+  outline: none;
+  cursor: pointer;
+  max-width: 15rem;
+}
+.acct-sel:focus-visible {
+  border-color: var(--accent);
+}
+
+/* Domaine analysé — modifiable ponctuellement sans changer de compte. */
+.dom-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.26rem 0.6rem;
+  border-radius: 999px;
+  background: var(--bg-solid);
+  border: 1px dashed var(--bd-strong);
+  min-width: 0;
+}
+.dom-field[data-edited='true'] {
+  border-style: solid;
+  border-color: var(--blue-b);
+  background: var(--blue-m);
+}
+.dom-field input {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--fg1);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 11rem;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Action principale de l'outil — « Enregistrer dans la fiche ». */
+.btn-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.42rem 0.95rem;
+  border-radius: 999px;
+  background: #15803d;
+  color: #ffffff;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 150ms;
+}
+[data-theme='dark'] .btn-go {
+  color: #0b2412;
+  background: var(--green);
+}
+.btn-go:hover {
+  opacity: 0.88;
+}
+.btn-go:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.cost-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: var(--fg3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Zone propre à l'outil — signalée comme un emplacement, pas comme du
+   contenu : le cadre s'arrête là, chaque outil dessine ce qu'il contient. */
+.slot-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg3);
+  border: 1px dashed var(--bd-strong);
+  background: transparent;
+}
+.slot {
+  border: 1.5px dashed var(--bd-strong);
+  border-radius: 14px;
+  padding: 0.75rem;
+  background: repeating-linear-gradient(135deg, var(--bg-surface) 0 10px, transparent 10px 20px);
+}
+[data-theme='dark'] .slot {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0 10px,
+    transparent 10px 20px
+  );
+}
+
+.res-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.inp {
+  font-family: var(--font);
+  font-size: 0.6875rem;
+  color: var(--fg1);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  outline: none;
+  min-width: 0;
+}
+.inp:focus-visible {
+  border-color: var(--accent);
+}
+
+/* Écran de chargement — silhouette animée, pas un simple message. */
+.skel {
+  border-radius: 9px;
+  background: var(--bg-muted);
+  position: relative;
+  overflow: hidden;
+}
+.skel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: skel 1.15s linear infinite;
+}
+[data-theme='dark'] .skel::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.09), transparent);
+}
+@keyframes skel {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skel::after {
+    animation: none;
+  }
+}
+
+.keep-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 9px;
+  font-size: 0.625rem;
+  color: var(--fg2);
+  line-height: 1.45;
+}
+.save-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 7px 0;
+  border-top: 1px solid var(--bd);
+}
+.save-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .subbar {
+    gap: 8px;
+  }
+  .acct-sel,
+  .inp,
+  .btn-go {
+    min-height: 44px;
+  }
+  .ctx-g,
+  .dom-field {
+    width: 100%;
+  }
+  .dom-field input {
+    width: 100%;
+  }
+  .acct-sel {
+    max-width: none;
+    flex: 1;
+  }
+  .ctx-sep {
+    display: none;
+  }
+  .banner-act {
+    margin-left: 0;
+    width: 100%;
+  }
+  .banner-act .btn-out {
+    flex: 1;
+    justify-content: center;
+  }
+  .res-bar > * {
+    flex: 1 1 auto;
+  }
+  .res-bar .inp {
+    width: 100%;
+  }
+}
+
+/* ── Site Audit ───────────────────────────────────────────────────────────── */
+
+.sum-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+.sum-cell {
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+}
+.sum-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.sum-thr {
+  font-size: 0.5625rem;
+  color: var(--fg3);
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.diff-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.diff-li {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  color: var(--fg2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Famille de constats — groupement repliable. */
+.fam {
+  border: 1px solid var(--bd-solid);
+  border-radius: 12px;
+  background: var(--bg-solid);
+  overflow: hidden;
+}
+.fam[data-sev='critique'] {
+  border-left: 3px solid var(--red);
+}
+.fam[data-sev='important'] {
+  border-left: 3px solid var(--yellow-b);
+}
+.fam[data-sev='opportunite'] {
+  border-left: 3px solid var(--blue-b);
+}
+.fam-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding-right: 11px;
+}
+.fam-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1 1 20rem;
+  min-width: 0;
+  padding: 10px 11px;
+  background: transparent;
+  border: none;
+  font-family: var(--font);
+  color: var(--fg1);
+  text-align: left;
+  cursor: pointer;
+  flex-wrap: wrap;
+}
+.fam-head:hover {
+  background: var(--bg-muted);
+}
+.fam-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.fam-ico {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--bd-solid);
+  background: var(--bg-surface);
+  color: var(--fg2);
+}
+.fam-act {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.chev {
+  color: var(--fg3);
+  display: flex;
+  transition: transform 170ms ease;
+}
+.chev[data-open='true'] {
+  transform: rotate(90deg);
+}
+.fam-body {
+  padding: 0 11px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Pages concernées par un constat, dépliées sous la ligne. */
+.crit-more {
+  flex-basis: 100%;
+  border-top: 1px dashed var(--bd-strong);
+  margin-top: 8px;
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pg {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 9px;
+  align-items: center;
+  padding: 5px 6px;
+  border-radius: 7px;
+}
+.pg:hover {
+  background: var(--bg-muted);
+}
+.pg-url {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--fg1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.pg-meas {
+  font-size: 0.5625rem;
+  color: var(--fg2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--bd-strong);
+  background: var(--bg-solid);
+  color: var(--fg2);
+  font-family: var(--font);
+  font-size: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pg-btn:hover {
+  color: var(--fg1);
+  border-color: var(--accent);
+}
+.pg-rest {
+  font-size: 0.5625rem;
+  color: var(--fg3);
+  padding: 4px 6px;
+}
+
+.prog-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.625rem;
+  color: var(--fg2);
+  margin-bottom: 5px;
+}
+
+@media (max-width: 900px) {
+  .sum-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .sum-grid {
+    grid-template-columns: 1fr;
+  }
+  .fam-head {
+    min-height: 44px;
+  }
+  .fam-act {
+    width: 100%;
+    padding: 0 11px 10px;
+  }
+  .fam-act .btn-out {
+    flex: 1;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .pg {
+    grid-template-columns: 1fr;
+    row-gap: 3px;
+  }
+  .pg-btn {
+    min-height: 44px;
+    justify-content: center;
   }
 }
