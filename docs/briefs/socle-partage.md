@@ -89,6 +89,30 @@ en thème sombre** parce que c'est son document, pas notre interface. Il existe
 déjà dans le détail d'une priorité et dans la clôture d'une tâche. Toute nouvelle
 prévisualisation client passe par lui.
 
+### Le cadre commun des outils — depuis la phase 2
+
+Sept écrans (Site Audit, Position Tracking, Backlink Analyse, Keyword Hunter,
+Keyword Gap, Domain Overview, Organic Research) partagent le même cadre, conçu
+une seule fois en session 2.1. **Un écran nouveau rattaché à un client** —
+fiche d'établissement, positions locales, avis — commence probablement par ce
+cadre plutôt que d'en redessiner un.
+
+| Composant | Rôle |
+|---|---|
+| `ContextBar` | Sélecteur de compte (clients/prospects/tous), domaine éditable, période, coût de la requête, **une seule** action constante — enregistrer dans la fiche |
+| `Banner` | Cinq états qui bloquent ou avertissent : non connecté, erreur, quota, prospect, aucune sélection |
+| `KeepCard` / `CostCard` / `SavesCard` | Colonne latérale : ce qui sera conservé (voir le marqueur, règle 3 de `decisions.md`), le coût, l'historique enregistré dans la fiche |
+
+**Le sélecteur de compte pointe vers de vrais comptes**, jamais une liste de
+noms inventée pour la démo — sinon « enregistrer dans la fiche » ne mène nulle
+part. Les prospects y figurent au même titre que les clients (décision 3).
+
+**Ce qui n'entre PAS dans ce cadre :** un écran agence, sans sélecteur de
+client ni les deux actions constantes — la Consommation en est l'exemple. Ne
+le mets pas dans le dropdown « Outil » ni sous une route `/outils/...`, et son
+fil d'Ariane ne doit jamais laisser croire qu'il suit les mêmes règles qu'un
+outil.
+
 ---
 
 ## Règles d'écriture du HTML
@@ -109,6 +133,13 @@ SFMono-Regular, Menlo, Consolas, monospace`.
 
 **Un nom de classe, un seul.** Si une classe existe déjà pour ce que tu dessines,
 reprends-la. Ne crée pas `-t`, `-r`, `-2` ni aucun suffixe de session.
+
+**Le lien « créer la priorité » d'une ligne est une fonction du contenu de la
+ligne, jamais une constante.** Sur un tableau ou une liste, chaque ligne doit
+calculer son propre lien (`prioHref(ligne)`, pas un `prioHref` unique passé au
+tableau) — sinon toutes les lignes pointent vers la même priorité. Ce bug est
+passé inaperçu deux fois (le détail d'audit en phase 1, puis reproduit dans les
+premiers outils de la phase 2) avant d'être corrigé partout.
 
 ---
 

@@ -21,16 +21,17 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**15 écrans construits et en ligne sur 37** (phase 1 complète, plus les 7
-outils SEO et la Consommation en phase 2). Il ne reste que l'Audit Prospect —
-une page publique statique hors du cadre commun, un peu comme `/r/[token]` —
-pour clore entièrement la phase 2.
+**Phase 2 terminée — 15 écrans construits et en ligne sur 37.** Les six
+sessions de la phase 2 sont toutes intégrées : les 7 outils SEO, la
+Consommation, et l'Audit Prospect qui referme la boucle commerciale
+(Organic Research → document partageable). Prochaine étape : la phase 3
+(SEO local), déjà en cours de conception.
 
 | Phase | Écrans | État |
 |---|---|---|
 | 1 — Boucle de livraison | 6 | ✅ intégrée |
-| 2 — Les outils | 9 | 🟡 conçue · 8 écrans intégrés, 1 restant |
-| 3 — SEO local | 6 | ⬜ à concevoir |
+| 2 — Les outils | 9 | ✅ intégrée |
+| 3 — SEO local | 6 | 🟡 en cours de conception |
 | 4 — Le quotidien de l'agence | 8 | ⬜ à concevoir |
 | 5 — Le portail client | 4 | ⬜ à concevoir |
 | 6 — Contenu et socle | 4 | ⬜ à concevoir |
@@ -83,22 +84,35 @@ séquence : elle définit un cadre réutilisé par sept écrans.
 > **2.1 avant tout le reste**, sans exception. Si le cadre change après avoir
 > dessiné trois outils, tu redessines trois outils.
 
-**Les 7 outils SEO et la Consommation sont en ligne.** Le cadre commun
-(`ContextBar`, `Banner`, cartes de côté) est réutilisé à l'identique par Site
-Audit, Position Tracking, Backlink Analyse, Keyword Hunter, Keyword Gap,
-Domain Overview et Organic Research. Un bug hérité de la phase 1 a été corrigé
-au passage : `prioHref` était une string constante partagée par toutes les
-lignes d'un tableau au lieu d'une fonction par ligne — corrigé dans le détail
-et la comparaison d'audits aussi, puis reproduit correctement (une fonction
-par ligne) dans les six outils. Les comptes fictifs des outils (Boréal
-Immobilier, Clinique Lavoie, Spa Nordik Estrie, Quincaillerie Fortin) sont
-maintenant de vrais enregistrements `CLIENTS` avec un domaine, pour que
-« Enregistrer dans la fiche » résolve vraiment quelque part. La Consommation
-(2.6) vit dans Paramètres — 6ᵉ onglet, fil d'Ariane « HuntPilote › Paramètres
-› Consommation », hors du cadre commun et de la barre latérale « Outil » —
-et sa ventilation par client s'appuie sur ces mêmes vrais comptes plutôt
-qu'une liste inventée. Reste l'Audit Prospect (page publique statique, un peu
-comme `/r/[token]`) pour clore la phase 2.
+**Phase 2 close.** Le cadre commun (`ContextBar`, `Banner`, cartes de côté) est
+réutilisé à l'identique par les 7 outils : Site Audit, Position Tracking,
+Backlink Analyse, Keyword Hunter, Keyword Gap, Domain Overview et Organic
+Research. Un bug hérité de la phase 1 a été corrigé au passage : `prioHref`
+était une string constante partagée par toutes les lignes d'un tableau au lieu
+d'une fonction par ligne — corrigé dans le détail et la comparaison d'audits
+aussi, puis reproduit correctement (une fonction par ligne) dans les sept
+outils. Ce point est maintenant dans [`socle-partage.md`](socle-partage.md)
+pour ne pas revenir en phase 3. Les comptes fictifs des outils (Boréal
+Immobilier, Clinique Lavoie, Spa Nordik Estrie, Quincaillerie Fortin) sont de
+vrais enregistrements `CLIENTS` avec un domaine, pour que « Enregistrer dans
+la fiche » résolve vraiment quelque part.
+
+La Consommation (2.6) vit dans Paramètres — 6ᵉ onglet, fil d'Ariane
+« HuntPilote › Paramètres › Consommation », hors du cadre commun et de la
+barre latérale « Outil ». L'Audit Prospect ferme la boucle commerciale
+d'Organic Research : route à jeton `/audit-prospect/[token]`, hors du shell
+CRM, dans l'esprit du rapport client partageable (session 1.3) mais plus léger
+— sa démo réutilise le calcul réel du potentiel d'Organic Research plutôt
+qu'un chiffre figé dans le prototype, pour que le document envoyé au prospect
+et l'écran vu en direct ne puissent pas se contredire. L'index `/outils` — la
+page derrière le libellé « Outil » de la barre latérale, avant qu'un outil
+précis soit choisi — a aussi été refait : il montrait encore le placeholder
+d'avant la phase 2.
+
+[`socle-partage.md`](socle-partage.md) documente maintenant le cadre commun
+des outils comme brique réutilisable pour la phase 3 : un écran neuf rattaché
+à un client (fiche d'établissement, positions locales, avis) en hérite
+probablement, au lieu d'en redessiner un.
 
 ### Phase 3 — SEO local
 
