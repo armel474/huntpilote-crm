@@ -546,3 +546,40 @@ export const IcoLogo = (p: IconProps) => (
     <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
   </Svg>
 );
+
+/* ── Position Tracking / Backlink Analyse ── */
+
+/** Trait plat — variation stable, ni hausse ni baisse. */
+export const IcoFlat = (p: IconProps) => (
+  <Svg size={9} strokeWidth={2.5} {...p}>
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </Svg>
+);
+
+/** Embranchement — cannibalisation, deux URL sur la même requête. */
+export const IcoFork = (p: IconProps) => (
+  <Svg size={12} {...p}>
+    <circle cx="6" cy="6" r="2.5" />
+    <circle cx="18" cy="6" r="2.5" />
+    <circle cx="12" cy="18" r="2.5" />
+    <path d="M6 8.5V12a4 4 0 004 4M18 8.5V12a4 4 0 01-4 4" />
+  </Svg>
+);
+
+/** Tête de mort — lien toxique ou suspect. */
+export const IcoSkull = (p: IconProps) => (
+  <Svg size={12} {...p}>
+    <circle cx="12" cy="11" r="7" />
+    <line x1="9" y1="11" x2="9.01" y2="11" strokeWidth={3} />
+    <line x1="15" y1="11" x2="15.01" y2="11" strokeWidth={3} />
+    <path d="M10 19l-1 3M14 19l1 3" />
+  </Svg>
+);
+
+/** Cercle barré — désavouer un lien. */
+export const IcoBan = (p: IconProps) => (
+  <Svg size={12} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <line x1="5.5" y1="18.5" x2="18.5" y2="5.5" />
+  </Svg>
+);
