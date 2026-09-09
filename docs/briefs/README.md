@@ -21,14 +21,14 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**Phase 1 construite et en ligne — 6 écrans sur 37.** Tout le reste reste à
-concevoir puis à intégrer. Prochaine étape : **2.1**, seule, avant tout le reste
-de la phase 2.
+**8 écrans construits et en ligne sur 37** (phase 1 complète, plus le cadre
+commun des outils et Site Audit en phase 2). Toute la phase 2 est déjà conçue
+par Claude Design ; reste à intégrer les 5 outils restants (2.3 à 2.6).
 
 | Phase | Écrans | État |
 |---|---|---|
 | 1 — Boucle de livraison | 6 | ✅ intégrée |
-| 2 — Les outils | 9 | ⬜ à concevoir · **2.1 ensuite** |
+| 2 — Les outils | 9 | 🟡 conçue · 2 écrans intégrés, 5 restants |
 | 3 — SEO local | 6 | ⬜ à concevoir |
 | 4 — Le quotidien de l'agence | 8 | ⬜ à concevoir |
 | 5 — Le portail client | 4 | ⬜ à concevoir |
@@ -72,15 +72,25 @@ séquence : elle définit un cadre réutilisé par sept écrans.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 2.1 | Cadre commun des outils | [`2-1-cadre-outils.md`](2-1-cadre-outils.md) | ⬜ **prochaine session** |
-| 2.2 | Site Audit | [`2-2-site-audit.md`](2-2-site-audit.md) | ⬜ à concevoir |
-| 2.3 | Position Tracking · Backlink Analyse | [`2-3-positions-backlinks.md`](2-3-positions-backlinks.md) | ⬜ à concevoir |
-| 2.4 | Keyword Hunter · Keyword Gap | [`2-4-mots-cles.md`](2-4-mots-cles.md) | ⬜ à concevoir |
-| 2.5 | Organic Research · Domain Overview | [`2-5-prospection.md`](2-5-prospection.md) | ⬜ à concevoir |
-| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) | ⬜ à concevoir |
+| 2.1 | Cadre commun des outils | [`2-1-cadre-outils.md`](2-1-cadre-outils.md) | ✅ intégré |
+| 2.2 | Site Audit | [`2-2-site-audit.md`](2-2-site-audit.md) | ✅ intégré |
+| 2.3 | Position Tracking · Backlink Analyse | [`2-3-positions-backlinks.md`](2-3-positions-backlinks.md) | 🟡 conçu · à intégrer |
+| 2.4 | Keyword Hunter · Keyword Gap | [`2-4-mots-cles.md`](2-4-mots-cles.md) | 🟡 conçu · à intégrer |
+| 2.5 | Organic Research · Domain Overview | [`2-5-prospection.md`](2-5-prospection.md) | 🟡 conçu · à intégrer |
+| 2.6 | Suivi de consommation | [`2-6-consommation.md`](2-6-consommation.md) | 🟡 conçu · à intégrer dans Paramètres |
 
 > **2.1 avant tout le reste**, sans exception. Si le cadre change après avoir
 > dessiné trois outils, tu redessines trois outils.
+
+**2.1 et 2.2 en ligne.** Le cadre commun (`ContextBar`, `Banner`, cartes de
+côté) est réutilisé tel quel par Site Audit et servira aux six autres outils.
+Un bug hérité de la phase 1 a été corrigé au passage : `prioHref` était une
+string constante partagée par toutes les lignes d'un tableau au lieu d'une
+fonction par ligne — corrigé dans le détail et la comparaison d'audits aussi.
+Les comptes fictifs des outils (Boréal Immobilier, Clinique Lavoie, Spa Nordik
+Estrie, Quincaillerie Fortin) sont maintenant de vrais enregistrements
+`CLIENTS` avec un domaine, pour que « Enregistrer dans la fiche » résolve
+vraiment quelque part.
 
 ### Phase 3 — SEO local
 
