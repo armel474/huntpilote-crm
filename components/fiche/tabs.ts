@@ -4,6 +4,8 @@ export const FICHE_TABS = [
   { id: 'priorites', label: 'Priorités SEO' },
   { id: 'plan', label: "Plan d'action" },
   { id: 'diagnostics', label: 'Diagnostics' },
+  /** Mène au calendrier éditorial (session 6.1) — pas un panneau interne, un lien de sortie. */
+  { id: 'contenu', label: 'Contenu', external: true },
   { id: 'rapports', label: 'Rapports client' },
   { id: 'contrat', label: 'Contrat & facturation' },
 ] as const;

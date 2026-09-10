@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { LeftPanel, RightPanel } from '@/components/fiche/SidePanels';
@@ -12,11 +13,13 @@ import { PanelContrat } from '@/components/fiche/PanelContrat';
 import { FICHE_TABS, type FicheTab } from '@/components/fiche/tabs';
 import { IcoDoc, IcoPlus, IcoTarget, IcoZap } from '@/components/ui/Icons';
 import { CLIENT, PRIORITIES, UX_STATES, type UxState } from '@/lib/data/fiche-client';
+import { routes } from '@/lib/routes';
 
 /** Durée simulée d'un audit avant que la fiche ne se remplisse. */
 const AUDIT_DURATION_MS = 4000;
 
 export function FicheClientView({ clientId }: { clientId: string }) {
+  const router = useRouter();
   const [tab, setTab] = useState<FicheTab>('apercu');
   const [uxState, setUxState] = useState<UxState>('active');
   const auditTimer = useRef<number | null>(null);
@@ -58,6 +61,9 @@ export function FicheClientView({ clientId }: { clientId: string }) {
         return <PanelRapports clientId={clientId} />;
       case 'contrat':
         return <PanelContrat />;
+      case 'contenu':
+        // Onglet de sortie : le clic navigue vers /clients/[id]/contenu, `tab` ne prend jamais cette valeur.
+        return null;
     }
   };
 
@@ -168,7 +174,7 @@ export function FicheClientView({ clientId }: { clientId: string }) {
                   role="tab"
                   aria-selected={tab === t.id}
                   className={`tab${tab === t.id ? ' on' : ''}`}
-                  onClick={() => setTab(t.id)}
+                  onClick={() => ('external' in t && t.external ? router.push(routes.contenu(clientId)) : setTab(t.id))}
                   style={
                     tab === t.id
                       ? { background: 'var(--primary)', color: 'var(--primary-fg)', fontWeight: 600 }
