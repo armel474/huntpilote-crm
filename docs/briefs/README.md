@@ -21,20 +21,19 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**Phase 2 terminée — 15 écrans construits et en ligne sur 37.** Les six
-sessions de la phase 2 sont toutes intégrées : les 7 outils SEO, la
-Consommation, et l'Audit Prospect qui referme la boucle commerciale
-(Organic Research → document partageable). Prochaine étape : la phase 3
-(SEO local), déjà en cours de conception.
+**Les six phases sont conçues, intégrées et en ligne.** La séquence complète
+— 37 écrans, de la boucle de livraison au portail client en passant par les
+outils, le SEO local, le quotidien de l'agence et le contenu — est construite
+dans l'application réelle.
 
 | Phase | Écrans | État |
 |---|---|---|
 | 1 — Boucle de livraison | 6 | ✅ intégrée |
 | 2 — Les outils | 9 | ✅ intégrée |
-| 3 — SEO local | 6 | 🟡 en cours de conception |
-| 4 — Le quotidien de l'agence | 8 | ⬜ à concevoir |
-| 5 — Le portail client | 4 | ⬜ à concevoir |
-| 6 — Contenu et socle | 4 | ⬜ à concevoir |
+| 3 — SEO local | 6 | ✅ intégrée |
+| 4 — Le quotidien de l'agence | 8 | ✅ intégrée |
+| 5 — Le portail client | 4 | ✅ intégrée |
+| 6 — Contenu et socle | 4 | ✅ intégrée |
 
 ---
 
@@ -120,9 +119,16 @@ Une section complète, au même niveau que les outils.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 3.1 | Vue d'ensemble · fiche d'établissement | [`3-1-local-etablissement.md`](3-1-local-etablissement.md) | ⬜ à concevoir |
-| 3.2 | Avis · citations et annuaires | [`3-2-avis-citations.md`](3-2-avis-citations.md) | ⬜ à concevoir |
-| 3.3 | Positions locales · concurrence locale | [`3-3-positions-locales.md`](3-3-positions-locales.md) | ⬜ à concevoir |
+| 3.1 | Vue d'ensemble · fiche d'établissement | [`3-1-local-etablissement.md`](3-1-local-etablissement.md) | ✅ intégré |
+| 3.2 | Avis · citations et annuaires | [`3-2-avis-citations.md`](3-2-avis-citations.md) | ✅ intégré |
+| 3.3 | Positions locales · concurrence locale | [`3-3-positions-locales.md`](3-3-positions-locales.md) | ✅ intégré |
+
+**Phase 3 close.** Six écrans en ligne : vue d'ensemble et fiche d'établissement,
+avis et citations/annuaires, positions locales et concurrence locale, tous
+rattachés à de vrais enregistrements `CLIENTS` (Boréal Immobilier, Clinique
+Lavoie — deux établissements —, Spa Nordik Estrie, Quincaillerie Fortin, Le
+Marché Bio). Le cadre commun des outils (session 2.1) s'est effectivement
+réutilisé pour ces écrans, comme anticipé dans `socle-partage.md`.
 
 ### Phase 4 — Le quotidien de l'agence
 
@@ -130,10 +136,19 @@ Les vues transversales, et les éditeurs manquants des écrans déjà livrés.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 4.1 | Mon plan de travail · priorités transversales | [`4-1-vues-transversales.md`](4-1-vues-transversales.md) | ⬜ à concevoir · à sa place dans l'ordre |
-| 4.2 | Agenda · rapports à produire | [`4-2-agenda-rapports.md`](4-2-agenda-rapports.md) | ⬜ à concevoir |
-| 4.3 | Recherche globale · notifications | [`4-3-recherche-notifications.md`](4-3-recherche-notifications.md) | ⬜ à concevoir |
-| 4.4 | Détail de deal · éditeur d'automatisation | [`4-4-deal-automatisation.md`](4-4-deal-automatisation.md) | ⬜ à concevoir |
+| 4.1 | Mon plan de travail · priorités transversales | [`4-1-vues-transversales.md`](4-1-vues-transversales.md) | ✅ intégré |
+| 4.2 | Agenda · rapports à produire | [`4-2-agenda-rapports.md`](4-2-agenda-rapports.md) | ✅ intégré |
+| 4.3 | Recherche globale · notifications | [`4-3-recherche-notifications.md`](4-3-recherche-notifications.md) | ✅ intégré |
+| 4.4 | Détail de deal · éditeur d'automatisation | [`4-4-deal-automatisation.md`](4-4-deal-automatisation.md) | ✅ intégré |
+
+**Phase 4 close.** Le plan de travail et les priorités transversales listent et
+filtrent les objets déjà livrés en phase 1 ; l'agenda et les rapports à
+produire (portefeuille de l'éditeur de rapport, session 1.3) sont en ligne ; la
+recherche globale et les notifications vivent dans un `OverlayProvider`
+transversal monté une fois dans `AppShell`, plutôt que de reproduire
+l'accrochage DOM de la maquette ; le détail de deal et l'éditeur
+d'automatisation (Quand → Si → Alors) complètent le pipeline et le workflow
+déjà livrés.
 
 ### Phase 5 — Le portail client
 
@@ -141,15 +156,30 @@ Ce que voit le client. Dépend du rapport conçu en 1.3.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 5.1 | Connexion · tableau de bord client | [`5-1-portail-accueil.md`](5-1-portail-accueil.md) | ⬜ à concevoir |
-| 5.2 | Ses rapports · échanges | [`5-2-portail-rapports.md`](5-2-portail-rapports.md) | ⬜ à concevoir |
+| 5.1 | Connexion · tableau de bord client | [`5-1-portail-accueil.md`](5-1-portail-accueil.md) | ✅ intégré |
+| 5.2 | Ses rapports · échanges | [`5-2-portail-rapports.md`](5-2-portail-rapports.md) | ✅ intégré |
+
+**Phase 5 close.** Quatre écrans hors du shell cockpit : connexion par lien
+magique, tableau de bord figé à la publication (ne montrant jamais que les
+priorités *annoncé*/*en traitement*), historique des rapports avec la courbe
+de score sur douze mois, et les échanges. Le tableau de bord reprend les
+données réelles du rapport publié (`REPORT`, le même qu'en `/r/[token]`) plutôt
+que d'en inventer un second, avec un lien vers le document tel qu'envoyé.
 
 ### Phase 6 — Contenu et socle
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 6.1 | Calendrier éditorial · brief d'article | [`6-1-contenu.md`](6-1-contenu.md) | ⬜ à concevoir |
-| 6.2 | Connexion agence · états système | [`6-2-socle.md`](6-2-socle.md) | ⬜ à concevoir |
+| 6.1 | Calendrier éditorial · brief d'article | [`6-1-contenu.md`](6-1-contenu.md) | ✅ intégré |
+| 6.2 | Connexion agence · états système | [`6-2-socle.md`](6-2-socle.md) | ✅ intégré |
+
+**Phase 6 close, et la séquence des 37 écrans avec elle.** Le calendrier
+éditorial et le brief d'article closent l'onglet « Contenu » de la fiche
+client (câblé depuis la phase 4, en attente de cette route). La connexion
+agence est en ligne. Les états système (`components/ui/States.tsx` — silhouettes
+de chargement, trois vides distincts, erreurs actionnables, permission) sont
+appliqués aux écrans qui en manquaient : plan de travail, priorités, agenda,
+rapports à produire, tableau de bord, pipeline, workflow, clients, SEO local.
 
 ---
 
