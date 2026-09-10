@@ -52,12 +52,14 @@ function DealCard({
   onDragStart,
   onDragEnd,
   onMove,
+  onOpen,
 }: {
   deal: Deal;
   dragging: boolean;
   onDragStart: (e: React.DragEvent, id: number) => void;
   onDragEnd: () => void;
   onMove: (id: number, direction: -1 | 1) => void;
+  onOpen: (id: number) => void;
 }) {
   const owner = OWNERS[deal.owner];
   const hot = deal.prob >= 70;
@@ -69,6 +71,16 @@ function DealCard({
       draggable
       onDragStart={(e) => onDragStart(e, deal.id)}
       onDragEnd={onDragEnd}
+      onClick={() => onOpen(deal.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen(deal.id);
+        }
+      }}
+      aria-label={`Voir le détail de ${deal.company}`}
       style={{ padding: '0.75rem', borderRadius: 11 }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 9 }}>
@@ -213,7 +225,10 @@ function DealCard({
           <button
             type="button"
             style={stepBtn}
-            onClick={() => onMove(deal.id, -1)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMove(deal.id, -1);
+            }}
             disabled={stageIndex === 0}
             aria-label={`Reculer ${deal.company} d'une étape`}
           >
@@ -222,7 +237,10 @@ function DealCard({
           <button
             type="button"
             style={stepBtn}
-            onClick={() => onMove(deal.id, 1)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onMove(deal.id, 1);
+            }}
             disabled={stageIndex === STAGES.length - 1}
             aria-label={`Avancer ${deal.company} d'une étape`}
           >
@@ -237,9 +255,11 @@ function DealCard({
 export function Board({
   deals,
   setDeals,
+  onOpen,
 }: {
   deals: Deal[];
   setDeals: React.Dispatch<React.SetStateAction<Deal[]>>;
+  onOpen: (id: number) => void;
 }) {
   const [dragId, setDragId] = useState<number | null>(null);
   const [overCol, setOverCol] = useState<StageId | null>(null);
@@ -378,6 +398,7 @@ export function Board({
                       setOverCol(null);
                     }}
                     onMove={moveByStep}
+                    onOpen={onOpen}
                   />
                 ))}
                 <button
