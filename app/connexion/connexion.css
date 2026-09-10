@@ -1,0 +1,213 @@
+/**
+ * Connexion agence — session 6.2.
+ *
+ * Page publique hors du shell CRM : pas de barre latérale, pas de header
+ * contextuel. Réutilise les jetons de thème et les classes `.fld` / `.btn-pri`
+ * / `.btn-out` de l'application plutôt que d'en inventer une seconde famille.
+ */
+
+.cn-wrap {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background: var(--bg-base);
+}
+
+.cn-card {
+  width: 100%;
+  max-width: 23rem;
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 2rem 1.875rem;
+}
+
+.cn-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--primary);
+  color: var(--primary-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cn-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.75rem;
+}
+
+.cn-h1 {
+  font-size: 1.3125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 5px;
+}
+
+.cn-sub {
+  font-size: 0.8125rem;
+  color: var(--fg3);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.cn-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+.cn-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--fg2);
+}
+.cn-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.cn-err {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  font-size: 0.8125rem;
+  color: var(--red);
+  line-height: 1.5;
+  margin-top: -3px;
+  margin-bottom: 1rem;
+}
+
+.cn-sep {
+  height: 1px;
+  background: var(--bd);
+  margin: 1.25rem 0;
+}
+.cn-hint {
+  font-size: 0.75rem;
+  color: var(--fg3);
+  line-height: 1.55;
+}
+
+.cn-sent {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--green-m);
+  border: 1px solid var(--green-b);
+  color: var(--green-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.cn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fg3);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  margin-bottom: 1.1rem;
+}
+.cn-back:hover {
+  color: var(--fg1);
+}
+
+.cn-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--violet-m);
+  border: 1px solid var(--violet-b);
+  color: var(--violet-fg);
+}
+
+.cn-demo {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 60;
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  border-radius: 999px;
+  padding: 5px 8px;
+  box-shadow: var(--shadow);
+}
+.cn-demo select {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fg2);
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  min-height: 32px;
+  max-width: 12rem;
+}
+.cn-demo button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--bd-solid);
+  background: transparent;
+  color: var(--fg3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cn-pw-toggle {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--fg3);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cn-pw-toggle:hover {
+  color: var(--fg1);
+}
+.cn-pw-wrap {
+  position: relative;
+}
+.cn-pw-wrap button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .cn-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 13px;
+  }
+  .cn-demo select,
+  .cn-demo button {
+    min-height: 44px;
+  }
+}
