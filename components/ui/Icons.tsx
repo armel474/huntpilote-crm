@@ -765,3 +765,14 @@ export const IcoUserX = (p: IconProps) => (
     <line x1="22" y1="8" x2="17" y2="13" />
   </Svg>
 );
+
+/* ── Portail client ── */
+
+/** Porte et flèche sortante — se déconnecter du portail client. */
+export const IcoOut = (p: IconProps) => (
+  <Svg size={14} {...p}>
+    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </Svg>
+);
