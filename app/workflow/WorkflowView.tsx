@@ -4,26 +4,37 @@ import { useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import {
+  IcoBell,
   IcoCal,
+  IcoCard,
+  IcoChart,
   IcoCheck,
   IcoClock,
   IcoDoc,
   IcoLink,
   IcoMail,
+  IcoPin,
   IcoPlus,
+  IcoSend,
+  IcoSrch,
+  IcoStar,
   IcoTarget,
   IcoWarn,
   IcoZap,
   type IconProps,
 } from '@/components/ui/Icons';
+import { RuleEditor } from '@/components/workflow/RuleEditor';
 import {
   AUTOMATIONS,
   CATEGORIES,
   CATEGORY_FILTERS,
   TEMPLATES,
+  blankRule,
+  ruleFromAutomation,
   type Automation,
   type CatId,
   type GlyphName,
+  type Rule,
 } from '@/lib/data/workflow';
 
 const GLYPHS: Record<GlyphName, (p: IconProps) => React.ReactElement> = {
@@ -36,6 +47,13 @@ const GLYPHS: Record<GlyphName, (p: IconProps) => React.ReactElement> = {
   task: IcoCheck,
   doc: IcoDoc,
   mail: IcoMail,
+  chart: IcoChart,
+  star: IcoStar,
+  bill: IcoCard,
+  pin: IcoPin,
+  bell: IcoBell,
+  send: IcoSend,
+  search: IcoSrch,
 };
 
 function Glyph({ name, size = 12 }: { name: GlyphName; size?: number }) {
@@ -123,7 +141,15 @@ function Arrow() {
   );
 }
 
-function AutomationRow({ a, onToggle }: { a: Automation; onToggle: (id: number) => void }) {
+function AutomationRow({
+  a,
+  onToggle,
+  onEdit,
+}: {
+  a: Automation;
+  onToggle: (id: number) => void;
+  onEdit: (id: number) => void;
+}) {
   const cat = CATEGORIES[a.cat];
   return (
     <article
@@ -279,6 +305,7 @@ function AutomationRow({ a, onToggle }: { a: Automation; onToggle: (id: number) 
           className="btn-out"
           type="button"
           style={{ marginLeft: 'auto', padding: '0.25rem 0.7rem', fontSize: '0.625rem' }}
+          onClick={() => onEdit(a.id)}
         >
           Modifier
         </button>
@@ -334,7 +361,7 @@ function StatStrip({ autos }: { autos: Automation[] }) {
   );
 }
 
-function TemplateCard({ t }: { t: (typeof TEMPLATES)[number] }) {
+function TemplateCard({ t, onUse }: { t: (typeof TEMPLATES)[number]; onUse: () => void }) {
   const cat = CATEGORIES[t.cat];
   return (
     <article
@@ -383,6 +410,7 @@ function TemplateCard({ t }: { t: (typeof TEMPLATES)[number] }) {
         className="btn-out"
         type="button"
         style={{ width: '100%', justifyContent: 'center', padding: '0.4rem', fontSize: '0.6875rem' }}
+        onClick={onUse}
       >
         <IcoPlus size={12} />
         Utiliser ce modèle
@@ -395,12 +423,40 @@ export function WorkflowView() {
   const [autos, setAutos] = useState<Automation[]>(AUTOMATIONS);
   const [tab, setTab] = useState<'actives' | 'modeles'>('actives');
   const [filter, setFilter] = useState<'tous' | CatId>('tous');
+  /** La règle en cours d'édition et, si elle vient d'une ligne existante, son id — pour
+      resynchroniser le bouton actif/pause de la liste quand on revient. Pas de nouvelle
+      route : « Modifier » bascule la même page vers l'éditeur. */
+  const [editing, setEditing] = useState<{ seed: Rule; automationId?: number } | null>(null);
 
   const toggle = (id: number) =>
     setAutos((prev) => prev.map((a) => (a.id === id ? { ...a, active: !a.active } : a)));
 
+  const setActive = (id: number, active: boolean) =>
+    setAutos((prev) => prev.map((a) => (a.id === id ? { ...a, active } : a)));
+
   const activeCount = autos.filter((a) => a.active).length;
   const shown = filter === 'tous' ? autos : autos.filter((a) => a.cat === filter);
+
+  if (editing) {
+    return (
+      <AppShell
+        header={
+          <CRMHeader
+            title={editing.seed.name || 'Nouvelle automatisation'}
+            subtitle="Éditeur d’automatisation"
+            period=""
+          />
+        }
+      >
+        <RuleEditor
+          seed={editing.seed}
+          automationId={editing.automationId}
+          onBack={() => setEditing(null)}
+          onSetActive={setActive}
+        />
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell
@@ -469,7 +525,7 @@ export function WorkflowView() {
             />
             Agent HuntPilote en service
           </span>
-          <button className="btn-pri" type="button">
+          <button className="btn-pri" type="button" onClick={() => setEditing({ seed: blankRule() })}>
             <IcoPlus size={12} />
             Créer une automatisation
           </button>
@@ -511,7 +567,15 @@ export function WorkflowView() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
               {shown.map((a) => (
-                <AutomationRow key={a.id} a={a} onToggle={toggle} />
+                <AutomationRow
+                  key={a.id}
+                  a={a}
+                  onToggle={toggle}
+                  onEdit={(id) => {
+                    const auto = autos.find((x) => x.id === id);
+                    if (auto) setEditing({ seed: ruleFromAutomation(auto), automationId: id });
+                  }}
+                />
               ))}
             </div>
           </>
@@ -531,7 +595,7 @@ export function WorkflowView() {
               }}
             >
               {TEMPLATES.map((t) => (
-                <TemplateCard key={t.name} t={t} />
+                <TemplateCard key={t.name} t={t} onUse={() => setEditing({ seed: blankRule(t.name, t.desc) })} />
               ))}
             </div>
           </>

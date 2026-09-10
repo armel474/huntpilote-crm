@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Board } from '@/components/pipeline/Board';
+import { DealPanel } from '@/components/pipeline/DealPanel';
 import { IcoFilter, IcoGrid, IcoList, IcoPlus } from '@/components/ui/Icons';
 import {
   DEALS,
@@ -14,6 +15,7 @@ import {
   initials,
   probColor,
   type Deal,
+  type Exchange,
 } from '@/lib/data/pipeline';
 
 /* ── Bandeau de statistiques, recalculé à chaque déplacement ── */
@@ -89,7 +91,7 @@ function StatStrip({ deals }: { deals: Deal[] }) {
 
 /* ── Vue liste ── */
 
-function ListView({ deals }: { deals: Deal[] }) {
+function ListView({ deals, onOpen }: { deals: Deal[]; onOpen: (id: number) => void }) {
   const stageMap = Object.fromEntries(STAGES.map((s) => [s.id, s]));
   const ordered = [...deals].sort(
     (a, b) =>
@@ -120,7 +122,20 @@ function ListView({ deals }: { deals: Deal[] }) {
             const st = stageMap[d.stage];
             const owner = OWNERS[d.owner];
             return (
-              <tr key={d.id}>
+              <tr
+                key={d.id}
+                onClick={() => onOpen(d.id)}
+                style={{ cursor: 'pointer' }}
+                tabIndex={0}
+                role="button"
+                aria-label={`Voir le détail de ${d.company}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onOpen(d.id);
+                  }
+                }}
+              >
                 <td style={cell}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
                     <div
@@ -229,9 +244,32 @@ function ListView({ deals }: { deals: Deal[] }) {
 export function PipelineView() {
   const [deals, setDeals] = useState<Deal[]>(DEALS);
   const [view, setView] = useState<'kanban' | 'liste'>('kanban');
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const active = deals.filter((d) => d.stage !== 'gagne');
   const totalMrr = active.reduce((s, d) => s + d.mrr, 0);
+  const openDeal = openId != null ? (deals.find((d) => d.id === openId) ?? null) : null;
+
+  /** « Marquer gagné » enclenche vraiment la bascule d'étape — la conséquence
+      annoncée dans le panneau (client + onboarding) n'est pas qu'un texte. */
+  const handleWin = (id: number) =>
+    setDeals((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, stage: 'gagne', prob: 100, days: 0, next: 'Onboarding lancé' } : d)),
+    );
+
+  const handleLose = (id: number, reason: string, note: string) =>
+    setDeals((prev) =>
+      prev.map((d) =>
+        d.id === id
+          ? { ...d, prob: 0, next: `Perdu — ${reason}`, lost: { reason, note: note || undefined } }
+          : d,
+      ),
+    );
+
+  const handleLog = (id: number, exchange: Exchange) =>
+    setDeals((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, extraHistory: [exchange, ...(d.extraHistory ?? [])] } : d)),
+    );
 
   return (
     <AppShell
@@ -329,12 +367,20 @@ export function PipelineView() {
       <StatStrip deals={deals} />
 
       {view === 'kanban' ? (
-        <Board deals={deals} setDeals={setDeals} />
+        <Board deals={deals} setDeals={setDeals} onOpen={setOpenId} />
       ) : (
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }}>
-          <ListView deals={deals} />
+          <ListView deals={deals} onOpen={setOpenId} />
         </div>
       )}
+
+      <DealPanel
+        deal={openDeal}
+        onClose={() => setOpenId(null)}
+        onWin={handleWin}
+        onLose={handleLose}
+        onLog={handleLog}
+      />
     </AppShell>
   );
 }
