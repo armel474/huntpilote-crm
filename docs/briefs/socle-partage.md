@@ -113,6 +113,28 @@ le mets pas dans le dropdown « Outil » ni sous une route `/outils/...`, et son
 fil d'Ariane ne doit jamais laisser croire qu'il suit les mêmes règles qu'un
 outil.
 
+### Le panneau latéral de détail — depuis la phase 4
+
+Un objet qui a besoin d'un détail riche mais dont la vue d'ensemble ne doit
+jamais se perdre (une carte de Kanban, une ligne de liste) s'ouvre en
+**panneau latéral** (`slide-over`), pas en page séparée : l'écran d'origine
+reste visible, voilé, derrière. Déjà utilisé pour le détail d'un deal
+(`DealPanel`, session 4.4). Un nouvel écran de ce type reprend ses classes
+(`.dl-sec`, `.dl-sec-h`, `.dl-field`, `.dl-form`, `.dl-ta`) plutôt que d'en
+redessiner un jeu équivalent. Les chips de sélection à l'intérieur (canal,
+catégorie…) utilisent `data-on`, jamais une classe `.on` isolée.
+
+### Les états système — depuis la session 6.2
+
+Un jeu de silhouettes de chargement, de trois vides distincts (initial, de
+filtre, sain) et d'erreurs actionnables existe déjà comme composants React
+(`components/ui/States.tsx`, classes `.hs-*`) et est appliqué à une dizaine
+d'écrans. Un nouvel écran de liste ou de tableau les réutilise directement —
+ce n'est plus à concevoir dans une maquette HTML, c'est déjà du code. Repère
+seulement, dans le brief, *lesquels* de ces états ont un sens pour l'écran (le
+principe reste : pas les quatre catégories partout, seulement où c'est
+pertinent).
+
 ---
 
 ## Règles d'écriture du HTML
