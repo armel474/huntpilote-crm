@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Lbl, Pill, Sec } from '@/components/ui/Atoms';
+import { EmptyHealthy } from '@/components/ui/States';
 import {
   IcoArrowR,
   IcoArrowL,
@@ -19,6 +20,7 @@ import {
   IcoCal,
   IcoCamera,
   IcoCheck,
+  IcoCheckAll,
   IcoClock,
   IcoCompare,
   IcoDoc,
@@ -141,7 +143,11 @@ export function ActionQueueCard({ estabs }: { estabs: Establishment[] }) {
       sub={rows.length ? `${rows.length} situation${rows.length > 1 ? 's' : ''} à traiter, la plus urgente en tête` : 'Aucune situation urgente en ce moment'}
     >
       {rows.length === 0 ? (
-        <div className="empty">Tous les établissements suivis sont à jour.</div>
+        <EmptyHealthy
+          icon={<IcoCheckAll size={18} />}
+          title="Tous les établissements suivis sont à jour"
+          text="Aucune fiche suspendue, aucun avis négatif sans réponse, aucune chute de position à traiter."
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {rows.map(({ est, alert }) => {

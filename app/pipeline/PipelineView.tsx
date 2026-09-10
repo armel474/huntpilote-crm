@@ -6,7 +6,9 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Board } from '@/components/pipeline/Board';
 import { DealPanel } from '@/components/pipeline/DealPanel';
-import { IcoFilter, IcoGrid, IcoList, IcoPlus } from '@/components/ui/Icons';
+import { Lbl } from '@/components/ui/Atoms';
+import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
+import { IcoFilter, IcoGrid, IcoList, IcoPipe, IcoPlus } from '@/components/ui/Icons';
 import {
   DEALS,
   OWNERS,
@@ -17,6 +19,37 @@ import {
   type Deal,
   type Exchange,
 } from '@/lib/data/pipeline';
+
+/* ── Démo · état — silhouette de colonnes pendant le chargement ── */
+
+function BoardSkeleton() {
+  return (
+    <div
+      className="sc"
+      style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '0.875rem 1.125rem 1.125rem' }}
+      aria-hidden="true"
+    >
+      <div style={{ display: 'flex', gap: 12, height: '100%', minWidth: 'min-content' }}>
+        {STAGES.map((st) => (
+          <section key={st.id} style={{ width: 244, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '0 4px 9px' }}>
+              <SkelLine w={72} h={11} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[...Array(st.id === 'gagne' ? 1 : 2)].map((_, i) => (
+                <div key={i} className="card" style={{ padding: '0.75rem 0.8rem' }}>
+                  <SkelLine w="70%" h={11} style={{ marginBottom: 8 }} />
+                  <SkelLine w="45%" h={9} style={{ marginBottom: 12 }} />
+                  <SkelLine w="55%" h={14} />
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* ── Bandeau de statistiques, recalculé à chaque déplacement ── */
 
@@ -241,10 +274,26 @@ function ListView({ deals, onOpen }: { deals: Deal[]; onOpen: (id: number) => vo
 
 /* ── Page ── */
 
+type PipeScenarioId = 'normal' | 'chargement' | 'vide';
+
+const PIPE_SCENARIOS: [PipeScenarioId, string][] = [
+  ['normal', 'Normal'],
+  ['chargement', 'Chargement'],
+  ['vide', 'Vide initial — aucun prospect'],
+];
+
 export function PipelineView() {
+  const [scenario, setScenarioRaw] = useState<PipeScenarioId>('normal');
   const [deals, setDeals] = useState<Deal[]>(DEALS);
   const [view, setView] = useState<'kanban' | 'liste'>('kanban');
   const [openId, setOpenId] = useState<number | null>(null);
+
+  const setScenario = (s: PipeScenarioId) => {
+    setScenarioRaw(s);
+    setDeals(s === 'vide' ? [] : DEALS);
+    setOpenId(null);
+  };
+  const loading = scenario === 'chargement';
 
   const active = deals.filter((d) => d.stage !== 'gagne');
   const totalMrr = active.reduce((s, d) => s + d.mrr, 0);
@@ -352,11 +401,26 @@ export function PipelineView() {
         </div>
 
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
-          {view === 'kanban' && (
+          {view === 'kanban' && scenario === 'normal' && (
             <span style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>
               Glissez les cartes entre les étapes, ou utilisez les flèches
             </span>
           )}
+          <Lbl>
+            <label htmlFor="etat-demo-pipeline">Démo · état</label>
+          </Lbl>
+          <select
+            id="etat-demo-pipeline"
+            className="state-sel"
+            value={scenario}
+            onChange={(e) => setScenario(e.target.value as PipeScenarioId)}
+          >
+            {PIPE_SCENARIOS.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
           <Link className="btn-primary" href="/onboarding">
             <IcoPlus size={12} />
             Nouveau prospect
@@ -364,14 +428,34 @@ export function PipelineView() {
         </div>
       </div>
 
-      <StatStrip deals={deals} />
-
-      {view === 'kanban' ? (
-        <Board deals={deals} setDeals={setDeals} onOpen={setOpenId} />
-      ) : (
-        <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }}>
-          <ListView deals={deals} onOpen={setOpenId} />
+      {loading ? (
+        <>
+          <div style={{ padding: '0.875rem 1.125rem 0', flexShrink: 0 }}>
+            <SkelKpiRow n={5} />
+          </div>
+          <BoardSkeleton />
+        </>
+      ) : scenario === 'vide' ? (
+        <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.125rem' }}>
+          <EmptyInitial
+            icon={<IcoPipe size={20} />}
+            title="Aucun prospect dans le pipeline"
+            text="Le pipeline commercial est vide — ajoutez votre premier prospect pour démarrer le suivi des opportunités."
+            primaryLabel="Nouveau prospect"
+            primaryHref="/onboarding"
+          />
         </div>
+      ) : (
+        <>
+          <StatStrip deals={deals} />
+          {view === 'kanban' ? (
+            <Board deals={deals} setDeals={setDeals} onOpen={setOpenId} />
+          ) : (
+            <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }}>
+              <ListView deals={deals} onOpen={setOpenId} />
+            </div>
+          )}
+        </>
       )}
 
       <DealPanel
