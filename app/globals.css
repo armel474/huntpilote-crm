@@ -3874,6 +3874,7 @@ body:has(.page-scroll) {
   }
 }
 
+
 /* ── Superpositions partagées : recherche globale et notifications — session 4.3 ── */
 #hp-overlay-root {
   --o-font: var(--font);
@@ -4447,5 +4448,152 @@ body:has(.page-scroll) {
   .hp-x {
     width: 40px;
     height: 40px;
+  }
+}
+
+
+/* ── Vues transversales — mon plan de travail, priorités (session 4.1) ──
+   Ligne « une tâche/une priorité, tous clients confondus » : ni `.crit`
+   (constat d'audit) ni `.step-row` (étape d'une tâche) ne portent échéance,
+   client et gestes de lot — nouvelle forme de ligne, propre à ces écrans. */
+.task-row,
+.prio-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+}
+.task-row[data-late='true'] {
+  border-color: var(--red-b);
+}
+.task-main,
+.prio-main {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.task-side,
+.prio-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+.task-actions,
+.prio-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+.task-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1.5px solid var(--bd-strong);
+  color: #fff;
+  cursor: pointer;
+  margin-top: 1px;
+}
+.task-check[data-done='true'] {
+  background: var(--green);
+  border-color: var(--green);
+}
+.task-check[data-locked='true'] {
+  background: var(--bg-muted);
+  border-color: var(--bd-solid);
+  color: var(--fg4);
+  cursor: not-allowed;
+}
+.task-check:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+/* Charge de la semaine : jauge + repère de seuil. */
+.load-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  overflow: hidden;
+  position: relative;
+}
+.load-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+.load-thresh {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--fg1);
+  opacity: 0.5;
+}
+/* Section critique groupée — même fond que `.crit`, appliqué à un groupe. */
+.crit-group {
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--red-m);
+  border: 1px solid var(--red-b);
+}
+.retard-group {
+  padding: 0.75rem 0.875rem;
+  border-radius: 12px;
+  background: var(--red-m);
+  border: 1px solid var(--red-b);
+}
+/* Barre d'assignation en lot — flottante en pied de liste. */
+.bulk-bar {
+  position: sticky;
+  bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-solid);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  z-index: 20;
+}
+@media (max-width: 768px) {
+  .task-row,
+  .prio-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* La bascule en colonne change l'axe principal : sans ça, le flex-basis de
+     280/300px pensé pour une largeur se lit comme une hauteur minimale. */
+  .task-main,
+  .prio-main {
+    flex-basis: auto;
+  }
+  .task-side,
+  .prio-side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .task-actions,
+  .prio-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .task-actions .btn-icon,
+  .task-actions .btn-out,
+  .prio-actions .btn-icon,
+  .prio-actions .btn-out {
+    min-height: 44px;
   }
 }
