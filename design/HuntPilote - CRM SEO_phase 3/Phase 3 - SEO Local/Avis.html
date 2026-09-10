@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Avis</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="lo-data.jsx"></script>
+<script type="text/babel" src="lo-panels.jsx"></script>
+<script type="text/babel" src="lo-avis-data.jsx"></script>
+<script type="text/babel" src="lo-avis-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="lo-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+const { NavSidebar, AIco, ASec } = window;
+const { ESTABS, GbpChip, blocked, BlockingCard } = window;
+const { AVIS_BY_ETAB, RatingSummaryCard, SentimentCard, ReviewRow, genDraft } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+const readIdFromUrl = () => { try { return new URLSearchParams(window.location.search).get('id'); } catch { return null; } };
+const ORDER = { sans_reponse: 0, a_relire: 1, signale: 2, publiee: 3 };
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [id, setId] = useState(() => readIdFromUrl() || 'acme-siege');
+  const est = ESTABS.find(e => e.id === id) || ESTABS[0];
+  const data = AVIS_BY_ETAB[est.id];
+  const [avis, setAvis] = useState(() => data ? data.avis.map(a => ({ ...a })) : []);
+  const [expandedId, setExpandedId] = useState(() => data ? (data.avis.find(a => a.etat !== 'publiee') || {}).id : null);
+  const [demo, setDemo] = useState('normal');
+  const [fNote, setFNote] = useState('toutes');
+  const [fEtat, setFEtat] = useState('toutes');
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+  useEffect(() => {
+    const d = AVIS_BY_ETAB[est.id];
+    setAvis(d ? d.avis.map(a => ({ ...a })) : []);
+    setExpandedId(d ? (d.avis.find(a => a.etat !== 'publiee') || {}).id : null);
+    setDemo('normal'); setFNote('toutes'); setFEtat('toutes');
+  }, [est.id]);
+  const pickEst = newId => { setId(newId); try { history.replaceState(null, '', `Avis.html?id=${newId}`); } catch {} };
+
+  const update = (rid, patch) => setAvis(list => list.map(r => r.id === rid ? { ...r, ...patch } : r));
+  const onGenerate = rid => update(rid, { etat: 'a_relire', reponseDraft: genDraft(avis.find(r => r.id === rid)) });
+  const onRegenerate = rid => update(rid, { reponseDraft: genDraft(avis.find(r => r.id === rid)) + ' (variante)' });
+  const onPublish = rid => update(rid, { etat: 'publiee', reponse: avis.find(r => r.id === rid).reponseDraft });
+  const onSignalAction = (rid, action) => update(rid, action === 'annule' ? { etat: 'publiee', reponse: 'Avis retiré du signalement — traité comme un avis normal.' } : { signaleMotif: avis.find(r => r.id === rid).signaleMotif + ' Signalement confirmé et transmis à Google.' });
+
+  const isBlocked = blocked(est);
+  const shown = demo === 'aucun' ? [] : avis;
+  const filtered = useMemo(() => shown.filter(r => (fNote === 'toutes' || r.note === +fNote) && (fEtat === 'toutes' || r.etat === fEtat)).sort((a, b) => ORDER[a.etat] - ORDER[b.etat]), [shown, fNote, fEtat]);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="local" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Avis — {est.name}</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><a href="SEO Local.html">SEO local</a><span>›</span><a href={`Fiche Etablissement.html?id=${est.id}`}>{est.name}</a><span>›</span><b>Avis</b></div>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+        </div>
+
+        <div className="subbar">
+          <a href={`Fiche Etablissement.html?id=${est.id}`} className="btn-out" style={{ textDecoration: 'none' }}><AIco.Back />Fiche de l’établissement</a>
+          <div className="ctx-g">
+            <span className="lbl" style={{ marginBottom: 0 }}>Établissement</span>
+            <select className="acct-sel" value={est.id} onChange={e => pickEst(e.target.value)} aria-label="Choisir un établissement">{ESTABS.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}</select>
+          </div>
+          {!isBlocked && <React.Fragment>
+            <div className="ctx-g"><span className="lbl" style={{ marginBottom: 0 }}>Note</span><select className="date-sel" value={fNote} onChange={e => setFNote(e.target.value)} aria-label="Filtrer par note"><option value="toutes">Toutes</option>{[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{n} étoiles</option>)}</select></div>
+            <div className="ctx-g"><span className="lbl" style={{ marginBottom: 0 }}>État</span><select className="date-sel" value={fEtat} onChange={e => setFEtat(e.target.value)} aria-label="Filtrer par état de réponse"><option value="toutes">Tous</option><option value="sans_reponse">Sans réponse</option><option value="a_relire">Réponse à relire</option><option value="publiee">Réponse publiée</option><option value="signale">Signalé</option></select></div>
+          </React.Fragment>}
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={demo} onChange={e => setDemo(e.target.value)} aria-label="État de démonstration"><option value="normal">Flux normal</option><option value="aucun">Aucun avis</option></select>
+          </div>
+        </div>
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content">
+            <div className="col-main">
+              {isBlocked
+                ? <BlockingCard est={est} />
+                : filtered.length === 0 && demo === 'aucun'
+                  ? <div className="card" style={{ padding: '1.25rem 1.125rem' }}><div className="empty" style={{ border: 'none', padding: 0 }}><div style={{ fontSize: '0.875rem', fontWeight: 800, marginBottom: 5 }}>Aucun avis pour cet établissement</div><div style={{ fontSize: '0.75rem', color: 'var(--fg2)' }}>La fiche est trop récente ou aucun client n’a encore laissé d’avis Google.</div></div></div>
+                  : <ASec title="Flux d’avis" sub={`${filtered.length} avis affichés · les avis sans réponse en tête`}>
+                      {filtered.length === 0
+                        ? <div className="empty">Aucun avis pour ces filtres.</div>
+                        : <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {filtered.map(r => <ReviewRow key={r.id} r={r} expanded={expandedId === r.id} onToggle={() => setExpandedId(r.id)}
+                              onGenerate={() => onGenerate(r.id)} onDraftChange={v => update(r.id, { reponseDraft: v })} onRegenerate={() => onRegenerate(r.id)}
+                              onPublish={() => onPublish(r.id)} onSignal={a => onSignalAction(r.id, a)} />)}
+                          </div>}
+                    </ASec>}
+            </div>
+            <div className="col-side">
+              {!isBlocked && data && <RatingSummaryCard dist={data.dist} trend={data.trend} threshold="Seuil : ≥ 4,0 et 0 avis sans réponse" />}
+              {!isBlocked && data && <SentimentCard sentiment={data.sentiment} />}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

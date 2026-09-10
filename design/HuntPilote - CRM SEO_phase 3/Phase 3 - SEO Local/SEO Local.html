@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — SEO local</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="lo-data.jsx"></script>
+<script type="text/babel" src="lo-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="lo-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+const { NavSidebar, AIco, APill, ALbl, ASec } = window;
+const { LOI, ESTABS, CLIENTS_SANS_ETAB, PortfolioKpis, ActionQueueCard, EstabRow } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+  Search: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+};
+
+const SORTS = [['urgence', 'Urgence d’abord'], ['score_asc', 'Score le plus bas'], ['score_desc', 'Score le plus élevé'], ['note_asc', 'Note la plus basse']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [client, setClient] = useState('tous');
+  const [sortBy, setSortBy] = useState('urgence');
+  const [q, setQ] = useState('');
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+
+  const clients = useMemo(() => [...new Set(ESTABS.map(e => e.client))], []);
+  const term = q.trim().toLowerCase();
+  const list = useMemo(() => {
+    let rows = ESTABS.filter(e => (client === 'tous' || e.client === client) && (!term || e.name.toLowerCase().includes(term) || e.client.toLowerCase().includes(term)));
+    const scoreOf = e => e.scoreLocal == null ? -1 : e.scoreLocal;
+    if (sortBy === 'score_asc') rows = [...rows].sort((a, b) => scoreOf(a) - scoreOf(b));
+    else if (sortBy === 'score_desc') rows = [...rows].sort((a, b) => scoreOf(b) - scoreOf(a));
+    else if (sortBy === 'note_asc') rows = [...rows].sort((a, b) => (a.note ?? 99) - (b.note ?? 99));
+    else rows = [...rows].sort((a, b) => b.alerts.length - a.alerts.length || scoreOf(a) - scoreOf(b));
+    return rows;
+  }, [client, sortBy, term]);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="local" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>SEO local</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><b>SEO local</b></div>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+        </div>
+
+        <div className="subbar">
+          <div className="dom-field" style={{ borderStyle: 'solid' }}>
+            <span style={{ color: 'var(--fg3)', display: 'flex' }}><HI.Search /></span>
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Filtrer un établissement…" aria-label="Filtrer les établissements" style={{ width: '12rem' }} />
+          </div>
+          <div className="ctx-g">
+            <span className="lbl" style={{ marginBottom: 0 }}>Client</span>
+            <select className="date-sel" value={client} onChange={e => setClient(e.target.value)} aria-label="Filtrer par client">
+              <option value="tous">Tous les clients</option>
+              {clients.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="ctx-g">
+            <span className="lbl" style={{ marginBottom: 0 }}>Tri</span>
+            <select className="date-sel" value={sortBy} onChange={e => setSortBy(e.target.value)} aria-label="Trier la liste">
+              {SORTS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}
+            </select>
+          </div>
+          <span style={{ marginLeft: 'auto', fontSize: '0.625rem', color: 'var(--fg3)' }}>{list.length} établissement{list.length > 1 ? 's' : ''}</span>
+        </div>
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content">
+            <div className="col-main">
+              <PortfolioKpis estabs={ESTABS} nSansEtab={CLIENTS_SANS_ETAB.length} />
+              <ActionQueueCard estabs={ESTABS} />
+              <ASec title="Établissements suivis" sub="Client rattaché, score local, avis, citations et position moyenne dans le pack local">
+                {list.length === 0
+                  ? <div className="empty">Aucun établissement pour ces filtres.</div>
+                  : <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{list.map(e => <EstabRow key={e.id} est={e} />)}</div>}
+              </ASec>
+            </div>
+            <div className="col-side">
+              <ASec title="Clients sans établissement local" sub="Aucune fiche Google Business suivie pour ces comptes">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {CLIENTS_SANS_ETAB.map(c => (
+                    <div key={c} className="link-row">
+                      <span style={{ flex: 1, fontSize: '0.75rem', fontWeight: 600 }}>{c}</span>
+                      <button className="btn-out"><AIco.Plus />Ajouter</button>
+                    </div>))}
+                </div>
+              </ASec>
+              <ASec title="Frontière avec l’audit" sub="Rappel utile en cas de doute">
+                <div style={{ fontSize: '0.6875rem', color: 'var(--fg2)', lineHeight: 1.6 }}>Les quatre critères de présence en ligne relevés par l’audit mensuel — complétude Google Business, cohérence nom·adresse·téléphone, citations, avis sans réponse — sont les mêmes ici, vus de plus près. C’est ici qu’on les corrige.</div>
+              </ASec>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

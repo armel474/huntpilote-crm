@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Votre rapport SEO — Septembre 2026 · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="rp-data.jsx"></script>
+<script type="text/babel" src="rp-body.jsx"></script>
+<link rel="stylesheet" href="rp-doc.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { RIco, REPORT } = window;
+
+const Delta = ({ d, up }) => <span className="delta" style={up ? null : { background: 'var(--yellow-m)', borderColor: 'var(--yellow-b)', color: 'var(--yellow-fg)' }}>{up ? <RIco.Up /> : <RIco.Down />}{d}</span>;
+
+const Expired = () => (
+  <div className="wrap" style={{ maxWidth: '30rem' }}>
+    <div className="doc" style={{ padding: '2rem 1.75rem', textAlign: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14, color: 'var(--fg3)' }}><RIco.Lock /></div>
+      <h2 style={{ marginBottom: 10 }}>Ce lien n’est plus valide</h2>
+      <p>Le lien de ce rapport a expiré ou a été révoqué par votre agence. Écrivez à <a href="mailto:marie@huntpilote.ca">marie@huntpilote.ca</a> pour en recevoir un nouveau.</p>
+      <div style={{ marginTop: 18, fontSize: '0.8125rem', color: 'var(--fg3)' }}>Rapport demandé : {REPORT.token}</div>
+    </div>
+  </div>);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [mode, setMode] = useState('normal');
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+
+  const first = mode === 'premier';
+  const proofs = REPORT.proofs.filter(p => p.on);
+  const R = REPORT;
+
+  const Demo = () => (
+    <div className="demo">
+      <select value={mode} onChange={e => setMode(e.target.value)} aria-label="État du rapport">
+        <option value="normal">Rapport normal</option>
+        <option value="premier">Premier rapport du client</option>
+        <option value="expire">Lien expiré ou révoqué</option>
+      </select>
+      <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'} aria-label="Changer de thème">{theme === 'dark' ? '☀' : '☾'}</button>
+    </div>);
+
+  if (mode === 'expire') return <React.Fragment><Demo /><Expired /></React.Fragment>;
+
+  return (
+    <React.Fragment>
+      <Demo />
+      <div className="wrap">
+        <window.ReportDoc R={R} first={first} theme={theme} proofs={proofs} Delta={Delta} RIco={RIco} />
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

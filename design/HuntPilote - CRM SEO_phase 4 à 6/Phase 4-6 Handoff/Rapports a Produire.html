@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Rapports à produire</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="rq-data.jsx"></script>
+<script type="text/babel" src="rq-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<style>
+@font-face{font-family:'Noto Sans';src:url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--font:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;--bg-base:#F2EFEA;--bg-solid:#FFFFFF;--bg-surface:rgba(255,255,255,0.54);--bg-muted:#E3DDD1;--bd:rgba(0,0,0,0.075);--bd-solid:#D0CBBF;--bd-strong:#BAB4A6;--border:rgba(0,0,0,0.075);--fg1:#18181B;--fg2:#3F3F46;--fg3:#71717A;--fg4:#A1A1AA;--primary:#1F1F1F;--primary-fg:#FFFFFF;--accent:#16A34A;--green:#16A34A;--green-m:#DCEFD4;--green-b:#BBE3AA;--green-fg:#2D5A27;--yellow:#E5C66B;--yellow-m:#F5E8B5;--yellow-fg:#7A5D14;--yellow-b:#D4B24A;--blue:#3B82F6;--blue-m:#DBEAFE;--blue-fg:#1D4ED8;--blue-b:#93C5FD;--red:#C44545;--red-m:rgba(196,69,69,0.08);--red-b:rgba(196,69,69,0.28);--violet:#7C3AED;--violet-m:rgba(124,58,237,0.07);--violet-b:rgba(124,58,237,0.2);--violet-fg:#5B21B6;--sidebar-w:230px;--sidebar-w-compact:64px;--header-h:58px;--blur:blur(22px) saturate(175%);--shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 4px 20px -2px rgba(0,0,0,0.10),0 1px 3px rgba(0,0,0,0.05)}
+[data-theme="dark"]{--bg-base:#131316;--bg-solid:#1E1E22;--bg-surface:rgba(255,255,255,0.06);--bg-muted:#27272A;--bd:rgba(255,255,255,0.08);--bd-solid:#2A2A2D;--bd-strong:#3F3F46;--border:rgba(255,255,255,0.08);--fg1:#FAFAFA;--fg2:#D4D4D8;--fg3:#A1A1AA;--fg4:#71717A;--primary:#FAFAFA;--primary-fg:#18181B;--green:#4ADE80;--green-m:rgba(74,222,128,0.13);--green-b:rgba(74,222,128,0.28);--green-fg:#86EFAC;--yellow:#E5C66B;--yellow-m:rgba(229,198,107,0.14);--yellow-fg:#E5C66B;--yellow-b:rgba(229,198,107,0.28);--blue-m:rgba(59,130,246,0.13);--blue-fg:#93C5FD;--blue-b:rgba(59,130,246,0.28);--red:#F5A0A0;--red-m:rgba(245,160,160,0.14);--red-b:rgba(245,160,160,0.32);--violet-m:rgba(124,58,237,0.12);--violet-b:rgba(124,58,237,0.3);--violet-fg:#C4B5FD;--shadow:0 1px 0 rgba(255,255,255,0.05) inset,0 4px 20px rgba(0,0,0,0.4)}
+[data-theme-switching],[data-theme-switching] *,[data-theme-switching] *::before,[data-theme-switching] *::after{transition:background-color 420ms ease,color 320ms ease,border-color 420ms ease,box-shadow 420ms ease !important}
+body{font-family:var(--font);background:var(--bg-base);color:var(--fg1);-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+body::before,body::after{content:'';position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:0.6}
+body::before{width:44rem;height:44rem;top:-12rem;left:12rem;background:radial-gradient(circle,rgba(74,222,128,0.4) 0%,transparent 68%)}
+body::after{width:36rem;height:36rem;bottom:-8rem;right:-2rem;background:radial-gradient(circle,rgba(229,198,107,0.36) 0%,transparent 68%)}
+[data-theme="dark"] body::before{opacity:0.32}[data-theme="dark"] body::after{opacity:0.30}
+a{color:var(--fg1)}a:hover{color:var(--green-fg)}
+.app-shell{display:flex;height:100vh;overflow:hidden;position:relative;z-index:1}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.crm-header{height:var(--header-h);flex-shrink:0;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.68);display:flex;align-items:center;padding:0 1.125rem;gap:0.625rem;position:relative;isolation:isolate;box-shadow:0 1px 0 var(--border),0 2px 20px rgba(0,0,0,0.05)}
+.crm-header::before{content:'';position:absolute;inset:0;z-index:-1;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+[data-theme="dark"] .crm-header{background:rgba(30,30,34,0.75)}
+.crumb{display:flex;align-items:center;gap:5px;font-size:0.6875rem;color:var(--fg3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb a{color:var(--fg3);text-decoration:none}.crumb a:hover{color:var(--fg1)}.crumb b{color:var(--fg1);font-weight:600}
+.btn-icon{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:var(--bg-solid);border:1px solid var(--bd-solid);color:var(--fg3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all 160ms;position:relative}
+.btn-icon:hover{color:var(--fg1)}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-ico{position:absolute;left:9px;color:var(--fg4);pointer-events:none;display:flex}
+.search-inp{font-family:var(--font);font-size:0.75rem;color:var(--fg1);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:0.35rem 0.75rem 0.35rem 28px;outline:none;transition:border-color 150ms;width:170px}
+.search-inp:focus{border-color:var(--accent)}.search-inp::placeholder{color:var(--fg4)}[data-theme="dark"] .search-inp{background:var(--bg-muted)}
+.card{background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:14px;box-shadow:var(--shadow)}
+.btn-pri{display:inline-flex;align-items:center;gap:6px;padding:0.45rem 1rem;border-radius:999px;background:var(--primary);color:var(--primary-fg);border:none;font-family:var(--font);font-size:0.75rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity 150ms}
+.btn-pri:hover{opacity:0.84}.btn-pri:disabled{opacity:0.4;cursor:not-allowed}
+.btn-out{display:inline-flex;align-items:center;gap:5px;padding:0.4rem 0.875rem;border-radius:999px;background:transparent;color:var(--fg2);border:1px solid var(--bd-strong);font-family:var(--font);font-size:0.75rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 150ms}
+.btn-out:hover{background:var(--bg-muted)}
+.lbl{font-size:0.5625rem;font-weight:700;color:var(--fg4);text-transform:uppercase;letter-spacing:0.07em}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap;line-height:1.6}
+.sc{overflow-y:auto}.sc::-webkit-scrollbar{width:7px}.sc::-webkit-scrollbar-thumb{background:var(--bd-strong);border-radius:999px}.sc::-webkit-scrollbar-track{background:transparent}
+.sel{font-family:var(--font);font-size:0.6875rem;color:var(--fg1);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:8px;padding:0.4rem 0.6rem;outline:none;min-height:34px}
+.state-sel{font-family:var(--font);font-size:0.6875rem;font-weight:600;color:var(--fg2);background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:0.3rem 0.7rem;outline:none;cursor:pointer}
+.subbar{display:flex;align-items:center;gap:10px;padding:0.55rem 1.125rem;border-bottom:1px solid var(--bd-solid);background:rgba(255,255,255,0.6);backdrop-filter:var(--blur);flex-shrink:0;flex-wrap:wrap}
+[data-theme="dark"] .subbar{background:rgba(30,30,34,0.6)}
+.content{flex:1;padding:1rem 1.125rem 1.5rem;max-width:1040px}
+.empty{padding:20px 14px;border-radius:10px;border:1.5px dashed var(--bd-strong);text-align:center}
+.note-box{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--bg-muted);border:1px solid var(--bd-solid);font-size:0.75rem;color:var(--fg2)}
+.note-box b{color:var(--fg1)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:0.4rem 0.75rem;border-radius:999px;border:1px solid var(--bd-solid);background:var(--bg-solid);font-family:var(--font);font-size:0.625rem;font-weight:600;color:var(--fg3);cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--green-m);border-color:var(--green-b);color:var(--green-fg)}
+.rq-row{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--bg-surface);flex-wrap:wrap}
+.rq-main{flex:1 1 340px;min-width:0}
+.rq-side{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:0 0 auto;padding-top:2px}
+.rq-act{display:flex;align-items:center;gap:5px;flex:0 0 auto;padding-top:2px}
+.rq-block{margin-top:9px;padding:9px 10px;border-radius:9px;background:var(--yellow-m);border:1px solid var(--yellow-b)}
+.hp-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:80;background:var(--fg1);color:var(--bg-solid);padding:9px 14px;border-radius:10px;font-size:0.6875rem;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.28);max-width:min(600px,92vw);line-height:1.45}
+@media (max-width:1100px){.rq-row{flex-direction:column;align-items:stretch}.rq-side{flex-direction:row;align-items:baseline;justify-content:flex-start;gap:5px;width:100%}.rq-act{width:100%;justify-content:flex-start}}
+@media (max-width:768px){.rq-act .btn-out,.chip,.state-sel,.btn-out{min-height:44px}.content{padding:12px 12px 1.5rem;max-width:100%}.subbar{padding:0.5rem 12px}}
+</style>
+<link rel="stylesheet" href="hp-overlays.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+const { NavSidebar } = window;
+const { QI, CycleCard, RqFilter, RqGroupSection, DebutBanner, PicBanner, FiniBanner, RqEmpty } = window;
+
+const I = {
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => {
+  const [s, setS] = useState('');
+  return (
+    <div className="crm-header">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Rapports à produire</div>
+        <div className="crumb"><a href="Dashboard.html">Accueil</a><span>›</span><b>Rapports à produire</b></div>
+      </div>
+      <div className="search-wrap"><span className="search-ico"><I.Srch /></span><input className="search-inp" placeholder="Rechercher un client…" value={s} onChange={e => setS(e.target.value)} /></div>
+      <button className="btn-icon" title="Notifications"><I.Bell /><span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span></button>
+      <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+    </div>);
+};
+
+const SCENARIOS = [['normal', 'Vue normale'], ['debut', 'Début de mois, rien à faire'], ['pic', 'Pic de fin de mois'], ['sanspreuve', 'Clients sans preuve'], ['retard', 'Rapports en retard']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState(() => { try { return localStorage.getItem('hp-rq-scenario') || 'normal'; } catch { return 'normal'; } });
+  const [filter, setFilter] = useState('tout');
+  const [noProofOnly, setNoProofOnly] = useState(false);
+  const [nudged, setNudged] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const on = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', on); return () => mq.removeEventListener('change', on);
+  }, []);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 5200); return () => clearTimeout(t); }, [toast]);
+
+  const setSc = s => { setScenario(s); setFilter('tout'); setNoProofOnly(false); setNudged([]); try { localStorage.setItem('hp-rq-scenario', s); } catch {} };
+
+  const { cycle, rows } = useMemo(() => window.rqScenario(scenario), [scenario]);
+  const counts = useMemo(() => rows.reduce((a, r) => { const g = window.rqGroup(r, cycle); a[g] = (a[g] || 0) + 1; return a; }, {}), [rows, cycle]);
+  const shown = rows.filter(r => (filter === 'tout' || window.rqGroup(r, cycle) === filter) && (!noProofOnly || r.proofs < window.RQ_PROOF_MIN));
+
+  const reviewers = useMemo(() => [...new Set(rows.filter(r => r.state === 'bloque').flatMap(r => (r.blockers || []).map(b => b.who)))], [rows]);
+  const blockedLabels = rows.filter(r => r.state === 'bloque').reduce((n, r) => n + (r.blockers || []).length, 0);
+  const nudgeAll = () => {
+    setNudged(reviewers);
+    setToast(`Relance envoyée à ${reviewers.join(' et ')} — les ${blockedLabels} libellés à relire leur ont été rappelés, avec le lien vers chaque rapport.`);
+  };
+  const nudgeOne = r => {
+    const who = (r.blockers || [])[0]?.who;
+    setNudged(n => [...new Set([...n, who])]);
+    setToast(`Relance envoyée à ${who} pour ${r.client} — ${(r.blockers || []).length} libellé${(r.blockers || []).length > 1 ? 's' : ''} à relire.`);
+  };
+
+  const sent = rows.filter(r => window.RQ_SENT.includes(r.state)).length;
+  const jours = Math.max(cycle.targetDay - cycle.today, 1);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="rapports" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
+        <div className="subbar">
+          <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Vue agence du cycle mensuel · les libellés d’état sont ceux de l’éditeur de rapport</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            {reviewers.length > 0 && (
+              <button className="btn-pri" style={{ background: '#15803D', color: '#fff' }} onClick={nudgeAll} disabled={nudged.length >= reviewers.length}>
+                <QI.Bell />{nudged.length >= reviewers.length ? 'Relecteurs relancés' : `Relancer les ${reviewers.length} relecteurs`}
+              </button>)}
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+        </div>
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content">
+            {scenario === 'debut' && <DebutBanner n={rows.length} cycle={cycle} />}
+            {scenario === 'pic' && <PicBanner n={rows.length} jours={jours} />}
+            {sent === rows.length && rows.length > 0 && <FiniBanner />}
+            <CycleCard rows={rows} cycle={cycle} />
+            <RqFilter f={filter} setF={setFilter} counts={counts} noProofOnly={noProofOnly} setNoProofOnly={setNoProofOnly} shown={shown.length} total={rows.length} />
+            {shown.length === 0 ? <RqEmpty /> : window.RQ_GROUPS.map(([id, title, sub]) => (
+              <RqGroupSection key={id} id={id} title={title} sub={sub} cycle={cycle} onNudge={nudgeOne}
+                rows={shown.filter(r => window.rqGroup(r, cycle) === id)} />))}
+            <div style={{ fontSize: '0.5625rem', color: 'var(--fg3)', lineHeight: 1.6, marginTop: 4 }}>Cet écran ne compose ni ne publie : il liste où en est chaque rapport et mène à l’éditeur. « En retard » n’est pas un état de l’éditeur — c’est la date d’envoi promise qui est passée, signalée par-dessus l’état réel du rapport.</div>
+          </div>
+        </div>
+      </div>
+      {toast && <div className="hp-toast" role="status">{toast}</div>}
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>

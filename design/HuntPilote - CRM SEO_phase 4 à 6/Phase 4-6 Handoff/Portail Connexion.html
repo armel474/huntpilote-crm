@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Votre espace client — HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="rp-doc.css">
+<link rel="stylesheet" href="pc-portal.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const KNOWN = ['contact@acmecorp.fr', 'marie.tremblay@acmecorp.fr', 'direction@bistrolechalet.ca'];
+
+const PI = {
+  Logo: ({ dark }) => <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke={dark ? '#18181B' : '#fff'} strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
+  Mail: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><polyline points="2 7 12 13 22 7" /></svg>,
+  Clock: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+  Warn: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
+  Arrow: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>,
+  Send: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>,
+  Back: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>,
+};
+
+const Brand = ({ theme, sub }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 11, marginBottom: '1.5rem' }}>
+    <span className="pc-mark"><PI.Logo dark={theme === 'dark'} /></span>
+    <div style={{ minWidth: 0 }}>
+      <div style={{ fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.2 }}>HuntPilote</div>
+      <div style={{ fontSize: '0.75rem', color: 'var(--fg3)' }}>{sub}</div>
+    </div>
+  </div>);
+
+/* ── SAISIE DU COURRIEL ── */
+const AskEmail = ({ theme, email, setEmail, error, onSubmit }) => (
+  <div className="pc-card">
+    <Brand theme={theme} sub="Votre espace client" />
+    <h1 style={{ fontSize: '1.5rem', marginBottom: 8 }}>Accédez à vos rapports</h1>
+    <p style={{ fontSize: '0.9375rem', marginBottom: '1.5rem' }}>Entrez l’adresse courriel à laquelle votre agence vous écrit. Nous vous envoyons un lien de connexion — aucun mot de passe à retenir.</p>
+    <form onSubmit={e => { e.preventDefault(); onSubmit(); }}>
+      <div className="pc-field">
+        <label htmlFor="pc-email">Adresse courriel</label>
+        <input id="pc-email" className={`pc-input${error ? ' bad' : ''}`} type="email" inputMode="email" autoComplete="email" autoFocus
+          value={email} onChange={e => setEmail(e.target.value)} placeholder="vous@votreentreprise.ca"
+          aria-invalid={!!error} aria-describedby={error ? 'pc-email-err' : undefined} />
+      </div>
+      {error && <div className="pc-err" id="pc-email-err" role="alert"><span><PI.Warn /></span><span>{error}</span></div>}
+      <button type="submit" className="pc-btn solid big" disabled={!email.trim()}><PI.Send />Recevoir mon lien de connexion</button>
+    </form>
+    <div className="pc-sep"></div>
+    <p className="pc-hint">Le lien reste valide <b style={{ color: 'var(--fg2)' }}>15 minutes</b> et ne fonctionne qu’une fois. Une question ? Écrivez à <a href="mailto:marie@huntpilote.ca">marie@huntpilote.ca</a>.</p>
+  </div>);
+
+/* ── VÉRIFIEZ VOTRE BOÎTE ── */
+const CheckInbox = ({ theme, email, onBack, resent, onResend }) => (
+  <div className="pc-card">
+    <Brand theme={theme} sub="Votre espace client" />
+    <div className="pc-sent"><PI.Mail /></div>
+    <h1 style={{ fontSize: '1.5rem', marginBottom: 8 }}>Vérifiez votre boîte de réception</h1>
+    <p style={{ fontSize: '0.9375rem' }}>Un lien de connexion vient de partir vers <b style={{ color: 'var(--fg1)' }}>{email}</b>.</p>
+    <ol className="pc-steps">
+      <li><span className="n">1</span><span>Ouvrez le courriel intitulé « Votre lien de connexion — HuntPilote ».</span></li>
+      <li><span className="n">2</span><span>Cliquez sur le bouton du courriel. Vous arrivez directement dans votre espace.</span></li>
+      <li><span className="n">3</span><span>Rien reçu au bout de deux minutes ? Regardez dans vos indésirables.</span></li>
+    </ol>
+    <a href="Portail.html" className="pc-btn solid big" style={{ marginBottom: 9 }}>J’ai cliqué sur le lien — ouvrir mon espace<PI.Arrow /></a>
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <button className="pc-btn" onClick={onResend} disabled={resent} style={{ flex: 1, justifyContent: 'center' }}>{resent ? 'Nouveau lien envoyé' : 'Renvoyer le lien'}</button>
+      <button className="pc-btn" onClick={onBack} style={{ flex: 1, justifyContent: 'center' }}><PI.Back />Changer d’adresse</button>
+    </div>
+    <div className="pc-sep"></div>
+    <p className="pc-hint">Le lien expire dans <b style={{ color: 'var(--fg2)' }}>15 minutes</b>. Passé ce délai, demandez-en un nouveau depuis cette page.</p>
+  </div>);
+
+/* ── LIEN EXPIRÉ ── */
+const ExpiredLink = ({ theme, email, resent, onResend, onBack }) => (
+  <div className="pc-card">
+    <Brand theme={theme} sub="Votre espace client" />
+    <div className="pc-sent warn"><PI.Clock /></div>
+    <h1 style={{ fontSize: '1.5rem', marginBottom: 8 }}>Ce lien a expiré</h1>
+    <p style={{ fontSize: '0.9375rem' }}>Les liens de connexion ne restent valides que <b style={{ color: 'var(--fg1)' }}>15 minutes</b>, et ne servent qu’une fois — c’est ce qui protège vos données. Celui-ci a dépassé le délai.</p>
+    <p style={{ fontSize: '0.9375rem', marginTop: 10, marginBottom: '1.25rem' }}>Rien n’est perdu : demandez-en un nouveau, il arrive en quelques secondes.</p>
+    {resent
+      ? <React.Fragment>
+          <div className="pc-frozen-in" style={{ background: 'var(--green-m)', borderColor: 'var(--green-b)', marginBottom: 10 }}>
+            <span style={{ color: 'var(--green-fg)' }}><PI.Mail /></span>
+            <div><b>Nouveau lien envoyé à {email}.</b> Il est valide 15 minutes.</div>
+          </div>
+          <a href="Portail.html" className="pc-btn solid big">J’ai cliqué sur le nouveau lien<PI.Arrow /></a>
+        </React.Fragment>
+      : <button className="pc-btn solid big" onClick={onResend}><PI.Send />M’envoyer un nouveau lien</button>}
+    <div className="pc-sep"></div>
+    <p className="pc-hint">Ce n’est pas votre adresse ? <button onClick={onBack} style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: 'var(--green-d)', cursor: 'pointer', textDecoration: 'underline' }}>Utilisez-en une autre</button>.</p>
+  </div>);
+
+const SCENARIOS = [['saisie', 'Saisie du courriel'], ['boite', 'Vérifiez votre boîte'], ['inconnue', 'Adresse inconnue'], ['expire', 'Lien expiré']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState('saisie');
+  const [email, setEmail] = useState('');
+  const [step, setStep] = useState('ask');
+  const [error, setError] = useState(null);
+  const [resent, setResent] = useState(false);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+
+  const setSc = s => {
+    setScenario(s); setResent(false); setError(null);
+    if (s === 'saisie') { setStep('ask'); setEmail(''); }
+    if (s === 'boite') { setStep('sent'); setEmail('contact@acmecorp.fr'); }
+    if (s === 'inconnue') { setStep('ask'); setEmail('jean@ancienneadresse.ca'); setError('Nous ne connaissons pas cette adresse. Vérifiez l’orthographe, ou écrivez à marie@huntpilote.ca pour qu’elle vous ajoute au compte.'); }
+    if (s === 'expire') { setStep('expired'); setEmail('contact@acmecorp.fr'); }
+  };
+
+  const submit = () => {
+    const v = email.trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(v)) { setError('Cette adresse n’a pas l’air complète. Elle doit ressembler à vous@votreentreprise.ca.'); return; }
+    if (!KNOWN.includes(v)) { setError('Nous ne connaissons pas cette adresse. Vérifiez l’orthographe, ou écrivez à marie@huntpilote.ca pour qu’elle vous ajoute au compte.'); return; }
+    setError(null); setResent(false); setStep('sent');
+  };
+
+  return (
+    <React.Fragment>
+      <div className="pc-demo">
+        <select value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+        <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'} aria-label="Changer de thème">{theme === 'dark' ? '☀' : '☾'}</button>
+      </div>
+      <div className="pc-auth">
+        {step === 'ask' && <AskEmail theme={theme} email={email} setEmail={v => { setEmail(v); setError(null); }} error={error} onSubmit={submit} />}
+        {step === 'sent' && <CheckInbox theme={theme} email={email} resent={resent} onResend={() => setResent(true)} onBack={() => { setStep('ask'); setResent(false); }} />}
+        {step === 'expired' && <ExpiredLink theme={theme} email={email} resent={resent} onResend={() => setResent(true)} onBack={() => { setStep('ask'); setEmail(''); setResent(false); }} />}
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

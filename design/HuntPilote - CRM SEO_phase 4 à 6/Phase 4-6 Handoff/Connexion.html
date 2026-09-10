@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Connexion — HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face{font-family:'Noto Sans';src:url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-style:normal;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--font:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;--bg-base:#F2EFEA;--bg-solid:#FFFFFF;--bg-muted:#E3DDD1;--bd:rgba(0,0,0,0.075);--bd-solid:#D0CBBF;--bd-strong:#BAB4A6;--fg1:#18181B;--fg2:#3F3F46;--fg3:#71717A;--fg4:#A1A1AA;--green:#16A34A;--green-d:#15803D;--green-m:#DCEFD4;--green-b:#BBE3AA;--green-fg:#2D5A27;--red:#C44545;--red-m:rgba(196,69,69,0.08);--red-b:rgba(196,69,69,0.28);--violet-m:rgba(124,58,237,0.07);--violet-b:rgba(124,58,237,0.2);--violet-fg:#5B21B6;--shadow:0 1px 2px rgba(0,0,0,0.04),0 6px 24px -8px rgba(0,0,0,0.10)}
+[data-theme="dark"]{--bg-base:#131316;--bg-solid:#1E1E22;--bg-muted:#27272A;--bd:rgba(255,255,255,0.08);--bd-solid:#2A2A2D;--bd-strong:#3F3F46;--fg1:#FAFAFA;--fg2:#D4D4D8;--fg3:#A1A1AA;--fg4:#71717A;--green:#4ADE80;--green-d:#4ADE80;--green-m:rgba(74,222,128,0.13);--green-b:rgba(74,222,128,0.28);--green-fg:#86EFAC;--red:#F5A0A0;--red-m:rgba(245,160,160,0.14);--red-b:rgba(245,160,160,0.32);--violet-m:rgba(124,58,237,0.12);--violet-b:rgba(124,58,237,0.3);--violet-fg:#C4B5FD;--shadow:0 4px 24px rgba(0,0,0,0.4)}
+[data-theme-switching],[data-theme-switching] *{transition:background-color 420ms ease,color 320ms ease,border-color 420ms ease !important}
+body{font-family:var(--font);background:var(--bg-base);color:var(--fg1);-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--green-d);text-decoration:none}a:hover{color:var(--green-fg);text-decoration:underline}
+.cn-wrap{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:2rem 1.25rem}
+.cn-card{width:100%;max-width:23rem;background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:16px;box-shadow:var(--shadow);padding:2rem 1.875rem}
+.cn-mark{width:34px;height:34px;border-radius:9px;background:#1F1F1F;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+[data-theme="dark"] .cn-mark{background:#FAFAFA}
+.cn-brand{display:flex;align-items:center;gap:10px;margin-bottom:1.75rem}
+.cn-h1{font-size:1.3125rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:5px}
+.cn-sub{font-size:0.8125rem;color:var(--fg3);margin-bottom:1.5rem;line-height:1.5}
+.cn-field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.cn-field label{font-size:0.75rem;font-weight:700;color:var(--fg2)}
+.cn-row{display:flex;align-items:baseline;justify-content:space-between}
+.cn-input{font-family:var(--font);font-size:0.9375rem;color:var(--fg1);background:var(--bg-solid);border:1.5px solid var(--bd-solid);border-radius:10px;padding:0.6rem 0.8rem;outline:none;width:100%;transition:border-color 150ms}
+.cn-input:focus{border-color:var(--green-d)}
+.cn-input.bad{border-color:var(--red)}
+.cn-input::placeholder{color:var(--fg4)}
+.cn-err{display:flex;gap:7px;align-items:flex-start;font-size:0.8125rem;color:var(--red);line-height:1.5;margin-top:-3px;margin-bottom:1rem}
+[data-theme="dark"] .cn-err{color:#F5A0A0}
+.cn-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:0.65rem 1rem;border-radius:10px;border:none;background:var(--green-d);color:#fff;font-family:var(--font);font-size:0.875rem;font-weight:700;cursor:pointer;transition:opacity 150ms}
+.cn-btn:hover{opacity:0.9}.cn-btn:disabled{opacity:0.45;cursor:not-allowed}
+.cn-btn-out{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:0.6rem 1rem;border-radius:10px;border:1px solid var(--bd-strong);background:transparent;color:var(--fg2);font-family:var(--font);font-size:0.8125rem;font-weight:600;cursor:pointer}
+.cn-btn-out:hover{background:var(--bg-muted)}
+.cn-sep{height:1px;background:var(--bd);margin:1.25rem 0}
+.cn-hint{font-size:0.75rem;color:var(--fg3);line-height:1.55}
+.cn-sent{width:46px;height:46px;border-radius:13px;background:var(--green-m);border:1px solid var(--green-b);color:var(--green-fg);display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+.cn-back{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600;color:var(--fg3);background:none;border:0;padding:0;cursor:pointer;margin-bottom:1.1rem}
+.cn-back:hover{color:var(--fg1)}
+.cn-role{display:inline-flex;align-items:center;gap:5px;font-size:0.6875rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--violet-m);border:1px solid var(--violet-b);color:var(--violet-fg)}
+.cn-demo{position:fixed;bottom:12px;right:12px;display:flex;gap:6px;align-items:center;z-index:60;background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:999px;padding:5px 8px;box-shadow:var(--shadow)}
+.cn-demo select{font-family:var(--font);font-size:0.75rem;font-weight:600;color:var(--fg2);background:transparent;border:none;outline:none;cursor:pointer;min-height:32px;max-width:12rem}
+.cn-demo button{width:32px;height:32px;border-radius:50%;border:1px solid var(--bd-solid);background:transparent;color:var(--fg3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.cn-pw-toggle{background:none;border:0;padding:0;color:var(--fg3);font-size:0.6875rem;font-weight:600;cursor:pointer}
+.cn-pw-toggle:hover{color:var(--fg1)}
+.cn-pw-wrap{position:relative}
+.cn-pw-wrap button{position:absolute;right:10px;top:50%;transform:translateY(-50%)}
+@media (max-width:768px){.cn-card{padding:1.5rem 1.25rem;border-radius:13px}.cn-btn,.cn-input{min-height:44px}.cn-demo select,.cn-demo button{min-height:44px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const KNOWN = { 'marie@huntpilot.ca': { name: 'Marie Chen', role: 'Administratrice', pass: 'bonjour2026' } };
+const CI = {
+  Logo: ({ dark }) => <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={dark ? '#18181B' : '#fff'} strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
+  Warn: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>,
+  Mail: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2" /><polyline points="2 7 12 13 22 7" /></svg>,
+  Back: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>,
+  Eye: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>,
+  EyeOff: () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>,
+};
+
+const Brand = () => (
+  <div className="cn-brand">
+    <span className="cn-mark"><CI.Logo dark={document.documentElement.getAttribute('data-theme') === 'dark'} /></span>
+    <span style={{ fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>HuntPilote</span>
+  </div>);
+
+const Login = ({ onLogin, onForgot }) => {
+  const [email, setEmail] = useState('marie@huntpilot.ca');
+  const [pass, setPass] = useState('');
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState(null);
+  const submit = e => {
+    e.preventDefault();
+    const u = KNOWN[email.trim().toLowerCase()];
+    if (!u) { setError('Aucun compte HuntPilote pour cette adresse.'); return; }
+    if (pass !== u.pass) { setError('Mot de passe incorrect.'); return; }
+    setError(null); onLogin(u);
+  };
+  return (
+    <div className="cn-card">
+      <Brand />
+      <div className="cn-h1">Connexion à l’agence</div>
+      <div className="cn-sub">Réservé à l’équipe HuntPilote.</div>
+      <form onSubmit={submit}>
+        <div className="cn-field">
+          <label htmlFor="cn-email">Courriel</label>
+          <input id="cn-email" className={`cn-input${error ? ' bad' : ''}`} type="email" autoComplete="username" value={email} onChange={e => { setEmail(e.target.value); setError(null); }} placeholder="prenom@huntpilot.ca" />
+        </div>
+        <div className="cn-field">
+          <div className="cn-row"><label htmlFor="cn-pass">Mot de passe</label><button type="button" className="cn-back" style={{ marginBottom: 0 }} onClick={onForgot}>Mot de passe oublié ?</button></div>
+          <div className="cn-pw-wrap">
+            <input id="cn-pass" className={`cn-input${error ? ' bad' : ''}`} type={show ? 'text' : 'password'} autoComplete="current-password" value={pass} onChange={e => { setPass(e.target.value); setError(null); }} placeholder="••••••••" />
+            <button type="button" className="cn-pw-toggle" onClick={() => setShow(s => !s)} aria-label={show ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}>{show ? <CI.EyeOff /> : <CI.Eye />}</button>
+          </div>
+        </div>
+        {error && <div className="cn-err"><span style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}><CI.Warn /></span><span>{error}</span></div>}
+        <button type="submit" className="cn-btn" disabled={!email.trim() || !pass}>Se connecter</button>
+      </form>
+    </div>);
+};
+
+const Forgot = ({ onBack }) => {
+  const [email, setEmail] = useState('marie@huntpilot.ca');
+  const [sent, setSent] = useState(false);
+  return (
+    <div className="cn-card">
+      <button className="cn-back" onClick={onBack}><CI.Back />Retour à la connexion</button>
+      <Brand />
+      {sent ? (
+        <React.Fragment>
+          <div className="cn-sent"><CI.Mail /></div>
+          <div className="cn-h1">Vérifiez votre boîte</div>
+          <div className="cn-sub" style={{ marginBottom: '1.25rem' }}>Si <b style={{ color: 'var(--fg1)' }}>{email}</b> correspond à un compte, un lien de réinitialisation valide 30 minutes vient de partir.</div>
+          <button className="cn-btn-out" onClick={() => setSent(false)}>Renvoyer à une autre adresse</button>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <div className="cn-h1">Réinitialiser le mot de passe</div>
+          <div className="cn-sub">Entrez votre courriel d’agence, nous vous envoyons un lien pour en choisir un nouveau.</div>
+          <div className="cn-field"><label htmlFor="cn-fe">Courriel</label><input id="cn-fe" className="cn-input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="prenom@huntpilot.ca" /></div>
+          <button className="cn-btn" disabled={!email.trim()} onClick={() => setSent(true)}>Envoyer le lien</button>
+        </React.Fragment>)}
+    </div>);
+};
+
+const Invited = ({ onAccept }) => (
+  <div className="cn-card">
+    <Brand />
+    <div style={{ marginBottom: 10 }}><span className="cn-role">Invitation</span></div>
+    <div className="cn-h1">Marie Chen vous invite chez HuntPilote</div>
+    <div className="cn-sub">Vous rejoindrez l’agence avec le rôle <b style={{ color: 'var(--fg1)' }}>Rédacteur</b> — accès aux briefs de contenu et aux clients qui vous seront assignés. Un administrateur peut ajuster ce rôle plus tard.</div>
+    <div className="cn-field"><label htmlFor="cn-inv-e">Courriel</label><input id="cn-inv-e" className="cn-input" defaultValue="tom@huntpilot.ca" disabled style={{ color: 'var(--fg3)', cursor: 'not-allowed' }} /></div>
+    <button className="cn-btn" onClick={onAccept}>Accepter et choisir un mot de passe</button>
+    <div className="cn-sep"></div>
+    <div className="cn-hint">Ce lien d’invitation expire dans 7 jours. Ce n’est pas vous ? Ignorez ce courriel, rien ne sera créé.</div>
+  </div>);
+
+const FirstLogin = ({ onDone }) => {
+  const [p1, setP1] = useState(''), [p2, setP2] = useState('');
+  const weak = p1.length > 0 && p1.length < 8;
+  const mismatch = p2.length > 0 && p1 !== p2;
+  const ok = p1.length >= 8 && p1 === p2;
+  return (
+    <div className="cn-card">
+      <Brand />
+      <div style={{ marginBottom: 10 }}><span className="cn-role">Tom Bélanger · tom@huntpilot.ca</span></div>
+      <div className="cn-h1">Choisissez votre mot de passe</div>
+      <div className="cn-sub">Dernière étape avant d’entrer dans HuntPilote.</div>
+      <div className="cn-field">
+        <label htmlFor="cn-p1">Mot de passe</label>
+        <input id="cn-p1" className={`cn-input${weak ? ' bad' : ''}`} type="password" value={p1} onChange={e => setP1(e.target.value)} placeholder="8 caractères minimum" />
+        {weak && <div className="cn-hint" style={{ color: 'var(--red)' }}>Encore {8 - p1.length} caractère{8 - p1.length > 1 ? 's' : ''} — le seuil minimal est de 8.</div>}
+      </div>
+      <div className="cn-field">
+        <label htmlFor="cn-p2">Confirmer le mot de passe</label>
+        <input id="cn-p2" className={`cn-input${mismatch ? ' bad' : ''}`} type="password" value={p2} onChange={e => setP2(e.target.value)} placeholder="Retapez-le" />
+        {mismatch && <div className="cn-hint" style={{ color: 'var(--red)' }}>Les deux mots de passe ne correspondent pas.</div>}
+      </div>
+      <button className="cn-btn" disabled={!ok} onClick={onDone}>Entrer dans HuntPilote</button>
+    </div>);
+};
+
+const Welcome = () => (
+  <div className="cn-card" style={{ textAlign: 'center' }}>
+    <Brand />
+    <div className="cn-h1">Vous êtes connectée</div>
+    <div className="cn-sub" style={{ marginBottom: '1.25rem' }}>Bienvenue, Marie. Redirection vers le tableau de bord.</div>
+    <a href="Dashboard.html" className="cn-btn" style={{ textDecoration: 'none' }}>Ouvrir HuntPilote</a>
+  </div>);
+
+const SCENARIOS = [['connexion', 'Connexion'], ['oublie', 'Mot de passe oublié'], ['invitation', 'Invitation reçue'], ['premiere', 'Première connexion']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState('connexion');
+  const [step, setStep] = useState('login');
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+
+  const setSc = s => { setScenario(s); setStep(s === 'connexion' ? 'login' : s === 'oublie' ? 'forgot' : s === 'invitation' ? 'invited' : 'first'); };
+
+  return (
+    <React.Fragment>
+      <div className="cn-demo">
+        <select value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+        <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'} aria-label="Changer de thème">{theme === 'dark' ? '☀' : '☾'}</button>
+      </div>
+      <div className="cn-wrap">
+        {step === 'login' && <Login onLogin={() => setStep('welcome')} onForgot={() => setStep('forgot')} />}
+        {step === 'forgot' && <Forgot onBack={() => setStep('login')} />}
+        {step === 'invited' && <Invited onAccept={() => setStep('first')} />}
+        {step === 'first' && <FirstLogin onDone={() => setStep('welcome')} />}
+        {step === 'welcome' && <Welcome />}
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

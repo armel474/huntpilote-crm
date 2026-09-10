@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — États système</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="hp-states.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-cockpit.css">
+<link rel="stylesheet" href="hp-states.css">
+<style>
+.es-nav{display:flex;flex-direction:column;gap:2px}
+.es-nav button{display:flex;align-items:center;gap:8px;padding:0.5rem 0.7rem;border-radius:9px;border:0;background:transparent;color:var(--fg3);font-family:var(--font);font-size:0.75rem;font-weight:600;cursor:pointer;text-align:left}
+.es-nav button:hover{background:var(--bg-muted);color:var(--fg1)}
+.es-nav button.on{background:var(--primary);color:var(--primary-fg)}
+.es-group-l{font-size:0.5625rem;font-weight:700;color:var(--fg4);text-transform:uppercase;letter-spacing:0.07em;padding:10px 0.7rem 4px}
+.es-group-l:first-child{padding-top:0}
+.es-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.es-layout{grid-template-columns:minmax(0,1fr)}.es-nav{flex-direction:row;flex-wrap:wrap;overflow-x:auto}}
+.es-block-h{margin-bottom:9px}
+.es-block-t{font-size:1rem;font-weight:800;letter-spacing:-0.01em}
+.es-block-s{font-size:0.75rem;color:var(--fg3);margin-top:3px;line-height:1.55;max-width:42rem}
+.es-demo{padding:0.9rem;border-radius:13px;border:1px solid var(--bd-solid);background:var(--bg-solid);box-shadow:var(--shadow)}
+.es-rule{margin-top:9px;padding:8px 10px;border-radius:8px;background:var(--bg-muted);border:1px solid var(--bd-solid);font-size:0.6875rem;color:var(--fg2);line-height:1.55}
+.es-rule b{color:var(--fg1)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { NavSidebar, HSI, SkelList, SkelKpiRow, EmptyInitial, EmptyFilter, EmptyHealthy, ErrorLoad, ErrorPartial, ErrorIntegration, ErrorStale, PermissionBlocked } = window;
+
+const I = {
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>États système</div>
+      <div className="crumb"><a href="Dashboard.html">Accueil</a><span>›</span><a href="Parametres.html">Paramètres</a><span>›</span><b>États système</b></div>
+    </div>
+    <div className="search-wrap"><span className="search-ico"><I.Srch /></span><input className="search-inp" placeholder="Rechercher…" readOnly /></div>
+    <button className="btn-icon" title="Notifications"><I.Bell /></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>);
+
+const NAV = [
+  ['Chargement', [['skel', 'Silhouettes']]],
+  ['Vide', [['vide-init', 'Vide initial'], ['vide-filtre', 'Vide de filtre'], ['vide-sain', 'Vide sain']]],
+  ['Erreur', [['err-charge', 'Erreur de chargement'], ['err-partiel', 'Chargement partiel'], ['err-integ', 'Intégration déconnectée'], ['err-perime', 'Données périmées']]],
+  ['Permission', [['perm', 'Accès restreint']]],
+];
+
+const SkelDemo = () => {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="es-demo">
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
+        <button className="btn-out" style={{ fontSize: '0.6875rem' }} onClick={() => setLoaded(l => !l)}>{loaded ? 'Revoir le chargement' : 'Simuler l’arrivée des données'}</button>
+        <span className="lbl">Priorités transversales — trois formes attendues</span>
+      </div>
+      {!loaded ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <SkelKpiRow n={3} />
+          <SkelList n={4} />
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 8 }}>
+            {[['7', 'Critiques ouvertes'], ['12', 'Importantes'], ['3', 'Non assignées depuis 30 j']].map(([v, l]) => (
+              <div key={l} className="card" style={{ padding: '0.875rem 1rem' }}><div style={{ fontSize: '1.375rem', fontWeight: 800 }}>{v}</div><div style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>{l}</div></div>))}
+          </div>
+          <div style={{ display: 'flex', gap: 12, padding: '10px 12px', border: '1px solid var(--bd)', borderRadius: 10, background: 'var(--bg-surface)' }}>
+            <div style={{ flex: 1 }}><div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Certificat SSL expiré depuis 4 jours</div><div style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Toiture Lavoie · critique</div></div>
+          </div>
+        </div>)}
+      <div className="es-rule"><b>Règle.</b> La silhouette respecte la mise en page réelle — barre de KPI puis lignes — pour que l’œil retrouve la même géométrie une fois les données arrivées. Jamais un tourniquet centré qui masque tout.</div>
+    </div>);
+};
+
+const EmptyInitDemo = () => {
+  const [created, setCreated] = useState(false);
+  return (
+    <div className="es-demo">
+      {created ? <EmptyHealthy title="Première règle créée" text="« Alerte chute de position » est en brouillon dans le Workflow — testez-la à blanc avant de l’activer." />
+        : <EmptyInitial icon={<HSI.Doc />} title="Aucune automatisation créée" text="Le Workflow relie un déclencheur à une action sans que vous ayez à surveiller manuellement chaque compte. Rien n’est configuré pour l’instant." primaryLabel="Créer votre première règle" onPrimary={() => setCreated(true)} secondaryLabel="Voir des exemples de règles" />}
+      <div className="es-rule"><b>Règle.</b> On explique ce que l’écran aurait montré, et on propose le premier geste en vert — jamais un centre d’écran silencieux.</div>
+    </div>);
+};
+
+const EmptyFilterDemo = () => {
+  const [sev, setSev] = useState('critique');
+  return (
+    <div className="es-demo">
+      <div className="chips" style={{ marginBottom: 10 }}>
+        {['critique', 'important', 'opportunite'].map(s => <button key={s} className={`chip${sev === s ? ' on' : ''}`} onClick={() => setSev(s)}>{s}</button>)}
+      </div>
+      {sev === 'critique'
+        ? <EmptyFilter title="Aucune priorité critique pour ces filtres" text="3 priorités importantes et 5 opportunités existent sur ce portefeuille — élargissez la sévérité pour les revoir." onReset={() => setSev('important')} />
+        : <div className="hs-row"><div className="hs-row-b"><div style={{ fontSize: '0.8125rem', fontWeight: 700 }}>Note Google en baisse : 4,1 vs 4,6</div><div style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>Bistro Le Chalet · {sev}</div></div></div>}
+      <div className="es-rule"><b>Règle.</b> Léger, dans le fil de la page — pas un grand encadré pointillé. Les données existent ; c’est le croisement de critères qui est vide. Toujours une porte pour élargir.</div>
+    </div>);
+};
+
+const EmptyHealthyDemo = () => (
+  <div className="es-demo">
+    <EmptyHealthy icon={<HSI.Trophy />} title="Aucune priorité critique ouverte, tous clients confondus" text="Le portefeuille reste à surveiller — mais rien n’exige d’attention immédiate aujourd’hui." />
+    <div className="es-rule"><b>Règle.</b> Fond vert, icône de réussite, ton qui dit que c’est une bonne nouvelle. Un vide sain n’est pas rendu comme un vide initial : rien à créer, rien à expliquer, juste à confirmer.</div>
+  </div>);
+
+const ErrLoadDemo = () => {
+  const [phase, setPhase] = useState('err');
+  const retry = () => { setPhase('retrying'); setTimeout(() => setPhase('ok'), 1100); };
+  return (
+    <div className="es-demo">
+      {phase === 'ok'
+        ? <div className="hs-healthy" style={{ background: 'var(--bg-muted)', borderColor: 'var(--bd-solid)' }}><span style={{ color: 'var(--green-fg)' }}><HSI.Retry /></span><div><div className="hs-healthy-t" style={{ color: 'var(--fg1)' }}>Positions rechargées</div><div className="hs-healthy-s">42 mots-clés suivis, dernier relevé il y a 2 minutes. <button className="btn-out" style={{ fontSize: '0.625rem', marginLeft: 6 }} onClick={() => setPhase('err')}>Revoir l’erreur</button></div></div></div>
+        : <ErrorLoad what="les positions" why="Le serveur de relevé n’a pas répondu après 8 secondes. Vos autres données ne sont pas concernées." onRetry={retry} retrying={phase === 'retrying'} />}
+      <div className="es-rule"><b>Règle.</b> Le bouton fonctionne réellement dans cette démo : il relance la requête et affiche le résultat, plutôt que de rester décoratif. Le message nomme la cause probable, jamais « une erreur est survenue ».</div>
+    </div>);
+};
+
+const ErrPartialDemo = () => (
+  <div className="es-demo">
+    <ErrorPartial available="Les positions" missing="le trafic Google Analytics" why="l’intégration Analytics ne répond pas depuis 14 minutes." />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {[['toiture montréal', '7ᵉ position'], ['réparation toiture urgence', '14ᵉ position'], ['couvreur rive-nord prix', '22ᵉ position']].map(([k, v]) => (
+        <div key={k} className="hs-row"><div className="hs-row-b" style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}><span style={{ fontSize: '0.8125rem', fontWeight: 700 }}>{k}</span><span style={{ fontSize: '0.6875rem', color: 'var(--fg3)' }}>{v}</span></div></div>))}
+    </div>
+    <div className="es-rule" style={{ marginTop: 10 }}><b>Règle.</b> Ce qui a répondu s’affiche normalement. Ce qui manque est signalé une fois, en haut, sans bloquer le reste — jamais un écran blanc parce qu’une seule source a échoué.</div>
+  </div>);
+
+const ErrIntegDemo = () => {
+  const [fixed, setFixed] = useState(false);
+  return (
+    <div className="es-demo">
+      {fixed
+        ? <EmptyHealthy title="Google Search Console reconnecté" text="Le prochain relevé de positions utilisera de nouveau des données à jour." />
+        : <ErrorIntegration service="Google Search Console" client="Toiture Lavoie" onReconnect={e => { e.preventDefault(); setFixed(true); }} />}
+      <div className="es-rule"><b>Règle.</b> C’est l’état le plus fréquent en production et le plus silencieux — un rapport peut sortir avec des chiffres figés sans que personne ne le remarque. Il doit donc être bruyant : rouge, non discret, avec le client nommé et le geste de réparation à un clic.</div>
+    </div>);
+};
+
+const ErrStaleDemo = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [fresh, setFresh] = useState(false);
+  const refresh = () => { setRefreshing(true); setTimeout(() => { setRefreshing(false); setFresh(true); }, 1000); };
+  return (
+    <div className="es-demo">
+      {fresh
+        ? <div className="hs-stale" style={{ background: 'var(--green-m)', borderColor: 'var(--green-b)' }}><span style={{ color: 'var(--green-fg)' }}><HSI.Refresh /></span><div style={{ flex: 1 }}><b>Données du 9 septembre 2026</b> — à jour.</div></div>
+        : <ErrorStale at="3 septembre 2026" ageLabel="vieilles de 6 jours" thresholdLabel="48 heures" onRefresh={refresh} refreshing={refreshing} />}
+      <div className="es-rule"><b>Règle.</b> L’âge des données et le seuil de fraîcheur sont tous les deux affichés — une mesure sans seuil ne dit rien. « Actualiser » relance vraiment la récupération.</div>
+    </div>);
+};
+
+const PermDemo = () => {
+  const ROLES = ['Administratrice', 'Chef de projet', 'Spécialiste SEO', 'Rédacteur'];
+  const ALLOWED = { 'Contrat & facturation': ['Administratrice'], 'Paramètres de l’agence': ['Administratrice'], 'Éditeur d’automatisation': ['Administratrice', 'Chef de projet'] };
+  const [role, setRole] = useState('Rédacteur');
+  const [action, setAction] = useState('Contrat & facturation');
+  const blocked = !ALLOWED[action].includes(role);
+  return (
+    <div className="es-demo">
+      <div style={{ display: 'flex', gap: 14, marginBottom: 12, flexWrap: 'wrap' }}>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rôle connecté
+          <select className="sel" value={role} onChange={e => setRole(e.target.value)}>{ROLES.map(r => <option key={r}>{r}</option>)}</select>
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Section visée
+          <select className="sel" value={action} onChange={e => setAction(e.target.value)}>{Object.keys(ALLOWED).map(a => <option key={a}>{a}</option>)}</select>
+        </label>
+      </div>
+      {blocked
+        ? <PermissionBlocked action={`accéder à « ${action.toLowerCase()} »`} allowedRoles={ALLOWED[action]} onAsk={() => alert('Demande envoyée à un administrateur.')} />
+        : <EmptyHealthy title={`Accès accordé à « ${action} »`} text={`Le rôle ${role} peut ouvrir cette section.`} />}
+      <div className="es-rule"><b>Règle.</b> Utile même mono-utilisateur aujourd’hui : les quatre rôles existent déjà dans les paramètres, et cet état évite de reconcevoir chaque écran le jour du deuxième compte.</div>
+    </div>);
+};
+
+const SECTIONS = {
+  skel: ['Chargement — silhouettes', 'Des formes qui respectent la mise en page réelle. L’utilisateur voit se dessiner ce qui arrive, jamais un tourniquet centré.', SkelDemo],
+  'vide-init': ['Vide initial', 'Rien n’a encore été créé. On explique le pourquoi, on propose le premier geste en vert.', EmptyInitDemo],
+  'vide-filtre': ['Vide de filtre', 'Des données existent, pas avec ces critères. On propose d’élargir plutôt que de refaire une recherche.', EmptyFilterDemo],
+  'vide-sain': ['Vide sain', 'Aucune priorité critique, aucune facture en retard : une bonne nouvelle, pas une absence.', EmptyHealthyDemo],
+  'err-charge': ['Erreur de chargement', 'Ce qui s’est passé, comment le réparer — avec un bouton Réessayer qui fonctionne.', ErrLoadDemo],
+  'err-partiel': ['Chargement partiel', 'Une source a répondu, l’autre non. On montre ce qui est disponible plutôt que de tout masquer.', ErrPartialDemo],
+  'err-integ': ['Intégration déconnectée', 'Le cas le plus fréquent en production, et le plus silencieux. Il doit être bruyant.', ErrIntegDemo],
+  'err-perime': ['Données périmées', 'L’âge des données, le seuil de fraîcheur, et le geste pour rafraîchir.', ErrStaleDemo],
+  perm: ['Accès restreint', 'Ce à quoi un rôle n’a pas accès — utile même à un seul utilisateur.', PermDemo],
+};
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [sec, setSec] = useState('skel');
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+
+  const [title, sub, Comp] = SECTIONS[sec];
+  return (
+    <div className="app-shell">
+      <NavSidebar active="parametres" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content" style={{ maxWidth: 1120 }}>
+            <div className="note-box" style={{ marginBottom: 16 }}>
+              <span style={{ color: 'var(--fg3)', display: 'flex', flexShrink: 0, marginTop: 1 }}><HSI.Doc /></span>
+              <div style={{ flex: 1, lineHeight: 1.55 }}><b>Vocabulaire d’états partagé</b> — chargé depuis hp-states.css / hp-states.jsx, à reprendre sur tout écran plutôt que d’inventer un traitement propre à chacun.</div>
+            </div>
+            <div className="es-layout">
+              <nav className="es-nav">
+                {NAV.map(([grp, items]) => <React.Fragment key={grp}><div className="es-group-l">{grp}</div>{items.map(([id, l]) => <button key={id} className={sec === id ? 'on' : ''} onClick={() => setSec(id)}>{l}</button>)}</React.Fragment>)}
+              </nav>
+              <div>
+                <div className="es-block-h"><div className="es-block-t">{title}</div><div className="es-block-s">{sub}</div></div>
+                <Comp key={sec} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

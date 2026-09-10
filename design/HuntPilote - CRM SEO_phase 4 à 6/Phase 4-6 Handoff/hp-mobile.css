@@ -1,0 +1,41 @@
+/* HuntPilote — règles responsives partagées pour les écrans à shell .app-shell */
+@media (max-width: 1180px) {
+  .content { flex-direction: column !important; }
+  .content > * { width: auto !important; max-width: 100% !important; flex: none !important; min-width: 0 !important; }
+  #root [style*="grid-template-columns: 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+  #root [style*="grid-template-columns: 3fr 2fr"] { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 768px) {
+  .app-shell { height: 100dvh; }
+  .app-shell > div:not(.sidebar):not(.nav-sidebar):not(.main) { display: contents; }
+  .main { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .sidebar, .nav-sidebar { position: fixed !important; left: 0; right: 0; bottom: 0; top: auto !important; width: 100% !important; height: calc(56px + env(safe-area-inset-bottom)) !important; padding: 0 0 env(safe-area-inset-bottom) !important; flex-direction: row !important; align-items: center !important; border-right: none !important; border-top: 1px solid var(--border, var(--bd)); box-shadow: 0 -6px 24px rgba(0,0,0,0.08) !important; z-index: 60; overflow: visible !important; }
+  .sidebar > div, .nav-sidebar > div { padding: 0 8px !important; border: none !important; width: auto !important; flex-direction: row !important; align-items: center !important; overflow: visible !important; gap: 2px; }
+  .sidebar > div:first-child, .nav-sidebar > div:first-child { display: none !important; }
+  .sidebar > div:nth-child(2), .nav-sidebar > div:nth-child(2) { flex: 1 !important; display: flex !important; justify-content: space-around; overflow-x: auto !important; scrollbar-width: none; }
+  .sidebar > div:nth-child(2)::-webkit-scrollbar, .nav-sidebar > div:nth-child(2)::-webkit-scrollbar { display: none; }
+  .nav-item, .nav-item-cpt, .nav-cpt { width: 44px !important; height: 44px !important; min-width: 44px; margin: 0 !important; padding: 0 !important; justify-content: center !important; border-radius: 12px !important; font-size: 0 !important; gap: 0 !important; }
+  .nav-item svg, .nav-item-cpt svg, .nav-cpt svg { width: 18px; height: 18px; }
+  .nav-sub-item, .nav-item + div:not(.nav-item), .sidebar .lbl { display: none !important; }
+  .nav-item[data-label]:hover::after, .nav-item-cpt[data-label]:hover::after, .nav-cpt[data-label]:hover::after { display: none !important; }
+  .header, .crm-header { padding: 0 12px !important; gap: 8px !important; }
+  .crm-header .search-wrap, .header > div:has(> input.input), .header > div:has(> input) { display: none !important; }
+  .header > div[style*="cursor: pointer"], .crm-header > div[style*="cursor: pointer"] { display: none !important; }
+  .btn-icon, .btn-out, .btn-pri, .btn-outline, .btn-primary, .act-btn, .tgl, select, .fld input, .fld select { min-height: 44px; }
+  .btn-icon { width: 44px !important; height: 44px !important; }
+  .content { padding: 12px !important; flex-direction: column !important; }
+  .content > * { width: auto !important; max-width: 100% !important; flex: none !important; min-width: 0 !important; }
+  .sc, .content { -webkit-overflow-scrolling: touch; }
+  #root [style*="grid-template-columns"]:not(.hp-table) { grid-template-columns: 1fr 1fr !important; }
+  #root [style*="grid-template-columns"][style*="auto-fill"] { grid-template-columns: 1fr !important; }
+  .hp-table.hp-cols-6 { grid-template-columns: 1.6fr 1fr !important; }
+  .hp-table.hp-cols-6 > :nth-child(6n+3), .hp-table.hp-cols-6 > :nth-child(6n+4), .hp-table.hp-cols-6 > :nth-child(6n+5), .hp-table.hp-cols-6 > :nth-child(6n+6) { display: none !important; }
+  .hp-table.hp-cols-4 { grid-template-columns: 2fr 1fr 44px !important; }
+  .hp-table.hp-cols-4 > :nth-child(4n+3) { display: none !important; }
+  .tweaks-panel { left: 12px; right: 12px; bottom: calc(68px + env(safe-area-inset-bottom)) !important; width: auto !important; }
+  .cards-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  #root [style*="grid-template-columns"]:not(.hp-table):not(.hp-keep2) { grid-template-columns: 1fr !important; }
+  .header > div:first-child > div:nth-child(2), .crm-header > div:first-child > div:nth-child(2) { display: none; }
+}

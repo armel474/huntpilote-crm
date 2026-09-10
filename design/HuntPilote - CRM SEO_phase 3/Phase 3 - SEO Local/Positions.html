@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Positions locales</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="au-data.jsx"></script>
+<script type="text/babel" src="lo-data.jsx"></script>
+<script type="text/babel" src="lo-panels.jsx"></script>
+<script type="text/babel" src="lo-positions-data.jsx"></script>
+<script type="text/babel" src="lo-positions-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="au-audit.css">
+<link rel="stylesheet" href="to-shell.css">
+<link rel="stylesheet" href="lo-audit.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+const { NavSidebar, AIco } = window;
+const { ESTABS, blocked, BlockingCard } = window;
+const { POSITIONS_BY_ETAB, ZoneNotConfiguredCard, ZoneMapCard, KeywordTable, ZoneReadCard } = window;
+
+const HI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+const readIdFromUrl = () => { try { return new URLSearchParams(window.location.search).get('id'); } catch { return null; } };
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [id, setId] = useState(() => readIdFromUrl() || 'marchebio');
+  const est = ESTABS.find(e => e.id === id) || ESTABS[0];
+  const data = POSITIONS_BY_ETAB[est.id];
+  const [demo, setDemo] = useState('normal');
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const f = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', f); return () => mq.removeEventListener('change', f);
+  }, []);
+  useEffect(() => { setDemo('normal'); }, [est.id]);
+  const pickEst = newId => { setId(newId); try { history.replaceState(null, '', `Positions.html?id=${newId}`); } catch {} };
+
+  const isBlocked = blocked(est);
+  const forceAbsent = demo === 'absent' && data;
+  const shownData = useMemo(() => {
+    if (!data) return null;
+    if (!forceAbsent) return data;
+    const g = data.mode === 'grille' ? data.grid.map(row => row.map(() => null)) : null;
+    const s = data.mode === 'secteurs' ? data.secteurs.map(x => ({ ...x, pos: null })) : null;
+    return { ...data, grid: g || data.grid, secteurs: s || data.secteurs };
+  }, [data, forceAbsent]);
+  const variance = shownData && shownData.mode === 'grille' ? shownData.grid.flat().filter(v => v != null) : shownData && shownData.mode === 'secteurs' ? shownData.secteurs.map(s => s.pos).filter(v => v != null) : [];
+  const highVariance = variance.length > 1 && (Math.max(...variance) - Math.min(...variance)) >= 6;
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="local" />
+      <div className="main">
+        <div className="crm-header">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Positions locales — {est.name}</div>
+            <div className="crumb"><a href="Dashboard.html">HuntPilote</a><span>›</span><a href="SEO Local.html">SEO local</a><span>›</span><a href={`Fiche Etablissement.html?id=${est.id}`}>{est.name}</a><span>›</span><b>Positions</b></div>
+          </div>
+          <button className="btn-icon" title="Notifications"><HI.Bell /></button>
+          <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <HI.Sun /> : <HI.Moon />}</button>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+        </div>
+
+        <div className="subbar">
+          <a href={`Fiche Etablissement.html?id=${est.id}`} className="btn-out" style={{ textDecoration: 'none' }}><AIco.Back />Fiche de l’établissement</a>
+          <div className="ctx-g">
+            <span className="lbl" style={{ marginBottom: 0 }}>Établissement</span>
+            <select className="acct-sel" value={est.id} onChange={e => pickEst(e.target.value)} aria-label="Choisir un établissement">{ESTABS.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}</select>
+          </div>
+          {!isBlocked && est.zone && data && <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl" style={{ marginBottom: 0 }}>Démo · état</span>
+            <select className="state-sel" value={demo} onChange={e => setDemo(e.target.value)} aria-label="État de démonstration"><option value="normal">Relevé le plus récent</option><option value="premier">Premier relevé</option><option value="encours">Relevé en cours</option><option value="absent">Absent du pack sur toute la zone</option></select>
+          </div>}
+        </div>
+
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content">
+            <div className="col-main">
+              {isBlocked
+                ? <BlockingCard est={est} />
+                : !est.zone
+                  ? <ZoneNotConfiguredCard estId={est.id} />
+                  : demo === 'encours'
+                    ? <div className="card" style={{ padding: '1.25rem 1.125rem' }}><div className="empty" style={{ border: 'none', padding: 0 }}><div style={{ fontSize: '0.875rem', fontWeight: 800, marginBottom: 5 }}>Relevé en cours</div><div style={{ fontSize: '0.75rem', color: 'var(--fg2)' }}>Les positions se mettent à jour point par point sur la zone. Cela peut prendre quelques minutes selon la densité choisie.</div></div></div>
+                    : !shownData
+                      ? <div className="empty">Aucune donnée de position pour cet établissement.</div>
+                      : <React.Fragment>
+                          {highVariance && <div className="banner" data-tone="yellow"><span className="banner-ico"><AIco.Warn /></span><div style={{ flex: 1, minWidth: '14rem' }}><b>Position très variable selon les points de la zone.</b> C’est un résultat en soi : la moyenne seule masquerait de forts écarts entre secteurs.</div></div>}
+                          <ZoneMapCard data={shownData} estId={est.id} />
+                          <KeywordTable keywords={demo === 'premier' ? shownData.keywords.map(k => ({ ...k, prevMoy: k.posMoy })) : shownData.keywords} />
+                        </React.Fragment>}
+            </div>
+            <div className="col-side">
+              {!isBlocked && est.zone && shownData && <ZoneReadCard read={shownData.zoneRead} />}
+              {!isBlocked && est.zone && <div className="card" style={{ padding: '0.875rem 1rem' }}>
+                <div className="lbl" style={{ marginBottom: 6 }}>Configuration de la zone</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>{est.zone.mode === 'grille' ? `Grille ${est.zone.rows} × ${est.zone.cols} · écart ${est.zone.spacingKm} km` : est.zone.mode === 'secteurs' ? `${est.zone.secteurs.length} secteurs listés` : `Rayon de ${est.zone.km} km`}</div>
+                <a href={`Fiche Etablissement.html?id=${est.id}#zone-editor`} className="btn-out" style={{ textDecoration: 'none', marginTop: 8, width: '100%', justifyContent: 'center' }}>Modifier la zone</a>
+              </div>}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

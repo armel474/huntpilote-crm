@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Brief d'article · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="ed-data.jsx"></script>
+<script type="text/babel" src="ed-panels.jsx"></script>
+<script type="text/babel" src="br-data.jsx"></script>
+<script type="text/babel" src="br-panels.jsx"></script>
+<script type="text/babel" src="br-track.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+<link rel="stylesheet" href="hp-cockpit.css">
+<link rel="stylesheet" href="ed-content.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { NavSidebar, EPill, BI, KeywordSection, IntentSection, OutlineSection, CompetitorSection, RulesSection, TrackSide, PerfSide, ProofClose, BR_STAGES, brScenario } = window;
+
+const I = {
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme, b }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.title}</div>
+      <div className="crumb"><a href="Client Hub.html">Client hub</a><span>›</span><a href="Fiche Client v4.html">{b.client}</a><span>›</span><a href="Calendrier Editorial.html">Contenu</a><span>›</span><b>{b.id}</b></div>
+    </div>
+    <div className="search-wrap"><span className="search-ico"><I.Srch /></span><input className="search-inp" placeholder="Rechercher…" readOnly /></div>
+    <button className="btn-icon" title="Notifications"><I.Bell /><span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>);
+
+const SCENARIOS = [['preparation', 'Brief en préparation'], ['assigne', 'Assigné'], ['redaction', 'En rédaction'], ['relecture', 'En relecture'], ['publie', 'Publié'], ['mesure', 'Publié et mesuré']];
+const STAGE_TONE = { brief: 'neutral', assigne: 'blue', redaction: 'blue', relecture: 'yellow', publie: 'green', mesure: 'green' };
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState(() => { try { return localStorage.getItem('hp-br-scenario') || 'redaction'; } catch { return 'redaction'; } });
+  const [b, setB] = useState(() => brScenario(scenario));
+  const [closing, setClosing] = useState(false);
+  const [proof, setProof] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const on = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', on); return () => mq.removeEventListener('change', on);
+  }, []);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 5200); return () => clearTimeout(t); }, [toast]);
+
+  const setSc = s => { setScenario(s); setB(brScenario(s)); setClosing(false); setProof(null); try { localStorage.setItem('hp-br-scenario', s); } catch {} };
+  const stage = BR_STAGES.find(([id]) => id === b.stage);
+  const advance = id => { setB(x => ({ ...x, stage: id, writer: id === 'assigne' ? 'Sophie Lanctôt' : x.writer, assignedAt: id === 'assigne' ? '9 septembre 2026' : x.assignedAt })); setToast(`Brief passé à « ${BR_STAGES.find(([i]) => i === id)[1].toLowerCase()} ».`); };
+  const publish = () => {
+    setB(x => ({ ...x, stage: 'publie', track: { ...x.track, url: 'acmecorp.fr/blogue/fiche-google-champs-essentiels', pubAt: '9 septembre 2026' } }));
+    setClosing(true);
+  };
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="clienthub" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} b={b} />
+        <div className="subbar">
+          <EPill label={stage[1]} tone={STAGE_TONE[b.stage]} />
+          <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>{stage[2]}</span>
+          <a href="Calendrier Editorial.html" className="btn-out" style={{ fontSize: '0.6875rem', textDecoration: 'none' }}>Calendrier éditorial</a>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+        </div>
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content" style={{ maxWidth: 1200 }}>
+            <div className="note-box" style={{ marginBottom: 12 }}>
+              <span style={{ color: 'var(--fg3)', display: 'flex', flexShrink: 0, marginTop: 1 }}><BI.Rule /></span>
+              <div style={{ flex: 1, minWidth: 0, lineHeight: 1.5 }}>
+                <b>Ce brief cadre l’article, il ne le contient pas.</b> Le texte s’écrit dans l’outil du rédacteur ; ici on fixe la cible, on suit l’avancement, et on transforme la publication en preuve de valeur.
+              </div>
+            </div>
+
+            {closing && !proof && <div style={{ marginBottom: 12 }}><ProofClose b={b} onSkip={() => { setClosing(false); setToast('Article publié sans preuve de valeur. Il n’apparaîtra pas au rapport du client.'); }} onDone={t => { setProof(t); setClosing(false); setToast('Preuve de valeur PV-086 créée et rattachée au rapport de septembre.'); }} /></div>}
+            {proof && (
+              <div className="note-box" style={{ marginBottom: 12, background: 'var(--green-m)', borderColor: 'var(--green-b)' }}>
+                <span style={{ color: 'var(--green-fg)', display: 'flex', flexShrink: 0, marginTop: 1 }}><BI.Trophy /></span>
+                <div style={{ flex: 1, minWidth: 0, lineHeight: 1.5 }}><b>Preuve de valeur PV-086 créée.</b> Elle attend une relecture avant publication du rapport. <a href="Editeur Rapport.html">Ouvrir l’éditeur de rapport</a></div>
+              </div>)}
+            {b.perf && b.perf.proof && !proof && (
+              <div className="note-box" style={{ marginBottom: 12, background: 'var(--green-m)', borderColor: 'var(--green-b)' }}>
+                <span style={{ color: 'var(--green-fg)', display: 'flex', flexShrink: 0, marginTop: 1 }}><BI.Trophy /></span>
+                <div style={{ flex: 1, minWidth: 0, lineHeight: 1.5 }}><b>Preuve de valeur {b.perf.proof}</b> rattachée au rapport, avec la performance mesurée. <a href="Editeur Rapport.html">Ouvrir l’éditeur de rapport</a></div>
+              </div>)}
+
+            <div className="br-grid">
+              <div>
+                <KeywordSection b={b} />
+                <IntentSection b={b} />
+                <OutlineSection b={b} key={b.stage} />
+                <CompetitorSection b={b} />
+                <RulesSection b={b} />
+              </div>
+              <div className="br-side">
+                <TrackSide b={b} onAdvance={advance} onPublish={publish} />
+                <PerfSide b={b} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {toast && <div role="status" style={{ position: 'fixed', left: '50%', transform: 'translateX(-50%)', bottom: 18, zIndex: 80, background: 'var(--fg1)', color: 'var(--bg-solid)', padding: '9px 14px', borderRadius: 10, fontSize: '0.6875rem', fontWeight: 600, boxShadow: '0 8px 30px rgba(0,0,0,0.28)', maxWidth: 'min(620px,92vw)', lineHeight: 1.45 }}>{toast}</div>}
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>

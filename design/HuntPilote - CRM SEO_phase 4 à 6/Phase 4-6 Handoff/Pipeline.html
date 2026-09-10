@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HuntPilot — Pipeline commercial</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base:   #F2EFEA;
+  --bg-solid:  #FFFFFF;
+  --bg-surface: rgba(255,255,255,0.54);
+  --bg-muted:  #E3DDD1;
+  --bd:        rgba(0,0,0,0.075);
+  --bd-solid:  #D0CBBF;
+  --bd-strong: #BAB4A6;
+  --border:    rgba(0,0,0,0.075);
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF;
+  --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px;
+  --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46;
+  --border: rgba(255,255,255,0.08);
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching],[data-theme-switching] *,
+[data-theme-switching] *::before,[data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important;
+}
+body {
+  font-family: var(--font); background: var(--bg-base); color: var(--fg1);
+  -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh;
+}
+body::before, body::after { content: ''; position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.6; }
+body::before { width: 44rem; height: 44rem; top: -14rem; left: 8rem; background: radial-gradient(circle, rgba(74,222,128,0.34) 0%, transparent 68%); }
+body::after { width: 36rem; height: 36rem; bottom: -10rem; right: -4rem; background: radial-gradient(circle, rgba(59,130,246,0.28) 0%, transparent 68%); }
+[data-theme="dark"] body::before { opacity: 0.34; }
+[data-theme="dark"] body::after { opacity: 0.30; }
+
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+.nav-sidebar { width: 58px; flex-shrink: 0; background: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; height: 100vh; position: relative; isolation: isolate; overflow: visible; }
+.nav-sidebar::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+.nav-cpt { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; margin: 0.1rem auto; cursor: pointer; transition: all 150ms; color: var(--fg3); position: relative; }
+.nav-cpt:hover { background: rgba(0,0,0,0.06); color: var(--fg1); }
+[data-theme="dark"] .nav-cpt:hover { background: rgba(255,255,255,0.07); }
+.nav-cpt.active { background: var(--primary); color: var(--primary-fg); }
+.nav-cpt[data-label]:hover::after { content: attr(data-label); position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: var(--fg1); color: var(--primary-fg); padding: 4px 10px; border-radius: 6px; font-size: 0.6875rem; font-weight: 500; white-space: nowrap; pointer-events: none; z-index: 400; }
+[data-theme="dark"] .nav-cpt[data-label]:hover::after { background: var(--fg2); color: var(--bg-base); }
+
+.crm-header { height: var(--header-h); flex-shrink: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.68); display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem; position: relative; isolation: isolate; box-shadow: 0 1px 0 var(--border), 0 2px 20px rgba(0,0,0,0.05); }
+.crm-header::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+
+.btn-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 160ms; position: relative; }
+.btn-icon:hover { color: var(--fg1); }
+.search-wrap { position: relative; display: flex; align-items: center; }
+.search-ico { position: absolute; left: 9px; color: var(--fg4); pointer-events: none; display: flex; }
+.search-inp { font-family: var(--font); font-size: 0.75rem; color: var(--fg1); background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 999px; padding: 0.35rem 0.75rem 0.35rem 28px; outline: none; transition: border-color 150ms; width: 170px; }
+.search-inp:focus { border-color: var(--accent); }
+.search-inp::placeholder { color: var(--fg4); }
+[data-theme="dark"] .search-inp { background: var(--bg-muted); }
+
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.tab { padding: 0.4rem 0.875rem; border-radius: 999px; font-size: 0.75rem; font-weight: 500; border: none; cursor: pointer; transition: all 140ms; font-family: var(--font); color: var(--fg2); background: transparent; white-space: nowrap; }
+.tab.on { background: var(--bg-solid); color: var(--fg1); box-shadow: 0 1px 4px rgba(0,0,0,0.09); }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; }
+.sc { overflow-y: auto; }
+.sc::-webkit-scrollbar { width: 7px; height: 7px; }
+.sc::-webkit-scrollbar-thumb { background: var(--bd-strong); border-radius: 999px; }
+.sc::-webkit-scrollbar-track { background: transparent; }
+
+.deal-card { cursor: grab; transition: box-shadow 160ms, transform 160ms, border-color 160ms; }
+.deal-card:hover { box-shadow: 0 6px 22px -6px rgba(0,0,0,0.18); transform: translateY(-1px); border-color: var(--bd-strong); }
+.deal-card.dragging { opacity: 0.4; cursor: grabbing; }
+.col-body.over { background: var(--bg-muted); outline: 2px dashed var(--bd-strong); outline-offset: -3px; }
+</style>
+<meta name="color-scheme" content="light dark">
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme');if(!s){var tw=JSON.parse(localStorage.getItem('hp-dash-tweaks')||'{}');s=tw.theme||null}}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+<link rel="stylesheet" href="dl-panel.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ── ICONS ── */
+const I = {
+  Dash: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
+  Users: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>,
+  Pipe: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>,
+  Zap: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+  Tool: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" /></svg>,
+  Cog: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Chev: ({ deg = 0 }) => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ transform: `rotate(${deg}deg)` }}><polyline points="6 9 12 15 18 9" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+  Plus: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>,
+  More: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>,
+  Clock: () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+  Grid: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
+  List: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>,
+  Filter: () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>,
+  Flame: () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" /></svg>,
+};
+
+const Bdg = ({ label, t = 'neutral', lg }) => {
+  const M = { green: ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'], yellow: ['var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'], blue: ['var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'], red: ['var(--red-m)', 'var(--red-b)', 'var(--red)'], neutral: ['var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'], violet: ['var(--violet-m)', 'var(--violet-b)', 'var(--violet-fg)'] }[t];
+  return <span style={{ background: M[0], border: `1px solid ${M[1]}`, color: M[2], padding: lg ? '3px 11px' : '2px 7px', borderRadius: 999, fontSize: lg ? '0.6875rem' : '0.5625rem', fontWeight: 700, letterSpacing: '0.03em', whiteSpace: 'nowrap' }}>{label}</span>;
+};
+
+/* ── DATA ── */
+const STAGES = [
+  { id: 'prospect', label: 'Prospect', color: 'var(--fg3)', accent: '#A1A1AA' },
+  { id: 'qualifie', label: 'Qualifié', color: 'var(--blue-fg)', accent: '#3B82F6' },
+  { id: 'proposition', label: 'Proposition', color: 'var(--violet-fg)', accent: '#7C3AED' },
+  { id: 'negociation', label: 'Négociation', color: 'var(--yellow-fg)', accent: '#D4B24A' },
+  { id: 'gagne', label: 'Gagné', color: 'var(--green-fg)', accent: '#16A34A' },
+];
+const OWNERS = {
+  MC: { name: 'Marie Chen', c: 'var(--green)' },
+  JD: { name: 'Julien Dubois', c: 'var(--blue)' },
+  AL: { name: 'Aïcha Lemaire', c: 'var(--violet)' },
+};
+const DEALS0 = [
+  { id: 1, company: 'Boutique Lumière', sector: 'E-commerce', mrr: 900, services: ['SEO Tech.', 'Contenu'], owner: 'MC', days: 4, prob: 15, stage: 'prospect', next: 'Appel de découverte' },
+  { id: 2, company: 'Garage Méca-Pro', sector: 'Automobile', mrr: 700, services: ['SEO Local'], owner: 'JD', days: 9, prob: 10, stage: 'prospect', next: 'Envoyer présentation' },
+  { id: 3, company: 'Pharmacie Centrale', sector: 'Santé', mrr: 1100, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 2, prob: 20, stage: 'prospect', next: 'Qualifier le besoin' },
+  { id: 4, company: 'Resto Le Margaux', sector: 'Restauration', mrr: 850, services: ['SEO Local'], owner: 'MC', days: 6, prob: 35, stage: 'qualifie', next: 'Audit gratuit planifié' },
+  { id: 5, company: 'Académie Vélo', sector: 'Éducation', mrr: 1200, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 12, prob: 40, stage: 'qualifie', next: 'Présenter l\u2019audit' },
+  { id: 6, company: 'Maison Bois Franc', sector: 'Construction', mrr: 1500, services: ['SEO Tech.', 'Contenu'], owner: 'AL', days: 8, prob: 35, stage: 'qualifie', next: 'Relance audit' },
+  { id: 7, company: 'TechNord Solutions', sector: 'SaaS B2B', mrr: 2200, services: ['SEO Tech.', 'Contenu', 'Backlinks'], owner: 'MC', days: 5, prob: 60, stage: 'proposition', next: 'Proposition envoyée' },
+  { id: 8, company: 'Cabinet Lefebvre', sector: 'Juridique', mrr: 1800, services: ['SEO Local', 'Contenu'], owner: 'JD', days: 11, prob: 50, stage: 'proposition', next: 'Suivi de proposition' },
+  { id: 9, company: 'Voyages Évasion', sector: 'Tourisme', mrr: 1300, services: ['Contenu', 'Backlinks'], owner: 'AL', days: 7, prob: 55, stage: 'proposition', next: 'Ajuster le devis' },
+  { id: 10, company: 'Clinique Santé Plus', sector: 'Santé', mrr: 1900, services: ['SEO Tech.', 'SEO Local'], owner: 'MC', days: 3, prob: 75, stage: 'negociation', next: 'Négocier l\u2019engagement' },
+  { id: 11, company: 'Studio Pixel', sector: 'Agence créative', mrr: 1400, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 14, prob: 80, stage: 'negociation', next: 'Signature imminente' },
+  { id: 12, company: 'Immobilier Vista', sector: 'Immobilier', mrr: 1600, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 1, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
+  { id: 13, company: 'Brasserie Houblon', sector: 'Agroalimentaire', mrr: 1000, services: ['SEO Local'], owner: 'MC', days: 2, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
+];
+
+const fmt = (n) => n.toLocaleString('fr-CA');
+
+/* ── NAV ── */
+const NavSidebar = ({ active }) => {
+  const items = [
+    { id: 'dashboard', label: 'Dashboard', Icon: I.Dash, href: 'Dashboard.html' },
+    { id: 'clienthub', label: 'Client Hub', Icon: I.Users, href: 'Client Hub.html' },
+    { id: 'pipeline', label: 'Pipeline', Icon: I.Pipe, href: 'Pipeline.html' },
+    { id: 'workflow', label: 'Workflow', Icon: I.Zap, href: 'Workflow.html' },
+    { id: 'outil', label: 'Outil', Icon: I.Tool },
+  ];
+  return (
+    <div className="nav-sidebar">
+      <div style={{ padding: '15px 0 13px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: 28, height: 28, background: 'var(--primary)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary-fg)" strokeWidth="2.5" strokeLinecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+        </div>
+      </div>
+      <div style={{ flex: 1, padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {items.map(({ id, label, Icon, href }) =>
+          <div key={id} className={`nav-cpt${id === active ? ' active' : ''}`} data-label={label} onClick={() => href && (window.location.href = href)}>
+            <Icon />
+          </div>
+        )}
+      </div>
+      <div style={{ padding: '8px 0', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className="nav-cpt" data-label="Paramètres" onClick={() => window.location.href = 'Parametres.html'}><I.Cog /></div>
+      </div>
+    </div>
+  );
+};
+
+const CRMHeader = ({ theme, onToggleTheme, title, sub }) => {
+  const [s, setS] = useState('');
+  return (
+    <div className="crm-header">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--fg1)', lineHeight: 1 }}>{title}</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2 }}>{sub}</div>
+      </div>
+      <div className="search-wrap">
+        <span className="search-ico"><I.Srch /></span>
+        <input className="search-inp" placeholder="Rechercher…" value={s} onChange={(e) => setS(e.target.value)} />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.325rem 0.7rem', borderRadius: 999, border: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg2)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+        Ce trimestre <I.Chev />
+      </div>
+      <button className="btn-icon"><I.Bell /><span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span></button>
+      <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+      <button className="btn-icon"><I.Cog /></button>
+    </div>
+  );
+};
+
+/* ── STAT STRIP ── */
+const StatStrip = ({ deals }) => {
+  const active = deals.filter((d) => d.stage !== 'gagne');
+  const totalMrr = active.reduce((s, d) => s + d.mrr, 0);
+  const weighted = Math.round(deals.reduce((s, d) => s + d.mrr * d.prob / 100, 0));
+  const won = deals.filter((d) => d.stage === 'gagne');
+  const wonMrr = won.reduce((s, d) => s + d.mrr, 0);
+  const stats = [
+    { l: 'Pipeline actif', v: `${fmt(totalMrr)} $`, sub: `${active.length} opportunités · MRR/mois`, c: 'var(--fg1)' },
+    { l: 'Prévision pondérée', v: `${fmt(weighted)} $`, sub: 'MRR ajusté par probabilité', c: 'var(--blue-fg)' },
+    { l: 'Gagné ce trimestre', v: `${fmt(wonMrr)} $`, sub: `${won.length} nouveaux clients`, c: 'var(--green)' },
+    { l: 'Taux de conversion', v: '28%', sub: '+4 pts vs T1', c: 'var(--fg1)' },
+    { l: 'Cycle de vente moyen', v: '34 j', sub: 'Prospect → signature', c: 'var(--fg1)' },
+  ];
+  return (
+    <div className="hp-keep2" style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 8, padding: '0.875rem 1.125rem 0' }}>
+      {stats.map((s) =>
+        <div key={s.l} className="card" style={{ padding: '0.75rem 0.875rem' }}>
+          <div className="lbl" style={{ marginBottom: 5 }}>{s.l}</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: s.c, letterSpacing: '-0.03em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{s.v}</div>
+          <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 5 }}>{s.sub}</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ── DEAL CARD ── */
+const DealCard = ({ deal, dragging, onDragStart, onDragEnd, onOpen }) => {
+  const o = OWNERS[deal.owner];
+  const probColor = deal.prob >= 75 ? 'var(--green)' : deal.prob >= 45 ? 'var(--yellow-fg)' : deal.prob >= 25 ? 'var(--blue-fg)' : 'var(--fg4)';
+  const hot = deal.prob >= 70;
+  return (
+    <div className={`card deal-card${dragging ? ' dragging' : ''}`} draggable
+      onDragStart={(e) => onDragStart(e, deal.id)} onDragEnd={onDragEnd}
+      onClick={() => onOpen && onOpen(deal.id)} role="button" tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen && onOpen(deal.id); } }}
+      title={`Ouvrir le détail de ${deal.company}`}
+      style={{ padding: '0.75rem', borderRadius: 11, cursor: 'pointer' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 9 }}>
+        <div style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0, background: 'linear-gradient(140deg,var(--bg-muted),var(--bg-base))', border: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 800, color: 'var(--fg2)' }}>
+          {deal.company.split(' ').slice(0, 2).map((w) => w[0]).join('')}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg1)', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.company}</div>
+          <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 2 }}>{deal.sector}</div>
+        </div>
+        {hot && <span title="Opportunité chaude" style={{ color: 'var(--red)', flexShrink: 0 }}><I.Flame /></span>}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 9 }}>
+        <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--fg1)', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{fmt(deal.mrr)} $</span>
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg4)', fontWeight: 500 }}>/mois</span>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 10 }}>
+        {deal.services.map((s) => <span key={s} style={{ fontSize: '0.5rem', fontWeight: 600, padding: '2px 7px', borderRadius: 999, background: 'var(--bg-muted)', color: 'var(--fg2)', border: '1px solid var(--bd-solid)' }}>{s}</span>)}
+      </div>
+      <div style={{ height: 1, background: 'var(--bd)', marginBottom: 9 }}></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+        <div title={o.name} style={{ width: 20, height: 20, borderRadius: '50%', background: o.c, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', fontWeight: 800, flexShrink: 0 }}>{deal.owner}</div>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: '0.5625rem', color: 'var(--fg4)' }}><I.Clock />{deal.days} j</span>
+        <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: '0.625rem', fontWeight: 800, color: probColor, fontVariantNumeric: 'tabular-nums' }}>{deal.prob}%</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+/* ── BOARD ── */
+const Board = ({ deals, setDeals, onOpen }) => {
+  const [dragId, setDragId] = useState(null);
+  const [overCol, setOverCol] = useState(null);
+  const onDragStart = (e, id) => { setDragId(id); e.dataTransfer.effectAllowed = 'move'; };
+  const onDragEnd = () => { setDragId(null); setOverCol(null); };
+  const onDrop = (stageId) => {
+    if (dragId == null) return;
+    setDeals((prev) => prev.map((d) => d.id === dragId ? { ...d, stage: stageId, days: d.stage === stageId ? d.days : 0, prob: d.stage === stageId ? d.prob : ({ prospect: 15, qualifie: 38, proposition: 55, negociation: 78, gagne: 100 }[stageId]) } : d));
+    setDragId(null); setOverCol(null);
+  };
+  return (
+    <div className="sc" style={{ flex: 1, overflowX: 'auto', overflowY: 'hidden', padding: '0.875rem 1.125rem 1.125rem' }}>
+      <div style={{ display: 'flex', gap: 12, height: '100%', minWidth: 'min-content' }}>
+        {STAGES.map((st) => {
+          const cards = deals.filter((d) => d.stage === st.id);
+          const sum = cards.reduce((s, d) => s + d.mrr, 0);
+          return (
+            <div key={st.id} style={{ width: 244, flexShrink: 0, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '0 4px 9px' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: st.accent, flexShrink: 0 }}></span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--fg1)' }}>{st.label}</span>
+                <span style={{ fontSize: '0.5625rem', fontWeight: 800, color: 'var(--fg3)', background: 'var(--bg-muted)', borderRadius: 999, padding: '1px 7px' }}>{cards.length}</span>
+                <span style={{ marginLeft: 'auto', fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg3)', fontVariantNumeric: 'tabular-nums' }}>{fmt(sum)} $</span>
+              </div>
+              <div style={{ height: 2, background: st.accent, opacity: 0.35, borderRadius: 999, marginBottom: 9 }}></div>
+              <div className={`col-body sc${overCol === st.id ? ' over' : ''}`}
+                onDragOver={(e) => { e.preventDefault(); setOverCol(st.id); }}
+                onDragLeave={(e) => { if (e.currentTarget === e.target) setOverCol(null); }}
+                onDrop={() => onDrop(st.id)}
+                style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8, padding: 4, borderRadius: 12, transition: 'background 140ms' }}>
+                {cards.map((d) => <DealCard key={d.id} deal={d} dragging={dragId === d.id} onDragStart={onDragStart} onDragEnd={onDragEnd} onOpen={onOpen} />)}
+                <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '0.5rem', borderRadius: 10, border: '1px dashed var(--bd-strong)', background: 'transparent', color: 'var(--fg4)', fontFamily: 'var(--font)', fontSize: '0.625rem', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>
+                  <I.Plus />Ajouter
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ── APP ── */
+const App = () => {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('hp-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { return (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } });
+  const [deals, setDeals] = useState(DEALS0);
+  const [view, setView] = useState('kanban');
+  const [openId, setOpenId] = useState(null);
+  useEffect(() => {
+    const h = document.documentElement;
+    h.setAttribute('data-theme-switching', '');
+    h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(t);
+  }, [theme]);
+  const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
+
+  const active = deals.filter((d) => d.stage !== 'gagne');
+  const totalMrr = active.reduce((s, d) => s + d.mrr, 0);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="pipeline" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={toggleTheme}
+          title="Pipeline commercial"
+          sub={`${active.length} opportunités actives · ${fmt(totalMrr)} $ de MRR potentiel`} />
+
+        {/* Toolbar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0.75rem 1.125rem', borderBottom: '1px solid var(--bd-solid)', background: 'rgba(255,255,255,0.6)', backdropFilter: 'var(--blur)', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 4, padding: 3, borderRadius: 999, background: 'var(--bg-muted)' }}>
+            <button className={`tab${view === 'kanban' ? ' on' : ''}`} onClick={() => setView('kanban')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.7rem' }}><I.Grid />Kanban</button>
+            <button className={`tab${view === 'liste' ? ' on' : ''}`} onClick={() => setView('liste')} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.3rem 0.7rem' }}><I.List />Liste</button>
+          </div>
+          <button className="btn-out" style={{ padding: '0.4rem 0.75rem' }}><I.Filter />Filtres</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 4 }}>
+            <span className="lbl">Équipe</span>
+            <div style={{ display: 'flex' }}>
+              {Object.entries(OWNERS).map(([k, o], i) => <div key={k} title={o.name} style={{ width: 22, height: 22, borderRadius: '50%', background: o.c, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', fontWeight: 800, border: '2px solid var(--bg-base)', marginLeft: i ? -7 : 0 }}>{k}</div>)}
+            </div>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: '0.625rem', color: 'var(--fg4)', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 9l-3 3 3 3" /><path d="M9 5l3-3 3 3" /><path d="M15 19l-3 3-3-3" /><path d="M19 9l3 3-3 3" /><path d="M2 12h20" /><path d="M12 2v20" /></svg>
+              Glissez les cartes entre les étapes
+            </span>
+            <button className="btn-pri" onClick={() => window.location.href = 'Onboarding.html'}><I.Plus />Nouveau prospect</button>
+          </div>
+        </div>
+
+        <StatStrip deals={deals} />
+
+        {view === 'kanban'
+          ? <Board deals={deals} setDeals={setDeals} onOpen={setOpenId} />
+          : <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }}>
+              <ListView deals={deals} onOpen={setOpenId} />
+            </div>}
+      </div>
+      {openId != null && window.DealPanel && React.createElement(window.DealPanel, {
+        deal: deals.find((d) => d.id === openId), stages: STAGES, owners: OWNERS,
+        onClose: () => setOpenId(null),
+        onWin: (id) => setDeals((p) => p.map((d) => d.id === id ? { ...d, stage: 'gagne', prob: 100, days: 0, next: 'Onboarding lancé' } : d)),
+        onLose: (id, reason) => setDeals((p) => p.map((d) => d.id === id ? { ...d, prob: 0, next: `Perdu — ${reason}` } : d)),
+      })}
+    </div>
+  );
+};
+
+/* ── LIST VIEW ── */
+const ListView = ({ deals, onOpen }) => {
+  const stageMap = Object.fromEntries(STAGES.map((s) => [s.id, s]));
+  const ordered = [...deals].sort((a, b) => STAGES.findIndex((s) => s.id === a.stage) - STAGES.findIndex((s) => s.id === b.stage) || b.mrr - a.mrr);
+  return (
+    <div className="card" style={{ padding: '0.5rem 1rem 0.875rem' }}>
+      <div className="hp-table hp-cols-6" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr 0.8fr 0.7fr 0.7fr', gap: '0 12px', alignItems: 'center' }}>
+        {['Entreprise', 'Étape', 'Services', 'MRR/mois', 'Resp.', 'Prob.'].map((h) => <div key={h} className="lbl" style={{ padding: '8px 0', borderBottom: '1px solid var(--bd-solid)' }}>{h}</div>)}
+        {ordered.map((d) => {
+          const st = stageMap[d.stage];
+          const o = OWNERS[d.owner];
+          const probColor = d.prob >= 75 ? 'var(--green)' : d.prob >= 45 ? 'var(--yellow-fg)' : d.prob >= 25 ? 'var(--blue-fg)' : 'var(--fg4)';
+          return (
+            <React.Fragment key={d.id}>
+              <div onClick={() => onOpen && onOpen(d.id)} role="button" tabIndex={0} title={`Ouvrir le détail de ${d.company}`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen && onOpen(d.id); } }} style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
+                <div style={{ width: 26, height: 26, borderRadius: 7, flexShrink: 0, background: 'linear-gradient(140deg,var(--bg-muted),var(--bg-base))', border: '1px solid var(--bd-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5625rem', fontWeight: 800, color: 'var(--fg2)' }}>{d.company.split(' ').slice(0, 2).map((w) => w[0]).join('')}</div>
+                <div><div style={{ fontSize: '0.75rem', fontWeight: 700, textDecoration: 'underline', textDecorationColor: 'var(--bd-strong)', textUnderlineOffset: 3 }}>{d.company}</div><div style={{ fontSize: '0.5625rem', color: 'var(--fg4)' }}>{d.sector}</div></div>
+              </div>
+              <div style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: st.accent }}></span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg2)' }}>{st.label}</span>
+              </div>
+              <div style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {d.services.map((s) => <span key={s} style={{ fontSize: '0.5rem', fontWeight: 600, padding: '2px 6px', borderRadius: 999, background: 'var(--bg-muted)', color: 'var(--fg2)', border: '1px solid var(--bd-solid)' }}>{s}</span>)}
+              </div>
+              <div style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)', fontSize: '0.8125rem', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>{fmt(d.mrr)} $</div>
+              <div style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)' }}>
+                <div title={o.name} style={{ width: 22, height: 22, borderRadius: '50%', background: o.c, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.5rem', fontWeight: 800 }}>{d.owner}</div>
+              </div>
+              <div style={{ padding: '11px 0', borderBottom: '1px solid var(--bd)', fontSize: '0.75rem', fontWeight: 800, color: probColor, fontVariantNumeric: 'tabular-nums' }}>{d.prob}%</div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="dl-data.jsx"></script>
+<script type="text/babel" src="dl-panels.jsx"></script>
+<script type="text/babel" src="dl-sheet.jsx"></script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>

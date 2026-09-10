@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Vos rapports — Acme Corp. · HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="pc-data.jsx"></script>
+<script type="text/babel" src="pc-nav.jsx"></script>
+<script type="text/babel" src="pc-reports-data.jsx"></script>
+<script type="text/babel" src="pc-reports.jsx"></script>
+<link rel="stylesheet" href="rp-doc.css">
+<link rel="stylesheet" href="pc-portal.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { PortalHeader, PNI, ScoreCurve, ReportRow, PrEmpty, PrSingle, prScenario, PC_ACCOUNT, PR_TARGET } = window;
+
+const SCENARIOS = [['archive', 'Archive complète — 11 rapports'], ['corrige', 'Période corrigée en v2'], ['unseul', 'Un seul rapport'], ['aucun', 'Aucun rapport']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState('archive');
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 4600); return () => clearTimeout(t); }, [toast]);
+
+  const sc = prScenario(scenario);
+  const recent = [...sc.months].reverse();
+  const download = m => setToast(`Rapport de ${m.label.toLowerCase()} en préparation — la version ${m.v} publiée le ${m.publish} sera enregistrée en PDF.`);
+
+  return (
+    <React.Fragment>
+      <div className="pc-demo">
+        <select value={scenario} onChange={e => setScenario(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+      </div>
+      <PortalHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} active="rapports" unread={1} />
+
+      <div className="pr-wrap">
+        {sc.months.length === 0 ? <PrEmpty /> : (
+          <React.Fragment>
+            <div className="eyebrow" style={{ marginBottom: 10 }}>Vos rapports</div>
+            <h1 style={{ fontSize: '1.75rem', marginBottom: 10 }}>{sc.months.length} rapport{sc.months.length > 1 ? 's' : ''} publié{sc.months.length > 1 ? 's' : ''} depuis {sc.months[0].label.toLowerCase()}</h1>
+            <p className="lead" style={{ marginBottom: '1.5rem' }}>Chaque rapport reste tel qu’il a été envoyé — un document daté, pas une page qui se réécrit. Ouvrez-en un pour le relire, ou téléchargez-le pour le transmettre en interne.</p>
+
+            {sc.months.length === 1 && <PrSingle />}
+            <ScoreCurve months={sc.curve} />
+
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 11, flexWrap: 'wrap' }}>
+              <h2>Période par période</h2>
+              <span style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>du plus récent au plus ancien</span>
+            </div>
+            <div className="pr-list">
+              {recent.map((m, i) => <ReportRow key={m.id} m={m} prev={recent[i + 1]} onDownload={download} />)}
+            </div>
+
+            <div className="pc-frozen-in" style={{ marginTop: '1.5rem' }}>
+              <span><PNI.Lock /></span>
+              <div>
+                <b>Pourquoi certains mois portent deux versions.</b> Quand nous repérons une erreur après l’envoi, nous publions une correction plutôt que de modifier le document d’origine. Les deux restent consultables, et la plus récente est celle qui s’ouvre par défaut.
+              </div>
+            </div>
+            <p className="pc-hint" style={{ marginTop: '1rem' }}>Une question sur un rapport en particulier ? <a href="Portail Echanges.html">Écrivez à {PC_ACCOUNT.pm}</a> — vous pourrez rattacher votre question au rapport concerné.</p>
+          </React.Fragment>)}
+      </div>
+
+      {toast && <div className="pc-toast" role="status">{toast}</div>}
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

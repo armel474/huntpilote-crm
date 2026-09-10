@@ -1,0 +1,17 @@
+/* HuntPilote — SEO local : styles propres aux deux écrans (vue d'ensemble + fiche d'établissement).
+   Dépend des jetons du shell (au-audit.css) et de to-shell.css (.seg, .banner, .inp, .date-sel). Ne redessine ni .card, ni .crit, ni .subbar. */
+.estab-row{display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:12px;border:1px solid var(--bd);background:var(--bg-surface);flex-wrap:wrap}
+.estab-stat{flex:0 0 7.5rem;min-width:0}
+.aq-row{display:flex;gap:9px;align-items:center;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg-surface);flex-wrap:wrap}
+.field-row{display:flex;gap:9px;align-items:center;padding:7px 9px;border-radius:9px;border:1px solid var(--bd);background:var(--bg-surface)}
+.link-row{display:flex;gap:9px;align-items:center;padding:8px 9px;border-radius:9px;border:1px solid var(--bd);background:var(--bg-surface);color:var(--fg3)}
+.crit-ico[data-st="neutral"]{background:var(--bg-muted);color:var(--fg3);border:1px solid var(--bd-solid)}
+.sector-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 6px 4px 11px;border-radius:999px;font-size:0.6875rem;font-weight:600;color:var(--fg1);background:var(--bg-solid);border:1px solid var(--bd-strong)}
+.sector-chip button{display:flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:none;background:var(--bg-muted);color:var(--fg3);cursor:pointer}
+.sector-chip button:hover{color:var(--fg1)}
+.grille-viz{display:grid;gap:5px;flex-shrink:0}
+.grille-dot{width:11px;height:11px;border-radius:50%;background:var(--bd-strong)}
+.grille-dot[data-center="true"]{background:var(--green-fg);width:13px;height:13px}
+.fld-t{width:100%;font-family:var(--font);font-size:0.75rem;line-height:1.5;color:var(--fg1);background:var(--bg-surface);border:1px solid var(--bd-solid);border-radius:9px;padding:8px 10px;outline:none;resize:vertical}
+.fld-t:focus{border-color:var(--accent);background:var(--bg-solid)}
+@media (max-width:768px){.estab-row{flex-direction:column;align-items:stretch}.estab-stat{flex:1 1 auto}.field-row{flex-wrap:wrap}.field-row .btn-out{width:100%;justify-content:center;min-height:44px}.aq-row .btn-out{width:100%;justify-content:center;min-height:44px}.hp-table.hp-cols-3{grid-template-columns:1fr !important}.hp-table.hp-cols-3>*{padding:2px 0 !important}.hp-table.hp-cols-5{grid-template-columns:1.6fr 1fr !important}.hp-table.hp-cols-5>:nth-child(5n+3),.hp-table.hp-cols-5>:nth-child(5n+4){display:none !important}}

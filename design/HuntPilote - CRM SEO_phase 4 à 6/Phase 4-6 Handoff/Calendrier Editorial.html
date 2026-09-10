@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>HuntPilote — Calendrier éditorial · Acme Corp.</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="ed-data.jsx"></script>
+<script type="text/babel" src="ed-panels.jsx"></script>
+<script type="text/babel" src="ed-month.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+<link rel="stylesheet" href="hp-cockpit.css">
+<link rel="stylesheet" href="ed-content.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { NavSidebar, EI, EPill, QuotaCard, ContentRow, EdMonthView, EdEmpty, edMonthLabel, ED_CLIENT, ED_STATES } = window;
+
+const I = {
+  Srch: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>,
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>Calendrier éditorial</div>
+      <div className="crumb"><a href="Client Hub.html">Client hub</a><span>›</span><a href="Fiche Client v4.html">{ED_CLIENT.name}</a><span>›</span><b>Contenu</b></div>
+    </div>
+    <div className="search-wrap"><span className="search-ico"><I.Srch /></span><input className="search-inp" placeholder="Rechercher…" readOnly /></div>
+    <button className="btn-icon" title="Notifications"><I.Bell /><span style={{ position: 'absolute', top: 3, right: 3, width: 6, height: 6, background: 'var(--red)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <I.Sun /> : <I.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>);
+
+const SCENARIOS = [['normal', 'Vue normale'], ['complet', 'Mois complet'], ['retard', 'Articles en retard'], ['souscota', 'Quota non atteint'], ['nonmesure', 'Publiés sans performance'], ['vide', 'Aucun contenu planifié']];
+const ORDER = ['idee', 'brief', 'assigne', 'redaction', 'relecture', 'publie', 'mesure'];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState(() => { try { return localStorage.getItem('hp-ed-scenario') || 'normal'; } catch { return 'normal'; } });
+  const [view, setView] = useState('liste');
+  const [month, setMonth] = useState('2026-09');
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const on = e => { let s = null; try { s = localStorage.getItem('hp-theme'); } catch {} if (!s) setTheme(e.matches ? 'dark' : 'light'); };
+    mq.addEventListener('change', on); return () => mq.removeEventListener('change', on);
+  }, []);
+
+  const setSc = s => { setScenario(s); setMonth('2026-09'); try { localStorage.setItem('hp-ed-scenario', s); } catch {} };
+  const sc = window.edScenario(scenario);
+  const inMonth = sc.content.filter(c => window.edMonth(c) === month);
+  const ordered = [...inMonth].sort((a, b) => (window.edLate(b) - window.edLate(a)) || a.due.localeCompare(b.due) || ORDER.indexOf(a.state) - ORDER.indexOf(b.state));
+  const shift = n => setMonth(v => { const [y, m] = v.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; });
+  const published = sc.content.filter(c => window.ED_DONE.includes(c.state) && c.perf);
+  const totalVisits = published.reduce((s, c) => s + c.perf.visits, 0);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="clienthub" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
+        <div className="subbar">
+          <div style={{ display: 'flex', gap: 4 }}>
+            <button className={`btn-out${view === 'liste' ? ' on' : ''}`} onClick={() => setView('liste')} aria-pressed={view === 'liste'}>Liste</button>
+            <button className={`btn-out${view === 'mois' ? ' on' : ''}`} onClick={() => setView('mois')} aria-pressed={view === 'mois'}>Mois</button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <button className="btn-icon" onClick={() => shift(-1)} aria-label="Mois précédent"><EI.Prev /></button>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, minWidth: 120, textAlign: 'center' }}>{edMonthLabel(month)}</span>
+            <button className="btn-icon" onClick={() => shift(1)} aria-label="Mois suivant"><EI.Next /></button>
+          </div>
+          <button className="btn-pri" style={{ background: '#15803D', color: '#fff' }} onClick={() => window.location.href = 'Brief Article.html'}><EI.Plus />Créer un brief</button>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+          </div>
+        </div>
+        <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
+          <div className="content">
+            <QuotaCard content={sc.content} month={month} />
+
+            {published.length > 0 && (
+              <div className="note-box ed-note">
+                <span style={{ color: 'var(--green-fg)', display: 'flex', flexShrink: 0, marginTop: 1 }}><EI.Chart /></span>
+                <div style={{ flex: 1, minWidth: 0, lineHeight: 1.5 }}>
+                  <b>{totalVisits} visites par mois</b> proviennent des {published.length} articles mesurés depuis le début du mandat. C’est ce chiffre qui justifie la ligne « contenu » de la facture — et il alimente {published.filter(c => c.proof).length} preuve{published.filter(c => c.proof).length > 1 ? 's' : ''} de valeur au rapport.
+                </div>
+                <a href="Editeur Rapport.html" className="btn-out" style={{ fontSize: '0.625rem', padding: '0.25rem 0.6rem', textDecoration: 'none', flexShrink: 0 }}>Voir au rapport<EI.Arrow /></a>
+              </div>)}
+
+            {inMonth.length === 0 ? <EdEmpty /> : view === 'mois'
+              ? <EdMonthView content={inMonth} month={month} onOpen={() => window.location.href = 'Brief Article.html'} />
+              : <div className="ed-list">{ordered.map(c => <ContentRow key={c.id} c={c} />)}</div>}
+
+            <div style={{ marginTop: 12, fontSize: '0.5625rem', color: 'var(--fg3)', lineHeight: 1.6 }}>Un sujet vient souvent d’une opportunité repérée dans Keyword Hunter ; un article publié et mesuré devient une preuve de valeur au rapport du mois. Les deux liens sont portés par chaque ligne.</div>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>

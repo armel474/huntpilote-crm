@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Échanges — Acme Corp. · HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="pc-data.jsx"></script>
+<script type="text/babel" src="pc-nav.jsx"></script>
+<script type="text/babel" src="pc-thread-data.jsx"></script>
+<script type="text/babel" src="pc-thread.jsx"></script>
+<link rel="stylesheet" href="rp-doc.css">
+<link rel="stylesheet" href="pc-portal.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { PortalHeader, PNI, Message, Composer, PeEmpty, peScenario, PC_ACCOUNT, PE_SLA } = window;
+
+const SCENARIOS = [['nonlue', 'Réponse reçue non lue'], ['attente', 'Question en attente de réponse'], ['longue', 'Conversation longue'], ['aucun', 'Aucun échange']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const [scenario, setScenario] = useState('nonlue');
+  const [extra, setExtra] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 5000); return () => clearTimeout(t); }, [toast]);
+
+  const sc = peScenario(scenario);
+  const setSc = s => { setScenario(s); setExtra([]); };
+  const thread = [...sc.thread, ...extra];
+  const waiting = sc.waiting || extra.length > 0;
+  const unread = thread.filter(m => !m.read && m.from === 'pm').length;
+
+  const send = ({ text, ctx, files }) => {
+    setExtra(e => [...e, { id: `n${e.length + 1}`, from: 'client', day: '9 octobre 2026', at: 'à l’instant', read: true, sent: true, text, ctx: ctx === 'a0' ? null : ctx, files }]);
+    setToast(`Message envoyé à ${PC_ACCOUNT.pm}. Elle répond en général le jour ouvrable suivant — vous recevrez un courriel.`);
+  };
+
+  /* Regroupement par jour : le fil se lit comme une correspondance, pas comme un clavardage. */
+  const days = [];
+  thread.forEach(m => {
+    const last = days[days.length - 1];
+    if (last && last.day === m.day) last.msgs.push(m); else days.push({ day: m.day, msgs: [m] });
+  });
+
+  return (
+    <React.Fragment>
+      <div className="pc-demo">
+        <select value={scenario} onChange={e => setSc(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select>
+      </div>
+      <PortalHeader theme={theme} onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} active="echanges" unread={unread} />
+
+      <div className="pe-wrap">
+        {thread.length === 0 ? <React.Fragment><PeEmpty /><Composer onSend={send} /></React.Fragment> : (
+          <React.Fragment>
+            <div className="eyebrow" style={{ marginBottom: 10 }}>Échanges</div>
+            <h1 style={{ fontSize: '1.75rem', marginBottom: 10 }}>Vos questions, et les réponses de {PC_ACCOUNT.pm}</h1>
+            <p className="lead" style={{ marginBottom: '1.25rem' }}>Un seul fil, du plus ancien au plus récent. {PC_ACCOUNT.pm} voit la même conversation de son côté, avec votre dossier sous les yeux.</p>
+
+            {unread > 0 && (
+              <div className="pc-frozen-in" style={{ background: 'var(--green-m)', borderColor: 'var(--green-b)', marginBottom: 4 }}>
+                <span style={{ color: 'var(--green-fg)' }}><PNI.Chat /></span>
+                <div><b>{unread} réponse{unread > 1 ? 's' : ''} non lue{unread > 1 ? 's' : ''}</b> de {PC_ACCOUNT.pm}, plus bas dans le fil.</div>
+              </div>)}
+            {waiting && unread === 0 && (
+              <div className="pc-frozen-in" style={{ marginBottom: 4 }}>
+                <span><PNI.Clock /></span>
+                <div><b>Votre question est arrivée.</b> {PC_ACCOUNT.pm} répond sous {PE_SLA} jour ouvrable — c’est le délai inscrit à votre mandat. Vous recevrez un courriel, rien à surveiller ici.</div>
+              </div>)}
+            {sc.long && (
+              <div className="pc-frozen-in" style={{ marginBottom: 4 }}>
+                <span><PNI.Chat /></span>
+                <div>{thread.length} messages depuis le début du mandat. Le fil complet est conservé — utilisez la recherche de votre navigateur pour retrouver un sujet précis.</div>
+              </div>)}
+
+            {days.map(d => (
+              <section key={d.day}>
+                <div className="pe-day"><span>{d.day}</span></div>
+                {d.msgs.map(m => <Message key={m.id} m={m} isLast={m === thread[thread.length - 1]} waiting={waiting} />)}
+              </section>))}
+
+            <Composer onSend={send} />
+
+            <p className="pc-hint" style={{ marginTop: '1.25rem' }}>Pour une urgence — site en panne, erreur visible par vos clients — appelez le 514 555 0100 plutôt que d’écrire ici.</p>
+          </React.Fragment>)}
+      </div>
+
+      {toast && <div className="pc-toast" role="status">{toast}</div>}
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
