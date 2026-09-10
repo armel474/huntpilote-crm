@@ -4,11 +4,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
+  IcoAlert,
   IcoCal,
   IcoCog,
   IcoDash,
+  IcoDoc,
   IcoLogo,
+  IcoPin,
   IcoPipe,
+  IcoTaskCheck,
   IcoTool,
   IcoUsers,
   IcoZap,
@@ -25,14 +29,20 @@ type NavItem = {
   match?: string[];
 };
 
-/** Ordre validé en revue de design : Dashboard → Client hub → Pipeline → Workflow → Agenda, puis Outil. */
+/** Ordre validé en revue de design, phases 1 à 4. */
 const TOP_NAV: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', Icon: IcoDash },
+  { href: '/travail', label: 'Mon plan de travail', Icon: IcoTaskCheck },
+  { href: '/priorites', label: 'Priorités transversales', Icon: IcoAlert },
+  { href: '/agenda', label: 'Agenda', Icon: IcoCal },
+  { href: '/rapports', label: 'Rapports à produire', Icon: IcoDoc },
   { href: '/clients', label: 'Client hub', Icon: IcoUsers, match: ['/clients', '/onboarding'] },
   { href: '/pipeline', label: 'Pipeline', Icon: IcoPipe },
   { href: '/workflow', label: 'Workflow', Icon: IcoZap },
-  { href: '/agenda', label: 'Agenda', Icon: IcoCal },
 ];
+
+/** Section complète, au même niveau que les outils (décision 8) — session 3.1. */
+const LOCAL_ITEM: NavItem = { href: '/local', label: 'SEO local', Icon: IcoPin };
 
 /** Les sept outils du cadre commun (session 2.1) — ordre validé en revue de design. */
 const TOOLS: { label: string; slug: string }[] = [
@@ -176,7 +186,7 @@ export function NavSidebar() {
 
   /* ── Vue compacte : icônes seules + tooltips ── */
   if (compact) {
-    const items: NavItem[] = [...TOP_NAV, { href: '/outils', label: 'Outil', Icon: IcoTool }];
+    const items: NavItem[] = [...TOP_NAV, LOCAL_ITEM, { href: '/outils', label: 'Outil', Icon: IcoTool }];
     return (
       <nav className="sidebar compact" aria-label="Navigation principale">
         <div className="sidebar-head">
@@ -269,6 +279,15 @@ export function NavSidebar() {
             </Link>
           );
         })}
+
+        <Link
+          href={LOCAL_ITEM.href}
+          className={`nav-item${isActive(LOCAL_ITEM) ? ' active' : ''}`}
+          aria-current={isActive(LOCAL_ITEM) ? 'page' : undefined}
+        >
+          <LOCAL_ITEM.Icon size={15} />
+          {LOCAL_ITEM.label}
+        </Link>
 
         <button
           type="button"

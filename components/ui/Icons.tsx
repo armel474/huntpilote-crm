@@ -627,3 +627,13 @@ export const IcoUserPlus = (p: IconProps) => (
     <line x1="17" y1="11" x2="23" y2="11" />
   </Svg>
 );
+
+/* ── Vues transversales / plan de travail — phase 4 ── */
+
+/** Carré à coche — mon plan de travail, une tâche cochable. */
+export const IcoTaskCheck = (p: IconProps) => (
+  <Svg size={15} {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="3" />
+    <path d="M8 12.5l2.5 2.5L16 9" />
+  </Svg>
+);

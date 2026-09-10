@@ -19,4 +19,29 @@ export const routes = {
   parametres: (section?: string) => (section ? `/parametres?section=${section}` : '/parametres'),
   /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
   auditProspect: (token: string) => `/audit-prospect/${token}`,
+
+  /* ── Phase 4 — le quotidien de l'agence ── */
+  travail: () => '/travail',
+  prioritesTransversales: () => '/priorites',
+  agenda: () => '/agenda',
+  rapportsAProduire: () => '/rapports',
+
+  /* ── Phase 3 — SEO local ── */
+  local: () => '/local',
+  etablissement: (etab: string) => `/local/${etab}`,
+  etablissementAvis: (etab: string) => `/local/${etab}/avis`,
+  etablissementCitations: (etab: string) => `/local/${etab}/citations`,
+  etablissementPositions: (etab: string) => `/local/${etab}/positions`,
+  etablissementConcurrence: (etab: string) => `/local/${etab}/concurrence`,
+
+  /* ── Phase 5 — le portail client ── */
+  portail: () => '/portail',
+  portailConnexion: () => '/portail/connexion',
+  portailRapports: () => '/portail/rapports',
+  portailEchanges: () => '/portail/echanges',
+
+  /* ── Phase 6 — contenu et socle ── */
+  contenu: (id: string) => `/clients/${id}/contenu`,
+  brief: (id: string, b: string) => `/clients/${id}/contenu/${b}`,
+  connexion: () => '/connexion',
 } as const;
