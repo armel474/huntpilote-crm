@@ -24,6 +24,8 @@ import {
   type IconProps,
 } from '@/components/ui/Icons';
 import { RuleEditor } from '@/components/workflow/RuleEditor';
+import { Lbl } from '@/components/ui/Atoms';
+import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
 import {
   AUTOMATIONS,
   CATEGORIES,
@@ -36,6 +38,35 @@ import {
   type GlyphName,
   type Rule,
 } from '@/lib/data/workflow';
+
+/* ── Démo · état ── */
+
+type WfScenarioId = 'normal' | 'chargement' | 'vide';
+
+const WF_SCENARIOS: [WfScenarioId, string][] = [
+  ['normal', 'Normal'],
+  ['chargement', 'Chargement'],
+  ['vide', 'Vide initial — aucune automatisation'],
+];
+
+function AutomationRowSkeleton() {
+  return (
+    <div className="card" style={{ padding: '0.875rem 1rem' }} aria-hidden="true">
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
+        <SkelLine w={34} h={34} style={{ borderRadius: 9, flexShrink: 0 }} />
+        <div style={{ flex: 1, minWidth: 160 }}>
+          <SkelLine w="45%" h={13} style={{ marginBottom: 6 }} />
+          <SkelLine w="65%" h={9} />
+        </div>
+        <SkelLine w={60} h={19} style={{ borderRadius: 999, flexShrink: 0 }} />
+      </div>
+      <div style={{ display: 'flex', gap: 9, marginTop: 11, paddingLeft: 45 }}>
+        <SkelLine w="100%" h={40} style={{ borderRadius: 9 }} />
+        <SkelLine w="100%" h={40} style={{ borderRadius: 9 }} />
+      </div>
+    </div>
+  );
+}
 
 const GLYPHS: Record<GlyphName, (p: IconProps) => React.ReactElement> = {
   warn: IcoWarn,
@@ -420,6 +451,7 @@ function TemplateCard({ t, onUse }: { t: (typeof TEMPLATES)[number]; onUse: () =
 }
 
 export function WorkflowView() {
+  const [scenario, setScenarioRaw] = useState<WfScenarioId>('normal');
   const [autos, setAutos] = useState<Automation[]>(AUTOMATIONS);
   const [tab, setTab] = useState<'actives' | 'modeles'>('actives');
   const [filter, setFilter] = useState<'tous' | CatId>('tous');
@@ -427,6 +459,13 @@ export function WorkflowView() {
       resynchroniser le bouton actif/pause de la liste quand on revient. Pas de nouvelle
       route : « Modifier » bascule la même page vers l'éditeur. */
   const [editing, setEditing] = useState<{ seed: Rule; automationId?: number } | null>(null);
+
+  const setScenario = (s: WfScenarioId) => {
+    setScenarioRaw(s);
+    setAutos(s === 'vide' ? [] : AUTOMATIONS);
+    setFilter('tous');
+  };
+  const loading = scenario === 'chargement';
 
   const toggle = (id: number) =>
     setAutos((prev) => prev.map((a) => (a.id === id ? { ...a, active: !a.active } : a)));
@@ -463,7 +502,11 @@ export function WorkflowView() {
       header={
         <CRMHeader
           title="Workflow & Automatisations"
-          subtitle={`${activeCount} automatisations actives · 42 h économisées ce mois`}
+          subtitle={
+            scenario === 'vide'
+              ? 'Aucune automatisation créée pour l’instant'
+              : `${activeCount} automatisations actives · 42 h économisées ce mois`
+          }
           period=""
         />
       }
@@ -525,6 +568,25 @@ export function WorkflowView() {
             />
             Agent HuntPilote en service
           </span>
+          {tab === 'actives' && (
+            <>
+              <Lbl>
+                <label htmlFor="etat-demo-workflow">Démo · état</label>
+              </Lbl>
+              <select
+                id="etat-demo-workflow"
+                className="state-sel"
+                value={scenario}
+                onChange={(e) => setScenario(e.target.value as WfScenarioId)}
+              >
+                {WF_SCENARIOS.map(([id, label]) => (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
           <button className="btn-pri" type="button" onClick={() => setEditing({ seed: blankRule() })}>
             <IcoPlus size={12} />
             Créer une automatisation
@@ -532,53 +594,76 @@ export function WorkflowView() {
         </div>
       </div>
 
-      {tab === 'actives' && <StatStrip autos={autos} />}
+      {tab === 'actives' && !loading && scenario !== 'vide' && <StatStrip autos={autos} />}
+      {tab === 'actives' && loading && (
+        <div style={{ padding: '0.875rem 1.125rem 0', flexShrink: 0 }}>
+          <SkelKpiRow n={4} />
+        </div>
+      )}
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem 1.5rem' }}>
         {tab === 'actives' ? (
-          <>
-            <div
-              role="tablist"
-              aria-label="Filtrer par catégorie"
-              style={{
-                display: 'flex',
-                gap: 4,
-                padding: 4,
-                borderRadius: 999,
-                background: 'var(--bg-muted)',
-                width: 'fit-content',
-                marginBottom: 14,
-                flexWrap: 'wrap',
-              }}
-            >
-              {CATEGORY_FILTERS.map(({ id, label }) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  aria-selected={filter === id}
-                  className={`tab${filter === id ? ' on' : ''}`}
-                  onClick={() => setFilter(id)}
-                  style={{ fontSize: '0.6875rem', padding: '0.32rem 0.75rem' }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+          loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              {shown.map((a) => (
-                <AutomationRow
-                  key={a.id}
-                  a={a}
-                  onToggle={toggle}
-                  onEdit={(id) => {
-                    const auto = autos.find((x) => x.id === id);
-                    if (auto) setEditing({ seed: ruleFromAutomation(auto), automationId: id });
-                  }}
-                />
+              {[...Array(4)].map((_, i) => (
+                <AutomationRowSkeleton key={i} />
               ))}
             </div>
-          </>
+          ) : scenario === 'vide' ? (
+            <EmptyInitial
+              icon={<IcoZap size={20} />}
+              title="Aucune automatisation créée"
+              text="Automatisez une première tâche répétitive — surveillance, rapport ou relance client — à partir d’un modèle ou de zéro."
+              primaryLabel="Créer une automatisation"
+              onPrimary={() => setEditing({ seed: blankRule() })}
+              secondaryLabel="Parcourir les modèles"
+              onSecondary={() => setTab('modeles')}
+            />
+          ) : (
+            <>
+              <div
+                role="tablist"
+                aria-label="Filtrer par catégorie"
+                style={{
+                  display: 'flex',
+                  gap: 4,
+                  padding: 4,
+                  borderRadius: 999,
+                  background: 'var(--bg-muted)',
+                  width: 'fit-content',
+                  marginBottom: 14,
+                  flexWrap: 'wrap',
+                }}
+              >
+                {CATEGORY_FILTERS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={filter === id}
+                    className={`tab${filter === id ? ' on' : ''}`}
+                    onClick={() => setFilter(id)}
+                    style={{ fontSize: '0.6875rem', padding: '0.32rem 0.75rem' }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                {shown.map((a) => (
+                  <AutomationRow
+                    key={a.id}
+                    a={a}
+                    onToggle={toggle}
+                    onEdit={(id) => {
+                      const auto = autos.find((x) => x.id === id);
+                      if (auto) setEditing({ seed: ruleFromAutomation(auto), automationId: id });
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )
         ) : (
           <>
             <h2 style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 4 }}>

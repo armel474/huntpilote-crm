@@ -5,16 +5,62 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import {
   PerfClientCard,
+  PerfClientCardSkeleton,
   TasksPanel,
+  TasksPanelSkeleton,
   TrafficCard,
+  TrafficCardSkeleton,
 } from '@/components/dashboard/DashboardCards';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
+import { Lbl } from '@/components/ui/Atoms';
+import { EmptyHealthy, ErrorIntegration, SkelLine } from '@/components/ui/States';
+import { IcoTrophy } from '@/components/ui/Icons';
+
+/**
+ * Sélecteur de démo « État » — même mécanisme que `PrioritesView` et
+ * `TravailView` : aucun état système n'a encore été appliqué à cet écran
+ * d'entrée, alors qu'il concentre les deux cas cités par le brief (chargement
+ * en silhouettes, intégration déconnectée « bruyante »).
+ */
+type DashScenarioId = 'normal' | 'chargement' | 'sain' | 'integration';
+
+const DASH_SCENARIOS: [DashScenarioId, string][] = [
+  ['normal', 'Normal'],
+  ['chargement', 'Chargement'],
+  ['sain', 'Vide sain — portefeuille'],
+  ['integration', 'Intégration déconnectée'],
+];
 
 export function DashboardView() {
   const [showForecast, setShowForecast] = useState(true);
+  const [scenario, setScenario] = useState<DashScenarioId>('normal');
+  const loading = scenario === 'chargement';
 
   return (
     <AppShell header={<CRMHeader title="Dashboard" subtitle="Vue d'ensemble de l'agence" />}>
+      <div className="subbar">
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
+          Vue d’ensemble de l’agence · portefeuille complet
+        </span>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="etat-demo-dashboard">Démo · état</label>
+          </Lbl>
+          <select
+            id="etat-demo-dashboard"
+            className="state-sel"
+            value={scenario}
+            onChange={(e) => setScenario(e.target.value as DashScenarioId)}
+          >
+            {DASH_SCENARIOS.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="content content-row">
         <div
           style={{
@@ -25,9 +71,20 @@ export function DashboardView() {
             minWidth: 0,
           }}
         >
+          {scenario === 'sain' && (
+            <EmptyHealthy
+              icon={<IcoTrophy size={18} />}
+              title="Aucune priorité critique ouverte, aucune facture en retard"
+              text="Le portefeuille de l’agence est sain aujourd’hui — rien n’exige d’attention immédiate."
+            />
+          )}
+          {scenario === 'integration' && (
+            <ErrorIntegration service="Google Search Console" client="8 comptes suivis" />
+          )}
+
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '1rem' }}>
-            <TrafficCard />
-            <PerfClientCard />
+            {loading ? <TrafficCardSkeleton /> : <TrafficCard />}
+            {loading ? <PerfClientCardSkeleton /> : <PerfClientCard />}
           </div>
 
           <section className="card-glass card-pad" aria-labelledby="revenue-title">
@@ -104,7 +161,7 @@ export function DashboardView() {
               </div>
             </div>
 
-            <RevenueChart showForecast={showForecast} />
+            {loading ? <SkelLine w="100%" h={220} /> : <RevenueChart showForecast={showForecast} />}
           </section>
         </div>
 
@@ -117,7 +174,7 @@ export function DashboardView() {
             alignSelf: 'flex-start',
           }}
         >
-          <TasksPanel />
+          {loading ? <TasksPanelSkeleton /> : <TasksPanel />}
         </div>
       </div>
     </AppShell>

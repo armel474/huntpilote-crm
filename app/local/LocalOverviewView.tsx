@@ -13,6 +13,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { ActionQueueCard, EstabRow, PortfolioKpis } from '@/components/local/Panels';
 import { Lbl, Sec } from '@/components/ui/Atoms';
+import { EmptyFilter, SkelKpiRow, SkelList } from '@/components/ui/States';
 import { IcoPlus, IcoSrch } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { CLIENTS_SANS_ETAB, ESTABS } from '@/lib/data/local';
@@ -24,10 +25,21 @@ const SORTS = [
   ['note_asc', 'Note la plus basse'],
 ] as const;
 
+/* ── Démo · état ── */
+
+type LocalScenarioId = 'normal' | 'chargement';
+
+const LOCAL_SCENARIOS: [LocalScenarioId, string][] = [
+  ['normal', 'Normal'],
+  ['chargement', 'Chargement'],
+];
+
 export function LocalOverviewView() {
+  const [scenario, setScenario] = useState<LocalScenarioId>('normal');
   const [client, setClient] = useState('tous');
   const [sortBy, setSortBy] = useState<(typeof SORTS)[number][0]>('urgence');
   const [q, setQ] = useState('');
+  const loading = scenario === 'chargement';
 
   const clients = useMemo(() => [...new Set(ESTABS.map((e) => e.client))], []);
   const term = q.trim().toLowerCase();
@@ -85,7 +97,24 @@ export function LocalOverviewView() {
             ))}
           </select>
         </div>
-        <span style={{ marginLeft: 'auto', fontSize: '0.625rem', color: 'var(--fg3)' }}>
+        <div className="ctx-g" style={{ marginLeft: 'auto' }}>
+          <Lbl>
+            <label htmlFor="etat-demo-local">Démo · état</label>
+          </Lbl>
+          <select
+            id="etat-demo-local"
+            className="state-sel"
+            value={scenario}
+            onChange={(e) => setScenario(e.target.value as LocalScenarioId)}
+          >
+            {LOCAL_SCENARIOS.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           {list.length} établissement{list.length > 1 ? 's' : ''}
         </span>
       </div>
@@ -93,19 +122,43 @@ export function LocalOverviewView() {
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
         <div className="detail-row">
           <div className="col-main">
-            <PortfolioKpis estabs={ESTABS} nSansEtab={CLIENTS_SANS_ETAB.length} />
-            <ActionQueueCard estabs={ESTABS} />
-            <Sec title="Établissements suivis" sub="Client rattaché, score local, avis, citations et position moyenne dans le pack local">
-              {list.length === 0 ? (
-                <div className="empty">Aucun établissement pour ces filtres.</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {list.map((e) => (
-                    <EstabRow key={e.id} est={e} />
-                  ))}
+            {loading ? (
+              <>
+                <div style={{ marginBottom: 12 }}>
+                  <SkelKpiRow n={4} />
                 </div>
-              )}
-            </Sec>
+                <Sec title="Ce qui demande une action">
+                  <SkelList n={3} />
+                </Sec>
+                <Sec title="Établissements suivis" sub="Client rattaché, score local, avis, citations et position moyenne dans le pack local">
+                  <SkelList n={5} />
+                </Sec>
+              </>
+            ) : (
+              <>
+                <PortfolioKpis estabs={ESTABS} nSansEtab={CLIENTS_SANS_ETAB.length} />
+                <ActionQueueCard estabs={ESTABS} />
+                <Sec title="Établissements suivis" sub="Client rattaché, score local, avis, citations et position moyenne dans le pack local">
+                  {list.length === 0 ? (
+                    <EmptyFilter
+                      title="Aucun établissement pour ces filtres"
+                      text="Élargissez la recherche ou revenez à tous les clients pour revoir le portefeuille complet."
+                      onReset={() => {
+                        setQ('');
+                        setClient('tous');
+                        setSortBy('urgence');
+                      }}
+                    />
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {list.map((e) => (
+                        <EstabRow key={e.id} est={e} />
+                      ))}
+                    </div>
+                  )}
+                </Sec>
+              </>
+            )}
           </div>
           <div className="col-side">
             <Sec title="Clients sans établissement local" sub="Aucune fiche Google Business suivie pour ces comptes">

@@ -11,6 +11,70 @@ import {
   type Task,
 } from '@/lib/data/dashboard';
 import { IcoCheck, IcoDown, IcoTarget, IcoUp } from '@/components/ui/Icons';
+import { SkelLine, SkelList } from '@/components/ui/States';
+
+/* ── Squelettes de chargement — même charpente que le contenu réel ── */
+
+export function TrafficCardSkeleton() {
+  return (
+    <section className="card-glass card-pad" aria-hidden="true">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          marginBottom: '0.625rem',
+        }}
+      >
+        <div>
+          <SkelLine w={128} h={13} style={{ marginBottom: 6 }} />
+          <SkelLine w={92} h={9} />
+        </div>
+        <SkelLine w={58} h={20} style={{ borderRadius: 999 }} />
+      </div>
+      <SkelLine w={140} h={34} style={{ marginBottom: '0.875rem' }} />
+      <SkelLine w="100%" h={72} style={{ marginBottom: '0.875rem' }} />
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '0.5rem',
+          paddingTop: '0.875rem',
+          borderTop: '1px solid var(--border-solid)',
+        }}
+      >
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <SkelLine w="70%" h={8} style={{ marginBottom: 5 }} />
+            <SkelLine w="45%" h={14} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function PerfClientCardSkeleton() {
+  return (
+    <section className="card-glass card-pad" aria-hidden="true">
+      <SkelLine w={132} h={13} style={{ marginBottom: '0.75rem' }} />
+      <SkelList n={4} />
+    </section>
+  );
+}
+
+export function TasksPanelSkeleton() {
+  return (
+    <section className="card-glass card-pad" aria-hidden="true">
+      <SkelLine w={150} h={15} style={{ marginBottom: '1rem' }} />
+      <SkelLine w={78} h={9} style={{ marginBottom: 8 }} />
+      <SkelList n={4} />
+      <div style={{ height: 1, background: 'var(--border-solid)', margin: '1rem 0' }} />
+      <SkelLine w={168} h={9} style={{ marginBottom: 8 }} />
+      <SkelList n={4} />
+    </section>
+  );
+}
 
 /* ── Sparkline du trafic ── */
 

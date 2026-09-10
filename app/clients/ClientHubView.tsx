@@ -7,6 +7,8 @@ import { CRMHeader } from '@/components/shell/CRMHeader';
 import { ClientCard, ProspectCard, type CardView } from '@/components/clients/ClientCards';
 import { CLIENTS, HUB_KPIS } from '@/lib/data/clients';
 import { IcoDl, IcoDown, IcoGrid, IcoList, IcoPlus, IcoUp } from '@/components/ui/Icons';
+import { Lbl } from '@/components/ui/Atoms';
+import { EmptyFilter, SkelLine, SkelTable } from '@/components/ui/States';
 
 type Filter = 'all' | 'client' | 'prospect';
 
@@ -15,6 +17,32 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: 'client', label: 'Clients' },
   { value: 'prospect', label: 'Prospects' },
 ];
+
+/* ── Démo · état ── */
+
+type HubScenarioId = 'normal' | 'chargement';
+
+const HUB_SCENARIOS: [HubScenarioId, string][] = [
+  ['normal', 'Normal'],
+  ['chargement', 'Chargement'],
+];
+
+/** Silhouette d'une fiche client/prospect — même charpente que `ClientCard`. */
+function HubCardSkeleton() {
+  return (
+    <div className="card" style={{ padding: '0.875rem' }} aria-hidden="true">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+        <SkelLine w={36} h={36} style={{ borderRadius: 8, flexShrink: 0 }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <SkelLine w="70%" h={11} style={{ marginBottom: 6 }} />
+          <SkelLine w="45%" h={9} />
+        </div>
+      </div>
+      <SkelLine w="100%" h={36} style={{ marginBottom: 10, borderRadius: 8 }} />
+      <SkelLine w="55%" h={9} />
+    </div>
+  );
+}
 
 /** Style commun aux segments de bascule (filtres, vue grille/liste). */
 function segmentStyle(active: boolean): React.CSSProperties {
@@ -30,9 +58,11 @@ function segmentStyle(active: boolean): React.CSSProperties {
 }
 
 export function ClientHubView() {
+  const [scenario, setScenario] = useState<HubScenarioId>('normal');
   const [view, setView] = useState<CardView>('grid');
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
+  const loading = scenario === 'chargement';
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -220,18 +250,46 @@ export function ClientHubView() {
           <IcoDl size={13} />
           Export CSV
         </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="etat-demo-clients">Démo · état</label>
+          </Lbl>
+          <select
+            id="etat-demo-clients"
+            className="state-sel"
+            value={scenario}
+            onChange={(e) => setScenario(e.target.value as HubScenarioId)}
+          >
+            {HUB_SCENARIOS.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="content">
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--fg-4)' }}>
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--fg-2)' }}>
-              Aucun résultat
+        {loading ? (
+          view === 'grid' ? (
+            <div className="cards-grid">
+              {[...Array(6)].map((_, i) => (
+                <HubCardSkeleton key={i} />
+              ))}
             </div>
-            <p style={{ fontSize: '0.75rem', marginTop: 6 }}>
-              Aucun client ou prospect ne correspond à cette recherche.
-            </p>
-          </div>
+          ) : (
+            <SkelTable rows={6} cols={5} />
+          )
+        ) : filtered.length === 0 ? (
+          <EmptyFilter
+            title="Aucun résultat pour cette recherche"
+            text="Aucun client ou prospect ne correspond à ces filtres. Élargissez la recherche ou changez de filtre de type."
+            onReset={() => {
+              setSearch('');
+              setFilter('all');
+            }}
+          />
         ) : (
           <div className={view === 'grid' ? 'cards-grid' : 'cards-list'}>
             {filtered.map((c) =>
