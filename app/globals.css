@@ -3873,3 +3873,115 @@ body:has(.page-scroll) {
     justify-content: center;
   }
 }
+
+/* ── SEO local (phase 3) ──────────────────────────────────────────────────
+   Socle propre à la vue d'ensemble et à la fiche d'établissement — ne
+   redessine ni `.card`, ni `.crit`, ni `.detail-row`. */
+
+/* Ligne d'établissement de la vue d'ensemble. */
+.estab-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+}
+.estab-stat {
+  flex: 0 0 7.5rem;
+  min-width: 0;
+}
+
+/* Ligne de la file « ce qui demande une action ». */
+.aq-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+}
+
+/* Ligne de renvoi vers un écran lié (avis, citations, positions, concurrence). */
+.loc-link-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 8px 9px;
+  border-radius: 9px;
+  border: 1px solid var(--bd);
+  background: var(--bg-surface);
+  color: var(--fg3);
+}
+.crit-ico[data-st='neutral'] {
+  background: var(--bg-muted);
+  color: var(--fg3);
+  border: 1px solid var(--bd-solid);
+}
+
+/* Éditeur de zone desservie — mode « liste de secteurs ». */
+.sector-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 11px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--fg1);
+  background: var(--bg-solid);
+  border: 1px solid var(--bd-strong);
+}
+.sector-chip button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-muted);
+  color: var(--fg3);
+  cursor: pointer;
+}
+.sector-chip button:hover {
+  color: var(--fg1);
+}
+
+/* Éditeur de zone desservie — aperçu de la grille de points. */
+.grille-viz {
+  display: grid;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.grille-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bd-strong);
+}
+.grille-dot[data-center='true'] {
+  background: var(--green-fg);
+  width: 13px;
+  height: 13px;
+}
+
+@media (max-width: 768px) {
+  .estab-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .estab-stat {
+    flex: 1 1 auto;
+  }
+  .aq-row .btn-out,
+  .loc-link-row .btn-out {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
