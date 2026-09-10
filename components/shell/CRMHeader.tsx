@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 import { useTheme } from '@/components/shell/ThemeProvider';
+import { HP_KEYHINT, useOverlays } from '@/components/shell/Overlays';
 import { IcoBell, IcoChevD, IcoCog, IcoMoon, IcoSrch, IcoSun } from '@/components/ui/Icons';
 
 export type Crumb = { label: string; href?: string };
@@ -22,7 +22,7 @@ type Props = {
 
 export function CRMHeader({ title, crumbs, subtitle, period = 'Mai 2026', children }: Props) {
   const { theme, toggleTheme } = useTheme();
-  const [search, setSearch] = useState('');
+  const { openSearch, openNotif, unreadCount } = useOverlays();
 
   return (
     <header className="crm-header">
@@ -81,10 +81,39 @@ export function CRMHeader({ title, crumbs, subtitle, period = 'Mai 2026', childr
         <input
           className="search-inp"
           placeholder="Rechercher…"
-          aria-label="Rechercher"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          aria-label={`Recherche globale (${HP_KEYHINT})`}
+          title={`Recherche globale (${HP_KEYHINT})`}
+          readOnly
+          onFocus={(e) => {
+            e.target.blur();
+            openSearch();
+          }}
+          onClick={openSearch}
+          style={{ paddingRight: 42 }}
         />
+        <span
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            right: 7,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            pointerEvents: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '1px 5px',
+            borderRadius: 5,
+            background: 'var(--bg-muted)',
+            border: '1px solid var(--bd-solid)',
+            fontSize: '0.625rem',
+            fontWeight: 700,
+            color: 'var(--fg3)',
+            whiteSpace: 'nowrap',
+            lineHeight: 1.6,
+          }}
+        >
+          {HP_KEYHINT}
+        </span>
       </div>
 
       {period && (
@@ -110,21 +139,23 @@ export function CRMHeader({ title, crumbs, subtitle, period = 'Mai 2026', childr
         </button>
       )}
 
-      <button className="btn-icon" type="button" aria-label="Notifications">
+      <button className="btn-icon" type="button" aria-label="Notifications" onClick={openNotif}>
         <IcoBell />
-        <span
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            top: 3,
-            right: 3,
-            width: 6,
-            height: 6,
-            background: 'var(--red)',
-            borderRadius: '50%',
-            border: '1.5px solid var(--bg-base)',
-          }}
-        />
+        {unreadCount > 0 && (
+          <span
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 3,
+              right: 3,
+              width: 6,
+              height: 6,
+              background: 'var(--red)',
+              borderRadius: '50%',
+              border: '1.5px solid var(--bg-base)',
+            }}
+          />
+        )}
       </button>
 
       <button

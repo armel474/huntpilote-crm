@@ -637,3 +637,37 @@ export const IcoTaskCheck = (p: IconProps) => (
     <path d="M8 12.5l2.5 2.5L16 9" />
   </Svg>
 );
+
+/* ── Recherche globale / notifications — session 4.3 ── */
+
+/** Clé — résultat de recherche de type mot-clé suivi. */
+export const IcoKey = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <path d="M3 11l8-8 4 4-8 8H3z" />
+    <circle cx="17.5" cy="6.5" r="2.5" />
+    <line x1="7" y1="13" x2="11" y2="17" />
+  </Svg>
+);
+
+/** Tendance — résultat de position ou variation. */
+export const IcoChart = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+    <polyline points="16 17 22 17 22 11" />
+  </Svg>
+);
+
+/** Étincelle — ce que l'agent IA propose. */
+export const IcoSpark = (p: IconProps) => (
+  <Svg size={13} {...p}>
+    <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18" />
+  </Svg>
+);
+
+/** Double coche — tout marquer comme lu. */
+export const IcoCheckAll = (p: IconProps) => (
+  <Svg size={12} strokeWidth={2.2} {...p}>
+    <polyline points="1 13 5 17 13 7" />
+    <polyline points="10 15 12 17 22 6" />
+  </Svg>
+);
