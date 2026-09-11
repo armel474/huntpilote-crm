@@ -1,4 +1,4 @@
-# Séquence de conception — 24 sessions Claude Design
+# Séquence de conception — 25 sessions Claude Design
 
 Un fichier par session. Ouvre le fichier, copie tout son contenu, colle-le dans
 une session Claude Design du projet *HuntPilote - CRM SEO*.
@@ -21,13 +21,15 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**Les sept phases sont conçues, intégrées et en ligne.** La séquence initiale
-— 37 écrans, de la boucle de livraison au portail client en passant par les
-outils, le SEO local, le quotidien de l'agence et le contenu — est construite
-dans l'application réelle. La phase 7 l'a rejointe : le socle CRM est renforcé,
-en s'inspirant de ce que des CRM comme Twenty font bien (contact comme objet
-à part du client, fil de communication unifié, cycle de devis), sans en
-reprendre l'architecture.
+**Les sept premières phases sont conçues, intégrées et en ligne.** La séquence
+initiale — 37 écrans, de la boucle de livraison au portail client en passant
+par les outils, le SEO local, le quotidien de l'agence et le contenu — est
+construite dans l'application réelle. La phase 7 l'a rejointe : le socle CRM
+est renforcé, en s'inspirant de ce que des CRM comme Twenty font bien (contact
+comme objet à part du client, fil de communication unifié, cycle de devis),
+sans en reprendre l'architecture. La phase 8 ouvre à la suite d'un audit de
+cohérence de la navigation : le Dashboard, resté figé depuis la phase 1, ne
+disait rien de ce qui est urgent à l'échelle du portefeuille.
 
 | Phase | Écrans | État |
 |---|---|---|
@@ -38,6 +40,7 @@ reprendre l'architecture.
 | 5 — Le portail client | 4 | ✅ intégrée |
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
+| 8 — Dashboard enrichi | 1 | 🟡 en cours de conception |
 
 ---
 
@@ -219,6 +222,35 @@ communications fusionne réellement `PORTAL_THREAD` (session 5.2, importé,
 jamais dupliqué) avec les nouveaux canaux internes — l'ancien tableau
 « Historique des communications » de l'onglet Rapports est devenu un simple
 renvoi vers ce nouvel onglet, une seule source de vérité.
+
+### Phase 8 — Dashboard enrichi
+
+Née d'un audit de cohérence de la navigation, pas de la séquence initiale.
+Le Dashboard n'avait pas bougé depuis la phase 1 : ni les priorités critiques
+du portefeuille, ni les rapports en retard, ni le pipeline, ni les devis en
+attente, ni les intégrations déconnectées n'y étaient visibles — pour un écran
+d'entrée d'agence, un vrai manque.
+
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 8.1 | Dashboard : le portefeuille en un coup d'œil | [`8-1-dashboard.md`](8-1-dashboard.md) | ⬜ à concevoir |
+
+Cinq blocs de résumé, chacun avec un lien vers l'écran complet déjà en ligne
+(Priorités transversales, Rapports à produire, Pipeline, onglets Contrat &
+facturation/Communications de la fiche client, Paramètres) — jamais une
+seconde version de ces listes. Quatre des cinq s'appuient sur des données déjà
+portefeuille-complet (`ALL_PRIORITIES`, les rapports à produire, `DEALS`,
+`AGENCY_INTEGRATIONS`) ; seul le bloc devis/communications a besoin d'un
+résumé agrégé léger, les données détaillées de la phase 7 n'existant
+aujourd'hui que pour Acme Corp. — voir la note de décision ci-dessous.
+
+> **Une décision prise pendant l'audit, à retenir pour la suite.** La fiche
+> client affiche en réalité toujours les données d'Acme Corp., quel que soit
+> le client dans l'URL — un raccourci de la phase 1 jamais corrigé depuis.
+> Décidé de ne **pas** construire neuf jeux de données mock complets pour
+> corriger ça : ce sera le rôle naturel du modèle de données réel, au
+> branchement de Supabase. Ce choix s'applique à tout brief futur qui
+> dépendrait de données riches par client.
 
 ---
 
