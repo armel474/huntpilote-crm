@@ -27,9 +27,9 @@ par les outils, le SEO local, le quotidien de l'agence et le contenu — est
 construite dans l'application réelle. La phase 7 l'a rejointe : le socle CRM
 est renforcé, en s'inspirant de ce que des CRM comme Twenty font bien (contact
 comme objet à part du client, fil de communication unifié, cycle de devis),
-sans en reprendre l'architecture. La phase 8 ouvre à la suite d'un audit de
-cohérence de la navigation : le Dashboard, resté figé depuis la phase 1, ne
-disait rien de ce qui est urgent à l'échelle du portefeuille.
+sans en reprendre l'architecture. La phase 8 l'a rejointe à son tour, née d'un
+audit de cohérence de la navigation : le Dashboard, resté figé depuis la
+phase 1, ne disait rien de ce qui est urgent à l'échelle du portefeuille.
 
 | Phase | Écrans | État |
 |---|---|---|
@@ -40,7 +40,7 @@ disait rien de ce qui est urgent à l'échelle du portefeuille.
 | 5 — Le portail client | 4 | ✅ intégrée |
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
-| 8 — Dashboard enrichi | 1 | 🟡 en cours de conception |
+| 8 — Dashboard enrichi | 1 | ✅ intégrée |
 
 ---
 
@@ -233,7 +233,7 @@ d'entrée d'agence, un vrai manque.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 8.1 | Dashboard : le portefeuille en un coup d'œil | [`8-1-dashboard.md`](8-1-dashboard.md) | ⬜ à concevoir |
+| 8.1 | Dashboard : le portefeuille en un coup d'œil | [`8-1-dashboard.md`](8-1-dashboard.md) | ✅ intégré |
 
 Cinq blocs de résumé, chacun avec un lien vers l'écran complet déjà en ligne
 (Priorités transversales, Rapports à produire, Pipeline, onglets Contrat &
@@ -243,6 +243,15 @@ portefeuille-complet (`ALL_PRIORITIES`, les rapports à produire, `DEALS`,
 `AGENCY_INTEGRATIONS`) ; seul le bloc devis/communications a besoin d'un
 résumé agrégé léger, les données détaillées de la phase 7 n'existant
 aujourd'hui que pour Acme Corp. — voir la note de décision ci-dessous.
+
+**Phase 8 close.** La maquette avait aussi remarqué, en marge du brief, que
+`Client Hub.html` et `Fiche Client v4.html` avaient dérivé vers leur propre
+barre latérale plutôt que la partagée — un drift propre aux prototypes HTML
+statiques, sans équivalent dans l'application réelle : `AppShell` rend déjà
+`NavSidebar` une seule fois pour tout le cockpit, ces deux fichiers de
+maquette ont donc été ignorés à l'intégration. Le panneau de tâches du
+Dashboard a aussi été rebranché sur `ALL_TASKS` (`/travail`) à cette occasion,
+un correctif de cohérence trouvé pendant l'audit plutôt qu'un point du brief.
 
 > **Une décision prise pendant l'audit, à retenir pour la suite.** La fiche
 > client affiche en réalité toujours les données d'Acme Corp., quel que soit
