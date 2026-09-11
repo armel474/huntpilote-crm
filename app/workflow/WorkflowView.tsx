@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/Icons';
 import { RuleEditor } from '@/components/workflow/RuleEditor';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
 import {
   AUTOMATIONS,
@@ -569,7 +570,7 @@ export function WorkflowView() {
             Agent HuntPilote en service
           </span>
           {tab === 'actives' && (
-            <>
+            <DemoOnly>
               <Lbl>
                 <label htmlFor="etat-demo-workflow">Démo · état</label>
               </Lbl>
@@ -585,7 +586,7 @@ export function WorkflowView() {
                   </option>
                 ))}
               </select>
-            </>
+            </DemoOnly>
           )}
           <button className="btn-pri" type="button" onClick={() => setEditing({ seed: blankRule() })}>
             <IcoPlus size={12} />

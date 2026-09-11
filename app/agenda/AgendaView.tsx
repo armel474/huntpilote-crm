@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { AgLegend, DayPanel, MonthView, NewRdvModal, RecapLine, WeekView } from '@/components/agenda/Panels';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoChevL, IcoChevR, IcoPlus } from '@/components/ui/Icons';
 import {
   AGENDA_SCENARIOS,
@@ -133,16 +134,18 @@ export function AgendaView() {
           <IcoPlus size={12} />
           Créer un rendez-vous
         </button>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span className="lbl">Démo · état</span>
-          <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as AgendaScenario)} aria-label="État de démonstration">
-            {AGENDA_SCENARIOS.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as AgendaScenario)} aria-label="État de démonstration">
+              {AGENDA_SCENARIOS.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

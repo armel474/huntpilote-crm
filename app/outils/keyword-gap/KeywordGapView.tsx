@@ -16,6 +16,7 @@ import { Banner, type BannerKind } from '@/components/outils/Banner';
 import { SavesCard } from '@/components/outils/SideCards';
 import { CatGroup, CompManage, GapKeepCard } from '@/components/outils/keyword-gap/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoPlus, IcoWarn } from '@/components/ui/Icons';
 import { readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
 import { routes } from '@/lib/routes';
@@ -98,18 +99,20 @@ export function KeywordGapView() {
 
   const header = (
     <CRMHeader title="Keyword Gap" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="kg-etat">Démo · état</label>
-        </Lbl>
-        <select id="kg-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as KgState)}>
-          {KG_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="kg-etat">Démo · état</label>
+          </Lbl>
+          <select id="kg-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as KgState)}>
+            {KG_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

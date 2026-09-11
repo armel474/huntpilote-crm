@@ -7,6 +7,7 @@ import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Board } from '@/components/pipeline/Board';
 import { DealPanel } from '@/components/pipeline/DealPanel';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
 import { IcoFilter, IcoGrid, IcoList, IcoPipe, IcoPlus } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
@@ -407,21 +408,23 @@ export function PipelineView() {
               Glissez les cartes entre les étapes, ou utilisez les flèches
             </span>
           )}
-          <Lbl>
-            <label htmlFor="etat-demo-pipeline">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-pipeline"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as PipeScenarioId)}
-          >
-            {PIPE_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <DemoOnly>
+            <Lbl>
+              <label htmlFor="etat-demo-pipeline">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-pipeline"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as PipeScenarioId)}
+            >
+              {PIPE_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </DemoOnly>
           <Link className="btn-primary" href={routes.onboarding()}>
             <IcoPlus size={12} />
             Nouveau prospect

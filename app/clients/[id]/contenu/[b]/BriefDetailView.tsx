@@ -16,6 +16,7 @@ import { CRMHeader } from '@/components/shell/CRMHeader';
 import { CompetitorSection, IntentSection, KeywordSection, OutlineSection, RulesSection } from '@/components/contenu/BriefPanels';
 import { PerfSide, ProofClose, TrackSide } from '@/components/contenu/BriefTrack';
 import { Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoRuler, IcoTrophy } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { BR_STAGES, brScenario, type BrStage } from '@/lib/data/brief';
@@ -86,16 +87,18 @@ export function BriefDetailView({ clientId }: { clientId: string }) {
         <Link href={routes.contenu(clientId)} className="btn-out" style={{ fontSize: '0.6875rem', textDecoration: 'none' }}>
           Calendrier éditorial
         </Link>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-          <span className="lbl">Démo · état</span>
-          <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as BrStage)} aria-label="État de démonstration">
-            {BR_STAGES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as BrStage)} aria-label="État de démonstration">
+              {BR_STAGES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

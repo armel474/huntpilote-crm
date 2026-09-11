@@ -9,6 +9,7 @@
  */
 import { useState } from 'react';
 import { useTheme } from '@/components/shell/ThemeProvider';
+import { DemoOnly } from '@/components/ui/Demo';
 import {
   IcoChevL,
   IcoEye,
@@ -309,13 +310,15 @@ export function ConnexionView() {
   return (
     <>
       <div className="cn-demo">
-        <select value={scenario} onChange={(e) => pickScenario(e.target.value as Scenario)} aria-label="État de démonstration">
-          {SCENARIOS.map(([id, l]) => (
-            <option key={id} value={id}>
-              {l}
-            </option>
-          ))}
-        </select>
+        <DemoOnly>
+          <select value={scenario} onChange={(e) => pickScenario(e.target.value as Scenario)} aria-label="État de démonstration">
+            {SCENARIOS.map(([id, l]) => (
+              <option key={id} value={id}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </DemoOnly>
         <button
           type="button"
           onClick={toggleTheme}

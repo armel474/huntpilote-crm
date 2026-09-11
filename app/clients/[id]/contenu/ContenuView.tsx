@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { ContentRow, EdEmpty, MonthView, QuotaCard, ctMonthLabel } from '@/components/contenu/Panels';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowR, IcoChart, IcoChevL, IcoChevR, IcoPlus } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import {
@@ -92,16 +93,18 @@ export function ContenuView({ clientId }: { clientId: string }) {
           <IcoPlus size={12} />
           Créer un brief
         </Link>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span className="lbl">Démo · état</span>
-          <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as CtScenarioId)} aria-label="État de démonstration">
-            {CT_SCENARIOS.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as CtScenarioId)} aria-label="État de démonstration">
+              {CT_SCENARIOS.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

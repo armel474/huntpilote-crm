@@ -14,6 +14,7 @@ import { PanelCommunications } from '@/components/fiche/PanelCommunications';
 import { ContactsAllSheet, ContactSheet, type NewContactData } from '@/components/fiche/ContactPanels';
 import { QuoteFormSheet, QuoteSheet } from '@/components/fiche/QuotePanels';
 import { FICHE_TABS, type FicheTab } from '@/components/fiche/tabs';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoDoc, IcoPlus, IcoTarget, IcoZap } from '@/components/ui/Icons';
 import { CLIENT, CONTACTS, PRIORITIES, UX_STATES, type Contact, type UxState } from '@/lib/data/fiche-client';
 import { QUOTES, type Quote, type QuoteLine } from '@/lib/data/devis';
@@ -215,43 +216,45 @@ export function FicheClientView({ clientId }: { clientId: string }) {
         >
           {/* Sélecteur d'état — sert à concevoir et vérifier les variantes UX
               (fiche vide, audit en cours, données obsolètes, erreur partielle). */}
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              fontSize: '0.5rem',
-              fontWeight: 700,
-              color: 'var(--fg4)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            État UX
-            <select
-              value={uxState}
-              onChange={(e) => setUxState(e.target.value as UxState)}
+          <DemoOnly>
+            <label
               style={{
-                padding: '4px 8px',
-                borderRadius: 6,
-                background: 'var(--bg-solid)',
-                border: '1px solid var(--bd-solid)',
-                color: 'var(--fg2)',
-                fontFamily: 'var(--font)',
-                fontSize: '0.625rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                textTransform: 'none',
-                letterSpacing: 'normal',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: '0.5rem',
+                fontWeight: 700,
+                color: 'var(--fg4)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
               }}
             >
-              {UX_STATES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              État UX
+              <select
+                value={uxState}
+                onChange={(e) => setUxState(e.target.value as UxState)}
+                style={{
+                  padding: '4px 8px',
+                  borderRadius: 6,
+                  background: 'var(--bg-solid)',
+                  border: '1px solid var(--bd-solid)',
+                  color: 'var(--fg2)',
+                  fontFamily: 'var(--font)',
+                  fontSize: '0.625rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textTransform: 'none',
+                  letterSpacing: 'normal',
+                }}
+              >
+                {UX_STATES.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </DemoOnly>
         </CRMHeader>
       }
     >

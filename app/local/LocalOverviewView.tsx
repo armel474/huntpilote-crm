@@ -13,6 +13,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { ActionQueueCard, EstabRow, PortfolioKpis } from '@/components/local/Panels';
 import { Lbl, Sec } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyFilter, SkelKpiRow, SkelList } from '@/components/ui/States';
 import { IcoPlus, IcoSrch } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
@@ -97,23 +98,25 @@ export function LocalOverviewView() {
             ))}
           </select>
         </div>
-        <div className="ctx-g" style={{ marginLeft: 'auto' }}>
-          <Lbl>
-            <label htmlFor="etat-demo-local">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-local"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as LocalScenarioId)}
-          >
-            {LOCAL_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div className="ctx-g" style={{ marginLeft: 'auto' }}>
+            <Lbl>
+              <label htmlFor="etat-demo-local">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-local"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as LocalScenarioId)}
+            >
+              {LOCAL_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           {list.length} établissement{list.length > 1 ? 's' : ''}
         </span>

@@ -14,6 +14,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { GroupSection, TravailEmpty, WeekLoadCard } from '@/components/travail/Panels';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import {
   PT_ME,
   PT_SCENARIOS,
@@ -67,23 +68,25 @@ export function TravailView() {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Groupées par échéance · les tâches en retard passent devant tout
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="etat-demo-travail">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-travail"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setSc(e.target.value as PtScenarioId)}
-          >
-            {PT_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="etat-demo-travail">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-travail"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setSc(e.target.value as PtScenarioId)}
+            >
+              {PT_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="content" style={{ maxWidth: 920 }}>

@@ -16,6 +16,7 @@ import { BlockingCard } from '@/components/local/Panels';
 import { KeywordTable, ZoneMapCard, ZoneNotConfiguredCard, ZoneReadCard } from '@/components/local/PositionsPanels';
 import { EmptyBlock } from '@/components/outils/Empty';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { ESTABS, findEstab, isBlocked } from '@/lib/data/local';
@@ -86,18 +87,20 @@ export function PositionsView({ etabId }: { etabId: string }) {
           </select>
         </div>
         {!blocked && est.zone && data && (
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Lbl>
-              <label htmlFor="pos-demo">Démo · état</label>
-            </Lbl>
-            <select id="pos-demo" className="state-sel" value={demo} onChange={(e) => setDemo(e.target.value as (typeof DEMO_STATES)[number][0])}>
-              {DEMO_STATES.map(([id, l]) => (
-                <option key={id} value={id}>
-                  {l}
-                </option>
-              ))}
-            </select>
-          </div>
+          <DemoOnly>
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Lbl>
+                <label htmlFor="pos-demo">Démo · état</label>
+              </Lbl>
+              <select id="pos-demo" className="state-sel" value={demo} onChange={(e) => setDemo(e.target.value as (typeof DEMO_STATES)[number][0])}>
+                {DEMO_STATES.map(([id, l]) => (
+                  <option key={id} value={id}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </DemoOnly>
         )}
       </div>
 

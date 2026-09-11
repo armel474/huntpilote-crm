@@ -31,6 +31,7 @@ import {
   IcoUp,
 } from '@/components/ui/Icons';
 import { PortalHeader } from '@/app/portail/PortalHeader';
+import { DemoOnly } from '@/components/ui/Demo';
 import { routes } from '@/lib/routes';
 import { REPORT } from '@/lib/data/rapport';
 import {
@@ -516,15 +517,17 @@ export function PortailView() {
 
   return (
     <div className="pc-root page-scroll">
-      <div className="pc-demo">
-        <select value={scenario} onChange={(e) => setSc(e.target.value as Scenario)} aria-label="État de démonstration">
-          {SCENARIOS.map(([id, l]) => (
-            <option key={id} value={id}>
-              {l}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div className="pc-demo">
+          <select value={scenario} onChange={(e) => setSc(e.target.value as Scenario)} aria-label="État de démonstration">
+            {SCENARIOS.map(([id, l]) => (
+              <option key={id} value={id}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
 
       <PortalHeader active="tableau" client={account.client} person={account.person} initials={account.initials} pm={account.pm} unread={UNREAD} />
 

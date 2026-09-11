@@ -15,6 +15,7 @@ import { ConstatCard } from '@/components/priorite/ConstatCard';
 import { HistoryCard, PagesCard, ProvCard, RecoCard } from '@/components/priorite/Panels';
 import { LabelCard, VisibilityCard } from '@/components/priorite/Visibility';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import {
@@ -78,23 +79,25 @@ export function PrioriteDetailView({ clientId }: { clientId: string }) {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           3 critiques · 5 importantes · 8 opportunités
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="etat-demo">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo"
-            className="state-sel"
-            value={state}
-            onChange={(e) => setState(e.target.value as PrioriteState)}
-          >
-            {UX_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="etat-demo">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo"
+              className="state-sel"
+              value={state}
+              onChange={(e) => setState(e.target.value as PrioriteState)}
+            >
+              {UX_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

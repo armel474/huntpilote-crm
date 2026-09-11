@@ -21,6 +21,7 @@ import {
   type ShownDim,
 } from '@/components/audit/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL, IcoCompare } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { AUDIT, AU_STATES, type AuditState } from '@/lib/data/audit';
@@ -116,26 +117,28 @@ export function AuditDetailView({ clientId }: { clientId: string }) {
             sm
           />
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="au-etat">Démo · état</label>
-          </Lbl>
-          <select
-            id="au-etat"
-            className="state-sel"
-            value={state}
-            onChange={(e) => {
-              setState(e.target.value as AuditState);
-              setCreated({});
-            }}
-          >
-            {AU_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="au-etat">Démo · état</label>
+            </Lbl>
+            <select
+              id="au-etat"
+              className="state-sel"
+              value={state}
+              onChange={(e) => {
+                setState(e.target.value as AuditState);
+                setCreated({});
+              }}
+            >
+              {AU_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

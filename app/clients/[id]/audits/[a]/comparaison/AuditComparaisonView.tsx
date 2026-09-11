@@ -13,6 +13,7 @@ import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { CmpEmpty, CmpGroup, CmpSummary } from '@/components/audit/Compare';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL, IcoArrowR } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { AUDIT, CMP, type ChangeKind } from '@/lib/data/audit';
@@ -97,23 +98,25 @@ export function AuditComparaisonView({ clientId }: { clientId: string }) {
             sm
           />
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="cmp-etat">Démo · état</label>
-          </Lbl>
-          <select
-            id="cmp-etat"
-            className="state-sel"
-            value={first ? 'premier' : 'normal'}
-            onChange={(e) => {
-              setFirst(e.target.value === 'premier');
-              setCreated({});
-            }}
-          >
-            <option value="normal">Deux audits comparables</option>
-            <option value="premier">Premier audit · rien à comparer</option>
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="cmp-etat">Démo · état</label>
+            </Lbl>
+            <select
+              id="cmp-etat"
+              className="state-sel"
+              value={first ? 'premier' : 'normal'}
+              onChange={(e) => {
+                setFirst(e.target.value === 'premier');
+                setCreated({});
+              }}
+            >
+              <option value="normal">Deux audits comparables</option>
+              <option value="premier">Premier audit · rien à comparer</option>
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
