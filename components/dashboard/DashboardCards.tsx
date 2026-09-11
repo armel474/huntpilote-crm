@@ -513,7 +513,7 @@ export function TasksPanel() {
   const [today, setToday] = useState<Task[]>([...TODAY_TASKS]);
   const [week, setWeek] = useState<Task[]>([...WEEK_TASKS]);
 
-  const toggle = (setter: typeof setToday, id: number) =>
+  const toggle = (setter: typeof setToday, id: string) =>
     setter((list) => list.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
 
   const todayDone = today.filter((t) => t.done).length;

@@ -3,6 +3,8 @@
  * Reprises telles quelles des maquettes ; à remplacer par les appels
  * DataForSEO / Google (GA4, GSC) au branchement des intégrations.
  */
+import { ALL_TASKS } from '@/lib/data/plan-travail';
+import { CLIENTS } from '@/lib/data/clients';
 
 export const MONTHS = [
   'Jan',
@@ -45,21 +47,26 @@ export const CLIENT_PERF = [
   { id: 'le-marche-bio', name: 'Le Marché Bio', score: 71, delta: 3, sessions: '4 730' },
 ] as const;
 
-export type Task = { id: number; text: string; done: boolean };
+export type Task = { id: string; text: string; done: boolean };
 
-export const TODAY_TASKS: readonly Task[] = [
-  { id: 1, text: 'Optimiser meta tags — Acme Corp.', done: false },
-  { id: 2, text: 'Publier 3 articles de blog — Novatech', done: true },
-  { id: 3, text: 'Corriger erreurs 404 — Le Marché Bio', done: false },
-  { id: 4, text: 'Envoyer rapport mensuel — Dupont SAS', done: false },
-];
+/**
+ * Même source que /travail (ALL_TASKS, lib/data/plan-travail.ts) — cocher une
+ * tâche ici et là-bas doivent partir du même portefeuille, pas de deux jeux de
+ * données parallèles qui peuvent se désynchroniser.
+ */
+const clientName = (id: string) => CLIENTS.find((c) => c.id === id)?.name ?? id;
 
-export const WEEK_TASKS: readonly Task[] = [
-  { id: 5, text: 'Réviser stratégie de mots-clés', done: false },
-  { id: 6, text: 'Configurer Google Search Console', done: false },
-  { id: 7, text: 'Analyse concurrents top 5', done: false },
-  { id: 8, text: 'Présentation résultats — Paris Médias', done: false },
-];
+const toTask = (t: (typeof ALL_TASKS)[number]): Task => ({
+  id: t.id,
+  text: `${t.title} — ${clientName(t.clientId)}`,
+  done: t.status === 'termine',
+});
+
+export const TODAY_TASKS: readonly Task[] = ALL_TASKS.filter(
+  (t) => t.bucket === 'aujourdhui' || t.bucket === 'retard',
+).map(toTask);
+
+export const WEEK_TASKS: readonly Task[] = ALL_TASKS.filter((t) => t.bucket === 'semaine').map(toTask);
 
 export const TRAFFIC_SPARKLINE = [
   22900, 25400, 24100, 27800, 29300, 28100, 31400, 30200, 33100, 34820,
