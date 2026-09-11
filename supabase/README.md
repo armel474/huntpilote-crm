@@ -13,7 +13,7 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0001_fondations.sql` | Agence, membres, vocabulaires, garde-fous RLS | ✅ écrite et vérifiée |
 | `0002_comptes.sql` | Clients, prospects, services, contacts, établissements | ✅ écrite et vérifiée |
 | `0003_boucle_livraison.sql` | Audit, priorité, tâche, preuve, rapport, versions publiées | ✅ écrite et vérifiée |
-| CRM (deals, devis, factures, communications) | — | ⬜ à écrire |
+| `0004_crm.sql` | Pipeline, devis, factures, fil de communications | ✅ écrite et vérifiée |
 | SEO local (avis, citations, positions, concurrence) | — | ⬜ à écrire |
 | Outils SEO (séries de positions, backlinks, cache de mots-clés) | — | ⬜ à écrire |
 | Contenu, automatisations, notifications, agenda | — | ⬜ à écrire |
@@ -41,6 +41,7 @@ for f in supabase/migrations/*.sql; do
 done
 
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/01_regles.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/02_regles_crm.sql
 ```
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
@@ -63,3 +64,14 @@ dépendre d'un bouton désactivé côté navigateur.
 - Un membre ne voit **que les comptes de son agence**.
 - Un contact du portail **n'atteint pas** la table des priorités, et ne voit que
   son propre compte (règle 1, appliquée en RLS).
+
+Et côté CRM (`02_regles_crm.sql`) :
+
+- Marquer un deal perdu **sans motif** est refusé — c'est le motif qui déclenche
+  la purge de l'instantané du prospect (règle 3).
+- Le sous-total, les taxes et le total d'un devis **se calculent** depuis ses
+  lignes ; la somme des parties affichées fait le total affiché, au cent près.
+- Une note interne **ne peut pas** devenir visible du client : la colonne est
+  dérivée du canal, pas saisie.
+- Le contact du portail ne lit **que** le fil du portail, ne peut écrire que
+  sur ce canal, et peut répondre dans son propre fil.
