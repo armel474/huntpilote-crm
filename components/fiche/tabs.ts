@@ -7,6 +7,8 @@ export const FICHE_TABS = [
   /** Mène au calendrier éditorial (session 6.1) — pas un panneau interne, un lien de sortie. */
   { id: 'contenu', label: 'Contenu', external: true },
   { id: 'rapports', label: 'Rapports client' },
+  /** Fil unique tous canaux, fusionné avec le portail client (session 7.2). */
+  { id: 'communications', label: 'Communications' },
   { id: 'contrat', label: 'Contrat & facturation' },
 ] as const;
 

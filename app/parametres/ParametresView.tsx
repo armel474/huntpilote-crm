@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
@@ -59,6 +60,26 @@ function IcoBuilding(p: IconProps) {
       <line x1="9" y1="17" x2="15" y2="17" />
     </svg>
   );
+}
+
+/**
+ * Lit `?section=` une fois au montage et applique la section demandée —
+ * utilisé par le geste « Connecter » de Communications (session 7.2), qui
+ * doit ouvrir directement l'onglet Intégrations. `useSearchParams` exige une
+ * frontière `<Suspense>` au-dessus de lui pour ne pas casser le rendu
+ * statique (`next build`) : seul ce petit composant, sans rendu propre, en
+ * dépend — le reste de la page s'affiche immédiatement.
+ */
+function SectionFromQuery({ onSection }: { onSection: (s: SectionId) => void }) {
+  const searchParams = useSearchParams();
+  const requested = searchParams.get('section');
+  useEffect(() => {
+    if (requested && SECTIONS.some((s) => s.id === requested)) {
+      onSection(requested as SectionId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requested]);
+  return null;
 }
 
 const SECTIONS: { id: SectionId; label: string; Icon: (p: IconProps) => React.ReactElement }[] = [
@@ -1172,6 +1193,9 @@ export function ParametresView() {
         />
       }
     >
+      <Suspense fallback={null}>
+        <SectionFromQuery onSection={setSection} />
+      </Suspense>
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <nav
           style={{

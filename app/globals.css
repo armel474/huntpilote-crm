@@ -6025,3 +6025,18 @@ body:has(.page-scroll) {
     margin-left: 12px;
   }
 }
+
+/* ── Contacts, Communications, Devis — phase 7 ──
+   Les trois panneaux latéraux (fiche contact, tous les contacts, document de
+   devis) réutilisent `.dl-scrim` / `.dl-sheet` et les classes `.dl-*` du
+   panneau de deal (session 4.4) plutôt que d'en redessiner un jeu équivalent.
+   Seule addition réelle : une variante plus large pour le document de devis,
+   qui porte des lignes de service en grille. */
+.dl-sheet.dl-wide {
+  width: min(620px, 100vw);
+}
+@media (max-width: 768px) {
+  .dl-sheet.dl-wide {
+    width: 100vw;
+  }
+}

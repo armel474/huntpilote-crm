@@ -72,6 +72,9 @@ export const AGENCY_INTEGRATIONS: Integration[] = [
   { id: 'gbp', name: 'Google Business Profile', desc: 'Fiches locales & avis', color: '#34A853', letter: 'GB', connected: false },
   { id: 'pagespeed', name: 'PageSpeed Insights', desc: 'Core Web Vitals & performance', color: '#0F9D58', letter: 'PS', connected: true, accounts: 8 },
   { id: 'stripe', name: 'Stripe', desc: 'Facturation & paiements récurrents', color: '#635BFF', letter: 'St', connected: false },
+  { id: 'slack', name: 'Slack', desc: 'Canal interne pour les échanges d’équipe', color: '#4A154B', letter: 'Sl', connected: false },
+  { id: 'whatsapp', name: 'WhatsApp', desc: 'Messages visibles du client', color: '#25D366', letter: 'Wa', connected: false },
+  { id: 'messenger', name: 'Messenger', desc: 'Messages visibles du client', color: '#0084FF', letter: 'Ms', connected: false },
 ];
 
 export type Notification = { id: string; label: string; desc: string; on: boolean };

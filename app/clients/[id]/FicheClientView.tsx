@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
@@ -10,19 +10,50 @@ import { PanelPriorites } from '@/components/fiche/PanelPriorites';
 import { PanelDiagnostics, PanelPlan } from '@/components/fiche/PanelPlan';
 import { PanelRapports } from '@/components/fiche/PanelRapports';
 import { PanelContrat } from '@/components/fiche/PanelContrat';
+import { PanelCommunications } from '@/components/fiche/PanelCommunications';
+import { ContactsAllSheet, ContactSheet, type NewContactData } from '@/components/fiche/ContactPanels';
+import { QuoteFormSheet, QuoteSheet } from '@/components/fiche/QuotePanels';
 import { FICHE_TABS, type FicheTab } from '@/components/fiche/tabs';
 import { IcoDoc, IcoPlus, IcoTarget, IcoZap } from '@/components/ui/Icons';
-import { CLIENT, PRIORITIES, UX_STATES, type UxState } from '@/lib/data/fiche-client';
+import { CLIENT, CONTACTS, PRIORITIES, UX_STATES, type Contact, type UxState } from '@/lib/data/fiche-client';
+import { QUOTES, type Quote, type QuoteLine } from '@/lib/data/devis';
 import { routes } from '@/lib/routes';
 
 /** Durée simulée d'un audit avant que la fiche ne se remplisse. */
 const AUDIT_DURATION_MS = 4000;
+
+/** Année de référence de la démo — cohérente avec le reste du jeu de données (Acme Corp., 2026). */
+const DEMO_YEAR = 2026;
+
+function nextQuoteId(quotes: Quote[]): string {
+  const nums = quotes.map((q) => Number(q.id.split('-').pop())).filter((n) => !Number.isNaN(n));
+  const next = (nums.length ? Math.max(...nums) : 0) + 1;
+  return `DV-${DEMO_YEAR}-${String(next).padStart(3, '0')}`;
+}
+
+/** Contact-panel ouvert : la fiche d'un contact précis, la liste complète, ou le formulaire de création. */
+type ContactPanel = { kind: 'contact'; id: string } | { kind: 'all' } | { kind: 'create' } | null;
+
+/** Devis ouvert : le document d'un devis précis, un nouveau devis, ou la correction d'un devis envoyé. */
+type QuoteView = { kind: 'view'; id: string } | { kind: 'new' } | { kind: 'edit'; id: string } | null;
 
 export function FicheClientView({ clientId }: { clientId: string }) {
   const router = useRouter();
   const [tab, setTab] = useState<FicheTab>('apercu');
   const [uxState, setUxState] = useState<UxState>('active');
   const auditTimer = useRef<number | null>(null);
+
+  /* ── Contacts — session 7.1 ── */
+  const [contacts, setContacts] = useState<Contact[]>(CONTACTS);
+  const [contactPanel, setContactPanel] = useState<ContactPanel>(null);
+
+  /* ── Devis — session 7.3 ── */
+  const [quotes, setQuotes] = useState<Quote[]>(QUOTES);
+  const [quoteView, setQuoteView] = useState<QuoteView>(null);
+
+  /* ── Renvoi vers le fil de communications, filtré sur un contact — depuis un contact ou un devis ── */
+  const [commContactFilter, setCommContactFilter] = useState<string | null>(null);
+  const [commKey, setCommKey] = useState(0);
 
   useEffect(() => {
     return () => {
@@ -47,6 +78,98 @@ export function FicheClientView({ clientId }: { clientId: string }) {
   const criticalCount = PRIORITIES.filter((p) => p.sev === 'critique').length;
   const auditRunning = uxState === 'audit';
 
+  /* ── Contacts ── */
+
+  const openContact = useCallback((id: string) => setContactPanel({ kind: 'contact', id }), []);
+  const openAllContacts = useCallback(() => setContactPanel({ kind: 'all' }), []);
+  const openCreateContact = useCallback(() => setContactPanel({ kind: 'create' }), []);
+  const closeContactPanel = useCallback(() => setContactPanel(null), []);
+
+  const setPrincipalContact = useCallback((id: string) => {
+    setContacts((cs) => cs.map((c) => ({ ...c, principal: c.id === id })));
+  }, []);
+  const archiveContact = useCallback((id: string) => {
+    setContacts((cs) => cs.map((c) => (c.id === id ? { ...c, status: 'archive' } : c)));
+  }, []);
+  const unarchiveContact = useCallback((id: string) => {
+    setContacts((cs) => cs.map((c) => (c.id === id ? { ...c, status: 'actif' } : c)));
+  }, []);
+  const saveNewContact = useCallback((data: NewContactData) => {
+    const initials = data.name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]!.toUpperCase())
+      .join('');
+    setContacts((cs) => [
+      ...cs,
+      { id: `c${cs.length + 1}-${Date.now()}`, initials, principal: false, status: 'actif', ...data },
+    ]);
+    setContactPanel(null);
+  }, []);
+
+  /** Depuis une fiche contact ou un devis : bascule vers Communications, filtré sur ce contact. */
+  const goToThread = useCallback((contactId: string) => {
+    setCommContactFilter(contactId);
+    setCommKey((k) => k + 1);
+    setTab('communications');
+    setContactPanel(null);
+    setQuoteView(null);
+  }, []);
+
+  /* ── Devis ── */
+
+  const openQuote = useCallback((id: string) => setQuoteView({ kind: 'view', id }), []);
+  const newQuote = useCallback(() => setQuoteView({ kind: 'new' }), []);
+  const closeQuoteView = useCallback(() => setQuoteView(null), []);
+
+  const saveQuote = useCallback(
+    (data: { objet: string; contactId: string; lignes: QuoteLine[]; conditions: string; expire: string | null }) => {
+      setQuotes((qs) => {
+        if (quoteView?.kind === 'edit') {
+          const editId = quoteView.id;
+          return qs.map((q) => (q.id === editId ? { ...q, ...data, statut: 'brouillon', emis: null } : q));
+        }
+        return [{ id: nextQuoteId(qs), statut: 'brouillon', emis: null, versions: [], ...data }, ...qs];
+      });
+      setQuoteView(null);
+    },
+    [quoteView],
+  );
+
+  const sendQuote = useCallback((id: string) => {
+    setQuotes((qs) =>
+      qs.map((q) => {
+        if (q.id !== id) return q;
+        const nextV = q.versions.length + 1;
+        return {
+          ...q,
+          statut: 'envoye',
+          emis: q.emis || 'aujourd’hui',
+          versions: [
+            ...q.versions,
+            {
+              v: nextV,
+              at: 'aujourd’hui',
+              who: 'Vous',
+              note:
+                nextV === 1
+                  ? 'Version envoyée au client par courriel.'
+                  : `Version ${nextV} envoyée au client — correction de la version ${nextV - 1}.`,
+            },
+          ],
+        };
+      }),
+    );
+  }, []);
+  const requestQuoteCorrection = useCallback((id: string) => setQuoteView({ kind: 'edit', id }), []);
+
+  const contactsById = useMemo(() => Object.fromEntries(contacts.map((c) => [c.id, c])), [contacts]);
+  const openContactPanel =
+    contactPanel?.kind === 'contact' ? (contacts.find((c) => c.id === contactPanel.id) ?? null) : null;
+  const currentQuote = quoteView?.kind === 'view' ? (quotes.find((q) => q.id === quoteView.id) ?? null) : null;
+  const editQuote = quoteView?.kind === 'edit' ? (quotes.find((q) => q.id === quoteView.id) ?? null) : null;
+
   const renderPanel = () => {
     switch (tab) {
       case 'apercu':
@@ -58,9 +181,20 @@ export function FicheClientView({ clientId }: { clientId: string }) {
       case 'diagnostics':
         return <PanelDiagnostics clientId={clientId} onLaunchAudit={launchAudit} />;
       case 'rapports':
-        return <PanelRapports clientId={clientId} />;
+        return <PanelRapports clientId={clientId} onGoCommunications={() => setTab('communications')} />;
+      case 'communications':
+        return (
+          <PanelCommunications
+            key={commKey}
+            contacts={contacts}
+            initialContactFilter={commContactFilter}
+            onOpenContact={openContact}
+          />
+        );
       case 'contrat':
-        return <PanelContrat />;
+        return (
+          <PanelContrat quotes={quotes} contactsById={contactsById} onOpenQuote={openQuote} onNewQuote={newQuote} />
+        );
       case 'contenu':
         // Onglet de sortie : le clic navigue vers /clients/[id]/contenu, `tab` ne prend jamais cette valeur.
         return null;
@@ -121,7 +255,15 @@ export function FicheClientView({ clientId }: { clientId: string }) {
       }
     >
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <LeftPanel uxState={uxState} onLaunchAudit={launchAudit} auditRunning={auditRunning} />
+        <LeftPanel
+          uxState={uxState}
+          onLaunchAudit={launchAudit}
+          auditRunning={auditRunning}
+          contacts={contacts}
+          onOpenContact={openContact}
+          onOpenAllContacts={openAllContacts}
+          onAddContact={openCreateContact}
+        />
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
           <div style={{ flexShrink: 0 }}>
@@ -209,6 +351,55 @@ export function FicheClientView({ clientId }: { clientId: string }) {
 
         <RightPanel onGenerateReport={() => setTab('rapports')} />
       </div>
+
+      {/* Panneaux latéraux — contacts (7.1) et devis (7.3), superposés à n'importe quel onglet. */}
+      {contactPanel?.kind === 'all' && (
+        <ContactsAllSheet contacts={contacts} onClose={closeContactPanel} onOpen={openContact} onAdd={openCreateContact} />
+      )}
+      {contactPanel?.kind === 'create' && (
+        <ContactSheet
+          contact={null}
+          isCreate
+          onClose={closeContactPanel}
+          onSetPrincipal={setPrincipalContact}
+          onArchive={archiveContact}
+          onUnarchive={unarchiveContact}
+          onSave={saveNewContact}
+          onGoThread={goToThread}
+        />
+      )}
+      {openContactPanel && (
+        <ContactSheet
+          contact={openContactPanel}
+          isCreate={false}
+          onClose={closeContactPanel}
+          onSetPrincipal={setPrincipalContact}
+          onArchive={archiveContact}
+          onUnarchive={unarchiveContact}
+          onSave={saveNewContact}
+          onGoThread={goToThread}
+        />
+      )}
+
+      {currentQuote && (
+        <QuoteSheet
+          quote={currentQuote}
+          contacts={contacts}
+          onClose={closeQuoteView}
+          onSend={sendQuote}
+          onNewVersion={requestQuoteCorrection}
+          onGoThread={goToThread}
+          onGoContract={closeQuoteView}
+        />
+      )}
+      {(quoteView?.kind === 'new' || editQuote) && (
+        <QuoteFormSheet
+          contacts={contacts.filter((c) => c.status === 'actif')}
+          initial={editQuote}
+          onClose={closeQuoteView}
+          onSave={saveQuote}
+        />
+      )}
     </AppShell>
   );
 }
