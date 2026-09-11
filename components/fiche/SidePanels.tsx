@@ -1,24 +1,14 @@
 'use client';
 
 import { Badge, CompBar, Feed, Gauge, Lbl } from '@/components/ui/Atoms';
-import {
-  IcoCal,
-  IcoCheck,
-  IcoDoc,
-  IcoGlobe,
-  IcoMail,
-  IcoPhone,
-  IcoPin,
-  IcoPlus,
-  IcoSrch,
-  IcoUser,
-  IcoZap,
-} from '@/components/ui/Icons';
+import { IcoCal, IcoCheck, IcoDoc, IcoPlus, IcoSrch, IcoUser, IcoZap } from '@/components/ui/Icons';
+import { ContactsBlock } from '@/components/fiche/ContactPanels';
 import {
   ACTIVITY,
   CLIENT,
   CLIENT_SESSIONS,
   COMPETITORS,
+  type Contact,
   type UxState,
 } from '@/lib/data/fiche-client';
 
@@ -46,18 +36,20 @@ export function LeftPanel({
   uxState,
   onLaunchAudit,
   auditRunning,
+  contacts,
+  onOpenContact,
+  onOpenAllContacts,
+  onAddContact,
 }: {
   uxState: UxState;
   onLaunchAudit: () => void;
   auditRunning: boolean;
+  contacts: Contact[];
+  onOpenContact: (id: string) => void;
+  onOpenAllContacts: () => void;
+  onAddContact: () => void;
 }) {
   const status = STATUS_BY_STATE[uxState];
-  const contacts: [React.ReactNode, string][] = [
-    [<IcoMail key="m" />, CLIENT.email],
-    [<IcoPhone key="p" />, CLIENT.phone],
-    [<IcoGlobe key="g" />, CLIENT.website],
-    [<IcoPin key="a" />, CLIENT.address],
-  ];
   const account: [React.ReactNode, string, string][] = [
     [<IcoUser key="u" />, 'Chef de projet', CLIENT.pm],
     [<IcoCal key="c" />, 'Client depuis', CLIENT.since],
@@ -123,25 +115,12 @@ export function LeftPanel({
         </div>
       </div>
 
-      <Lbl>Contact</Lbl>
-      <div style={{ marginTop: 8, marginBottom: 12 }}>
-        {contacts.map(([icon, value]) => (
-          <div
-            key={value}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 7,
-              marginBottom: 6,
-              color: 'var(--fg3)',
-              fontSize: '0.6875rem',
-            }}
-          >
-            <span style={{ color: 'var(--fg4)', flexShrink: 0, display: 'flex' }}>{icon}</span>
-            {value}
-          </div>
-        ))}
-      </div>
+      <ContactsBlock
+        contacts={contacts}
+        onOpen={onOpenContact}
+        onOpenAll={onOpenAllContacts}
+        onAdd={onAddContact}
+      />
 
       <Lbl>Services actifs</Lbl>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, margin: '8px 0 1rem' }}>
@@ -245,8 +224,6 @@ export function LeftPanel({
 }
 
 /* ── Colonne droite : intelligence continue ── */
-
-const COMM_ICON = { cal: IcoCal, mail: IcoMail, phone: IcoPhone } as const;
 
 export function RightPanel({ onGenerateReport }: { onGenerateReport: () => void }) {
   const maxCompetitor = Math.max(...COMPETITORS.map((c) => c.sessions), CLIENT_SESSIONS) * 1.2;
@@ -433,5 +410,3 @@ export function RightPanel({ onGenerateReport }: { onGenerateReport: () => void 
     </aside>
   );
 }
-
-export { COMM_ICON };

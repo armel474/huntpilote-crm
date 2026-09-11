@@ -372,35 +372,97 @@ export const REPORTS = [
   { period: 'Janvier 2026', date: '4 fév. 2026', status: 'Envoyé', score: 74, pages: 7 },
 ] as const;
 
-/** Historique des échanges avec le client, à côté des rapports envoyés. */
-export const COMMUNICATIONS = [
+/**
+ * Contacts d'Acme Corp. — session 7.1. Remplace l'ancien bloc « Contact »
+ * unique (coordonnées de l'entreprise) par de vraies personnes. Un seul
+ * `principal: true` à la fois ; un contact qui a quitté l'entreprise passe
+ * `status: 'archive'` — jamais supprimé, pour que l'historique des échanges
+ * avec lui reste lisible (session 7.2).
+ */
+export type ContactChannel = 'email' | 'phone' | 'sms';
+
+export type Contact = {
+  id: string;
+  name: string;
+  role: string;
+  initials: string;
+  principal: boolean;
+  email: string | null;
+  phone: string | null;
+  channel: ContactChannel;
+  /** Établissement rattaché — `null` pour un contact du siège (cas d'Acme Corp, site unique). */
+  establishment: string | null;
+  status: 'actif' | 'archive';
+  /** Jamais visible du client. */
+  notes: string;
+};
+
+export const CONTACTS: Contact[] = [
   {
-    kind: 'Réunion',
-    label: 'Point mensuel — revue des résultats d’avril',
-    date: '5 mai 2026',
-    who: 'Marie Chen',
-    icon: 'cal' as const,
+    id: 'c1',
+    name: 'Marie Tremblay',
+    role: 'Directrice marketing',
+    initials: 'MT',
+    principal: true,
+    email: 'marie.tremblay@acmecorp.fr',
+    phone: '(514) 555-0182',
+    channel: 'email',
+    establishment: null,
+    status: 'actif',
+    notes:
+      'Décideuse finale sur le budget SEO. Préfère les échanges écrits — résume toujours l’appel par courriel après coup. Titulaire du compte portail client.',
   },
   {
-    kind: 'Courriel',
-    label: 'Envoi du rapport SEO d’avril (8 sections)',
-    date: '2 mai 2026',
-    who: 'Automatisation',
-    icon: 'mail' as const,
+    id: 'c2',
+    name: 'Marc-André Bissonnette',
+    role: 'Responsable TI',
+    initials: 'MB',
+    principal: false,
+    email: 'ma.bissonnette@acmecorp.fr',
+    phone: null,
+    channel: 'email',
+    establishment: null,
+    status: 'actif',
+    notes: 'Point de contact pour tout accès technique (DNS, serveur, GA4). Répond lentement le lundi.',
   },
   {
-    kind: 'Appel',
-    label: 'Validation du plan éditorial du T2',
-    date: '22 avr. 2026',
-    who: 'Marie Chen',
-    icon: 'phone' as const,
+    id: 'c3',
+    name: 'Julie Paquette',
+    role: 'Responsable comptabilité',
+    initials: 'JP',
+    principal: false,
+    email: 'j.paquette@acmecorp.fr',
+    phone: '(514) 555-0199',
+    channel: 'phone',
+    establishment: null,
+    status: 'actif',
+    notes: 'Contact facturation uniquement — ne pas inclure dans les communications SEO.',
   },
   {
-    kind: 'Courriel',
-    label: 'Alerte — 23 liens brisés détectés',
-    date: '14 avr. 2026',
-    who: 'Automatisation',
-    icon: 'mail' as const,
+    id: 'c4',
+    name: 'David Lemieux',
+    role: 'Coordonnateur contenu',
+    initials: 'DL',
+    principal: false,
+    email: null,
+    phone: '(514) 555-0140',
+    channel: 'phone',
+    establishment: null,
+    status: 'actif',
+    notes: 'Valide les briefs d’articles avant publication. Courriel professionnel pas encore renseigné.',
+  },
+  {
+    id: 'c5',
+    name: 'Éric Fontaine',
+    role: 'Ancien directeur marketing',
+    initials: 'EF',
+    principal: false,
+    email: 'e.fontaine@acmecorp.fr',
+    phone: '(514) 555-0107',
+    channel: 'email',
+    establishment: null,
+    status: 'archive',
+    notes: 'A quitté l’entreprise en mars 2026 — conservé pour l’historique des échanges.',
   },
 ];
 

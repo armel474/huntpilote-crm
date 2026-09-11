@@ -4,15 +4,13 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Badge, Delta, Gauge, Lbl, Spark } from '@/components/ui/Atoms';
 import {
-  IcoCal,
+  IcoArrowR,
   IcoCheck,
   IcoDl,
   IcoDoc,
   IcoEye,
   IcoFile,
   IcoLogo,
-  IcoMail,
-  IcoPhone,
   IcoRepeat,
   IcoSend,
   IcoUp,
@@ -24,15 +22,12 @@ import { REPORT } from '@/lib/data/rapport';
 import {
   AI_SUMMARY,
   CLIENT,
-  COMMUNICATIONS,
   KEYWORDS,
   KPIS,
   REPORT_SECTIONS,
   REPORTS,
   TRAFFIC_SPARK,
 } from '@/lib/data/fiche-client';
-
-const COMM_ICONS = { cal: IcoCal, mail: IcoMail, phone: IcoPhone } as const;
 
 /* ── Aperçu plein écran du rapport ── */
 
@@ -307,7 +302,13 @@ function ReportPreviewOverlay({
 
 /* ── Générateur ── */
 
-export function PanelRapports({ clientId }: { clientId: string }) {
+export function PanelRapports({
+  clientId,
+  onGoCommunications,
+}: {
+  clientId: string;
+  onGoCommunications: () => void;
+}) {
   const [enabled, setEnabled] = useState<boolean[]>(REPORT_SECTIONS.map((s) => s.on));
   const [autoSend, setAutoSend] = useState(true);
   const [preview, setPreview] = useState(false);
@@ -718,71 +719,26 @@ export function PanelRapports({ clientId }: { clientId: string }) {
         </div>
       </section>
 
-      {/* Historique des communications */}
-      <section className="card" style={{ padding: '0.875rem 1rem' }} aria-labelledby="comms-history">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 12,
-          }}
-        >
-          <h2 id="comms-history" style={{ fontSize: '0.8125rem', fontWeight: 800 }}>
-            Historique des communications
+      {/* Une seule source de vérité pour les échanges avec le client — le tableau qui vivait ici est remplacé par un renvoi. */}
+      <section
+        className="card"
+        style={{ padding: '0.875rem 1rem', display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}
+        aria-labelledby="comms-redirect"
+      >
+        <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+          <h2 id="comms-redirect" style={{ fontSize: '0.8125rem', fontWeight: 800, marginBottom: 3 }}>
+            Communications avec le client
           </h2>
-          <button className="btn-sm" type="button" style={{ border: '1px solid var(--bd-solid)' }}>
-            <IcoDoc size={11} />
-            Consigner un échange
-          </button>
+          <p style={{ fontSize: '0.6875rem', color: 'var(--fg3)', lineHeight: 1.5 }}>
+            Un seul fil, tous canaux confondus — courriels, appels, réunions, notes internes et messages du portail
+            client.
+          </p>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {COMMUNICATIONS.map((c, i) => {
-            const Icon = COMM_ICONS[c.icon];
-            return (
-              <div
-                key={c.label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '0.625rem 0',
-                  borderBottom:
-                    i < COMMUNICATIONS.length - 1 ? '1px solid var(--bd)' : 'none',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <div
-                  aria-hidden="true"
-                  style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: 7,
-                    background: 'var(--bg-muted)',
-                    border: '1px solid var(--bd-solid)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--fg3)',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Icon size={12} />
-                </div>
-                <div style={{ flex: 1, minWidth: 180 }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg1)' }}>
-                    {c.label}
-                  </div>
-                  <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)', marginTop: 1 }}>
-                    {c.date} · {c.who}
-                  </div>
-                </div>
-                <Badge label={c.kind} tone="neutral" />
-              </div>
-            );
-          })}
-        </div>
+        <button className="btn-pri" type="button" onClick={onGoCommunications}>
+          <IcoDoc size={12} />
+          Ouvrir le fil complet
+          <IcoArrowR size={12} />
+        </button>
       </section>
 
       {preview && <ReportPreviewOverlay sections={selected} onClose={() => setPreview(false)} />}

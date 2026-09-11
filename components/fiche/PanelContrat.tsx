@@ -1,14 +1,17 @@
 'use client';
 
 import { Badge, Lbl } from '@/components/ui/Atoms';
-import { IcoCard, IcoDl, IcoEye, IcoRepeat } from '@/components/ui/Icons';
+import { IcoCard, IcoCheck, IcoDl, IcoEye, IcoRepeat } from '@/components/ui/Icons';
+import { QuotesSection } from '@/components/fiche/QuotePanels';
 import {
   BILLING_STATS,
   CLIENT,
   CONTRACT_FIELDS,
   INVOICES,
+  type Contact,
   type InvoiceStatus,
 } from '@/lib/data/fiche-client';
+import type { Quote } from '@/lib/data/devis';
 
 const STATUS_COLORS: Record<InvoiceStatus, readonly [string, string, string]> = {
   Payée: ['var(--green-m)', 'var(--green-b)', 'var(--green-fg)'],
@@ -16,7 +19,18 @@ const STATUS_COLORS: Record<InvoiceStatus, readonly [string, string, string]> = 
   'En retard': ['var(--red-m)', 'var(--red-b)', 'var(--red)'],
 };
 
-export function PanelContrat() {
+export function PanelContrat({
+  quotes,
+  contactsById,
+  onOpenQuote,
+  onNewQuote,
+}: {
+  quotes: Quote[];
+  contactsById: Record<string, Contact>;
+  onOpenQuote: (id: string) => void;
+  onNewQuote: () => void;
+}) {
+  const acceptedQuotes = quotes.filter((q) => q.statut === 'accepte' && q.contratRef);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {/* Indicateurs clés */}
@@ -109,6 +123,37 @@ export function PanelContrat() {
               </span>
             ))}
           </div>
+
+          {/* Un devis accepté se lie visiblement au contrat qu'il modifie — jamais un objet qui flotte sans conséquence. */}
+          {acceptedQuotes.length > 0 && (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bd-solid)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {acceptedQuotes.map((q) => (
+                <button
+                  key={q.id}
+                  type="button"
+                  onClick={() => onOpenQuote(q.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: '0.625rem',
+                    color: 'var(--fg3)',
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontFamily: 'var(--font)',
+                  }}
+                >
+                  <span style={{ color: 'var(--green)', display: 'flex', flexShrink: 0 }}>
+                    <IcoCheck size={11} />
+                  </span>
+                  <b style={{ color: 'var(--fg1)' }}>{q.contratRef}</b> — {q.objet}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <section
@@ -305,6 +350,8 @@ export function PanelContrat() {
           </table>
         </div>
       </section>
+
+      <QuotesSection quotes={quotes} contactsById={contactsById} onOpen={onOpenQuote} onNew={onNewQuote} />
     </div>
   );
 }

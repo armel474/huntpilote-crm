@@ -567,6 +567,27 @@ export function Sec({
   );
 }
 
+/* ── Puce de canal ── */
+
+/** Petite puce colorée par ton — marque le canal d'une ligne de fil sans dupliquer un badge complet. */
+export function Dot({ tone = 'neutral' }: { tone?: Tone }) {
+  const { fg } = toneColors(tone);
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: fg,
+        flexShrink: 0,
+        marginTop: 5,
+        display: 'inline-block',
+      }}
+    />
+  );
+}
+
 /* ── Pastille de sévérité ── */
 
 export function SevDot({ color }: { color: string }) {
