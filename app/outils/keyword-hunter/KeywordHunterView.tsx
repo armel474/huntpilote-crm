@@ -16,6 +16,7 @@ import { Banner, type BannerKind } from '@/components/outils/Banner';
 import { SavesCard } from '@/components/outils/SideCards';
 import { KhKeepCard, SeedFilters, ThemeGroup } from '@/components/outils/keyword-hunter/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoCheck, IcoPlus, IcoRepeat, IcoSrch } from '@/components/ui/Icons';
 import { readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
 import { routes } from '@/lib/routes';
@@ -125,18 +126,20 @@ export function KeywordHunterView() {
 
   const header = (
     <CRMHeader title="Keyword Hunter" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="kh-etat">Démo · état</label>
-        </Lbl>
-        <select id="kh-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as KhState)}>
-          {KH_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="kh-etat">Démo · état</label>
+          </Lbl>
+          <select id="kh-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as KhState)}>
+            {KH_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

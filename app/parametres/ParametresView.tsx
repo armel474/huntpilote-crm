@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import {
   IcoBell,
   IcoCard,
@@ -756,19 +757,21 @@ function ConsommationPanel({
         sub="Où part l'argent, et est-ce que ça vaut le coup ?"
         action={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <select
-              className="fld"
-              style={{ width: 'auto', padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}
-              value={state}
-              onChange={(e) => onState(e.target.value as ConsoStateId)}
-              aria-label="État de démonstration"
-            >
-              {CONSO_STATES.map(([id, l]) => (
-                <option key={id} value={id}>
-                  {l}
-                </option>
-              ))}
-            </select>
+            <DemoOnly>
+              <select
+                className="fld"
+                style={{ width: 'auto', padding: '0.4rem 0.6rem', fontSize: '0.75rem' }}
+                value={state}
+                onChange={(e) => onState(e.target.value as ConsoStateId)}
+                aria-label="État de démonstration"
+              >
+                {CONSO_STATES.map(([id, l]) => (
+                  <option key={id} value={id}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </DemoOnly>
             {saved ? (
               <Badge label="Réglages à jour" tone="green" />
             ) : (

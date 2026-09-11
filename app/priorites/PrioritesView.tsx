@@ -22,6 +22,7 @@ import {
   type PrioFilters,
 } from '@/components/priorites/Panels';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyFilter, EmptyHealthy } from '@/components/ui/States';
 import { IcoTrophy } from '@/components/ui/Icons';
 import type { Severity } from '@/lib/data/priorite';
@@ -108,23 +109,25 @@ export function PrioritesView() {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Portefeuille complet · triées par sévérité puis par ancienneté
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="etat-demo-priorites">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-priorites"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as XpScenarioId)}
-          >
-            {XP_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="etat-demo-priorites">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-priorites"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as XpScenarioId)}
+            >
+              {XP_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="content" style={{ maxWidth: 980 }}>

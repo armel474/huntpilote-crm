@@ -16,6 +16,7 @@ import { ContextBar } from '@/components/outils/ContextBar';
 import { Banner, type BannerKind } from '@/components/outils/Banner';
 import { CostCard, KeepCard } from '@/components/outils/SideCards';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoCheck, IcoUserPlus, IcoWarn } from '@/components/ui/Icons';
 import { writeLastAccount, TOOL_ACCOUNTS, NORMAL_QUOTA, type AccountFilter } from '@/lib/data/outils';
 import { routes } from '@/lib/routes';
@@ -104,18 +105,20 @@ export function DomainOverviewView() {
 
   const header = (
     <CRMHeader title="Domain Overview" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="do-etat">Démo · état</label>
-        </Lbl>
-        <select id="do-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as DoState)}>
-          {DO_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="do-etat">Démo · état</label>
+          </Lbl>
+          <select id="do-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as DoState)}>
+            {DO_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

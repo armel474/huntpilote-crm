@@ -15,6 +15,7 @@ import { CloseFlow, type Destination } from '@/components/tache/CloseFlow';
 import { PrioLink, StepsCard, ThreadCard, TimeCard } from '@/components/tache/Panels';
 import { TaskHeader } from '@/components/tache/TaskHeader';
 import { Lbl, Sec } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import {
@@ -78,38 +79,40 @@ export function TacheDetailView({ clientId }: { clientId: string }) {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Rapport de septembre · publication le 2 octobre
         </span>
-        <div
-          style={{
-            marginLeft: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            flexWrap: 'wrap',
-          }}
-        >
-          <Lbl>Démo</Lbl>
-          <select
-            className="state-sel"
-            aria-label="Type de tâche"
-            value={kind}
-            onChange={(e) => setKindReset(e.target.value as 'technique' | 'contenu')}
+        <DemoOnly>
+          <div
+            style={{
+              marginLeft: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              flexWrap: 'wrap',
+            }}
           >
-            <option value="technique">Correctif technique</option>
-            <option value="contenu">Contenu publié</option>
-          </select>
-          <select
-            className="state-sel"
-            aria-label="État de la tâche"
-            value={state}
-            onChange={(e) => setState(e.target.value as TacheState)}
-          >
-            {T_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+            <Lbl>Démo</Lbl>
+            <select
+              className="state-sel"
+              aria-label="Type de tâche"
+              value={kind}
+              onChange={(e) => setKindReset(e.target.value as 'technique' | 'contenu')}
+            >
+              <option value="technique">Correctif technique</option>
+              <option value="contenu">Contenu publié</option>
+            </select>
+            <select
+              className="state-sel"
+              aria-label="État de la tâche"
+              value={state}
+              onChange={(e) => setState(e.target.value as TacheState)}
+            >
+              {T_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

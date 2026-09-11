@@ -14,6 +14,7 @@
  */
 import { useState } from 'react';
 import { useTheme } from '@/components/shell/ThemeProvider';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowR, IcoChevL, IcoClock, IcoLogo, IcoMail, IcoMoon, IcoSend, IcoSun, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { PORTAL_ACCOUNT, PORTAL_KNOWN_EMAILS, PORTAL_LINK_MINUTES } from '@/lib/data/portail';
@@ -275,13 +276,15 @@ export function ConnexionPortailView() {
   return (
     <div className="pc-root page-scroll">
       <div className="pc-demo">
-        <select value={scenario} onChange={(e) => setSc(e.target.value as Scenario)} aria-label="État de démonstration">
-          {SCENARIOS.map(([id, l]) => (
-            <option key={id} value={id}>
-              {l}
-            </option>
-          ))}
-        </select>
+        <DemoOnly>
+          <select value={scenario} onChange={(e) => setSc(e.target.value as Scenario)} aria-label="État de démonstration">
+            {SCENARIOS.map(([id, l]) => (
+              <option key={id} value={id}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </DemoOnly>
         <button
           type="button"
           onClick={toggleTheme}

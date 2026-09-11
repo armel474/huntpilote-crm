@@ -14,6 +14,7 @@
 import { useEffect, useState } from 'react';
 import { IcoArrowR, IcoClock, IcoDoc, IcoDown, IcoLock, IcoUp } from '@/components/ui/Icons';
 import { PortalHeader } from '@/app/portail/PortalHeader';
+import { DemoOnly } from '@/components/ui/Demo';
 import { REPORT } from '@/lib/data/rapport';
 import { PORTAL_ACCOUNT, PORTAL_HISTORY, PORTAL_TARGET_SCORE, PORTAL_THREAD, type PortalReportMonth } from '@/lib/data/portail';
 import { routes } from '@/lib/routes';
@@ -247,15 +248,17 @@ export function PortailRapportsView() {
 
   return (
     <div className="pc-root page-scroll">
-      <div className="pc-demo">
-        <select value={scenario} onChange={(e) => setScenario(e.target.value as Scenario)} aria-label="État de démonstration">
-          {SCENARIOS.map(([id, l]) => (
-            <option key={id} value={id}>
-              {l}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div className="pc-demo">
+          <select value={scenario} onChange={(e) => setScenario(e.target.value as Scenario)} aria-label="État de démonstration">
+            {SCENARIOS.map(([id, l]) => (
+              <option key={id} value={id}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
       <PortalHeader active="rapports" client={PORTAL_ACCOUNT.client} person={PORTAL_ACCOUNT.person} initials={PORTAL_ACCOUNT.initials} pm={PORTAL_ACCOUNT.pm} unread={UNREAD} />
 
       <div className="pr-wrap">

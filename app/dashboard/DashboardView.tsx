@@ -21,6 +21,7 @@ import {
 } from '@/components/dashboard/PortfolioBlocks';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyHealthy, ErrorIntegration, SkelLine } from '@/components/ui/States';
 import { IcoTrophy } from '@/components/ui/Icons';
 
@@ -50,23 +51,25 @@ export function DashboardView() {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Vue d’ensemble de l’agence · portefeuille complet
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="etat-demo-dashboard">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-dashboard"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as DashScenarioId)}
-          >
-            {DASH_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="etat-demo-dashboard">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-dashboard"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as DashScenarioId)}
+            >
+              {DASH_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="content content-row">

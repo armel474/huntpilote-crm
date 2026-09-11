@@ -17,6 +17,7 @@ import { CostCard, SavesCard } from '@/components/outils/SideCards';
 import { EmptyBlock } from '@/components/outils/Empty';
 import { CrawlRunning, CrawlSummary, FamilyGroup, FeedsCard, SaKeepCard } from '@/components/outils/site-audit/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoCoin, IcoDl, IcoPlay, IcoSpin, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import {
@@ -133,23 +134,25 @@ export function SiteAuditView() {
 
   const header = (
     <CRMHeader title="Site Audit" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="sa-etat">Démo · état</label>
-        </Lbl>
-        <select
-          id="sa-etat"
-          className="state-sel"
-          value={state}
-          onChange={(e) => pickState(e.target.value as SaState)}
-        >
-          {SA_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="sa-etat">Démo · état</label>
+          </Lbl>
+          <select
+            id="sa-etat"
+            className="state-sel"
+            value={state}
+            onChange={(e) => pickState(e.target.value as SaState)}
+          >
+            {SA_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

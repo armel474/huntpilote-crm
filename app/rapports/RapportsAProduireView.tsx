@@ -18,6 +18,7 @@ import {
   RqFilter,
   RqGroupSection,
 } from '@/components/rapports-a-produire/Panels';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoBell } from '@/components/ui/Icons';
 import {
   RQ_GROUPS,
@@ -107,14 +108,16 @@ export function RapportsAProduireView() {
               {nudged.length >= reviewers.length ? 'Relecteurs relancés' : `Relancer les ${reviewers.length} relecteurs`}
             </button>
           )}
-          <span className="lbl">Démo · état</span>
-          <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as RqScenario)} aria-label="État de démonstration">
-            {RQ_SCENARIOS.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
+          <DemoOnly>
+            <span className="lbl">Démo · état</span>
+            <select className="state-sel" value={scenario} onChange={(e) => setSc(e.target.value as RqScenario)} aria-label="État de démonstration">
+              {RQ_SCENARIOS.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </DemoOnly>
         </div>
       </div>
 

@@ -22,6 +22,7 @@ import {
   type BlockItem,
 } from '@/components/rapport/Publish';
 import { Lbl, Sec } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL, IcoLink } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import {
@@ -42,6 +43,9 @@ const allSections = (except?: SectionId) =>
   Object.fromEntries(SECTIONS.map((s) => [s.id, s.id !== except])) as Record<SectionId, boolean>;
 
 export function EditeurRapportView({ clientId }: { clientId: string }) {
+  // Le jeu de données porte réellement deux libellés client non relus : « bloqué »
+  // est donc l'état honnête au chargement, pas un décor de démonstration. Le bandeau
+  // et le bouton de publication en découlent de toute façon (blockItems).
   const [state, setStateRaw] = useState<EditorState>('bloque');
   const [view, setView] = useState<'edition' | 'apercu'>('edition');
   const [order, setOrder] = useState<SectionId[]>(SECTIONS.map((s) => s.id));
@@ -170,23 +174,25 @@ export function EditeurRapportView({ clientId }: { clientId: string }) {
             </button>
           ))}
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="ed-etat">Démo · état</label>
-          </Lbl>
-          <select
-            id="ed-etat"
-            className="state-sel"
-            value={state}
-            onChange={(e) => setState(e.target.value as EditorState)}
-          >
-            {ED_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="ed-etat">Démo · état</label>
+            </Lbl>
+            <select
+              id="ed-etat"
+              className="state-sel"
+              value={state}
+              onChange={(e) => setState(e.target.value as EditorState)}
+            >
+              {ED_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>

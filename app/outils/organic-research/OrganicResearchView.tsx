@@ -16,6 +16,7 @@ import { ContextBar } from '@/components/outils/ContextBar';
 import { Banner, type BannerKind } from '@/components/outils/Banner';
 import { KeepCard, SavesCard } from '@/components/outils/SideCards';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoCheck, IcoDoc } from '@/components/ui/Icons';
 import { NEAR_LIMIT_QUOTA, readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
 import { AUDIT_PROSPECT } from '@/lib/data/audit-prospect';
@@ -42,7 +43,7 @@ import {
 const DEFAULT_ACCOUNT = 'spa-nordik-estrie';
 
 export function OrganicResearchView() {
-  const [state, setStateRaw] = useState<OrState>('chute');
+  const [state, setStateRaw] = useState<OrState>('ok');
   const [acctId, setAcctId] = useState<string>(DEFAULT_ACCOUNT);
   const [filter, setFilter] = useState<AccountFilter>('prospects');
   const [domain, setDomain] = useState('spanordik-estrie.ca');
@@ -119,18 +120,20 @@ export function OrganicResearchView() {
 
   const header = (
     <CRMHeader title="Organic Research" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="or-etat">Démo · état</label>
-        </Lbl>
-        <select id="or-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as OrState)}>
-          {OR_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="or-etat">Démo · état</label>
+          </Lbl>
+          <select id="or-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as OrState)}>
+            {OR_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

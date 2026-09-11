@@ -24,6 +24,7 @@ import {
   ToxicCard,
 } from '@/components/outils/backlink-analyse/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoGlobe, IcoPlay, IcoPlus, IcoSpin, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { NORMAL_QUOTA, readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
@@ -118,18 +119,20 @@ export function BacklinkAnalyseView() {
 
   const header = (
     <CRMHeader title="Backlink Analyse" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="bl-etat">Démo · état</label>
-        </Lbl>
-        <select id="bl-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as BlState)}>
-          {BL_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="bl-etat">Démo · état</label>
+          </Lbl>
+          <select id="bl-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as BlState)}>
+            {BL_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

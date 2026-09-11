@@ -33,6 +33,7 @@ import {
   type IconProps,
 } from '@/components/ui/Icons';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { routes } from '@/lib/routes';
 import {
   ACTIONS,
@@ -800,16 +801,18 @@ export function RuleEditor({
         {complete && !tested && rule.status !== 'active' && (
           <span style={{ fontSize: '0.625rem', color: 'var(--yellow-fg)', fontWeight: 700 }}>Test à blanc exigé avant activation</span>
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>Démo · état</Lbl>
-          <select className="state-sel" value={demoState} onChange={(e) => setSc(e.target.value as DemoStateId)} aria-label="État de démonstration">
-            {DEMO_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>Démo · état</Lbl>
+            <select className="state-sel" value={demoState} onChange={(e) => setSc(e.target.value as DemoStateId)} aria-label="État de démonstration">
+              {DEMO_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem 1.5rem' }}>

@@ -26,6 +26,7 @@ import {
   TrendCard,
 } from '@/components/outils/position-tracking/Panels';
 import { Lbl, Pill } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoFork, IcoPlus, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
@@ -148,18 +149,20 @@ export function PositionTrackingView() {
 
   const header = (
     <CRMHeader title="Position Tracking" period="" crumbs={crumbs}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Lbl>
-          <label htmlFor="pt-etat">Démo · état</label>
-        </Lbl>
-        <select id="pt-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as PtState)}>
-          {PT_STATES.map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <DemoOnly>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Lbl>
+            <label htmlFor="pt-etat">Démo · état</label>
+          </Lbl>
+          <select id="pt-etat" className="state-sel" value={state} onChange={(e) => pickState(e.target.value as PtState)}>
+            {PT_STATES.map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </DemoOnly>
     </CRMHeader>
   );
 

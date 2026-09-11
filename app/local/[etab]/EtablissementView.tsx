@@ -26,6 +26,7 @@ import {
   ZoneEditorCard,
 } from '@/components/local/Panels';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { ErrorStale, SkelLine } from '@/components/ui/States';
 import { IcoArrowL, IcoCompare } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
@@ -87,23 +88,25 @@ export function EtablissementView({ etabId }: { etabId: string }) {
           </select>
         </div>
         <GbpChip st={est.gbp} sm={false} />
-        <div className="ctx-g" style={{ marginLeft: auditHref ? undefined : 'auto' }}>
-          <Lbl>
-            <label htmlFor="etat-demo-etab">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-etab"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as EtabScenarioId)}
-          >
-            {ETAB_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div className="ctx-g" style={{ marginLeft: auditHref ? undefined : 'auto' }}>
+            <Lbl>
+              <label htmlFor="etat-demo-etab">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-etab"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as EtabScenarioId)}
+            >
+              {ETAB_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
         {auditHref && (
           <Link href={auditHref} className="btn-out" style={{ textDecoration: 'none', marginLeft: 'auto' }}>
             <IcoCompare />

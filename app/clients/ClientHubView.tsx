@@ -8,6 +8,7 @@ import { ClientCard, ProspectCard, type CardView } from '@/components/clients/Cl
 import { CLIENTS, HUB_KPIS } from '@/lib/data/clients';
 import { IcoDl, IcoDown, IcoGrid, IcoList, IcoPlus, IcoUp } from '@/components/ui/Icons';
 import { Lbl } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyFilter, SkelLine, SkelTable } from '@/components/ui/States';
 import { routes } from '@/lib/routes';
 
@@ -252,23 +253,25 @@ export function ClientHubView() {
           Export CSV
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="etat-demo-clients">Démo · état</label>
-          </Lbl>
-          <select
-            id="etat-demo-clients"
-            className="state-sel"
-            value={scenario}
-            onChange={(e) => setScenario(e.target.value as HubScenarioId)}
-          >
-            {HUB_SCENARIOS.map(([id, label]) => (
-              <option key={id} value={id}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="etat-demo-clients">Démo · état</label>
+            </Lbl>
+            <select
+              id="etat-demo-clients"
+              className="state-sel"
+              value={scenario}
+              onChange={(e) => setScenario(e.target.value as HubScenarioId)}
+            >
+              {HUB_SCENARIOS.map(([id, label]) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="content">

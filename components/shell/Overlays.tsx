@@ -61,6 +61,7 @@ import {
   type NotifKindId,
   type NotifScenario,
 } from '@/lib/data/notifications';
+import { DemoOnly } from '@/components/ui/Demo';
 import { routes } from '@/lib/routes';
 
 const TONE_VARS: Record<string, [string, string, string]> = {
@@ -466,18 +467,20 @@ function NotifPanel({
             </span>
           )}
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <select
-              className="hp-sel"
-              value={scenario}
-              onChange={(e) => onScenario(e.target.value as NotifScenario)}
-              aria-label="État de démonstration"
-            >
-              {N_SCENARIOS.map(([id, l]) => (
-                <option key={id} value={id}>
-                  {l}
-                </option>
-              ))}
-            </select>
+            <DemoOnly>
+              <select
+                className="hp-sel"
+                value={scenario}
+                onChange={(e) => onScenario(e.target.value as NotifScenario)}
+                aria-label="État de démonstration"
+              >
+                {N_SCENARIOS.map(([id, l]) => (
+                  <option key={id} value={id}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </DemoOnly>
             <button className="hp-x" onClick={onClose} aria-label="Fermer les notifications" type="button">
               <IcoX size={13} />
             </button>

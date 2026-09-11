@@ -15,6 +15,7 @@ import { BlockingCard } from '@/components/local/Panels';
 import { AnnuaireRow, ReferenceCard } from '@/components/local/CitationsPanels';
 import { EmptyBlock } from '@/components/outils/Empty';
 import { Lbl, Sec } from '@/components/ui/Atoms';
+import { DemoOnly } from '@/components/ui/Demo';
 import { IcoArrowL, IcoRepeat, IcoWarn } from '@/components/ui/Icons';
 import { routes } from '@/lib/routes';
 import { ESTABS, findEstab, isBlocked } from '@/lib/data/local';
@@ -92,18 +93,20 @@ export function CitationsView({ etabId }: { etabId: string }) {
             {present} annuaire{present > 1 ? 's' : ''} sur {rows.length} de référence · Seuil : {rows.length} sur {rows.length}
           </span>
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Lbl>
-            <label htmlFor="cit-demo">Démo · état</label>
-          </Lbl>
-          <select id="cit-demo" className="state-sel" value={demo} onChange={(e) => setDemo(e.target.value as (typeof DEMO_STATES)[number][0])}>
-            {DEMO_STATES.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </div>
+        <DemoOnly>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Lbl>
+              <label htmlFor="cit-demo">Démo · état</label>
+            </Lbl>
+            <select id="cit-demo" className="state-sel" value={demo} onChange={(e) => setDemo(e.target.value as (typeof DEMO_STATES)[number][0])}>
+              {DEMO_STATES.map(([id, l]) => (
+                <option key={id} value={id}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </DemoOnly>
       </div>
 
       <div className="sc" style={{ flex: 1, overflowY: 'auto' }}>
