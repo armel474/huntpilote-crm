@@ -12,6 +12,7 @@ import {
 } from '@/lib/data/dashboard';
 import { IcoCheck, IcoDown, IcoTarget, IcoUp } from '@/components/ui/Icons';
 import { SkelLine, SkelList } from '@/components/ui/States';
+import { routes } from '@/lib/routes';
 
 /* ── Squelettes de chargement — même charpente que le contenu réel ── */
 
@@ -278,7 +279,7 @@ export function PerfClientCard() {
             }}
           >
             <Link
-              href="/clients/acme-corp"
+              href={routes.client(c.id)}
               style={{
                 display: 'flex',
                 alignItems: 'center',

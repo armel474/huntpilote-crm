@@ -39,10 +39,10 @@ export const REVENUE: readonly { r: number | null; p: number }[] = [
 export const LAST_ACTUAL_INDEX = REVENUE.findLastIndex((d) => d.r !== null);
 
 export const CLIENT_PERF = [
-  { name: 'Acme Corp.', score: 92, delta: 5, sessions: '12 400' },
-  { name: 'Dupont SAS', score: 78, delta: -2, sessions: '8 150' },
-  { name: 'Novatech', score: 85, delta: 8, sessions: '9 620' },
-  { name: 'Le Marché Bio', score: 71, delta: 3, sessions: '4 730' },
+  { id: 'acme-corp', name: 'Acme Corp.', score: 92, delta: 5, sessions: '12 400' },
+  { id: 'dupont-sas', name: 'Dupont SAS', score: 78, delta: -2, sessions: '8 150' },
+  { id: 'novatech', name: 'Novatech', score: 85, delta: 8, sessions: '9 620' },
+  { id: 'le-marche-bio', name: 'Le Marché Bio', score: 71, delta: 3, sessions: '4 730' },
 ] as const;
 
 export type Task = { id: number; text: string; done: boolean };
