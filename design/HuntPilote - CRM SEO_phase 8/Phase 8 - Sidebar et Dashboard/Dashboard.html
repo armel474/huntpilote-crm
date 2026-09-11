@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HuntPilote — Dashboard</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Consolas';
+  src: url('fonts/Consolas.ttf') format('truetype');
+  font-weight: 400 700; font-style: normal; font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+
+:root {
+  --font-sans: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Consolas', ui-monospace, Consolas, monospace;
+  --bg-base:          #F2EFEA;
+  --bg-surface:       rgba(255,255,255,0.54);
+  --bg-surface-solid: #FFFFFF;
+  --bg-muted:         #E3DDD1;
+  --bg-accent:        #DCEFD4;
+  --border:           rgba(0,0,0,0.075);
+  --border-solid:     #D0CBBF;
+  --border-strong:    #BAB4A6;
+  --fg-1: #18181B; --fg-2: #3F3F46; --fg-3: #71717A; --fg-4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF; --primary-hover: #2A2A2A;
+  --accent: #16A34A; --accent-hover: #15803D;
+  --accent-muted: #DCEFD4; --accent-border: #BBE3AA; --accent-fg: #2D5A27;
+  --warm: #E5C66B; --warm-muted: #F5E8B5; --warm-fg: #7A5D14;
+  --error: #C44545; --error-bg: #F5C9C9;
+  --success: #16A34A; --success-bg: #DCEFD4;
+  --sidebar-w: 230px; --sidebar-w-compact: 64px; --header-h: 58px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 9999px;
+  --shadow-md: inset 0 1px 0 rgba(255,255,255,0.88), 0 4px 24px -2px rgba(0,0,0,0.11), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-lg: inset 0 1px 0 rgba(255,255,255,0.88), 0 8px 32px -4px rgba(0,0,0,0.13), 0 2px 4px rgba(0,0,0,0.06);
+  --blur: blur(22px) saturate(175%);
+  --font: var(--font-sans); --fg1: var(--fg-1); --fg2: var(--fg-2); --fg3: var(--fg-3); --fg4: var(--fg-4);
+  --green-fg: var(--accent-fg); --green-m: var(--accent-muted);
+}
+
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-surface: rgba(255,255,255,0.06);
+  --bg-surface-solid: #1E1E22; --bg-muted: #27272A; --bg-accent: rgba(74,222,128,0.12);
+  --border: rgba(255,255,255,0.08); --border-solid: #2A2A2D; --border-strong: #3F3F46;
+  --fg-1: #FAFAFA; --fg-2: #D4D4D8; --fg-3: #A1A1AA; --fg-4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B; --primary-hover: #E4E4E7;
+  --accent: #4ADE80; --accent-hover: #22C55E;
+  --accent-muted: rgba(74,222,128,0.14); --accent-border: rgba(74,222,128,0.28); --accent-fg: #A6E494;
+  --warm: #E5C66B; --warm-muted: rgba(229,198,107,0.14); --warm-fg: #E5C66B;
+  --error: #F5A0A0; --error-bg: rgba(245,160,160,0.14);
+  --success: #4ADE80; --success-bg: rgba(74,222,128,0.14);
+  --shadow-md: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+
+/* Transition douce lors du changement de thème uniquement */
+[data-theme-switching], [data-theme-switching] *,
+[data-theme-switching] *::before, [data-theme-switching] *::after {
+  transition:
+    background-color 420ms ease,
+    color 320ms ease,
+    border-color 420ms ease,
+    box-shadow 420ms ease,
+    fill 320ms ease,
+    stroke 320ms ease !important;
+}
+
+body {
+  font-family: var(--font-sans); font-size: 0.875rem; color: var(--fg-1);
+  background: var(--bg-base); -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision; overflow: hidden; height: 100vh;
+}
+body::before, body::after {
+  content: ''; position: fixed; border-radius: 50%; pointer-events: none;
+  z-index: 0; filter: blur(80px); opacity: 0.72;
+}
+body::before {
+  width: 44rem; height: 44rem; top: -12rem; left: 10rem;
+  background: radial-gradient(circle, rgba(74,222,128,0.44) 0%, transparent 68%);
+}
+body::after {
+  width: 36rem; height: 36rem; bottom: -8rem; right: -2rem;
+  background: radial-gradient(circle, rgba(229,198,107,0.40) 0%, transparent 68%);
+}
+[data-theme="dark"] body::before { opacity: 0.45; }
+[data-theme="dark"] body::after  { opacity: 0.40; }
+
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+
+/* Main */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.header {
+  height: var(--header-h); flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.65);
+  display: flex; align-items: center; padding: 0 1.25rem; gap: 0.75rem;
+  position: relative; isolation: isolate;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+.header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.content { flex: 1; overflow-y: auto; padding: 1.125rem; display: flex; gap: 1rem; align-items: flex-start; }
+.content::-webkit-scrollbar { width: 0.25rem; }
+.content::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 9999px; }
+
+/* Cards */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+  position: relative; isolation: isolate;
+  transition: box-shadow 160ms ease;
+}
+.card:hover {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), 0 8px 32px -4px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.07);
+}
+.card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.card-pad { padding: 1rem 1.0625rem; }
+
+/* Input */
+.input {
+  font-family: var(--font-sans); font-size: 0.8125rem; color: var(--fg-1);
+  background: var(--bg-surface-solid);
+  border: 1px solid var(--border-solid); border-radius: var(--radius-full);
+  padding: 0.4rem 0.875rem; outline: none; transition: border-color 150ms;
+}
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+.input::placeholder { color: var(--fg-4); }
+
+/* Button */
+.btn-icon {
+  width: 1.875rem; height: 1.875rem; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg-surface-solid);
+  border: 1px solid var(--border-solid); color: var(--fg-3);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 160ms;
+}
+.btn-icon:hover { color: var(--fg-1); background: rgba(255,255,255,0.92); }
+
+/* Progress */
+.progress-track { height: 0.25rem; background: rgba(0,0,0,0.10); border-radius: 9999px; overflow: hidden; }
+[data-theme="dark"] .progress-track { background: rgba(255,255,255,0.09); }
+.progress-fill { height: 100%; border-radius: 9999px; background: var(--accent); transition: width 700ms ease; }
+
+/* Tweaks panel */
+.tweaks-panel {
+  position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 200;
+  width: 236px; background: var(--bg-surface-solid);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-md);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.14);
+}
+</style>
+<meta name="color-scheme" content="light dark">
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme');if(!s){var tw=JSON.parse(localStorage.getItem('hp-dash-tweaks')||'{}');s=tw.theme||null}}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="xp-data.jsx"></script>
+<script type="text/babel" src="rq-data.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+/* ── DATA ────────────────────────────────────────────────── */
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "showForecast": true
+}/*EDITMODE-END*/;
+try { if (!JSON.parse(localStorage.getItem('hp-dash-tweaks') || '{}').theme) TWEAK_DEFAULTS.theme = (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch {}
+
+const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+
+const REVENUE = [
+  { r: 38, p: 36 }, { r: 42, p: 41 }, { r: 45, p: 44 }, { r: 43, p: 47 },
+  { r: 51, p: 50 }, { r: 58, p: 54 }, { r: 54, p: 57 }, { r: 48, p: 60 },
+  { r: 62, p: 63 }, { r: null, p: 68 }, { r: null, p: 72 }, { r: null, p: 76 },
+];
+
+const CLIENT_PERF = [
+  { name: 'Acme Corp.',     score: 92, delta: +5, sessions: '12 400', pos: true },
+  { name: 'Dupont SAS',     score: 78, delta: -2, sessions: '8 150',  pos: false },
+  { name: 'Novatech',       score: 85, delta: +8, sessions: '9 620',  pos: true },
+  { name: 'Le Marché Bio',  score: 71, delta: +3, sessions: '4 730',  pos: true },
+];
+
+const TODAY_INIT = [
+  { id: 1, text: 'Optimiser meta tags — Acme Corp.',     done: false },
+  { id: 2, text: 'Publier 3 articles de blog — Novatech', done: true  },
+  { id: 3, text: 'Corriger erreurs 404 — Le Marché Bio', done: false },
+  { id: 4, text: 'Envoyer rapport mensuel — Dupont SAS', done: false },
+];
+const WEEK_INIT = [
+  { id: 5, text: 'Réviser stratégie de mots-clés',        done: false },
+  { id: 6, text: 'Configurer Google Search Console',      done: false },
+  { id: 7, text: 'Analyse concurrents top 5',             done: false },
+  { id: 8, text: 'Présentation résultats — Paris Médias', done: false },
+];
+
+const SPARKLINE = [22900,25400,24100,27800,29300,28100,31400,30200,33100,34820];
+
+const { XP_ALL, XP_CLIENTS } = window;
+const { RQ_SENT, rqLate, rqScenario } = window;
+
+/* Aperçu pipeline — miroir des deals en négociation de Pipeline.html */
+const PIPE_NEGOCIATION = [
+  { company: 'Clinique Santé Plus', mrr: 1900, days: 3, prob: 75 },
+  { company: 'Studio Pixel', mrr: 1400, days: 14, prob: 80 },
+];
+
+/* Devis clients signés en attente de réponse — résumé agrégé portefeuille, pas de fiche détaillée par compte */
+const DASH_QUOTES_PENDING = [
+  { client: 'Garage Pelletier', montant: 2400, envoye: '28 août' },
+  { client: 'Bistro Le Chalet', montant: 850, envoye: '2 sept.' },
+  { client: 'École de langues Verdun', montant: 600, envoye: '5 sept.' },
+];
+
+/* Fils de communication avec message non lu côté agence — résumé agrégé portefeuille */
+const DASH_THREADS_UNREAD = [
+  { client: 'Toiture Lavoie', count: 2 },
+  { client: 'Clinique DentAlex', count: 1 },
+  { client: 'Groupe Immobilier Rousseau', count: 1 },
+];
+
+/* Intégrations agence — miroir de Parametres.html */
+const DASH_INTEGRATIONS = [
+  { id: 'ga4', name: 'Google Analytics 4', connected: true },
+  { id: 'gsc', name: 'Google Search Console', connected: true },
+  { id: 'semrush', name: 'Semrush', connected: true },
+  { id: 'gbp', name: 'Google Business Profile', connected: false, impact: 'les fiches locales de 6 clients n’affichent plus d’avis à jour' },
+  { id: 'pagespeed', name: 'PageSpeed Insights', connected: true },
+  { id: 'stripe', name: 'Stripe', connected: false, impact: 'la facturation automatique est suspendue' },
+];
+
+/* ── ICONS ───────────────────────────────────────────────── */
+
+const IcoSettings = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>;
+const IcoBell     = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>;
+const IcoSearch   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
+const IcoCheck    = ({ s = 10 }) => <svg width={s} height={s} viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const IcoChevron  = ({ deg = 0 }) => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ transform: `rotate(${deg}deg)`, transition: 'transform 200ms' }}><polyline points="6 9 12 15 18 9"/></svg>;
+const IcoArrow    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
+const IcoTarget   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>;
+const IcoUp       = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>;
+const IcoDown     = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>;
+const IcoSun      = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
+const IcoMoon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
+const IcoWarnTri  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+const IcoPlug     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 01-12 0V8z"/><line x1="12" y1="17" x2="12" y2="22"/></svg>;
+
+/* ── SPARKLINE ───────────────────────────────────────────── */
+
+const Sparkline = ({ data, h = 60 }) => {
+  const W = 240;
+  const max = Math.max(...data), min = Math.min(...data), range = max - min || 1;
+  const px = (i) => (i / (data.length - 1)) * W;
+  const py = (v) => h - 6 - ((v - min) / range) * (h - 12);
+  const pts = data.map((v, i) => ({ x: px(i), y: py(v) }));
+  const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const area = `M 0,${h} ${line.slice(1)} L ${W},${h} Z`;
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 ${W} ${h}`} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="spk-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.16"/>
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#spk-g)"/>
+      <path d={line} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="3.5" fill="var(--accent)"/>
+    </svg>
+  );
+};
+
+/* ── REVENUE CHART ───────────────────────────────────────── */
+
+const RevenueChart = ({ showForecast }) => {
+  const W = 800, H = 190;
+  const PAD = { t: 18, r: 24, b: 30, l: 44 };
+  const cW = W - PAD.l - PAD.r;
+  const cH = H - PAD.t - PAD.b;
+  const MAX = 90;
+  const gx = (i) => PAD.l + (i / 11) * cW;
+  const gy = (v) => PAD.t + cH - (v / MAX) * cH;
+
+  const actuals = REVENUE.map((d, i) => d.r !== null ? { x: gx(i), y: gy(d.r) } : null).filter(Boolean);
+  const forecasts = REVENUE.slice(8).map((d, i) => ({ x: gx(8 + i), y: gy(d.p) }));
+
+  const linePath = (pts) => pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const areaPath = (pts, x0, x1) => `M ${x0},${gy(0)} ${linePath(pts).slice(1)} L ${x1},${gy(0)} Z`;
+
+  const yTicks = [0, 25, 50, 75];
+
+  return (
+    <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} style={{ overflow: 'visible' }}>
+      <defs>
+        <linearGradient id="rv-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.22"/>
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="pv-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--warm)" stopOpacity="0.18"/>
+          <stop offset="100%" stopColor="var(--warm)" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+
+      {/* Grid */}
+      {yTicks.map(v => (
+        <g key={v}>
+          <line x1={PAD.l} y1={gy(v)} x2={W - PAD.r} y2={gy(v)} stroke="var(--border-solid)" strokeWidth="1" strokeDasharray="4 3"/>
+          <text x={PAD.l - 8} y={gy(v) + 4} textAnchor="end" fontSize="10" fill="var(--fg-4)" fontFamily="Consolas, monospace">{v}k</text>
+        </g>
+      ))}
+
+      {/* Month labels */}
+      {MONTHS.map((m, i) => (
+        <text key={m} x={gx(i)} y={H - 5} textAnchor="middle" fontSize="10"
+          fill={i >= 9 ? 'var(--fg-3)' : 'var(--fg-4)'}
+          fontWeight={i >= 9 ? '600' : '400'}
+          fontFamily="Noto Sans, sans-serif">{m}</text>
+      ))}
+
+      {/* Actual area + line */}
+      <path d={areaPath(actuals, gx(0), gx(8))} fill="url(#rv-g)"/>
+      <path d={linePath(actuals)} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+
+      {/* Separator */}
+      {showForecast && (
+        <line x1={gx(8)} y1={PAD.t} x2={gx(8)} y2={PAD.t + cH} stroke="var(--border-strong)" strokeWidth="1" strokeDasharray="4 3"/>
+      )}
+
+      {/* Forecast */}
+      {showForecast && (
+        <>
+          <path d={areaPath(forecasts, gx(8), gx(11))} fill="url(#pv-g)"/>
+          <path d={linePath(forecasts)} fill="none" stroke="var(--warm)" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round" strokeDasharray="6 4"/>
+          {forecasts.map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="var(--bg-surface-solid)" stroke="var(--warm)" strokeWidth="1.8"/>
+          ))}
+          <text x={gx(10)} y={PAD.t - 4} textAnchor="middle" fontSize="9" fontWeight="600" fill="var(--fg-4)" fontFamily="Noto Sans, sans-serif">Prévision</text>
+        </>
+      )}
+
+      {/* Actual dots */}
+      {actuals.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y}
+          r={i === actuals.length - 1 ? 5 : 3.5}
+          fill={i === actuals.length - 1 ? 'var(--accent)' : 'var(--bg-surface-solid)'}
+          stroke="var(--accent)" strokeWidth="1.8"/>
+      ))}
+
+      {/* Current value callout */}
+      <text x={gx(8)} y={gy(62) - 11} textAnchor="middle" fontSize="11" fontWeight="700"
+        fill="var(--accent)" fontFamily="Consolas, monospace">62k€</text>
+    </svg>
+  );
+};
+
+/* ── BLOCS SIGNAUX PORTEFEUILLE ──────────────────────────── */
+
+const SignalHead = ({ title, count, tone }) => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+    <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg-1)' }}>{title}</div>
+    {count != null && <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: tone === 'error' ? 'var(--error)' : 'var(--fg-3)', background: tone === 'error' ? 'var(--error-bg)' : 'var(--bg-muted)', padding: '2px 8px', borderRadius: 9999 }}>{count}</div>}
+  </div>
+);
+const ExitLink = ({ href, label, onClick }) => (
+  <div onClick={onClick || (() => window.location.href = href)} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.6875rem', fontWeight: 600, color: 'var(--accent)', cursor: 'pointer', marginTop: '0.625rem' }}>
+    {label}<IcoArrow />
+  </div>
+);
+const HealthyLine = ({ text }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: '0.75rem', color: 'var(--success)', background: 'var(--success-bg)', padding: '0.5rem 0.625rem', borderRadius: 8, fontWeight: 600 }}>
+    <IcoCheck s={11} />{text}
+  </div>
+);
+
+const CriticalCard = () => {
+  const crit = XP_ALL.filter(p => p.sev === 'critique').sort((a, b) => a.age - b.age);
+  const top = crit.slice(0, 4);
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SignalHead title="Priorités critiques" count={crit.length || null} tone="error" />
+      {crit.length === 0 ? <HealthyLine text="Aucune priorité critique en ce moment." /> : (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {top.map((p, i) => (
+            <div key={p.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, padding: '5px 0', borderBottom: i < top.length - 1 ? '1px solid var(--border-solid)' : 'none' }}>
+              <span style={{ color: 'var(--error)', flexShrink: 0, marginTop: 2 }}><IcoWarnTri /></span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{XP_CLIENTS[p.client]} <span style={{ color: 'var(--fg-4)', fontWeight: 400 }}>· {p.dim}</span></div>
+                <div style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.label}</div>
+              </div>
+              <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>{p.age} j</div>
+            </div>
+          ))}
+        </div>
+      )}
+      <ExitLink href="Priorites Transversales.html" label="Voir toutes les priorités critiques" />
+    </div>
+  );
+};
+
+const ReportsCard = () => {
+  const { cycle, rows } = rqScenario();
+  const late = rows.filter(r => rqLate(r, cycle));
+  const sent = rows.filter(r => RQ_SENT.includes(r.state));
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SignalHead title="Rapports à produire" />
+      <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: -6, marginBottom: '0.75rem' }}>{cycle.period}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        <div><div style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--fg-1)' }}>{rows.length}</div><div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>dus</div></div>
+        <div><div style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--success)' }}>{sent.length}</div><div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>publiés</div></div>
+        <div><div style={{ fontSize: '1.0625rem', fontWeight: 800, color: late.length ? 'var(--error)' : 'var(--fg-3)' }}>{late.length}</div><div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>en retard</div></div>
+      </div>
+      {late.length > 0 ? (
+        <div style={{ fontSize: '0.6875rem', color: 'var(--error)', background: 'var(--error-bg)', padding: '0.45rem 0.625rem', borderRadius: 8, fontWeight: 600 }}>
+          {late.map(r => r.client).join(', ')} — date d’envoi dépassée
+        </div>
+      ) : <HealthyLine text="Aucun rapport en retard." />}
+      <ExitLink href="Rapports a Produire.html" label="Voir les rapports à produire" />
+    </div>
+  );
+};
+
+const PipelineCard = () => {
+  const total = PIPE_NEGOCIATION.reduce((s, d) => s + d.mrr, 0);
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SignalHead title="Pipeline" />
+      <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--fg-1)', letterSpacing: '-0.02em' }}>{total.toLocaleString('fr-CA')} $</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)' }}>MRR proposé en négociation</div>
+      </div>
+      {PIPE_NEGOCIATION.length === 0 ? <HealthyLine text="Aucun deal en négociation." /> : (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {PIPE_NEGOCIATION.map((d, i) => (
+            <div key={d.company} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: i < PIPE_NEGOCIATION.length - 1 ? '1px solid var(--border-solid)' : 'none' }}>
+              <div style={{ flex: 1, minWidth: 0, fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.company}</div>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', flexShrink: 0 }}>{d.days} j dans l’étape</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--fg-1)', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>{d.mrr.toLocaleString('fr-CA')} $</div>
+            </div>
+          ))}
+        </div>
+      )}
+      <ExitLink href="Pipeline.html" label="Voir le pipeline" />
+    </div>
+  );
+};
+
+const QuotesThreadsCard = () => {
+  const qTotal = DASH_QUOTES_PENDING.reduce((s, q) => s + q.montant, 0);
+  const tTotal = DASH_THREADS_UNREAD.reduce((s, t) => s + t.count, 0);
+  const goTab = tab => { try { localStorage.setItem('hp-fc4-tab', tab); } catch {} window.location.href = 'Fiche Client v4.html'; };
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+      <SignalHead title="Devis & communications" />
+      <div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <div style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--fg-1)' }}>{DASH_QUOTES_PENDING.length}</div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)' }}>devis en attente · {qTotal.toLocaleString('fr-CA')} $ cumulé</div>
+        </div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', marginTop: 2 }}>{DASH_QUOTES_PENDING.map(q => q.client).join(' · ')}</div>
+        <ExitLink label="Voir Contrat & facturation" onClick={() => goTab('contrat')} />
+      </div>
+      <div style={{ height: 1, background: 'var(--border-solid)' }}></div>
+      <div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <div style={{ fontSize: '1.0625rem', fontWeight: 800, color: 'var(--fg-1)' }}>{tTotal}</div>
+          <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)' }}>messages non lus · {DASH_THREADS_UNREAD.length} clients</div>
+        </div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', marginTop: 2 }}>{DASH_THREADS_UNREAD.map(t => t.client).join(' · ')}</div>
+        <ExitLink label="Voir Communications" onClick={() => goTab('communications')} />
+      </div>
+    </div>
+  );
+};
+
+const IntegrationsCard = () => {
+  const down = DASH_INTEGRATIONS.filter(i => !i.connected);
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SignalHead title="Intégrations" count={down.length || null} tone="error" />
+      {down.length === 0 ? <HealthyLine text="Toutes les intégrations sont connectées." /> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: '0.625rem' }}>
+          {down.map(i => (
+            <div key={i.id} style={{ display: 'flex', gap: 7, alignItems: 'flex-start', padding: '0.5rem 0.625rem', borderRadius: 8, background: 'var(--error-bg)' }}>
+              <span style={{ color: 'var(--error)', flexShrink: 0, marginTop: 1 }}><IcoPlug /></span>
+              <div style={{ fontSize: '0.6875rem', color: 'var(--fg-2)', lineHeight: 1.45 }}><b style={{ color: 'var(--fg-1)' }}>{i.name} déconnecté</b> — {i.impact}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)' }}>{DASH_INTEGRATIONS.length - down.length} / {DASH_INTEGRATIONS.length} connectées</div>
+      <ExitLink href="Parametres.html" label="Gérer les intégrations" />
+    </div>
+  );
+};
+
+/* ── HEADER ──────────────────────────────────────────────── */
+
+const Header = ({ theme, onToggleTheme }) => {
+  const [search, setSearch] = React.useState('');
+  return (
+    <div className="header">
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--fg-1)', letterSpacing: '-0.02em' }}>Tableau de bord</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', marginTop: 1 }}>Bienvenue, Marc · Dernière synchro il y a 3 min</div>
+      </div>
+
+      {/* Search */}
+      <div style={{ position: 'relative' }}>
+        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--fg-4)', display: 'flex', pointerEvents: 'none' }}><IcoSearch /></span>
+        <input className="input" placeholder="Rechercher…" value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ paddingLeft: 30, width: 180, fontSize: '0.75rem' }}/>
+      </div>
+
+      {/* Period pill */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border)', background: 'var(--bg-surface)', fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg-2)', cursor: 'pointer', backdropFilter: 'var(--blur)' }}>
+        Mai 2026
+        <IcoChevron deg={0} />
+      </div>
+
+      {/* Bell */}
+      <button className="btn-icon" style={{ position: 'relative' }}>
+        <IcoBell />
+        <span style={{ position: 'absolute', top: 3, right: 3, width: 7, height: 7, background: 'var(--error)', borderRadius: '50%', border: '1.5px solid var(--bg-base)' }}></span>
+      </button>
+
+      {/* Theme toggle */}
+      <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Passer en clair' : 'Passer en sombre'}>
+        {theme === 'dark' ? <IcoSun /> : <IcoMoon />}
+      </button>
+
+      {/* Avatar */}
+      <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--accent-muted)', color: 'var(--accent-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--accent-border)' }}>MC</div>
+
+      {/* Settings */}
+      <button className="btn-icon"><IcoSettings /></button>
+    </div>
+  );
+};
+
+/* ── TRAFFIC CARD ────────────────────────────────────────── */
+
+const TrafficCard = () => (
+  <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.625rem' }}>
+      <div>
+        <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg-1)' }}>Trafic organique</div>
+        <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 2 }}>Sessions SEO · mai 2026</div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', fontWeight: 600, color: 'var(--success)', background: 'var(--success-bg)', padding: '2px 8px', borderRadius: 9999 }}>
+        <IcoUp />+8.7%
+      </div>
+    </div>
+
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginBottom: '0.875rem' }}>
+      <div style={{ fontSize: '2.125rem', fontWeight: 800, letterSpacing: '-0.04em', color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>34 820</div>
+      <div style={{ fontSize: '0.8125rem', color: 'var(--fg-3)', fontWeight: 500 }}>sessions</div>
+    </div>
+
+    <div style={{ flex: 1 }}>
+      <Sparkline data={SPARKLINE} h={72} />
+    </div>
+
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', marginTop: '0.875rem', paddingTop: '0.875rem', borderTop: '1px solid var(--border-solid)' }}>
+      {[
+        { label: 'Positions top 10', value: '142' },
+        { label: 'Clics organiques', value: '5 284' },
+        { label: 'CTR moyen',        value: '3.4%' },
+      ].map(s => (
+        <div key={s.label}>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{s.label}</div>
+          <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--fg-1)', fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* ── PERF CLIENT CARD ────────────────────────────────────── */
+
+const scoreColor = s => s >= 85 ? 'var(--accent)' : s >= 70 ? 'var(--warm)' : 'var(--error)';
+
+const PerfClientCard = () => (
+  <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg-1)' }}>Performance client</div>
+      <div style={{ fontSize: '0.6875rem', fontWeight: 500, color: 'var(--accent)', cursor: 'pointer' }}>Voir tout</div>
+    </div>
+
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, flex: 1 }}>
+      {CLIENT_PERF.map((c, i) => (
+        <div key={c.name} style={{
+          display: 'flex', alignItems: 'center', gap: 10, padding: '8px 4px',
+          borderBottom: i < CLIENT_PERF.length - 1 ? '1px solid var(--border-solid)' : 'none',
+          cursor: 'pointer',
+        }}>
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: 'var(--bg-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '0.625rem', fontWeight: 700, color: 'var(--fg-3)' }}>
+            {c.name.slice(0, 2).toUpperCase()}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--fg-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</div>
+            <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)', marginTop: 1, fontVariantNumeric: 'tabular-nums' }}>{c.sessions} sessions</div>
+          </div>
+          <div style={{ fontSize: '1rem', fontWeight: 800, color: scoreColor(c.score), fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>{c.score}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, color: c.pos ? 'var(--success)' : 'var(--error)', fontSize: '0.75rem', fontWeight: 600, minWidth: 30 }}>
+            {c.pos ? <IcoUp /> : <IcoDown />}
+            {c.pos ? '+' : ''}{c.delta}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Legend */}
+    <div style={{ display: 'flex', gap: 12, paddingTop: '0.75rem', marginTop: '0.25rem', borderTop: '1px solid var(--border-solid)' }}>
+      {[{ c: 'var(--accent)', l: '85+' }, { c: 'var(--warm)', l: '70–84' }, { c: 'var(--error)', l: '<70' }].map(({ c, l }) => (
+        <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.6875rem', color: 'var(--fg-4)' }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, flexShrink: 0 }}></span>{l}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/* ── TASK ITEM ────────────────────────────────────────────── */
+
+const TaskItem = ({ task, onToggle }) => (
+  <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 2px', cursor: 'pointer' }}>
+    <div style={{
+      width: 16, height: 16, borderRadius: '50%', flexShrink: 0, transition: 'all 150ms',
+      border: `1.5px solid ${task.done ? 'var(--success)' : 'var(--border-strong)'}`,
+      background: task.done ? 'var(--success)' : 'transparent',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+    }}>
+      {task.done && <IcoCheck s={8} />}
+    </div>
+    <div style={{ flex: 1, fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg-1)', lineHeight: 1.35,
+      textDecoration: task.done ? 'line-through' : 'none', opacity: task.done ? 0.45 : 1, transition: 'opacity 200ms' }}>
+      {task.text}
+    </div>
+  </div>
+);
+
+/* ── TASKS PANEL ─────────────────────────────────────────── */
+
+const TasksPanel = () => {
+  const [today, setToday] = React.useState(TODAY_INIT);
+  const [week, setWeek]   = React.useState(WEEK_INIT);
+  const toggle = (arr, setArr, id) => setArr(a => a.map(t => t.id === id ? { ...t, done: !t.done } : t));
+
+  const todayDone = today.filter(t => t.done).length;
+  const weekDone  = week.filter(t => t.done).length;
+
+  const SectionHead = ({ label, done, total, color }) => (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.375rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)' }}>{label}</span>
+        <span style={{ fontSize: '0.625rem', color: 'var(--fg-4)', background: 'var(--bg-muted)', padding: '1px 6px', borderRadius: 9999, fontVariantNumeric: 'tabular-nums' }}>{done}/{total}</span>
+      </div>
+      <div style={{ width: 18, height: 18, borderRadius: '50%', border: `1.5px solid ${color}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color }}>
+        <IcoCheck s={8} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="card card-pad" style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--fg-1)', letterSpacing: '-0.01em', marginBottom: '1rem' }}>Tableau des tâches</div>
+
+      {/* Aujourd'hui */}
+      <SectionHead label="Aujourd'hui" done={todayDone} total={today.length} color="var(--accent)" />
+      <div style={{ marginBottom: '1rem' }}>
+        {today.map(t => <TaskItem key={t.id} task={t} onToggle={() => toggle(today, setToday, t.id)} />)}
+      </div>
+
+      <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 0 1rem' }}></div>
+
+      {/* Semaine */}
+      <SectionHead label="Important de la semaine" done={weekDone} total={week.length} color="var(--warm)" />
+      <div style={{ marginBottom: '1rem' }}>
+        {week.map(t => <TaskItem key={t.id} task={t} onToggle={() => toggle(week, setWeek, t.id)} />)}
+      </div>
+
+      <div style={{ height: 1, background: 'var(--border-solid)', margin: '0 0 1rem' }}></div>
+
+      {/* Objectif */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: '0.625rem' }}>
+        <IcoTarget />
+        <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)' }}>Objectif</span>
+      </div>
+      <div style={{ background: 'var(--bg-muted)', borderRadius: 10, padding: '0.625rem 0.75rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--fg-2)' }}>Sessions organiques</div>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>87%</div>
+        </div>
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: '87%' }}></div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)', fontVariantNumeric: 'tabular-nums' }}>34 820 réalisées</div>
+          <div style={{ fontSize: '0.625rem', color: 'var(--fg-4)', fontVariantNumeric: 'tabular-nums' }}>Cible : 40 000</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── TWEAKS PANEL ────────────────────────────────────────── */
+
+const TweaksPanel = ({ t, setTweak, visible }) => {
+  if (!visible) return null;
+  const Toggle = ({ val, onChange }) => (
+    <button onClick={() => onChange(!val)} style={{
+      width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer',
+      position: 'relative', transition: 'background 200ms',
+      background: val ? 'var(--accent)' : 'var(--border-strong)',
+    }}>
+      <span style={{ position: 'absolute', top: 2, left: val ? 18 : 2, width: 16, height: 16, borderRadius: '50%', background: 'white', transition: 'left 200ms' }}/>
+    </button>
+  );
+  return (
+    <div className="tweaks-panel">
+      <div style={{ padding: '9px 14px', borderBottom: '1px solid var(--border-solid)' }}>
+        <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--fg-1)' }}>Tweaks</span>
+      </div>
+      <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+        {/* Theme */}
+        <div>
+          <div style={{ fontSize: '0.625rem', fontWeight: 600, color: 'var(--fg-4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 7 }}>Thème</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[{ v: 'light', l: 'Clair', Ico: IcoSun }, { v: 'dark', l: 'Sombre', Ico: IcoMoon }].map(({ v, l, Ico }) => (
+              <button key={v} onClick={() => setTweak('theme', v)} style={{
+                flex: 1, padding: '5px 0', borderRadius: 8, fontSize: '0.75rem', fontWeight: 500,
+                cursor: 'pointer', border: '1px solid var(--border-strong)', transition: 'all 150ms',
+                background: t.theme === v ? 'var(--primary)' : 'transparent',
+                color: t.theme === v ? 'var(--primary-fg)' : 'var(--fg-3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+              }}><Ico />{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Forecast toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--fg-2)' }}>Prévision revenus</span>
+          <Toggle val={t.showForecast} onChange={v => setTweak('showForecast', v)} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── APP ─────────────────────────────────────────────────── */
+
+const App = () => {
+  const [tweaksVisible, setTweaksVisible] = React.useState(false);
+  const [tweaks, setTweaksState] = React.useState(() => {
+    try { return { ...TWEAK_DEFAULTS, ...JSON.parse(localStorage.getItem('hp-dash-tweaks') || '{}') }; }
+    catch { return TWEAK_DEFAULTS; }
+  });
+
+  const setTweak = (key, val) => {
+    setTweaksState(prev => {
+      const next = { ...prev, [key]: val };
+      localStorage.setItem('hp-dash-tweaks', JSON.stringify(next));
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: next }, '*');
+      return next;
+    });
+  };
+
+  React.useEffect(() => {
+    const handler = e => {
+      if (e.data?.type === '__activate_edit_mode') setTweaksVisible(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksVisible(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  React.useEffect(() => {
+    const html = document.documentElement;
+    html.setAttribute('data-theme-switching', '');
+    html.setAttribute('data-theme', tweaks.theme);
+    try { localStorage.setItem('hp-theme', tweaks.theme); } catch {}
+    const timer = setTimeout(() => html.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(timer);
+  }, [tweaks.theme]);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="dashboard" />
+
+      <div className="main">
+        <Header theme={tweaks.theme} onToggleTheme={() => setTweak('theme', tweaks.theme === 'dark' ? 'light' : 'dark')} />
+
+        <div className="content">
+          {/* Left content column */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: 0 }}>
+
+            {/* Signaux portefeuille : incendies à éteindre en premier */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              <CriticalCard />
+              <ReportsCard />
+              <IntegrationsCard />
+            </div>
+
+            {/* Signaux commerciaux */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <PipelineCard />
+              <QuotesThreadsCard />
+            </div>
+
+            {/* Top row: 2 cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '1rem' }}>
+              <TrafficCard />
+              <PerfClientCard />
+            </div>
+
+            {/* Revenue chart */}
+            <div className="card card-pad">
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--fg-1)' }}>Revenu · Prévision</div>
+                  <div style={{ fontSize: '0.6875rem', color: 'var(--fg-4)', marginTop: 2 }}>Chiffre d'affaires mensuel 2026 · en k€</div>
+                </div>
+                <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.6875rem', color: 'var(--fg-3)' }}>
+                    <div style={{ width: 18, height: 2.5, borderRadius: 9999, background: 'var(--accent)' }}></div>Réalisé
+                  </div>
+                  {tweaks.showForecast && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.6875rem', color: 'var(--fg-3)' }}>
+                      <div style={{ width: 18, height: 2.5, borderRadius: 9999, background: 'var(--warm)', opacity: 0.8 }}></div>Prévision
+                    </div>
+                  )}
+                </div>
+              </div>
+              <RevenueChart showForecast={tweaks.showForecast} />
+            </div>
+          </div>
+
+          {/* Right: Tasks panel */}
+          <div style={{ width: 272, flexShrink: 0, position: 'sticky', top: 0, alignSelf: 'flex-start' }}>
+            <TasksPanel />
+          </div>
+        </div>
+      </div>
+
+      <TweaksPanel t={tweaks} setTweak={setTweak} visible={tweaksVisible} />
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>
