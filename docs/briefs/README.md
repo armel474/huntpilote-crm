@@ -21,13 +21,13 @@ concerne ; en cas de doute, `decisions.md` fait foi.
 
 ## Où on en est
 
-**Les six premières phases sont conçues, intégrées et en ligne.** La séquence
-initiale — 37 écrans, de la boucle de livraison au portail client en passant
-par les outils, le SEO local, le quotidien de l'agence et le contenu — est
-construite dans l'application réelle. Une septième phase s'ouvre : renforcer
-le socle CRM, en s'inspirant de ce que des CRM comme Twenty font bien
-(contact comme objet à part du client, fil de communication unifié, cycle de
-devis), sans en reprendre l'architecture.
+**Les sept phases sont conçues, intégrées et en ligne.** La séquence initiale
+— 37 écrans, de la boucle de livraison au portail client en passant par les
+outils, le SEO local, le quotidien de l'agence et le contenu — est construite
+dans l'application réelle. La phase 7 l'a rejointe : le socle CRM est renforcé,
+en s'inspirant de ce que des CRM comme Twenty font bien (contact comme objet
+à part du client, fil de communication unifié, cycle de devis), sans en
+reprendre l'architecture.
 
 | Phase | Écrans | État |
 |---|---|---|
@@ -37,7 +37,7 @@ devis), sans en reprendre l'architecture.
 | 4 — Le quotidien de l'agence | 8 | ✅ intégrée |
 | 5 — Le portail client | 4 | ✅ intégrée |
 | 6 — Contenu et socle | 4 | ✅ intégrée |
-| 7 — CRM avancé | 5 | 🟡 en cours de conception |
+| 7 — CRM avancé | 5 | ✅ intégrée |
 
 ---
 
@@ -196,9 +196,9 @@ serait disproportionné ici.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 7.1 | Les contacts d'un client · fiche d'un contact | [`7-1-contact.md`](7-1-contact.md) | ⬜ à concevoir |
-| 7.2 | Communications | [`7-2-communications.md`](7-2-communications.md) | ⬜ à concevoir |
-| 7.3 | Devis | [`7-3-devis.md`](7-3-devis.md) | ⬜ à concevoir |
+| 7.1 | Les contacts d'un client · fiche d'un contact | [`7-1-contact.md`](7-1-contact.md) | ✅ intégré |
+| 7.2 | Communications | [`7-2-communications.md`](7-2-communications.md) | ✅ intégré |
+| 7.3 | Devis | [`7-3-devis.md`](7-3-devis.md) | ✅ intégré |
 
 > **L'ordre importe ici aussi.** 7.1 avant 7.2 : le fil de communication se
 > rattache à un contact précis, pas seulement à un client. 7.3 est indépendante
@@ -208,6 +208,17 @@ Le panneau latéral de détail (session 4.4) et la bibliothèque d'états systè
 (session 6.2) sont maintenant documentés dans
 [`socle-partage.md`](socle-partage.md) — ces trois briefs s'appuient dessus au
 lieu d'en redessiner une variante.
+
+**Phase 7 close.** Les trois sessions vivaient sur un seul écran hôte — la
+fiche client — et ont donc été intégrées ensemble plutôt qu'en parallèle, pour
+éviter des conflits de fusion sur les mêmes fichiers. Les panneaux latéraux de
+contact et de devis réutilisent `.dl-scrim`/`.dl-sheet` du panneau de deal
+(session 4.4) au lieu d'un second système ; le document de devis repose sur
+`.client-doc`, déjà utilisé pour le rapport et la clôture de tâche. Le fil de
+communications fusionne réellement `PORTAL_THREAD` (session 5.2, importé,
+jamais dupliqué) avec les nouveaux canaux internes — l'ancien tableau
+« Historique des communications » de l'onglet Rapports est devenu un simple
+renvoi vers ce nouvel onglet, une seule source de vérité.
 
 ---
 
