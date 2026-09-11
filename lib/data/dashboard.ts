@@ -77,3 +77,32 @@ export const TRAFFIC_STATS = [
   { label: 'Clics organiques', value: '5 284' },
   { label: 'CTR moyen', value: '3.4%' },
 ] as const;
+
+/**
+ * Résumé agrégé portefeuille — devis en attente et messages non lus (session 8.1).
+ *
+ * `lib/data/devis.ts` et `lib/data/communications.ts` ne modélisent en détail
+ * que le compte Acme Corp. — aucune fiche aussi riche n'existe pour les autres
+ * clients aujourd'hui (voir `docs/briefs/README.md`, phase 8). Ces deux listes
+ * sont donc volontairement légères : juste assez pour peupler deux compteurs
+ * portefeuille sur de vrais comptes de `CLIENTS`, sans construire un second
+ * jeu de devis/communications détaillé par client. Chaque ligne mène vers la
+ * fiche générale du client (`routes.client`), seule adressable aujourd'hui —
+ * il n'existe pas encore de route séparée par onglet (Contrat & facturation /
+ * Communications).
+ */
+export type DashQuote = { clientId: string; label: string; amount: number };
+
+export const DASH_QUOTES_PENDING: readonly DashQuote[] = [
+  { clientId: 'dupont-sas', label: 'Ajout d’une page services régionale', amount: 850 },
+  { clientId: 'boreal-immobilier', label: 'Campagne de contenu par quartier', amount: 1200 },
+  { clientId: 'clinique-lavoie', label: 'Refonte de la page tarifs', amount: 600 },
+];
+
+export type DashThread = { clientId: string; unread: number };
+
+export const DASH_THREADS_UNREAD: readonly DashThread[] = [
+  { clientId: 'le-marche-bio', unread: 2 },
+  { clientId: 'boreal-immobilier', unread: 1 },
+  { clientId: 'dupont-sas', unread: 1 },
+];

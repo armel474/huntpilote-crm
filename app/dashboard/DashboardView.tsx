@@ -11,6 +11,14 @@ import {
   TrafficCard,
   TrafficCardSkeleton,
 } from '@/components/dashboard/DashboardCards';
+import {
+  CriticalPrioritiesCard,
+  IntegrationsCard,
+  PipelineOverviewCard,
+  PortfolioBlockSkeleton,
+  QuotesThreadsCard,
+  ReportsToProduceCard,
+} from '@/components/dashboard/PortfolioBlocks';
 import { RevenueChart } from '@/components/dashboard/RevenueChart';
 import { Lbl } from '@/components/ui/Atoms';
 import { EmptyHealthy, ErrorIntegration, SkelLine } from '@/components/ui/States';
@@ -81,6 +89,20 @@ export function DashboardView() {
           {scenario === 'integration' && (
             <ErrorIntegration service="Google Search Console" client="8 comptes suivis" />
           )}
+
+          {/* Signaux portefeuille : ce qu'une agence doit repérer en quelques secondes
+              en ouvrant l'écran — incendies (priorités, rapports, intégrations) puis
+              signaux commerciaux (pipeline, devis & communications). Données réelles,
+              indépendantes du sélecteur de démo ci-dessus (session 8.1). */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            {loading ? <PortfolioBlockSkeleton lines={4} /> : <CriticalPrioritiesCard />}
+            {loading ? <PortfolioBlockSkeleton lines={3} /> : <ReportsToProduceCard />}
+            {loading ? <PortfolioBlockSkeleton lines={5} /> : <IntegrationsCard />}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            {loading ? <PortfolioBlockSkeleton lines={3} /> : <PipelineOverviewCard />}
+            {loading ? <PortfolioBlockSkeleton lines={4} /> : <QuotesThreadsCard />}
+          </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '1rem' }}>
             {loading ? <TrafficCardSkeleton /> : <TrafficCard />}
