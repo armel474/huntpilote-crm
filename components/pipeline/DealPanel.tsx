@@ -326,7 +326,7 @@ export function DealPanel({
                 client existe dans le Client hub, l’onboarding en 4 étapes est assigné à {owner.name} et
                 le premier audit est planifié.
                 <div style={{ display: 'flex', gap: 7, marginTop: 8, flexWrap: 'wrap' }}>
-                  <Link href="/onboarding" className="btn-out" style={{ fontSize: '0.625rem', textDecoration: 'none' }}>
+                  <Link href={routes.onboarding()} className="btn-out" style={{ fontSize: '0.625rem', textDecoration: 'none' }}>
                     Ouvrir l’onboarding
                     <IcoArrowR size={12} />
                   </Link>

@@ -37,7 +37,7 @@ export function DashboardView() {
   const loading = scenario === 'chargement';
 
   return (
-    <AppShell header={<CRMHeader title="Dashboard" subtitle="Vue d'ensemble de l'agence" />}>
+    <AppShell header={<CRMHeader title="Dashboard" subtitle="Vue d'ensemble de l'agence" period="" />}>
       <div className="subbar">
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Vue d’ensemble de l’agence · portefeuille complet

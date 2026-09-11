@@ -250,7 +250,7 @@ export function PerfClientCard() {
           Performance client
         </h2>
         <Link
-          href="/clients"
+          href={routes.clients()}
           style={{
             fontSize: '0.6875rem',
             fontWeight: 500,

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useTheme } from '@/components/shell/ThemeProvider';
 import { HP_KEYHINT, useOverlays } from '@/components/shell/Overlays';
 import { IcoBell, IcoChevD, IcoCog, IcoMoon, IcoSrch, IcoSun } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
 
 export type Crumb = { label: string; href?: string };
 
@@ -189,7 +190,7 @@ export function CRMHeader({ title, crumbs, subtitle, period = 'Mai 2026', childr
         MC
       </div>
 
-      <Link className="btn-icon" href="/parametres" aria-label="Paramètres">
+      <Link className="btn-icon" href={routes.parametres()} aria-label="Paramètres">
         <IcoCog />
       </Link>
     </header>

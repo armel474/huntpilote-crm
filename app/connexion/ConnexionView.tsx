@@ -19,6 +19,7 @@ import {
   IcoSun,
   IcoWarn,
 } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
 
 const KNOWN: Record<string, { name: string; role: string; pass: string }> = {
   'marie@huntpilote.ca': { name: 'Marie Chen', role: 'Administratrice', pass: 'bonjour2026' },
@@ -288,7 +289,7 @@ function Welcome() {
       <p className="cn-sub" style={{ marginBottom: '1.25rem' }}>
         Bienvenue, Marie. Redirection vers le tableau de bord.
       </p>
-      <a href="/dashboard" className="btn-pri" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
+      <a href={routes.dashboard()} className="btn-pri" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
         Ouvrir HuntPilote
       </a>
     </div>

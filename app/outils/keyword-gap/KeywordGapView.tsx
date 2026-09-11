@@ -178,7 +178,7 @@ export function KeywordGapView() {
                   sm
                   icon={<IcoPlus />}
                 />
-                <a href="/outils/position-tracking" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
+                <a href={routes.outil('position-tracking')} style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
                   Voir le suivi
                 </a>
               </div>

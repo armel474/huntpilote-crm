@@ -18,6 +18,7 @@ import {
   IcoZap,
   type IconProps,
 } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
 
 const COMPACT_STORAGE_KEY = 'huntpilote-sidebar-compact';
 
@@ -31,18 +32,18 @@ type NavItem = {
 
 /** Ordre validé en revue de design, phases 1 à 4. */
 const TOP_NAV: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', Icon: IcoDash },
-  { href: '/travail', label: 'Mon plan de travail', Icon: IcoTaskCheck },
-  { href: '/priorites', label: 'Priorités transversales', Icon: IcoAlert },
-  { href: '/agenda', label: 'Agenda', Icon: IcoCal },
-  { href: '/rapports', label: 'Rapports à produire', Icon: IcoDoc },
-  { href: '/clients', label: 'Client hub', Icon: IcoUsers, match: ['/clients', '/onboarding'] },
-  { href: '/pipeline', label: 'Pipeline', Icon: IcoPipe },
-  { href: '/workflow', label: 'Workflow', Icon: IcoZap },
+  { href: routes.dashboard(), label: 'Dashboard', Icon: IcoDash },
+  { href: routes.travail(), label: 'Mon plan de travail', Icon: IcoTaskCheck },
+  { href: routes.prioritesTransversales(), label: 'Priorités transversales', Icon: IcoAlert },
+  { href: routes.agenda(), label: 'Agenda', Icon: IcoCal },
+  { href: routes.rapportsAProduire(), label: 'Rapports à produire', Icon: IcoDoc },
+  { href: routes.clients(), label: 'Client hub', Icon: IcoUsers, match: [routes.clients(), routes.onboarding()] },
+  { href: routes.pipeline(), label: 'Pipeline', Icon: IcoPipe },
+  { href: routes.workflow(), label: 'Workflow', Icon: IcoZap },
 ];
 
 /** Section complète, au même niveau que les outils (décision 8) — session 3.1. */
-const LOCAL_ITEM: NavItem = { href: '/local', label: 'SEO local', Icon: IcoPin };
+const LOCAL_ITEM: NavItem = { href: routes.local(), label: 'SEO local', Icon: IcoPin };
 
 /** Les sept outils du cadre commun (session 2.1) — ordre validé en revue de design. */
 const TOOLS: { label: string; slug: string }[] = [
@@ -181,16 +182,16 @@ export function NavSidebar() {
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
     );
 
-  const settingsActive = pathname.startsWith('/parametres');
-  const toolsActive = pathname.startsWith('/outils');
+  const settingsActive = pathname.startsWith(routes.parametres());
+  const toolsActive = pathname.startsWith(routes.outils());
 
   /* ── Vue compacte : icônes seules + tooltips ── */
   if (compact) {
-    const items: NavItem[] = [...TOP_NAV, LOCAL_ITEM, { href: '/outils', label: 'Outil', Icon: IcoTool }];
+    const items: NavItem[] = [...TOP_NAV, LOCAL_ITEM, { href: routes.outils(), label: 'Outil', Icon: IcoTool }];
     return (
       <nav className="sidebar compact" aria-label="Navigation principale">
         <div className="sidebar-head">
-          <Link href="/dashboard" aria-label="HuntPilote — accueil">
+          <Link href={routes.dashboard()} aria-label="HuntPilote — accueil">
             <LogoMark />
           </Link>
         </div>
@@ -215,7 +216,7 @@ export function NavSidebar() {
 
         <div className="sidebar-foot">
           <Link
-            href="/parametres"
+            href={routes.parametres()}
             className={`nav-cpt${settingsActive ? ' active' : ''}`}
             data-label="Paramètres"
             aria-label="Paramètres"
@@ -242,7 +243,7 @@ export function NavSidebar() {
     <nav className="sidebar" aria-label="Navigation principale">
       <div className="sidebar-head">
         <Link
-          href="/dashboard"
+          href={routes.dashboard()}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -334,7 +335,7 @@ export function NavSidebar() {
 
       <div className="sidebar-foot">
         <Link
-          href="/parametres"
+          href={routes.parametres()}
           className={`nav-item${settingsActive ? ' active' : ''}`}
           aria-current={settingsActive ? 'page' : undefined}
         >

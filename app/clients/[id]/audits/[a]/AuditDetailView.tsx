@@ -75,7 +75,7 @@ export function AuditDetailView({ clientId }: { clientId: string }) {
 
   const nCreated = Object.keys(created).length;
   const prioHref = (prio: string) => routes.priorite(clientId, prio.toLowerCase());
-  const compareHref = `${routes.audit(clientId, AUDIT.slug)}/comparaison`;
+  const compareHref = routes.auditComparaison(clientId, AUDIT.slug);
 
   const header = (
     <CRMHeader

@@ -112,7 +112,7 @@ export function PanelDiagnostics({
           <div style={{ display: 'flex', gap: 5 }}>
             <Link
               className="btn-sm"
-              href={`${routes.audit(clientId, a.id)}/comparaison`}
+              href={routes.auditComparaison(clientId, a.id)}
               style={{ border: '1px solid var(--bd-solid)', textDecoration: 'none' }}
             >
               Comparer

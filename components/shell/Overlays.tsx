@@ -61,6 +61,7 @@ import {
   type NotifKindId,
   type NotifScenario,
 } from '@/lib/data/notifications';
+import { routes } from '@/lib/routes';
 
 const TONE_VARS: Record<string, [string, string, string]> = {
   red: ['var(--o-red-m)', 'var(--o-red-b)', 'var(--o-red)'],
@@ -488,7 +489,7 @@ function NotifPanel({
               <IcoCheckAll size={12} />
               Tout marquer comme lu
             </button>
-            <a href="/parametres?section=notifications" className="hp-btn">
+            <a href={routes.parametres('notifications')} className="hp-btn">
               <IcoCog size={12} />
               Réglages des notifications
             </a>
@@ -505,7 +506,7 @@ function NotifPanel({
                 Les automatisations et l&apos;agent n&apos;ont rien signalé. Les chutes de position, les liens
                 brisés, les avis négatifs et les jetons expirés arrivent ici.
               </div>
-              <a href="/parametres?section=notifications" className="hp-btn">
+              <a href={routes.parametres('notifications')} className="hp-btn">
                 <IcoCog size={12} />
                 Réglages des notifications
               </a>

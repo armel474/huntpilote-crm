@@ -9,6 +9,7 @@ import { DealPanel } from '@/components/pipeline/DealPanel';
 import { Lbl } from '@/components/ui/Atoms';
 import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
 import { IcoFilter, IcoGrid, IcoList, IcoPipe, IcoPlus } from '@/components/ui/Icons';
+import { routes } from '@/lib/routes';
 import {
   DEALS,
   OWNERS,
@@ -421,7 +422,7 @@ export function PipelineView() {
               </option>
             ))}
           </select>
-          <Link className="btn-primary" href="/onboarding">
+          <Link className="btn-primary" href={routes.onboarding()}>
             <IcoPlus size={12} />
             Nouveau prospect
           </Link>

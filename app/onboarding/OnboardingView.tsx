@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
+import { routes } from '@/lib/routes';
 import {
   IcoCheck,
   IcoChevL,
@@ -831,10 +832,10 @@ function Done({ company }: { company: string }) {
         L&apos;agent IA a lancé le premier audit — les résultats seront prêts dans quelques minutes.
       </p>
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <Link className="btn-out" href="/clients">
+        <Link className="btn-out" href={routes.clients()}>
           Retour au Client Hub
         </Link>
-        <Link className="btn-pri" href="/clients/acme-corp">
+        <Link className="btn-pri" href={routes.client('acme-corp')}>
           Ouvrir la fiche client <IcoChevR />
         </Link>
       </div>
@@ -943,7 +944,7 @@ export function OnboardingView() {
               <button
                 className="btn-out"
                 type="button"
-                onClick={() => (step === 0 ? router.push('/clients') : goStep(step - 1))}
+                onClick={() => (step === 0 ? router.push(routes.clients()) : goStep(step - 1))}
               >
                 <IcoChevL />
                 {step === 0 ? 'Annuler' : 'Précédent'}

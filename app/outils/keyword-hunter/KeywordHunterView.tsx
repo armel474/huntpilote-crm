@@ -18,6 +18,7 @@ import { KhKeepCard, SeedFilters, ThemeGroup } from '@/components/outils/keyword
 import { Lbl, Pill } from '@/components/ui/Atoms';
 import { IcoCheck, IcoPlus, IcoRepeat, IcoSrch } from '@/components/ui/Icons';
 import { readLastAccount, writeLastAccount, TOOL_ACCOUNTS, type AccountFilter } from '@/lib/data/outils';
+import { routes } from '@/lib/routes';
 import {
   KH_FILTERS_DEFAULT,
   KH_SAVES,
@@ -175,7 +176,7 @@ export function KeywordHunterView() {
                   sm
                   icon={<IcoPlus />}
                 />
-                <a href="/outils/position-tracking" style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
+                <a href={routes.outil('position-tracking')} style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
                   Voir le suivi
                 </a>
               </div>

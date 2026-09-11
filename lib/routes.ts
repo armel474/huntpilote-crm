@@ -8,14 +8,19 @@
  */
 
 export const routes = {
+  dashboard: () => '/dashboard',
   clients: () => '/clients',
   client: (id: string) => `/clients/${id}`,
   priorite: (id: string, p: string) => `/clients/${id}/priorites/${p}`,
   tache: (id: string, t: string) => `/clients/${id}/taches/${t}`,
   rapport: (id: string, r: string) => `/clients/${id}/rapports/${r}`,
   audit: (id: string, a: string) => `/clients/${id}/audits/${a}`,
+  auditComparaison: (id: string, a: string) => `/clients/${id}/audits/${a}/comparaison`,
+  outils: () => '/outils',
   outil: (slug: string) => `/outils/${slug}`,
   pipeline: () => '/pipeline',
+  workflow: () => '/workflow',
+  onboarding: () => '/onboarding',
   parametres: (section?: string) => (section ? `/parametres?section=${section}` : '/parametres'),
   /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
   auditProspect: (token: string) => `/audit-prospect/${token}`,

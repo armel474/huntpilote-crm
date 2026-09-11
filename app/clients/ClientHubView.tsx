@@ -9,6 +9,7 @@ import { CLIENTS, HUB_KPIS } from '@/lib/data/clients';
 import { IcoDl, IcoDown, IcoGrid, IcoList, IcoPlus, IcoUp } from '@/components/ui/Icons';
 import { Lbl } from '@/components/ui/Atoms';
 import { EmptyFilter, SkelLine, SkelTable } from '@/components/ui/States';
+import { routes } from '@/lib/routes';
 
 type Filter = 'all' | 'client' | 'prospect';
 
@@ -242,7 +243,7 @@ export function ClientHubView() {
           ))}
         </div>
 
-        <Link className="btn-primary" href="/onboarding">
+        <Link className="btn-primary" href={routes.onboarding()}>
           <IcoPlus size={13} />
           Ajouter
         </Link>

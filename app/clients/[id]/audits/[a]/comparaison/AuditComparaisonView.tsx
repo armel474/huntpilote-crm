@@ -41,7 +41,7 @@ export function AuditComparaisonView({ clientId }: { clientId: string }) {
       crumbs={[
         { label: 'Client hub', href: routes.clients() },
         { label: AUDIT.client, href: routes.client(clientId) },
-        { label: 'Audits', href: auditHref },
+        { label: 'Audits', href: routes.client(clientId) },
         { label: 'Comparaison' },
       ]}
     />

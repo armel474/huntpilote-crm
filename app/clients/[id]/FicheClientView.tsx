@@ -206,8 +206,9 @@ export function FicheClientView({ clientId }: { clientId: string }) {
       header={
         <CRMHeader
           title={CLIENT.name}
+          period=""
           crumbs={[
-            { label: 'Client Hub', href: '/clients' },
+            { label: 'Client Hub', href: routes.clients() },
             { label: CLIENT.name },
             { label: `${CLIENT.sector} · MRR ${CLIENT.mrr}` },
           ]}
