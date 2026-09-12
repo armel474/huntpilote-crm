@@ -39,7 +39,8 @@ $$, 'un deal perdu sans motif est refusé');
 \echo ''
 \echo '--- Devis : le total et les taxes se calculent, ne se stockent pas ---'
 
-insert into public.agency_settings (agency_id) values ('aaaaaaaa-0000-0000-0000-000000000001');
+-- Les réglages de l'agence (taux de taxes compris) existent déjà : la
+-- migration 0007 les crée en même temps que l'agence.
 
 insert into public.quote (id, agency_id, client_id, contact_id, ref, subject, status, issued_on)
 values ('c1000000-0000-0000-0000-00000000000a',
