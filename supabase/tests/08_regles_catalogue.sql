@@ -272,9 +272,11 @@ end $$;
 do $$
 declare a integer; b integer; c integer;
 begin
-  a := app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'facture', 2026);
-  b := app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'facture', 2026);
-  c := app.next_number('aaaaaaaa-0000-0000-0000-000000000002', 'facture', 2026);
+  -- Un usage de test, pas « facture » : consommer des numéros de facture ici
+  -- décalerait la suite réelle vérifiée par 09_regles_documents.sql.
+  a := app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'essai', 2026);
+  b := app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'essai', 2026);
+  c := app.next_number('aaaaaaaa-0000-0000-0000-000000000002', 'essai', 2026);
 
   if b <> a + 1 then
     raise exception 'ÉCHEC — deux appels ont rendu % puis %', a, b;
@@ -329,7 +331,7 @@ begin
   set local role authenticated;
   set local request.jwt.claim.sub = '11111111-1111-1111-1111-111111111111';
   begin
-    perform app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'facture', 2026);
+    perform app.next_number('aaaaaaaa-0000-0000-0000-000000000001', 'essai', 2026);
     raise notice 'OK   — la numérotation passe par la fonction, jamais par la table';
   exception when others then
     raise exception 'ÉCHEC — un membre ne peut plus obtenir un numéro : %', left(sqlerrm, 60);
