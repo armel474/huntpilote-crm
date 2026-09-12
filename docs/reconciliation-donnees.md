@@ -33,73 +33,69 @@ schéma ; ils se défont facilement.
 
 ---
 
-## À trancher — j'ai besoin de toi
+## Tranché avec toi — 12 septembre
 
-Ces cinq-là touchent à ton activité réelle, pas à la forme. Je ne peux pas
-deviner.
+Les cinq questions ont leur réponse. Elles sont reportées ici pour que le
+document cesse d'être une question ouverte.
 
-### 1. Le domaine d'Acme Corp. : `.ca` ou `.fr` ?
+### 1. Le domaine d'Acme Corp. → `.ca`
 
-Les deux circulent. `clients.ts` et les citations locales disent
-**`acmecorp.ca`** ; la fiche client, les courriels des contacts, les URL de
-contenu et l'adresse d'envoi du rapport disent **`acmecorp.fr`**.
+`acmecorp.ca` partout. Le `.fr` de la fiche client, des courriels de contact,
+des URL de contenu et de l'adresse d'envoi du rapport disparaît. C'est le
+domaine cohérent avec une clientèle québécoise.
 
-Pour une agence québécoise avec un client montréalais, `.ca` paraît juste —
-mais c'est ton jeu de démonstration, et il sert aussi à montrer le produit.
+### 2. Le pipeline → remappé sur les comptes existants
 
-### 2. Le pipeline ne connaît aucun de tes clients
+Les treize deals du Kanban ne pointaient vers aucun compte. Ils sont remappés
+sur les comptes du portefeuille ; huit disparaissent, et **c'est sans
+importance**. Le portefeuille de démonstration n'a pas besoin d'être gros, il
+a besoin d'être cohérent : un deal pointe vers un compte, « Marquer gagné »
+crée le client, et chaque référence mène quelque part.
 
-C'est l'incohérence la plus lourde. Les treize deals (`Immobilier Vista`,
-`Studio Pixel`…) **n'existent dans aucun autre fichier**, et les cinq prospects
-du Client Hub (`Novatech`, `Paris Médias`, `Vélo Urbain`, `Spa Nordik`,
-`Quincaillerie Fortin`) **n'apparaissent dans aucun deal**. Deux univers
-parallèles.
+Ces comptes sont **fictifs**, même quand le nom et le domaine d'une entreprise
+sont réels — ils viennent de données de prospection, pas d'un mandat. Ils
+seront remplacés par de vrais comptes.
 
-Or le produit repose sur l'inverse : « Marquer gagné » crée le client et lance
-l'onboarding. Dans le schéma, un deal pointe vers un compte prospect.
+### 3. Les forfaits → un chantier, pas une valeur à saisir
 
-Trois sorties possibles :
-- **rattacher les treize deals à de nouveaux comptes prospects** — le
-  portefeuille passe de 10 à 23 comptes, le Client Hub devient chargé ;
-- **remapper les deals sur les cinq prospects existants** — cohérent, mais huit
-  deals disparaissent ;
-- **garder les deux et l'assumer** — quelques deals sur des prospects du hub,
-  d'autres sur des comptes créés pour l'occasion.
+C'est la réponse qui a changé le projet. La question « quels forfaits vends-tu
+et à quels prix ? » n'appelait pas trois lignes dans une table : elle a révélé
+que **l'agence ne peut pas paramétrer ce qu'elle vend**. Or sans ça, pas de
+devis, pas de facture, et chaque tâche d'un mandat doit être créée à la main.
 
-Je pencherais pour la deuxième, quitte à garder trois ou quatre deals
-supplémentaires pour que le Kanban reste vivant. Mais c'est ta démonstration
-commerciale.
+Un onglet **Agence** pilote donc le catalogue : produits, services, offres,
+modèles de devis et de factures. Et une offre ne se contente pas d'un prix —
+elle **décrit le travail qu'elle engage**. Vendre le forfait Croissance à un
+compte crée les tâches de ce forfait, sans que personne les invente et sans
+qu'un modèle de langage ait à les deviner.
 
-### 3. Tes forfaits, pour de vrai
+Voir `docs/catalogue-agence.md` pour le détail du modèle.
 
-Quatre vocabulaires cohabitent : `badge` vaut `Croissance`/`Stable` sur un
-client, `workflow.FORFAITS` dit `Essentiel`/`Croissance`/`Sur mesure`,
-`CLIENT.plan` dit `Croissance SEO`, et `onboarding.SERVICES` liste cinq
-services avec des prix (`seotech`, `contenu`, `seolocal`, `audit`,
-`backlinks`).
+Les offres réellement vendues restent à saisir — ce sont des **données**, pas
+un changement de schéma. Le semis part des forfaits de démonstration
+(`Essentiel`, `Croissance`, `Sur mesure`) et des cinq services de
+`onboarding.ts` avec leurs prix.
 
-**Quels forfaits vends-tu réellement, et à quels prix ?** Le schéma a une table
-`service` avec un prix : autant y mettre tes vrais paliers. C'est aussi ce qui
-alimentera la facturation plus tard.
+### 4. L'équipe → un membre réel, trois de décor
 
-Note au passage : `badge` sert à deux choses incompatibles — le forfait pour un
-client, l'étape commerciale pour un prospect. Je les sépare de toute façon.
+L'agence, c'est une personne. Le semis garde **Marie Chen** en administratrice
+et ajoute trois membres fictifs avec des rôles distincts, pour que les
+assignations, les relectures et les permissions se testent vraiment.
 
-### 4. Ton équipe
+Au passage : le panneau d'équipe existant ne portait qu'un nom, un courriel et
+un rôle. Il lui manquait de quoi identifier une personne — prénom et nom
+séparés, photo, téléphone, adresse — et de quoi dire ce qu'un rôle **autorise**.
+Les deux sont ajoutés.
 
-`TEAM` compte quatre membres (Marie Chen, Julien Dubois, plus deux). Mais des
-tâches, des commentaires et des blocages citent **Jules Rivard**, **Sofia
-Nadeau**, **Julie Bergeron**, **Marc Tremblay** — absents de `TEAM`. Et le
-pipeline a son propre trio d'initiales (`MC`, `JD`, `AL`).
+### 5. Novatech et les autres → répartis, sans état d'âme
 
-**Qui existe vraiment ?** Réponse simple si l'agence, c'est toi : un seul
-membre réel, et le reste devient du décor assumé dans le semis.
+Aucun compte n'est réel aujourd'hui. Le semis pose **quatre clients** et le
+reste en prospects, de façon à ce que les deux régimes de conservation
+(règle 3) et les deux parcours (portail, pipeline) soient tous les deux
+exerçables.
 
-### 5. Novatech : client ou prospect ?
-
-`clients.ts` en fait un **prospect** (donc sans score de santé). Le dashboard
-lui donne un **score de 85** comme à un client. Même genre d'écart pour Le
-Marché Bio : score 71 au dashboard, 85 au Client Hub.
+Les vrais comptes viendront ensuite : le site de l'agence en client, un
+prospect déjà signé en second client, puis les prospects réellement visés.
 
 ---
 
