@@ -55,19 +55,18 @@ insert into public.agency (id, name, slug) values
   ('aaaaaaaa-0000-0000-0000-000000000001', 'HuntPilote', 'huntpilote'),
   ('aaaaaaaa-0000-0000-0000-000000000002', 'Agence rivale', 'rivale');
 
--- `full_name` est une colonne calculée depuis le prénom et le nom (migration
--- 0016) : un nom d'affichage qui diverge de ses parties est un bogue qui
--- attend son heure.
-insert into public.user_profile (user_id, kind, first_name, last_name) values
-  ('11111111-1111-1111-1111-111111111111', 'agency_member', 'Marie', 'Chen'),
-  ('22222222-2222-2222-2222-222222222222', 'agency_member', 'Concurrente', null),
-  ('33333333-3333-3333-3333-333333333333', 'client_contact', 'Sophie', 'Tremblay');
-
-insert into public.agency_member (id, agency_id, user_id, role, initials) values
+-- L'identité d'une personne de l'agence vit sur `agency_member` (migration
+-- 0017) ; `full_name` s'y calcule depuis le prénom et le nom. Celle d'un
+-- contact client vit sur `contact`.
+insert into public.agency_member
+  (id, agency_id, user_id, role, initials, first_name, last_name, email, accepted_at)
+values
   ('bbbbbbbb-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000001',
-   '11111111-1111-1111-1111-111111111111', 'admin', 'MC'),
+   '11111111-1111-1111-1111-111111111111', 'admin', 'MC',
+   'Marie', 'Chen', 'marie@huntpilote.ca', now()),
   ('bbbbbbbb-0000-0000-0000-000000000002', 'aaaaaaaa-0000-0000-0000-000000000002',
-   '22222222-2222-2222-2222-222222222222', 'admin', 'XX');
+   '22222222-2222-2222-2222-222222222222', 'admin', 'XX',
+   'Concurrente', null, 'rivale@autre-agence.ca', now());
 
 insert into public.client (id, agency_id, slug, name, initials, type) values
   ('cccccccc-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000001',

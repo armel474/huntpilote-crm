@@ -21,28 +21,22 @@ insert into auth.users (id, email) values
   ('55555555-5555-5555-5555-555555555555', 'aicha@huntpilote.ca'),
   ('66666666-6666-6666-6666-666666666666', 'tom@huntpilote.ca');
 
-insert into public.user_profile
-  (user_id, kind, first_name, last_name, phone, city, province)
-values
-  ('44444444-4444-4444-4444-444444444444', 'agency_member', 'Julien', 'Dubois',
-   '514-555-0110', 'Montréal', 'QC'),
-  ('55555555-5555-5555-5555-555555555555', 'agency_member', 'Aïcha', 'Lemaire',
-   '514-555-0111', 'Laval', 'QC'),
-  ('66666666-6666-6666-6666-666666666666', 'agency_member', 'Tom', 'Bélanger',
-   '418-555-0112', 'Québec', 'QC');
-
 insert into public.agency_member
-  (id, agency_id, user_id, role, initials, job_title, started_on, hourly_rate_cents)
+  (id, agency_id, user_id, role, initials, first_name, last_name, email,
+   phone, city, province, job_title, started_on, hourly_rate_cents, accepted_at)
 values
   ('bbbbbbbb-0000-0000-0000-00000000000c', 'aaaaaaaa-0000-0000-0000-000000000001',
    '44444444-4444-4444-4444-444444444444', 'chef_projet', 'JD',
-   'Chef de projet', '2026-02-01', 9000),
+   'Julien', 'Dubois', 'julien@huntpilote.ca', '514-555-0110', 'Montréal', 'QC',
+   'Chef de projet', '2026-02-01', 9000, now()),
   ('bbbbbbbb-0000-0000-0000-00000000000d', 'aaaaaaaa-0000-0000-0000-000000000001',
    '55555555-5555-5555-5555-555555555555', 'specialiste_seo', 'AL',
-   'Spécialiste SEO', '2026-03-15', 8500),
+   'Aïcha', 'Lemaire', 'aicha@huntpilote.ca', '514-555-0111', 'Laval', 'QC',
+   'Spécialiste SEO', '2026-03-15', 8500, now()),
   ('bbbbbbbb-0000-0000-0000-00000000000e', 'aaaaaaaa-0000-0000-0000-000000000001',
    '66666666-6666-6666-6666-666666666666', 'redacteur', 'TB',
-   'Rédacteur', '2026-05-01', 7000);
+   'Tom', 'Bélanger', 'tom@huntpilote.ca', '418-555-0112', 'Québec', 'QC',
+   'Rédacteur', '2026-05-01', 7000, now());
 
 
 \echo ''
@@ -51,7 +45,7 @@ values
 do $$
 declare n text; mono text;
 begin
-  select full_name into n from public.user_profile
+  select full_name into n from public.agency_member
    where user_id = '55555555-5555-5555-5555-555555555555';
   if n <> 'Aïcha Lemaire' then
     raise exception 'ÉCHEC — nom d''affichage attendu « Aïcha Lemaire », obtenu « % »', n;
@@ -59,7 +53,7 @@ begin
 
   -- Un mononyme s'écrit dans le prénom, et le nom d'affichage ne traîne pas
   -- d'espace.
-  select full_name into mono from public.user_profile
+  select full_name into mono from public.agency_member
    where user_id = '22222222-2222-2222-2222-222222222222';
   if mono <> 'Concurrente' then
     raise exception 'ÉCHEC — un mononyme devrait donner « Concurrente », obtenu « % »', mono;
@@ -71,8 +65,10 @@ end $$;
 do $$
 begin
   begin
-    insert into public.user_profile (user_id, kind, first_name, last_name)
-    values ('44444444-4444-4444-4444-444444444444', 'agency_member', null, null);
+    insert into public.agency_member
+      (agency_id, role, initials, first_name, last_name, email)
+    values ('aaaaaaaa-0000-0000-0000-000000000001', 'redacteur', 'ZZ',
+            null, null, 'sansnom@huntpilote.ca');
     raise exception 'ÉCHEC — une personne sans aucun nom a été acceptée';
   exception when check_violation or unique_violation then
     raise notice 'OK   — une personne a au moins un prénom ou un nom';
@@ -300,6 +296,68 @@ begin
     raise exception 'ÉCHEC — un membre désactivé conserve ses droits';
   end if;
   raise notice 'OK   — désactiver un membre lui retire tout, y compris ses exceptions';
+end $$;
+
+
+\echo ''
+\echo '--- On invite d''abord, on se connecte ensuite ---'
+
+insert into public.agency_member
+  (id, agency_id, role, initials, first_name, last_name, email, job_title, invited_at)
+values ('bbbbbbbb-0000-0000-0000-00000000000f', 'aaaaaaaa-0000-0000-0000-000000000001',
+        'redacteur', 'CL', 'Camille', 'Ouellet', 'camille@huntpilote.ca',
+        'Rédactrice', now());
+
+do $$
+declare n text; compte uuid;
+begin
+  select full_name, user_id into n, compte from public.agency_member
+   where id = 'bbbbbbbb-0000-0000-0000-00000000000f';
+
+  if n <> 'Camille Ouellet' then
+    raise exception 'ÉCHEC — la personne invitée devrait s''appeler Camille Ouellet, obtenu « % »', n;
+  end if;
+  if compte is not null then
+    raise exception 'ÉCHEC — une personne invitée n''a pas encore de compte';
+  end if;
+  raise notice 'OK   — Camille existe dans l''équipe avec son nom et son poste, sans compte';
+end $$;
+
+do $$
+begin
+  begin
+    update public.agency_member set accepted_at = now()
+     where id = 'bbbbbbbb-0000-0000-0000-00000000000f';
+    raise exception 'ÉCHEC — une invitation acceptée sans compte a été acceptée';
+  exception when check_violation then
+    raise notice 'OK   — accepter une invitation sans compte est refusé : l''un ne va pas sans l''autre';
+  end;
+end $$;
+
+insert into auth.users (id, email) values
+  ('77777777-7777-7777-7777-777777777777', 'camille@huntpilote.ca');
+
+do $$
+declare lie uuid; compte uuid; orphelin uuid;
+begin
+  lie := app.accept_member_invitation('77777777-7777-7777-7777-777777777777',
+                                      'Camille@HuntPilote.ca');
+
+  select user_id into compte from public.agency_member
+   where id = 'bbbbbbbb-0000-0000-0000-00000000000f';
+
+  if lie is null or compte <> '77777777-7777-7777-7777-777777777777' then
+    raise exception 'ÉCHEC — la première connexion n''a pas rattaché l''invitation';
+  end if;
+
+  -- Une connexion sans invitation correspondante ne rattache rien.
+  orphelin := app.accept_member_invitation('77777777-7777-7777-7777-777777777777',
+                                           'inconnu@ailleurs.ca');
+  if orphelin is not null then
+    raise exception 'ÉCHEC — un courriel sans invitation a été rattaché à une agence';
+  end if;
+
+  raise notice 'OK   — la première connexion rattache l''invitation (casse comprise), et rien d''autre';
 end $$;
 
 
