@@ -131,6 +131,14 @@ confondus* — est une **vue** qui rassemble les trois, pas une table.
 
 ### 8. La politique de conservation façonne les tables, elle ne s'y ajoute pas
 
+> **Depuis :** la règle 3 ne façonne plus seulement les tables, elle s'exécute.
+> `app.purge_expired_data()` périme le cache et dilue les séries avec les
+> seuils de chaque agence ; un déclencheur pose le régime de conservation à
+> l'insertion pour qu'un appel ne puisse pas se déclarer conservé alors qu'il
+> ne l'est pas ; et perdre un deal purge l'instantané du prospect sur-le-champ.
+> La table des deltas de liens s'appelle `backlink_event` et non
+> `backlink_change`, mais la thèse est la même : pas de table `backlink`.
+
 La règle 3 distingue ce qui est historisé de ce qui est éphémère. Ça se traduit
 directement :
 
@@ -170,14 +178,28 @@ divergences impossibles.
 
 ## Ce qui reste à décider — et qui ne m'appartient pas
 
-### Quel projet Supabase
+### ~~Quel projet Supabase~~ — tranché
 
-Trois projets existent sur le compte, tous en pause, aucun nommé HuntPilote :
-`Tigro CRM`, `digihunt-crm-seo`, `digihunt-mini-crm`. Je ne sais pas lesquels
-sont vivants ni ce qu'ils contiennent, et appliquer des migrations sur le
-mauvais effacerait du travail. **À trancher : en créer un neuf — mon conseil —
-ou réutiliser l'un des trois.** Tant que ce n'est pas décidé, les migrations
-restent dans le dépôt sans être appliquées.
+Un projet neuf, `huntpilote` (région `ca-central-1`), a été créé le
+11 septembre plutôt que de réutiliser l'un des trois projets en pause dont on
+ignorait le contenu. Les onze migrations y sont appliquées ; l'audit de
+sécurité est vide.
+
+**Quatre réglages restent manuels**, parce qu'ils passent par la console et
+qu'aucun outil ne les pose à distance :
+
+1. **Authentification** — activer les fournisseurs « courriel » et « lien
+   magique » (*Authentication → Providers*).
+2. **Désactiver les inscriptions publiques** (*Authentication → Sign Up*).
+   Sans ça, n'importe qui crée un compte sur le CRM d'une agence. C'est le
+   seul des quatre qui soit une faille tant qu'il n'est pas fait.
+3. **URL de redirection** — l'URL du site et les URL de retour autorisées
+   (*Authentication → URL Configuration*), sinon le lien magique renvoie vers
+   `localhost`.
+4. **Trois variables d'environnement côté Vercel** —
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` et
+   `SUPABASE_SERVICE_ROLE_KEY` (celle-ci jamais préfixée `NEXT_PUBLIC_` :
+   elle contourne RLS et n'a rien à faire dans un paquet navigateur).
 
 ### Comment les écrans liront la base
 
