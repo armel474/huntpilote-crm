@@ -17,15 +17,17 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0005_vues_security_invoker.sql` | Les vues respectent le RLS de leur appelant | ✅ appliquée |
 | `0006_index_cles_etrangeres.sql` | Index sur les 22 clés étrangères non couvertes | ✅ appliquée |
 | `0007_seo_local.sql` | Fiche Google Business, avis, citations, positions, concurrence | ✅ appliquée |
-| Outils SEO (séries de positions, backlinks, cache de mots-clés) | — | ⬜ à écrire |
+| `0008_outils_series.sql` | Suivi de positions, profil de liens, gains et pertes | ✅ appliquée |
+| `0009_analyses_et_conservation.sql` | Analyses ponctuelles, cache, quota, **règle 3 exécutée** | ✅ appliquée |
+| `0010_search_path_declencheur.sql` | Chemin de recherche figé sur le dernier déclencheur | ✅ appliquée |
 | Contenu, automatisations, notifications, agenda | — | ⬜ à écrire |
 | `seed.sql` — le portefeuille de démonstration | — | ⬜ bloqué par la réconciliation |
 
-Le projet Supabase `huntpilote` (région `ca-central-1`) porte les sept
-migrations. Le schéma en ligne correspond exactement à celui validé en local :
-49 tables, 58 politiques, 6 vues — toutes en `security_invoker` —, 64
-contraintes de vérification, 23 déclencheurs, 24 vocabulaires, aucune table
-sans RLS. L'audit de sécurité ne remonte rien.
+Le projet Supabase `huntpilote` (région `ca-central-1`) porte les dix
+migrations. Le schéma en ligne correspond exactement à celui validé en local,
+sur les sept compteurs : 72 tables, 81 politiques, 12 vues — toutes en
+`security_invoker` —, 100 contraintes de vérification, 27 déclencheurs, 33
+vocabulaires, aucune table sans RLS. L'audit de sécurité ne remonte rien.
 
 Il reste **quatre réglages manuels** côté plateforme, listés dans
 `docs/modele-donnees.md` : les deux fournisseurs d'authentification, la
@@ -56,11 +58,13 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/01_regles.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/02_regles_crm.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/03_regles_vues.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/04_regles_local.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/05_regles_outils.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/06_regles_conservation.sql
 ```
 
-Les quatre fichiers s'enchaînent sur **la même base** : `02`, `03` et `04`
-réutilisent le jeu d'essai monté par `01` (agence HuntPilote, agence rivale,
-compte Acme, contact Sophie). 38 assertions au total.
+Les six fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
+Sophie). 63 assertions au total.
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
 (`auth.users`, `auth.uid()`, le rôle `authenticated`). Il n'est jamais appliqué
@@ -116,6 +120,26 @@ Et côté SEO local (`04_regles_local.sql`) :
   qu'elle sert à constater.
 - Le portail voit sa fiche et ses relevés, **jamais l'inventaire** des
   incohérences ni l'analyse de ses rivaux.
+
+Et côté outils (`05_regles_outils.sql`, `06_regles_conservation.sql`) :
+
+- Le tableau `history` devient une série datée : « 7, précédemment 9 » se lit
+  entre deux lignes, et le relevé précédent **a enfin une date**.
+- « Sorti du classement », « premier relevé » et « cannibalisation » se
+  déduisent de la série. Le test a d'ailleurs trouvé une contradiction dans le
+  jeu de démonstration : un mot-clé affiche « précédemment 34 » alors que son
+  propre historique donne `null` aux trois derniers relevés.
+- Un gain de lien **nomme la page** qu'il pointe, une perte **dit pourquoi**,
+  un lien « désavoué » **porte la date** de son désaveu.
+- Le marqueur de conservation (règle 3) ne se déclare pas : un appel qui se
+  prétend historisé alors qu'il est du cache **est corrigé, pas cru**.
+- Les quatre catégories du Keyword Gap sont quatre comparaisons, pas quatre
+  listes à tenir — et un concurrent sans données **ne compte pas** : ne pas
+  savoir n'est pas être absent.
+- Perdre un deal **purge l'instantané** du prospect, sur-le-champ.
+- La dilution n'est plus un vœu de document : 14 relevés quotidiens vieux de
+  plus de 90 jours deviennent 3 relevés hebdomadaires, le relevé récent reste
+  intact, et le cache périmé disparaît.
 
 Ce troisième fichier existe parce que les deux premiers avaient un trou : ils
 vérifiaient les politiques des *tables*, jamais ce que renvoient les *vues*. Or
