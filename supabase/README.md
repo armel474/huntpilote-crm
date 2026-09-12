@@ -20,14 +20,15 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0008_outils_series.sql` | Suivi de positions, profil de liens, gains et pertes | ✅ appliquée |
 | `0009_analyses_et_conservation.sql` | Analyses ponctuelles, cache, quota, **règle 3 exécutée** | ✅ appliquée |
 | `0010_search_path_declencheur.sql` | Chemin de recherche figé sur le dernier déclencheur | ✅ appliquée |
-| Contenu, automatisations, notifications, agenda | — | ⬜ à écrire |
+| `0011_contenu_automatisations_agenda.sql` | Contenu éditorial, briefs, règles Quand/Alors, notifications, agenda | ✅ appliquée |
 | `seed.sql` — le portefeuille de démonstration | — | ⬜ bloqué par la réconciliation |
 
-Le projet Supabase `huntpilote` (région `ca-central-1`) porte les dix
-migrations. Le schéma en ligne correspond exactement à celui validé en local,
-sur les sept compteurs : 72 tables, 81 politiques, 12 vues — toutes en
-`security_invoker` —, 100 contraintes de vérification, 27 déclencheurs, 33
-vocabulaires, aucune table sans RLS. L'audit de sécurité ne remonte rien.
+**Le modèle est complet.** Le projet Supabase `huntpilote` (région
+`ca-central-1`) porte les onze migrations. Le schéma en ligne correspond
+exactement à celui validé en local, sur les sept compteurs : 88 tables, 99
+politiques, 15 vues — toutes en `security_invoker` —, 121 contraintes de
+vérification, 34 déclencheurs, 42 vocabulaires, aucune table sans RLS.
+L'audit de sécurité ne remonte rien.
 
 Il reste **quatre réglages manuels** côté plateforme, listés dans
 `docs/modele-donnees.md` : les deux fournisseurs d'authentification, la
@@ -60,11 +61,12 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/03_regles_vues.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/04_regles_local.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/05_regles_outils.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/06_regles_conservation.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/07_regles_automatisations.sql
 ```
 
-Les six fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les sept fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). 63 assertions au total.
+Sophie). 81 assertions au total.
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
 (`auth.users`, `auth.uid()`, le rôle `authenticated`). Il n'est jamais appliqué
@@ -140,6 +142,24 @@ Et côté outils (`05_regles_outils.sql`, `06_regles_conservation.sql`) :
 - La dilution n'est plus un vœu de document : 14 relevés quotidiens vieux de
   plus de 90 jours deviennent 3 relevés hebdomadaires, le relevé récent reste
   intact, et le cache périmé disparaît.
+
+Et côté contenu et automatisations (`07_regles_automatisations.sql`) :
+
+- Une condition qui **ne parle pas de son déclencheur** est refusée, et
+  changer de déclencheur **emporte** les conditions devenues fausses. Le code
+  nettoyait après coup ; la base refuse d'abord.
+- Trois échecs **consécutifs** arrêtent une règle — et une réussite au milieu
+  casse la série. Une exécution qui échoue **dit pourquoi**.
+- « 24 exécutions, dernière il y a 2 j, 100 % de réussite » se comptent sur le
+  journal d'exécution, qui n'existait pas.
+- « Publié » veut dire qu'il y a **une page et une date** ; « en rédaction »
+  veut dire que **quelqu'un le rédige** ; une longueur cible porte **la raison
+  qui l'explique** ; un plan d'article n'a que des H2 et des H3.
+- Un événement d'agenda **ouvre une chose, pas deux, et jamais rien** — et
+  seule une échéance se coche.
+- Un bouton **sans destination** ne se propose pas, et quand l'objet pointé
+  disparaît, **le lien disparaît avec lui**.
+- Chacun ne lit que **ses** notifications, plus celles de l'agence.
 
 Ce troisième fichier existe parce que les deux premiers avaient un trou : ils
 vérifiaient les politiques des *tables*, jamais ce que renvoient les *vues*. Or
