@@ -21,14 +21,44 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0009_analyses_et_conservation.sql` | Analyses ponctuelles, cache, quota, **règle 3 exécutée** | ✅ appliquée |
 | `0010_search_path_declencheur.sql` | Chemin de recherche figé sur le dernier déclencheur | ✅ appliquée |
 | `0011_contenu_automatisations_agenda.sql` | Contenu éditorial, briefs, règles Quand/Alors, notifications, agenda | ✅ appliquée |
-| `seed.sql` — le portefeuille de démonstration | — | ⬜ bloqué par la réconciliation |
+| `0012_catalogue_agence.sql` | Produits, services, offres, abonnements, tâches engagées | ✅ appliquée |
+| `0013_documents_agence.sql` | Identité de facturation, modèles, numérotation, lignes de facture | ✅ appliquée |
+| `0014_offre_reelle.sql` | Offres emboîtées, prix plancher, tarif d'entrée, alternatives | ✅ appliquée |
+| `0015a` + `0015b` | Contrat, livrables, jalons, exclusions, échéancier de paiement | ✅ appliquée |
+| `0016_equipe_et_permissions.sql` | Profils d'équipe et onze permissions appliquées | ✅ appliquée |
+| `0017_membre_avant_connexion.sql` | Inviter avant de connecter ; `user_profile` disparaît | ✅ appliquée |
+| `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
 
-**Le modèle est complet.** Le projet Supabase `huntpilote` (région
-`ca-central-1`) porte les onze migrations. Le schéma en ligne correspond
-exactement à celui validé en local, sur les sept compteurs : 88 tables, 99
-politiques, 15 vues — toutes en `security_invoker` —, 121 contraintes de
-vérification, 34 déclencheurs, 42 vocabulaires, aucune table sans RLS.
-L'audit de sécurité ne remonte rien.
+**Le modèle est complet, et la base est peuplée.** Le projet Supabase
+`huntpilote` (région `ca-central-1`) porte les dix-huit migrations et le
+semis. Le schéma en ligne correspond exactement à celui validé en local, sur
+les huit compteurs : 109 tables, 134 politiques, 23 vues — toutes en
+`security_invoker` —, 178 contraintes de vérification, 46 déclencheurs, 50
+vocabulaires, 37 fonctions, aucune table sans RLS.
+
+L'audit de sécurité ne remonte qu'une information : `number_counter` a RLS
+sans aucune politique. C'est voulu — personne n'y touche depuis
+l'application, seule `app.next_number()` y accède avec ses propres droits. Y
+ajouter une politique affaiblirait la garantie.
+
+### Le semis
+
+`seed.sql` pose des **données**, pas du schéma : une révision de tarifs ou un
+nouveau client ne demande aucune migration. Il contient l'agence DigiHunt et
+son identité de facturation, les six offres telles qu'elles sont vendues, le
+mandat SHGM (contrat n° 2026-007 avec ses onze livrables, ses douze jalons et
+ses treize exclusions), et un portefeuille de huit comptes — quatre clients,
+quatre prospects, fictifs et assumés comme tels.
+
+Trois mandats mensuels y génèrent **115 tâches** sans que personne les écrive :
+c'est l'offre qui dit ce qu'elle engage. Le revenu récurrent s'élève à
+2 200 $ par mois, calculé sur les abonnements actifs.
+
+Un garde-fou empêche de le rejouer sur une base déjà peuplée.
+
+**Il reste deux valeurs à saisir**, signalées dans le fichier :
+les numéros d'inscription à la TPS et à la TVQ de l'agence, et le tarif
+préférentiel des trois premiers mois de chaque pack SEO.
 
 Il reste **quatre réglages manuels** côté plateforme, listés dans
 `docs/modele-donnees.md` : les deux fournisseurs d'authentification, la
@@ -62,11 +92,20 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/04_regles_local.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/05_regles_outils.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/06_regles_conservation.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/07_regles_automatisations.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/08_regles_catalogue.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/09_regles_documents.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/10_regles_offre_reelle.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/11_regles_contrat.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/12_regles_permissions.sql
 ```
 
-Les sept fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les douze fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). 81 assertions au total.
+Sophie). **151 assertions** au total.
+
+Les trois derniers montent des données réelles — les six offres telles
+qu'elles sont vendues, et le mandat SHGM tel qu'il est signé — parce que c'est
+la seule façon de vérifier que le modèle les décrit sans rien perdre.
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
 (`auth.users`, `auth.uid()`, le rôle `authenticated`). Il n'est jamais appliqué
