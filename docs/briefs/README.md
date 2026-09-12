@@ -1,4 +1,4 @@
-# Séquence de conception — 25 sessions Claude Design
+# Séquence de conception — 29 sessions Claude Design
 
 Un fichier par session. Ouvre le fichier, copie tout son contenu, colle-le dans
 une session Claude Design du projet *HuntPilote - CRM SEO*.
@@ -41,6 +41,7 @@ phase 1, ne disait rien de ce qui est urgent à l'échelle du portefeuille.
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
 | 8 — Dashboard enrichi | 1 | ✅ intégrée |
+| 9 — L'Agence hub | 4 sessions, 10 écrans | 📐 briefs prêts |
 
 ---
 
@@ -252,6 +253,36 @@ statiques, sans équivalent dans l'application réelle : `AppShell` rend déjà
 maquette ont donc été ignorés à l'intégration. Le panneau de tâches du
 Dashboard a aussi été rebranché sur `ALL_TASKS` (`/travail`) à cette occasion,
 un correctif de cohérence trouvé pendant l'audit plutôt qu'un point du brief.
+
+### Phase 9 — L'Agence hub
+
+Née d'un besoin dit après le branchement de la base : l'agence n'avait pas
+d'espace à elle. Son profil, son équipe et son catalogue se cachaient dans
+Paramètres, le catalogue en lecture seule, et rien ne permettait de
+construire une offre ni de produire un devis, un contrat, une annexe ou une
+facture depuis ce que l'agence vend. Le modèle de données sait déjà tout
+faire (voir [`../passation-agence-hub.md`](../passation-agence-hub.md),
+section 3) : cette phase dessine les écrans qui manquent.
+
+| Session | Écrans | Fichier | État |
+|---|---|---|---|
+| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | 📐 à concevoir |
+| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | 📐 à concevoir |
+| 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 📐 à concevoir |
+| 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 📐 à concevoir |
+
+> **9.1 d'abord**, seule : elle pose le cadre dont les trois autres sont des
+> sections. **9.2 et 9.3 sont indépendantes** et peuvent se concevoir en
+> parallèle. **9.4 vient en dernier** : elle assemble les offres de 9.2 et
+> les modèles de 9.3. Pour 9.3, colle aussi dans la session le HTML d'un
+> vrai modèle de l'agence.
+
+Deux choses distinguent cette phase des précédentes. **L'application est
+branchée sur la base** : les états vides, les états « pas le droit » et les
+erreurs d'enregistrement sont réels, et chaque brief les liste. **Le
+Profil et l'Équipe existent déjà en code** (session sans brief, construite
+directement dans `/parametres`) : 9.1 les déplace et les complète, elle ne
+les redessine pas.
 
 > **Une décision prise pendant l'audit, à retenir pour la suite.** La fiche
 > client affiche en réalité toujours les données d'Acme Corp., quel que soit

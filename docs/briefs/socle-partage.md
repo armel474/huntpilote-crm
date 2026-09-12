@@ -135,6 +135,26 @@ seulement, dans le brief, *lesquels* de ces états ont un sens pour l'écran (le
 principe reste : pas les quatre catégories partout, seulement où c'est
 pertinent).
 
+### La colonne de réglages et les boîtes de dialogue — depuis le branchement de la base
+
+`/parametres` a une **sous-navigation verticale** (`.set-nav`, état actif
+par `.on`) qui sert aussi à l'Agence hub : un écran à sections la reprend.
+Trois pièces sont nées avec les premiers formulaires qui écrivent dans la
+base, et se réutilisent telles quelles :
+
+| Classe | Rôle |
+|---|---|
+| `.st-msg` (`.err` `.ok` `.warn`) | Le résultat d'une action serveur ou un avertissement : une icône, une ligne, un ton |
+| `.st-dlg` (`.wide`), `.st-dlg-top`, `.st-dlg-actions` | Boîte de dialogue au-dessus de la page, sur le voile `.hp-ovl` ; Échap et le fond la ferment |
+| `.st-grid2` | Grille de formulaire à deux colonnes, une seule sous 560 px |
+| `.st-perm` (`.on`) | Carte cochable d'un droit : libellé, explication, badge d'exception |
+| `.st-sep` | Séparateur de sections dans un formulaire |
+
+**Un bouton verrouillé reste à sa place et dit pourquoi** (`title` ou
+ligne d'explication) — il ne disparaît pas quand la personne n'a pas le
+droit. Et un formulaire en lecture seule le dit en tête, pas seulement par
+des champs grisés.
+
 ---
 
 ## Règles d'écriture du HTML

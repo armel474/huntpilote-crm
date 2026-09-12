@@ -5,7 +5,11 @@ Il dit où en est le projet, ce que la base sait déjà faire, ce que l'Agence
 hub doit devenir, et par quoi commencer. Il se lit seul : la session qui
 le reçoit n'a pas l'historique de celle qui l'a écrit.
 
-Rédigé le 12 septembre 2026, après le déploiement `2aba965`.
+Rédigé le 12 septembre 2026, après le déploiement `2aba965`. Complété le
+même jour par les quatre briefs de conception de la phase 9
+(`docs/briefs/9-1` à `9-4`), à faire passer dans Claude Design **avant** de
+coder : la nouvelle session reçoit les maquettes HTML et les intègre, comme
+pour les huit phases précédentes.
 
 ---
 
@@ -104,6 +108,13 @@ le dit.
 
 ## 4. L'Agence hub : ce qu'il doit devenir
 
+Cette section est le résumé. **Le détail écran par écran est dans les
+briefs de la phase 9**, `docs/briefs/9-1-agence-hub-cadre.md`,
+`9-2-catalogue-offres.md`, `9-3-modeles-documents.md`,
+`9-4-generateur-documents.md`, et `docs/briefs/README.md` dit dans quel
+ordre les faire passer dans Claude Design. En cas d'écart entre cette
+section et un brief, le brief fait foi.
+
 ### Nom et place
 
 **« Agence hub »**, en miroir de « Client hub » qui existe déjà dans le
@@ -186,16 +197,21 @@ en ligne plus que d'un CRM. Ce qui est décidé et ce qui reste à décider.
 
 ## 5. Ordre de travail proposé
 
-Chaque étape se livre seule, déployée, vérifiable en production.
+La méthode reste celle des huit phases précédentes : **le design d'abord,
+dans Claude Design, brief par brief ; puis l'intégration, maquette par
+maquette**, dans l'application réelle, en vérifiant au navigateur en thème
+clair et sombre. Chaque étape se livre seule, déployée, vérifiable en
+production.
 
 | # | Étape | Taille | Dépend de |
 |---|---|---|---|
+| D | **Design** : faire passer les briefs 9.1 → (9.2 ‖ 9.3) → 9.4 dans Claude Design, valider chaque maquette (shell intact, classes du socle reprises, états présents). Armel. | 4 sessions | briefs |
 | 0 | `AUTH_REQUIRED=on` sur Vercel (Armel). Bucket Storage `public-assets` (migration + politique). | petite | — |
-| 1 | Créer `/agence` avec sa navigation ; y déplacer Profil, Équipe, Catalogue ; alléger `/parametres`. Téléversement du logo et des photos. | moyenne | 0 |
-| 2 | Catalogue modifiable : actions serveur créer / modifier / archiver / réordonner. | moyenne | 1 |
-| 3 | Constructeur d'offres : édition complète de `offer`, `offer_line`, `offer_benefit`, `offer_segment`, `offer_task_template`. Migration `offer_deliverable_template`. | grande | 2 |
-| 4 | Modèles de documents : `body_html` + balises, écran d'édition, aperçu sur données d'exemple, semis des modèles réels d'Armel. | grande | HTML fourni |
-| 5 | Générateur : devis depuis un client ou une opportunité, à partir d'une offre ou de lignes libres ; rendu `/documents/[id]` ; envoi = figeage. Puis contrat et annexe, puis facture. | grande | 3, 4 |
+| 1 | Intégrer 9.1 : `/agence`, sa navigation, sa page d'accueil ; déplacer Profil, Équipe, alléger `/parametres` ; téléversement du logo et des photos ; NEQ et instructions de paiement (migration de trois colonnes). | moyenne | D, 0 |
+| 2 | Intégrer 9.2 — catalogue : actions serveur créer / modifier / archiver / réordonner. | moyenne | 1 |
+| 3 | Intégrer 9.2 — constructeur d'offres : édition complète de `offer`, `offer_line`, `offer_benefit`, `offer_segment`, `offer_task_template`. Migration `offer_deliverable_template`. | grande | 2 |
+| 4 | Intégrer 9.3 : `document_template.body_html`, analyse des balises, éditeur, aperçu sur données d'exemple, semis des modèles réels d'Armel. | grande | 1, HTML fourni |
+| 5 | Intégrer 9.4 : panneau de création, rendu `/documents/[id]`, envoi = figeage (`rendered_html`), versions, chaîne proposition → contrat → facture → mandat ; liste `/agence/documents` ; écran du portail. | grande | 3, 4 |
 | 6 | Brancher `/clients` et `/pipeline` sur la base (semer opportunités et mesures pour les 8 comptes fictifs). Indépendant de l'Agence hub, mais nécessaire pour que le générateur ait des clients réels sous la main. | grande | — |
 
 Le reste de l'arriéré, pour mémoire : contrat à l'écran (livrables, jalons,
@@ -205,8 +221,11 @@ figés encore présents sur `client` (`health_score_prev` et semblables).
 
 ## 6. À apporter à la nouvelle session
 
-- Le **HTML des modèles** produits avec Claude Design, un fichier par
-  document, et la **liste des balises** qu'ils contiennent.
+- Les **maquettes HTML** produites par Claude Design à partir des briefs
+  9.1 à 9.4, un fichier par écran, telles que validées.
+- Le **HTML des modèles de documents** de l'agence (proposition, contrat,
+  Annexe A, devis, facture), un fichier par document, et la **liste des
+  balises** qu'ils contiennent.
 - Les numéros de **TPS, TVQ et NEQ** (ou les saisir dans Profil avant).
 - Le **logo** de l'agence et les **photos** des membres réels.
 - Les **tarifs d'entrée** des packs SEO, s'ils existent.
@@ -230,12 +249,19 @@ précis vaut mieux qu'une liste de souhaits.
 
 À coller tel quel dans la première invite :
 
-> Lis `docs/passation-agence-hub.md` en entier, puis `supabase/README.md`
-> et `docs/modele-donnees.md`. Respecte les conventions de la section 2
-> sans exception. Commence par l'étape 1 de la section 5 : créer
-> `/agence` (« Agence hub »), y déplacer Profil, Équipe et Catalogue depuis
-> `/parametres`, ajouter le téléversement du logo et des photos via
-> Supabase Storage. Valide toute migration en local avant de l'appliquer
-> en ligne, déploie, et dis-moi ce que je dois vérifier en production
-> avant de passer à l'étape suivante. Ne me demande pas de permission pour
-> les actions réversibles : le mode automatique est activé.
+> Lis `docs/passation-agence-hub.md` en entier, puis `supabase/README.md`,
+> `docs/modele-donnees.md` et les quatre briefs `docs/briefs/9-*.md`.
+> Respecte les conventions de la section 2 sans exception. Je te fournis
+> les maquettes HTML produites par Claude Design à partir de ces briefs
+> (jointes à ce message ou déposées dans `docs/maquettes/phase-9/`).
+> Commence par l'étape 1 de la section 5 : intégrer la maquette 9.1 —
+> créer `/agence` (« Agence hub »), sa navigation et sa page d'accueil, y
+> déplacer Profil et Équipe depuis `/parametres`, ajouter le téléversement
+> du logo et des photos via Supabase Storage, le NEQ et les instructions de
+> paiement. Réutilise les composants existants (`app/parametres/*Panel.tsx`,
+> `bits.tsx`, `actions.ts`) au lieu de les réécrire. Valide toute migration
+> en local avant de l'appliquer en ligne, vérifie au navigateur en thème
+> clair et sombre, déploie, et dis-moi ce que je dois vérifier en
+> production avant de passer à l'étape suivante. Ne me demande pas de
+> permission pour les actions réversibles : le mode automatique est activé.
+> En fin d'étape, mets à jour la section 1 et la section 8 de ce document.
