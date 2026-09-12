@@ -33,6 +33,19 @@ as $$
   select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
 $$;
 
+-- `auth.jwt()` rend les revendications du jeton. En local, le courriel se
+-- pose comme l'identifiant :
+--   set local request.jwt.claim.email = 'marie@huntpilote.ca';
+create or replace function auth.jwt()
+returns jsonb
+language sql
+stable
+as $$
+  select jsonb_build_object(
+    'sub',   nullif(current_setting('request.jwt.claim.sub', true), ''),
+    'email', nullif(current_setting('request.jwt.claim.email', true), ''));
+$$;
+
 do $$
 begin
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then

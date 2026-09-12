@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ConnexionView } from '@/app/connexion/ConnexionView';
 import './connexion.css';
 
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default function ConnexionPage() {
-  return <ConnexionView />;
+  // `useSearchParams` côté client exige une frontière Suspense au prérendu.
+  return (
+    <Suspense>
+      <ConnexionView />
+    </Suspense>
+  );
 }

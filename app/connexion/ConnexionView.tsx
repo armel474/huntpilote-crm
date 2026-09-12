@@ -1,15 +1,19 @@
 'use client';
 
 /**
- * Connexion agence — session 6.2.
+ * Connexion agence.
  *
- * Aucune authentification n'existe encore (décision 12 : mono-utilisateur
- * pour l'instant). Cet écran reste un outil interne, pas un produit grand
- * public — pas d'argumentaire de vente sur une page de connexion.
+ * Trois façons d'entrer, toutes servies par Supabase Auth : mot de passe,
+ * lien magique, Google. Le lien magique et Google reviennent par
+ * `/api/auth/callback`, qui échange le code contre une session et rattache la
+ * personne à son invitation.
+ *
+ * Cet écran reste un outil interne, pas un produit grand public — pas
+ * d'argumentaire de vente sur une page de connexion.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useTheme } from '@/components/shell/ThemeProvider';
-import { DemoOnly } from '@/components/ui/Demo';
 import {
   IcoChevL,
   IcoEye,
@@ -20,21 +24,29 @@ import {
   IcoSun,
   IcoWarn,
 } from '@/components/ui/Icons';
+import { createClient } from '@/lib/supabase/client';
 import { routes } from '@/lib/routes';
 
-const KNOWN: Record<string, { name: string; role: string; pass: string }> = {
-  'marie@huntpilote.ca': { name: 'Marie Chen', role: 'Administratrice', pass: 'bonjour2026' },
-};
+type Step = 'login' | 'magic-sent' | 'forgot' | 'forgot-sent' | 'new-password' | 'welcome';
 
-type Scenario = 'connexion' | 'oublie' | 'invitation' | 'premiere';
-type Step = 'login' | 'forgot' | 'invited' | 'first' | 'welcome';
-
-const SCENARIOS: [Scenario, string][] = [
-  ['connexion', 'Connexion'],
-  ['oublie', 'Mot de passe oublié'],
-  ['invitation', 'Invitation reçue'],
-  ['premiere', 'Première connexion'],
-];
+/** Ce que Supabase renvoie, dit en français — et sans révéler si un compte existe. */
+function messageFor(code: string | undefined, fallback: string): string {
+  switch (code) {
+    case 'invalid_credentials':
+      return 'Courriel ou mot de passe incorrect.';
+    case 'email_not_confirmed':
+      return 'Ce courriel n’a pas encore été confirmé. Vérifiez votre boîte.';
+    case 'over_email_send_rate_limit':
+    case 'over_request_rate_limit':
+      return 'Trop de tentatives. Patientez une minute avant de réessayer.';
+    case 'weak_password':
+      return 'Mot de passe trop faible — 8 caractères minimum.';
+    case 'same_password':
+      return 'Choisissez un mot de passe différent de l’actuel.';
+    default:
+      return fallback;
+  }
+}
 
 function Brand() {
   return (
@@ -47,33 +59,100 @@ function Brand() {
   );
 }
 
-function Login({ onLogin, onForgot }: { onLogin: () => void; onForgot: () => void }) {
-  const [email, setEmail] = useState('marie@huntpilote.ca');
+function ErrorLine({ text }: { text: string }) {
+  return (
+    <div className="cn-err" role="alert">
+      <span style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}>
+        <IcoWarn size={14} />
+      </span>
+      <span>{text}</span>
+    </div>
+  );
+}
+
+/** Où renvoyer après connexion : le chemin demandé, ou le tableau de bord. */
+function useDestination() {
+  const params = useSearchParams();
+  const suite = params.get('suite');
+  return suite && suite.startsWith('/') && !suite.startsWith('//') ? suite : routes.dashboard();
+}
+
+function callbackUrl(suite: string) {
+  return `${window.location.origin}/api/auth/callback?suite=${encodeURIComponent(suite)}`;
+}
+
+function Login({
+  onMagicSent,
+  onForgot,
+  onLoggedIn,
+  initialError,
+}: {
+  onMagicSent: (email: string) => void;
+  onForgot: () => void;
+  onLoggedIn: () => void;
+  initialError: string | null;
+}) {
+  const destination = useDestination();
+  const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [show, setShow] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<'password' | 'magic' | 'google' | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
 
-  const submit = (e: React.FormEvent) => {
+  const withPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const u = KNOWN[email.trim().toLowerCase()];
-    if (!u) {
-      setError('Aucun compte HuntPilote pour cette adresse.');
-      return;
-    }
-    if (pass !== u.pass) {
-      setError('Mot de passe incorrect.');
-      return;
-    }
+    setBusy('password');
     setError(null);
-    onLogin();
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: pass });
+    setBusy(null);
+    if (error) {
+      setError(messageFor(error.code, 'La connexion a échoué. Réessayez.'));
+      return;
+    }
+    // Rattache une invitation en attente, sans bloquer si rien ne correspond.
+    await supabase.rpc('accept_my_invitation');
+    onLoggedIn();
+    window.location.assign(destination);
+  };
+
+  const withMagicLink = async () => {
+    setBusy('magic');
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: callbackUrl(destination), shouldCreateUser: false },
+    });
+    setBusy(null);
+    if (error) {
+      setError(messageFor(error.code, 'L’envoi du lien a échoué. Réessayez.'));
+      return;
+    }
+    onMagicSent(email.trim());
+  };
+
+  const withGoogle = async () => {
+    setBusy('google');
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: callbackUrl(destination) },
+    });
+    if (error) {
+      setBusy(null);
+      setError(messageFor(error.code, 'La connexion avec Google a échoué.'));
+    }
+    // Sinon, le navigateur part chez Google : rien d'autre à faire ici.
   };
 
   return (
     <div className="cn-card">
       <Brand />
       <div className="cn-h1">Connexion à l&apos;agence</div>
-      <p className="cn-sub">Réservé à l&apos;équipe HuntPilote.</p>
-      <form onSubmit={submit}>
+      <p className="cn-sub">Réservé à l&apos;équipe.</p>
+      <form onSubmit={withPassword}>
         <div className="cn-field">
           <label htmlFor="cn-email">Courriel</label>
           <input
@@ -86,7 +165,7 @@ function Login({ onLogin, onForgot }: { onLogin: () => void; onForgot: () => voi
               setEmail(e.target.value);
               setError(null);
             }}
-            placeholder="prenom@huntpilote.ca"
+            placeholder="prenom@agence.ca"
             style={error ? { borderColor: 'var(--red)' } : undefined}
           />
         </div>
@@ -121,25 +200,83 @@ function Login({ onLogin, onForgot }: { onLogin: () => void; onForgot: () => voi
             </button>
           </div>
         </div>
-        {error && (
-          <div className="cn-err">
-            <span style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}>
-              <IcoWarn size={14} />
-            </span>
-            <span>{error}</span>
-          </div>
-        )}
-        <button type="submit" className="btn-pri" style={{ width: '100%', justifyContent: 'center' }} disabled={!email.trim() || !pass}>
-          Se connecter
+        {error && <ErrorLine text={error} />}
+        <button
+          type="submit"
+          className="btn-pri"
+          style={{ width: '100%', justifyContent: 'center' }}
+          disabled={!email.trim() || !pass || busy !== null}
+        >
+          {busy === 'password' ? 'Connexion…' : 'Se connecter'}
         </button>
       </form>
+
+      <div className="cn-sep" />
+
+      <button
+        type="button"
+        className="btn-out"
+        style={{ width: '100%', justifyContent: 'center', marginBottom: 8 }}
+        disabled={!email.trim() || busy !== null}
+        onClick={withMagicLink}
+        title={email.trim() ? undefined : 'Entrez d’abord votre courriel'}
+      >
+        {busy === 'magic' ? 'Envoi…' : 'Recevoir un lien de connexion par courriel'}
+      </button>
+      <button
+        type="button"
+        className="btn-out"
+        style={{ width: '100%', justifyContent: 'center' }}
+        disabled={busy !== null}
+        onClick={withGoogle}
+      >
+        {busy === 'google' ? 'Redirection…' : 'Continuer avec Google'}
+      </button>
+      <p className="cn-hint" style={{ marginTop: '1rem' }}>
+        Seules les personnes invitées par l&apos;agence peuvent entrer. Un compte créé sans invitation ne voit rien.
+      </p>
     </div>
   );
 }
 
-function Forgot({ onBack }: { onBack: () => void }) {
-  const [email, setEmail] = useState('marie@huntpilote.ca');
-  const [sent, setSent] = useState(false);
+function Sent({ email, title, body, onBack }: { email: string; title: string; body: string; onBack: () => void }) {
+  return (
+    <div className="cn-card">
+      <button type="button" className="cn-back" onClick={onBack}>
+        <IcoChevL size={13} />
+        Retour à la connexion
+      </button>
+      <Brand />
+      <div className="cn-sent" aria-hidden="true">
+        <IcoMail size={20} />
+      </div>
+      <div className="cn-h1">{title}</div>
+      <p className="cn-sub" style={{ marginBottom: '1.25rem' }}>
+        Si <b style={{ color: 'var(--fg1)' }}>{email}</b> correspond à un compte, {body}
+      </p>
+    </div>
+  );
+}
+
+function Forgot({ onBack, onSent }: { onBack: () => void; onSent: (email: string) => void }) {
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const send = async () => {
+    setBusy(true);
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: callbackUrl('/connexion?etape=nouveau-mot-de-passe'),
+    });
+    setBusy(false);
+    if (error) {
+      setError(messageFor(error.code, 'L’envoi a échoué. Réessayez.'));
+      return;
+    }
+    onSent(email.trim());
+  };
 
   return (
     <div className="cn-card">
@@ -148,105 +285,72 @@ function Forgot({ onBack }: { onBack: () => void }) {
         Retour à la connexion
       </button>
       <Brand />
-      {sent ? (
-        <>
-          <div className="cn-sent" aria-hidden="true">
-            <IcoMail size={20} />
-          </div>
-          <div className="cn-h1">Vérifiez votre boîte</div>
-          <p className="cn-sub" style={{ marginBottom: '1.25rem' }}>
-            Si <b style={{ color: 'var(--fg1)' }}>{email}</b> correspond à un compte, un lien de réinitialisation
-            valide 30 minutes vient de partir.
-          </p>
-          <button type="button" className="btn-out" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setSent(false)}>
-            Renvoyer à une autre adresse
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="cn-h1">Réinitialiser le mot de passe</div>
-          <p className="cn-sub">Entrez votre courriel d&apos;agence, nous vous envoyons un lien pour en choisir un nouveau.</p>
-          <div className="cn-field">
-            <label htmlFor="cn-fe">Courriel</label>
-            <input
-              id="cn-fe"
-              className="fld"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="prenom@huntpilote.ca"
-            />
-          </div>
-          <button
-            type="button"
-            className="btn-pri"
-            style={{ width: '100%', justifyContent: 'center' }}
-            disabled={!email.trim()}
-            onClick={() => setSent(true)}
-          >
-            Envoyer le lien
-          </button>
-        </>
-      )}
-    </div>
-  );
-}
-
-function Invited({ onAccept }: { onAccept: () => void }) {
-  return (
-    <div className="cn-card">
-      <Brand />
-      <div style={{ marginBottom: 10 }}>
-        <span className="cn-role">Invitation</span>
-      </div>
-      <div className="cn-h1">Marie Chen vous invite chez HuntPilote</div>
-      <p className="cn-sub">
-        Vous rejoindrez l&apos;agence avec le rôle <b style={{ color: 'var(--fg1)' }}>Rédacteur</b> — accès aux
-        briefs de contenu et aux clients qui vous seront assignés. Un administrateur peut ajuster ce rôle plus tard.
-      </p>
+      <div className="cn-h1">Réinitialiser le mot de passe</div>
+      <p className="cn-sub">Entrez votre courriel d&apos;agence, nous vous envoyons un lien pour en choisir un nouveau.</p>
       <div className="cn-field">
-        <label htmlFor="cn-inv-e">Courriel</label>
+        <label htmlFor="cn-fe">Courriel</label>
         <input
-          id="cn-inv-e"
+          id="cn-fe"
           className="fld"
-          defaultValue="tom@huntpilote.ca"
-          disabled
-          style={{ color: 'var(--fg3)', cursor: 'not-allowed' }}
+          type="email"
+          autoComplete="username"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError(null);
+          }}
+          placeholder="prenom@agence.ca"
         />
       </div>
-      <button type="button" className="btn-pri" style={{ width: '100%', justifyContent: 'center' }} onClick={onAccept}>
-        Accepter et choisir un mot de passe
+      {error && <ErrorLine text={error} />}
+      <button
+        type="button"
+        className="btn-pri"
+        style={{ width: '100%', justifyContent: 'center' }}
+        disabled={!email.trim() || busy}
+        onClick={send}
+      >
+        {busy ? 'Envoi…' : 'Envoyer le lien'}
       </button>
-      <div className="cn-sep" />
-      <p className="cn-hint">
-        Ce lien d&apos;invitation expire dans 7 jours. Ce n&apos;est pas vous ? Ignorez ce courriel, rien ne sera
-        créé.
-      </p>
     </div>
   );
 }
 
-function FirstLogin({ onDone }: { onDone: () => void }) {
+/** Après un lien de réinitialisation : la session existe, il reste à choisir le mot de passe. */
+function NewPassword({ onDone }: { onDone: () => void }) {
   const [p1, setP1] = useState('');
   const [p2, setP2] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const weak = p1.length > 0 && p1.length < 8;
   const mismatch = p2.length > 0 && p1 !== p2;
   const ok = p1.length >= 8 && p1 === p2;
 
+  const save = async () => {
+    setBusy(true);
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password: p1 });
+    setBusy(false);
+    if (error) {
+      setError(messageFor(error.code, 'Le mot de passe n’a pas pu être enregistré.'));
+      return;
+    }
+    onDone();
+  };
+
   return (
     <div className="cn-card">
       <Brand />
-      <div style={{ marginBottom: 10 }}>
-        <span className="cn-role">Tom Bélanger · tom@huntpilote.ca</span>
-      </div>
       <div className="cn-h1">Choisissez votre mot de passe</div>
-      <p className="cn-sub">Dernière étape avant d&apos;entrer dans HuntPilote.</p>
+      <p className="cn-sub">Il remplace l&apos;ancien dès que vous validez.</p>
       <div className="cn-field">
         <label htmlFor="cn-p1">Mot de passe</label>
         <input
           id="cn-p1"
           className="fld"
           type="password"
+          autoComplete="new-password"
           value={p1}
           onChange={(e) => setP1(e.target.value)}
           placeholder="8 caractères minimum"
@@ -264,6 +368,7 @@ function FirstLogin({ onDone }: { onDone: () => void }) {
           id="cn-p2"
           className="fld"
           type="password"
+          autoComplete="new-password"
           value={p2}
           onChange={(e) => setP2(e.target.value)}
           placeholder="Retapez-le"
@@ -275,22 +380,33 @@ function FirstLogin({ onDone }: { onDone: () => void }) {
           </p>
         )}
       </div>
-      <button type="button" className="btn-pri" style={{ width: '100%', justifyContent: 'center' }} disabled={!ok} onClick={onDone}>
-        Entrer dans HuntPilote
+      {error && <ErrorLine text={error} />}
+      <button
+        type="button"
+        className="btn-pri"
+        style={{ width: '100%', justifyContent: 'center' }}
+        disabled={!ok || busy}
+        onClick={save}
+      >
+        {busy ? 'Enregistrement…' : 'Entrer dans HuntPilote'}
       </button>
     </div>
   );
 }
 
 function Welcome() {
+  const destination = useDestination();
+  useEffect(() => {
+    const t = setTimeout(() => window.location.assign(destination), 800);
+    return () => clearTimeout(t);
+  }, [destination]);
+
   return (
     <div className="cn-card" style={{ textAlign: 'center' }}>
       <Brand />
-      <div className="cn-h1">Vous êtes connectée</div>
-      <p className="cn-sub" style={{ marginBottom: '1.25rem' }}>
-        Bienvenue, Marie. Redirection vers le tableau de bord.
-      </p>
-      <a href={routes.dashboard()} className="btn-pri" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
+      <div className="cn-h1">Vous êtes connecté</div>
+      <p className="cn-sub" style={{ marginBottom: '1.25rem' }}>Redirection vers le tableau de bord.</p>
+      <a href={destination} className="btn-pri" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
         Ouvrir HuntPilote
       </a>
     </div>
@@ -299,26 +415,19 @@ function Welcome() {
 
 export function ConnexionView() {
   const { theme, toggleTheme } = useTheme();
-  const [scenario, setScenario] = useState<Scenario>('connexion');
-  const [step, setStep] = useState<Step>('login');
+  const params = useSearchParams();
+  const [step, setStep] = useState<Step>(() =>
+    params.get('etape') === 'nouveau-mot-de-passe' ? 'new-password' : 'login',
+  );
+  const [sentTo, setSentTo] = useState('');
 
-  const pickScenario = (s: Scenario) => {
-    setScenario(s);
-    setStep(s === 'connexion' ? 'login' : s === 'oublie' ? 'forgot' : s === 'invitation' ? 'invited' : 'first');
-  };
+  // Un lien revenu cassé (expiré, déjà utilisé) atterrit ici avec `?erreur=lien`.
+  const initialError =
+    params.get('erreur') === 'lien' ? 'Ce lien n’est plus valide. Demandez-en un nouveau.' : null;
 
   return (
     <>
       <div className="cn-demo">
-        <DemoOnly>
-          <select value={scenario} onChange={(e) => pickScenario(e.target.value as Scenario)} aria-label="État de démonstration">
-            {SCENARIOS.map(([id, l]) => (
-              <option key={id} value={id}>
-                {l}
-              </option>
-            ))}
-          </select>
-        </DemoOnly>
         <button
           type="button"
           onClick={toggleTheme}
@@ -329,10 +438,43 @@ export function ConnexionView() {
         </button>
       </div>
       <div className="cn-wrap">
-        {step === 'login' && <Login onLogin={() => setStep('welcome')} onForgot={() => setStep('forgot')} />}
-        {step === 'forgot' && <Forgot onBack={() => setStep('login')} />}
-        {step === 'invited' && <Invited onAccept={() => setStep('first')} />}
-        {step === 'first' && <FirstLogin onDone={() => setStep('welcome')} />}
+        {step === 'login' && (
+          <Login
+            initialError={initialError}
+            onForgot={() => setStep('forgot')}
+            onLoggedIn={() => setStep('welcome')}
+            onMagicSent={(e) => {
+              setSentTo(e);
+              setStep('magic-sent');
+            }}
+          />
+        )}
+        {step === 'magic-sent' && (
+          <Sent
+            email={sentTo}
+            title="Vérifiez votre boîte"
+            body="un lien de connexion vient de partir. Il n’est valide qu’une fois."
+            onBack={() => setStep('login')}
+          />
+        )}
+        {step === 'forgot' && (
+          <Forgot
+            onBack={() => setStep('login')}
+            onSent={(e) => {
+              setSentTo(e);
+              setStep('forgot-sent');
+            }}
+          />
+        )}
+        {step === 'forgot-sent' && (
+          <Sent
+            email={sentTo}
+            title="Vérifiez votre boîte"
+            body="un lien de réinitialisation vient de partir."
+            onBack={() => setStep('login')}
+          />
+        )}
+        {step === 'new-password' && <NewPassword onDone={() => setStep('welcome')} />}
         {step === 'welcome' && <Welcome />}
       </div>
     </>
