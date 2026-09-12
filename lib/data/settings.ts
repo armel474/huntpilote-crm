@@ -5,6 +5,7 @@ import { CLIENTS } from '@/lib/data/clients';
 
 export type SectionId =
   | 'agence'
+  | 'catalogue'
   | 'equipe'
   | 'integrations'
   | 'notifications'

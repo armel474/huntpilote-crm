@@ -3,6 +3,10 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
+import { CataloguePanel } from '@/app/parametres/CataloguePanel';
+import type { Session } from '@/lib/auth';
+import type { AgencyData } from '@/lib/queries/agence';
+import { ROLE_LABEL } from '@/lib/format';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
 import { DemoOnly } from '@/components/ui/Demo';
@@ -63,6 +67,25 @@ function IcoBuilding(p: IconProps) {
   );
 }
 
+function IcoTag(p: IconProps) {
+  return (
+    <svg
+      width={p.size ?? 15}
+      height={p.size ?? 15}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+      <line x1="7" y1="7" x2="7.01" y2="7" />
+    </svg>
+  );
+}
+
 /**
  * Lit `?section=` une fois au montage et applique la section demandée —
  * utilisé par le geste « Connecter » de Communications (session 7.2), qui
@@ -85,6 +108,7 @@ function SectionFromQuery({ onSection }: { onSection: (s: SectionId) => void }) 
 
 const SECTIONS: { id: SectionId; label: string; Icon: (p: IconProps) => React.ReactElement }[] = [
   { id: 'agence', label: "Profil de l'agence", Icon: IcoBuilding },
+  { id: 'catalogue', label: 'Catalogue', Icon: IcoTag },
   { id: 'equipe', label: "Membres d'équipe", Icon: IcoUsers },
   { id: 'integrations', label: 'Intégrations', Icon: IcoTool },
   { id: 'notifications', label: 'Notifications', Icon: IcoBell },
@@ -1147,7 +1171,13 @@ function ConsommationPanel({
 
 /* ── Page ── */
 
-export function ParametresView() {
+export function ParametresView({
+  session,
+  agency,
+}: {
+  session: Session | null;
+  agency: AgencyData;
+}) {
   const [section, setSection] = useState<SectionId>('agence');
   const [ints, setInts] = useState<Integration[]>(AGENCY_INTEGRATIONS);
   const [notifs, setNotifs] = useState<Notification[]>(NOTIFICATIONS);
@@ -1254,7 +1284,7 @@ export function ParametresView() {
                   fontWeight: 800,
                 }}
               >
-                MC
+                {session?.initials ?? '—'}
               </div>
               <div style={{ minWidth: 0 }}>
                 <div
@@ -1266,24 +1296,39 @@ export function ParametresView() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  Marie Chen
+                  {session?.fullName ?? 'Personne connectée'}
                 </div>
-                <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)' }}>Administratrice</div>
+                <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)' }}>
+                  {session?.role ? ROLE_LABEL[session.role] : 'Aucune session'}
+                </div>
               </div>
             </div>
-            <button
-              className="btn-out"
-              type="button"
-              style={{ width: '100%', justifyContent: 'center', padding: '0.35rem', fontSize: '0.6875rem' }}
-            >
-              Se déconnecter
-            </button>
+            {session ? (
+              <form method="post" action="/api/auth/deconnexion">
+                <button
+                  className="btn-out"
+                  type="submit"
+                  style={{ width: '100%', justifyContent: 'center', padding: '0.35rem', fontSize: '0.6875rem' }}
+                >
+                  Se déconnecter
+                </button>
+              </form>
+            ) : (
+              <a
+                href="/connexion?suite=/parametres"
+                className="btn-out"
+                style={{ width: '100%', justifyContent: 'center', padding: '0.35rem', fontSize: '0.6875rem', textDecoration: 'none' }}
+              >
+                Se connecter
+              </a>
+            )}
           </div>
         </nav>
 
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
             {section === 'agence' && <AgencePanel />}
+            {section === 'catalogue' && <CataloguePanel items={agency.items} offers={agency.offers} />}
             {section === 'equipe' && <EquipePanel />}
             {section === 'integrations' && <IntegrationsPanel ints={ints} onToggle={toggleInt} />}
             {section === 'notifications' && (
