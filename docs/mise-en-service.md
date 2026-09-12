@@ -30,16 +30,20 @@ votre compte se rattache à cette invitation automatiquement.
 
 ## 3. Supabase → Authentication → URL Configuration (1 min)
 
-- **Site URL** : `https://huntpilote-crm-git-main-digi-hunt-systeme.vercel.app`
-  (ou votre domaine, le jour où il y en a un).
-- **Redirect URLs** : ajouter
-  `https://huntpilote-crm-git-main-digi-hunt-systeme.vercel.app/api/auth/callback`
+- **Site URL** : `https://huntpilote-crm.vercel.app` — le domaine stable de
+  production (ou votre propre domaine, le jour où il y en a un).
+- **Redirect URLs** : ajouter `https://huntpilote-crm.vercel.app/api/auth/callback`
   et, pour travailler en local, `http://localhost:3000/api/auth/callback`.
 
 Sans ça, le lien magique et Google reviennent vers `localhost` et la
 connexion échoue avec « Ce lien n'est plus valide ».
 
-## 4. Vercel → Projet → Settings → Environment Variables (2 min)
+## 4. Vercel → Projet → Settings → Environments → **Production** (2 min)
+
+Les variables ne sont plus une entrée du menu : elles vivent dans chaque
+environnement. Cliquer sur la ligne **Production**, puis la section
+**Environment Variables**. La boîte d'ajout permet de cocher plusieurs
+environnements à la fois.
 
 | Variable | Valeur | Portée |
 |---|---|---|
