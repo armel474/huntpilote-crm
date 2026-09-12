@@ -10,27 +10,38 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 
 | Migration | Contenu | État |
 |---|---|---|
-| `0001_fondations.sql` | Agence, membres, vocabulaires, garde-fous RLS | ✅ écrite et vérifiée |
-| `0002_comptes.sql` | Clients, prospects, services, contacts, établissements | ✅ écrite et vérifiée |
-| `0003_boucle_livraison.sql` | Audit, priorité, tâche, preuve, rapport, versions publiées | ✅ écrite et vérifiée |
-| `0004_crm.sql` | Pipeline, devis, factures, fil de communications | ✅ écrite et vérifiée |
+| `0001_fondations.sql` | Agence, membres, vocabulaires, garde-fous RLS | ✅ appliquée |
+| `0002_comptes.sql` | Clients, prospects, services, contacts, établissements | ✅ appliquée |
+| `0003_boucle_livraison.sql` | Audit, priorité, tâche, preuve, rapport, versions publiées | ✅ appliquée |
+| `0004_crm.sql` | Pipeline, devis, factures, fil de communications | ✅ appliquée |
+| `0005_vues_security_invoker.sql` | Les vues respectent le RLS de leur appelant | ✅ appliquée |
+| `0006_index_cles_etrangeres.sql` | Index sur les 22 clés étrangères non couvertes | ✅ appliquée |
 | SEO local (avis, citations, positions, concurrence) | — | ⬜ à écrire |
 | Outils SEO (séries de positions, backlinks, cache de mots-clés) | — | ⬜ à écrire |
 | Contenu, automatisations, notifications, agenda | — | ⬜ à écrire |
 | `seed.sql` — le portefeuille de démonstration | — | ⬜ bloqué par la réconciliation |
 
-**Rien n'est encore appliqué sur un projet Supabase** : lequel utiliser reste à
-décider (voir `docs/modele-donnees.md`, dernière section).
+Le projet Supabase `huntpilote` (région `ca-central-1`) porte les six migrations.
+Le schéma en ligne correspond exactement à celui validé en local : 34 tables,
+41 politiques, 2 vues, 35 contraintes de vérification, 17 déclencheurs, aucune
+table sans RLS. L'audit de sécurité ne remonte plus rien.
+
+Il reste **quatre réglages manuels** côté plateforme, listés dans
+`docs/modele-donnees.md` : les deux fournisseurs d'authentification, la
+**désactivation des inscriptions publiques**, les URL de redirection, et les
+trois variables d'environnement côté Vercel.
 
 ## Vérifier les migrations en local
 
 Pas besoin de Supabase ni de Docker — un PostgreSQL nu suffit, avec la doublure
-de plateforme fournie.
+de plateforme fournie. `initdb` refuse de tourner sous `root` : on passe donc
+par le compte `postgres`.
 
 ```bash
 export PATH=/usr/lib/postgresql/16/bin:$PATH
-initdb -D /tmp/hp-pgdata -U postgres --auth=trust
-pg_ctl -D /tmp/hp-pgdata -o '-p 55432 -k /tmp' -l /tmp/hp-pg.log start
+mkdir -p /tmp/hp-pgdata && chown postgres:postgres /tmp/hp-pgdata && chmod 700 /tmp/hp-pgdata
+su postgres -c "initdb -D /tmp/hp-pgdata -U postgres --auth=trust"
+su postgres -c "pg_ctl -D /tmp/hp-pgdata -o '-p 55432 -k /tmp' -l /tmp/hp-pg.log start"
 
 export PGHOST=/tmp PGPORT=55432 PGUSER=postgres
 createdb hp_test
@@ -42,7 +53,12 @@ done
 
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/01_regles.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/02_regles_crm.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/03_regles_vues.sql
 ```
+
+Les trois fichiers s'enchaînent sur **la même base** : `02` et `03` réutilisent
+le jeu d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme,
+contact Sophie).
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
 (`auth.users`, `auth.uid()`, le rôle `authenticated`). Il n'est jamais appliqué
@@ -75,3 +91,17 @@ Et côté CRM (`02_regles_crm.sql`) :
   dérivée du canal, pas saisie.
 - Le contact du portail ne lit **que** le fil du portail, ne peut écrire que
   sur ce canal, et peut répondre dans son propre fil.
+
+Et côté vues (`03_regles_vues.sql`) :
+
+- `review_queue` ne montre **que** les relectures de sa propre agence.
+- `quote_total` ne montre **que** les devis de sa propre agence.
+- Un contact du portail n'atteint **ni l'une ni l'autre**.
+
+Ce troisième fichier existe parce que les deux premiers avaient un trou : ils
+vérifiaient les politiques des *tables*, jamais ce que renvoient les *vues*. Or
+une vue PostgreSQL s'exécute par défaut avec les droits de son créateur et
+contourne RLS — c'est l'audit Supabase qui l'a trouvé, pas ces tests. Le
+correctif est la migration `0005`, et rejouer `03` sur un schéma privé de cette
+migration échoue bien à la première assertion : le test attrape la faille qu'il
+prétend couvrir.
