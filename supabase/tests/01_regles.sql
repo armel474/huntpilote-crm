@@ -55,10 +55,13 @@ insert into public.agency (id, name, slug) values
   ('aaaaaaaa-0000-0000-0000-000000000001', 'HuntPilote', 'huntpilote'),
   ('aaaaaaaa-0000-0000-0000-000000000002', 'Agence rivale', 'rivale');
 
-insert into public.user_profile (user_id, kind, full_name) values
-  ('11111111-1111-1111-1111-111111111111', 'agency_member', 'Marie Chen'),
-  ('22222222-2222-2222-2222-222222222222', 'agency_member', 'Concurrente'),
-  ('33333333-3333-3333-3333-333333333333', 'client_contact', 'Sophie Tremblay');
+-- `full_name` est une colonne calculée depuis le prénom et le nom (migration
+-- 0016) : un nom d'affichage qui diverge de ses parties est un bogue qui
+-- attend son heure.
+insert into public.user_profile (user_id, kind, first_name, last_name) values
+  ('11111111-1111-1111-1111-111111111111', 'agency_member', 'Marie', 'Chen'),
+  ('22222222-2222-2222-2222-222222222222', 'agency_member', 'Concurrente', null),
+  ('33333333-3333-3333-3333-333333333333', 'client_contact', 'Sophie', 'Tremblay');
 
 insert into public.agency_member (id, agency_id, user_id, role, initials) values
   ('bbbbbbbb-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000001',
