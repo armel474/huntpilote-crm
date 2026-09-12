@@ -28,7 +28,13 @@ const BUCKET_ORDER: TacheBucket[] = ['retard', 'aujourdhui', 'semaine', 'plustar
 
 type Override = Partial<Pick<TaskSummary, 'status' | 'due' | 'bucket' | 'assignee'>>;
 
-export function TravailView() {
+/**
+ * `tasks` et `me` viennent du serveur quand la base est branchée ; sans eux,
+ * l'écran rejoue les scénarios de démonstration comme avant.
+ */
+export function TravailView({ tasks: real, me }: { tasks?: TaskSummary[]; me?: string } = {}) {
+  const live = real !== undefined;
+  const mine = me ?? PT_ME.initials;
   const [scenario, setScenario] = useState<PtScenarioId>('normal');
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
 
@@ -37,10 +43,11 @@ export function TravailView() {
     setOverrides({});
   };
 
-  const base = ptScenario(scenario);
+  const base = live ? real : ptScenario(scenario);
   const tasks = base
     .map((t) => ({ ...t, ...(overrides[t.id] ?? {}) }))
-    .filter((t) => t.assignee === PT_ME.initials);
+    // En direct : les miennes, plus celles que personne n'a encore prises.
+    .filter((t) => t.assignee === mine || (live && t.assignee === ''));
 
   const onToggle = (id: string) =>
     setOverrides((o) => {
@@ -68,7 +75,7 @@ export function TravailView() {
         <span style={{ fontSize: '0.625rem', color: 'var(--fg3)' }}>
           Groupées par échéance · les tâches en retard passent devant tout
         </span>
-        <DemoOnly>
+        {!live && <DemoOnly>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Lbl>
               <label htmlFor="etat-demo-travail">Démo · état</label>
@@ -86,7 +93,7 @@ export function TravailView() {
               ))}
             </select>
           </div>
-        </DemoOnly>
+        </DemoOnly>}
       </div>
 
       <div className="content" style={{ maxWidth: 920 }}>

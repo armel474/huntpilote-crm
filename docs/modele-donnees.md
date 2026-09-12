@@ -201,7 +201,15 @@ qu'aucun outil ne les pose à distance :
    `SUPABASE_SERVICE_ROLE_KEY` (celle-ci jamais préfixée `NEXT_PUBLIC_` :
    elle contourne RLS et n'a rien à faire dans un paquet navigateur).
 
-### Comment les écrans liront la base
+### ~~Comment les écrans liront la base~~ — tranché : composants serveur
+
+Décision prise le 12 septembre, écran par écran. `page.tsx` charge la session
+et les données avec les droits de la personne connectée (donc sous RLS) et
+les passe en props à la vue. Premier écran migré : `/parametres`. Tant que
+Vercel n'est pas configuré, `supabaseConfigured()` fait rendre chaque écran
+comme avant la base — sans session, sans données, sans planter.
+
+Ce qui suit est le raisonnement d'origine, conservé pour mémoire.
 
 Les quarante vues sont des composants clients (`'use client'`) qui importent
 directement leurs constantes. Avec une vraie base, trois chemins :
