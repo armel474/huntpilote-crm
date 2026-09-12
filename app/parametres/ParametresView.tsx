@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
 import { CataloguePanel } from '@/app/parametres/CataloguePanel';
 import type { Session } from '@/lib/auth';
-import type { AgencyData } from '@/lib/queries/agence';
+import type { AgencyData, AgencyProfile, Member } from '@/lib/queries/agence';
 import { ROLE_LABEL } from '@/lib/format';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
@@ -66,6 +66,13 @@ function IcoBuilding(p: IconProps) {
     </svg>
   );
 }
+
+const ROLE_TONE: Record<Member['role'], 'green' | 'blue' | 'violet' | 'yellow'> = {
+  admin: 'green',
+  chef_projet: 'blue',
+  specialiste_seo: 'violet',
+  redacteur: 'yellow',
+};
 
 function IcoTag(p: IconProps) {
   return (
@@ -175,19 +182,37 @@ function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; labe
 
 /* ── Sections ── */
 
-function AgencePanel() {
+function AgencePanel({ agency }: { agency: AgencyProfile | null }) {
+  const v = (x: string | null | undefined) => x ?? '';
+  const missingTax = agency && (!agency.gstNumber || !agency.qstNumber);
   return (
     <div>
       <SectionHead
         title="Profil de l'agence"
-        sub="Ces informations apparaissent sur les rapports envoyés aux clients."
+        sub="Ces informations apparaissent sur les devis, les factures et les rapports envoyés aux clients."
         action={
-          <button className="btn-pri" type="button">
+          <button className="btn-pri" type="button" disabled title="Bientôt : l'enregistrement passera par ici">
             <IcoCheck size={12} />
             Enregistrer
           </button>
         }
       />
+      {!agency && (
+        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--fg3)', fontSize: '0.8125rem', marginBottom: 14 }}>
+          Rien à afficher. Connectez-vous avec un compte rattaché à l&apos;agence pour voir son profil.
+        </div>
+      )}
+      {missingTax && (
+        <div className="cn-err" style={{ marginBottom: 14 }}>
+          <span style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}>
+            <IcoWarn size={14} />
+          </span>
+          <span>
+            Les numéros d&apos;inscription à la TPS et à la TVQ ne sont pas saisis. Une facture qui réclame les
+            taxes doit les afficher, sinon le client ne peut pas récupérer ses crédits.
+          </span>
+        </div>
+      )}
       <div className="card" style={{ padding: '1.25rem', marginBottom: 14 }}>
         <div
           style={{
@@ -211,60 +236,61 @@ function AgencePanel() {
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
+              overflow: 'hidden',
             }}
           >
-            <IcoLogo size={28} />
+            {agency?.logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={agency.logoUrl} alt="" width={64} height={64} style={{ objectFit: 'cover' }} />
+            ) : (
+              <IcoLogo size={28} />
+            )}
           </div>
           <div>
             <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-              HuntPilote
+              {agency?.name ?? 'Agence'}
             </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 2 }}>
-              Logo affiché sur les rapports · PNG ou SVG, 512×512 px
+              Logo affiché sur les documents · PNG ou SVG, 512×512 px
             </p>
-            <button
-              className="btn-out"
-              type="button"
-              style={{ marginTop: 8, padding: '0.3rem 0.75rem', fontSize: '0.6875rem' }}
-            >
-              Changer le logo
-            </button>
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <Field label="Nom de l'agence" htmlFor="st-name">
-            <input id="st-name" className="fld" defaultValue="HuntPilote" />
+            <input id="st-name" className="fld" defaultValue={v(agency?.name)} readOnly />
+          </Field>
+          <Field label="Raison sociale" htmlFor="st-legal">
+            <input id="st-legal" className="fld" defaultValue={v(agency?.legalName)} readOnly />
           </Field>
           <Field label="Site web" htmlFor="st-web">
-            <input id="st-web" className="fld" defaultValue="huntpilote.ca" />
+            <input id="st-web" className="fld" defaultValue={v(agency?.website)} readOnly />
           </Field>
           <Field label="Courriel de contact" htmlFor="st-mail">
-            <input id="st-mail" className="fld" defaultValue="bonjour@huntpilote.ca" />
+            <input id="st-mail" className="fld" defaultValue={v(agency?.email)} readOnly />
           </Field>
           <Field label="Téléphone" htmlFor="st-tel">
-            <input id="st-tel" className="fld" defaultValue="(514) 555-0100" />
+            <input id="st-tel" className="fld" defaultValue={v(agency?.phone)} readOnly />
           </Field>
-          <Field label="Adresse" span htmlFor="st-adr">
+          <Field label="Adresse" htmlFor="st-adr">
+            <input id="st-adr" className="fld" defaultValue={v(agency?.address)} readOnly />
+          </Field>
+          <Field label="Ville" htmlFor="st-city">
+            <input id="st-city" className="fld" defaultValue={v(agency?.city)} readOnly />
+          </Field>
+          <Field label="Province · code postal" htmlFor="st-pc">
             <input
-              id="st-adr"
+              id="st-pc"
               className="fld"
-              defaultValue="1200 av. McGill College, Montréal, QC H3B 4G7"
+              defaultValue={[agency?.province, agency?.postalCode].filter(Boolean).join(' · ')}
+              readOnly
             />
           </Field>
-          <Field label="Fuseau horaire" htmlFor="st-tz">
-            <select id="st-tz" className="fld" defaultValue="et">
-              <option value="et">(GMT-5) Heure de l&apos;Est — Montréal</option>
-              <option value="pt">(GMT-8) Heure du Pacifique</option>
-              <option value="ce">(GMT+1) Europe centrale</option>
-            </select>
+          <Field label="Numéro de TPS" htmlFor="st-gst">
+            <input id="st-gst" className="fld" defaultValue={v(agency?.gstNumber)} placeholder="À saisir" readOnly />
           </Field>
-          <Field label="Devise" htmlFor="st-cur">
-            <select id="st-cur" className="fld" defaultValue="cad">
-              <option value="cad">CAD — Dollar canadien ($)</option>
-              <option value="usd">USD — Dollar américain ($)</option>
-              <option value="eur">EUR — Euro (€)</option>
-            </select>
+          <Field label="Numéro de TVQ" htmlFor="st-qst">
+            <input id="st-qst" className="fld" defaultValue={v(agency?.qstNumber)} placeholder="À saisir" readOnly />
           </Field>
         </div>
       </div>
@@ -272,15 +298,32 @@ function AgencePanel() {
   );
 }
 
-function EquipePanel() {
+function EquipePanel({ members, session }: { members: Member[]; session: Session | null }) {
   const cell: React.CSSProperties = { padding: '12px 0', borderBottom: '1px solid var(--bd)' };
+  const active = members.filter((m) => m.active);
+  const pending = active.filter((m) => m.pending).length;
+  const palette = ['var(--green)', 'var(--blue)', 'var(--violet)', 'var(--yellow-fg)', 'var(--red)'];
+
+  if (members.length === 0) {
+    return (
+      <div>
+        <SectionHead title="Membres d'équipe" sub="Qui fait partie de l'agence, et ce que chaque rôle autorise." />
+        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--fg3)', fontSize: '0.8125rem' }}>
+          Rien à afficher. Connectez-vous avec un compte rattaché à l&apos;agence pour voir son équipe.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <SectionHead
         title="Membres d'équipe"
-        sub="4 membres · 4 sièges utilisés sur 5 inclus dans votre forfait."
+        sub={`${active.length} membre${active.length > 1 ? 's' : ''}${
+          pending ? ` · ${pending} invitation${pending > 1 ? 's' : ''} en attente` : ''
+        }`}
         action={
-          <button className="btn-pri" type="button">
+          <button className="btn-pri" type="button" disabled title="Bientôt : l'invitation passera par ici">
             <IcoPlus size={12} />
             Inviter un membre
           </button>
@@ -290,7 +333,7 @@ function EquipePanel() {
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}>
           <thead>
             <tr>
-              {['Membre', 'Rôle', 'Clients', ''].map((h, i) => (
+              {['Membre', 'Rôle', 'Poste', ''].map((h, i) => (
                 <th
                   key={h || 'actions'}
                   className="lbl"
@@ -306,8 +349,8 @@ function EquipePanel() {
             </tr>
           </thead>
           <tbody>
-            {TEAM.map((m) => (
-              <tr key={m.email}>
+            {members.map((m, idx) => (
+              <tr key={m.id} style={!m.active ? { opacity: 0.5 } : undefined}>
                 <td style={cell}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
                     <div
@@ -316,7 +359,7 @@ function EquipePanel() {
                         width: 34,
                         height: 34,
                         borderRadius: '50%',
-                        background: m.color,
+                        background: palette[idx % palette.length],
                         color: '#fff',
                         display: 'flex',
                         alignItems: 'center',
@@ -324,9 +367,15 @@ function EquipePanel() {
                         fontSize: '0.6875rem',
                         fontWeight: 800,
                         flexShrink: 0,
+                        overflow: 'hidden',
                       }}
                     >
-                      {m.initials}
+                      {m.avatarUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={m.avatarUrl} alt="" width={34} height={34} style={{ objectFit: 'cover' }} />
+                      ) : (
+                        m.initials
+                      )}
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div
@@ -336,10 +385,11 @@ function EquipePanel() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: 6,
+                          flexWrap: 'wrap',
                         }}
                       >
-                        {m.name}
-                        {'you' in m && m.you && (
+                        {m.fullName}
+                        {session?.memberId === m.id && (
                           <span
                             style={{
                               fontSize: '0.5rem',
@@ -353,27 +403,19 @@ function EquipePanel() {
                             VOUS
                           </span>
                         )}
+                        {m.pending && <Badge label="Invitation en attente" tone="yellow" />}
+                        {!m.active && <Badge label="Désactivé" tone="neutral" />}
                       </div>
-                      <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{m.email}</div>
+                      <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{m.email ?? '—'}</div>
                     </div>
                   </div>
                 </td>
                 <td style={cell}>
-                  <Badge label={m.role} tone={ROLE_TONES[m.role] ?? 'neutral'} />
+                  <Badge label={ROLE_LABEL[m.role]} tone={ROLE_TONE[m.role]} />
                 </td>
-                <td
-                  style={{
-                    ...cell,
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    color: 'var(--fg2)',
-                    fontVariantNumeric: 'tabular-nums',
-                  }}
-                >
-                  {m.clients}
-                </td>
+                <td style={{ ...cell, fontSize: '0.8125rem', color: 'var(--fg2)' }}>{m.jobTitle ?? '—'}</td>
                 <td style={{ ...cell, textAlign: 'right' }}>
-                  <button className="btn-icon" type="button" aria-label={`Actions pour ${m.name}`}>
+                  <button className="btn-icon" type="button" aria-label={`Actions pour ${m.fullName}`} disabled>
                     <IcoMore />
                   </button>
                 </td>
@@ -382,32 +424,10 @@ function EquipePanel() {
           </tbody>
         </table>
       </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          marginTop: 12,
-          padding: '0.875rem 1rem',
-          borderRadius: 12,
-          background: 'var(--yellow-m)',
-          border: '1px solid var(--yellow-b)',
-          flexWrap: 'wrap',
-        }}
-      >
-        <p style={{ fontSize: '0.75rem', color: 'var(--yellow-fg)', flex: 1, fontWeight: 500, minWidth: 240 }}>
-          Vous approchez de la limite de sièges. Passez au forfait Studio pour ajouter des membres
-          illimités.
-        </p>
-        <button
-          className="btn-out"
-          type="button"
-          style={{ borderColor: 'var(--yellow-b)', color: 'var(--yellow-fg)' }}
-        >
-          Voir les forfaits
-        </button>
-      </div>
+      <p style={{ fontSize: '0.75rem', color: 'var(--fg4)', marginTop: 10 }}>
+        Une personne invitée figure ici avant de s&apos;être connectée : son compte se rattache à l&apos;invitation
+        à la première connexion, par son courriel.
+      </p>
     </div>
   );
 }
@@ -1327,9 +1347,9 @@ export function ParametresView({
 
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
-            {section === 'agence' && <AgencePanel />}
+            {section === 'agence' && <AgencePanel agency={agency.agency} />}
             {section === 'catalogue' && <CataloguePanel items={agency.items} offers={agency.offers} />}
-            {section === 'equipe' && <EquipePanel />}
+            {section === 'equipe' && <EquipePanel members={agency.members} session={session} />}
             {section === 'integrations' && <IntegrationsPanel ints={ints} onToggle={toggleInt} />}
             {section === 'notifications' && (
               <NotificationsPanel notifs={notifs} onToggle={toggleNotif} />

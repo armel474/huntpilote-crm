@@ -27,11 +27,17 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0015a` + `0015b` | Contrat, livrables, jalons, exclusions, échéancier de paiement | ✅ appliquée |
 | `0016_equipe_et_permissions.sql` | Profils d'équipe et onze permissions appliquées | ✅ appliquée |
 | `0017_membre_avant_connexion.sql` | Inviter avant de connecter ; `user_profile` disparaît | ✅ appliquée |
+| `0018_connexion.sql` | `whoami()` et `accept_my_invitation()`, les deux points d'entrée publics de la connexion | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
 
-**Le modèle est complet, et la base est peuplée.** Le projet Supabase
-`huntpilote` (région `ca-central-1`) porte les dix-huit migrations et le
-semis. Le schéma en ligne correspond exactement à celui validé en local, sur
+**Le modèle est complet, la base est peuplée, et l'application y est
+branchée.** Le projet Supabase `huntpilote` (région `ca-central-1`) porte les
+dix-neuf migrations et le semis. Côté application : `lib/supabase/` (clients
+serveur et navigateur, middleware de session), `lib/auth.ts` (la session en
+un aller-retour), `lib/queries/` (les lectures, par écran), et
+`lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
+après chaque migration. `/parametres` est le premier écran lu dans la base ;
+`docs/mise-en-service.md` liste les quatre réglages de console qui restent. Le schéma en ligne correspond exactement à celui validé en local, sur
 les huit compteurs : 109 tables, 134 politiques, 23 vues — toutes en
 `security_invoker` —, 178 contraintes de vérification, 46 déclencheurs, 50
 vocabulaires, 37 fonctions, aucune table sans RLS.
