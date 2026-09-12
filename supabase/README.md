@@ -16,15 +16,16 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0004_crm.sql` | Pipeline, devis, factures, fil de communications | ✅ appliquée |
 | `0005_vues_security_invoker.sql` | Les vues respectent le RLS de leur appelant | ✅ appliquée |
 | `0006_index_cles_etrangeres.sql` | Index sur les 22 clés étrangères non couvertes | ✅ appliquée |
-| SEO local (avis, citations, positions, concurrence) | — | ⬜ à écrire |
+| `0007_seo_local.sql` | Fiche Google Business, avis, citations, positions, concurrence | ✅ appliquée |
 | Outils SEO (séries de positions, backlinks, cache de mots-clés) | — | ⬜ à écrire |
 | Contenu, automatisations, notifications, agenda | — | ⬜ à écrire |
 | `seed.sql` — le portefeuille de démonstration | — | ⬜ bloqué par la réconciliation |
 
-Le projet Supabase `huntpilote` (région `ca-central-1`) porte les six migrations.
-Le schéma en ligne correspond exactement à celui validé en local : 34 tables,
-41 politiques, 2 vues, 35 contraintes de vérification, 17 déclencheurs, aucune
-table sans RLS. L'audit de sécurité ne remonte plus rien.
+Le projet Supabase `huntpilote` (région `ca-central-1`) porte les sept
+migrations. Le schéma en ligne correspond exactement à celui validé en local :
+49 tables, 58 politiques, 6 vues — toutes en `security_invoker` —, 64
+contraintes de vérification, 23 déclencheurs, 24 vocabulaires, aucune table
+sans RLS. L'audit de sécurité ne remonte rien.
 
 Il reste **quatre réglages manuels** côté plateforme, listés dans
 `docs/modele-donnees.md` : les deux fournisseurs d'authentification, la
@@ -54,11 +55,12 @@ done
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/01_regles.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/02_regles_crm.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/03_regles_vues.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/04_regles_local.sql
 ```
 
-Les trois fichiers s'enchaînent sur **la même base** : `02` et `03` réutilisent
-le jeu d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme,
-contact Sophie).
+Les quatre fichiers s'enchaînent sur **la même base** : `02`, `03` et `04`
+réutilisent le jeu d'essai monté par `01` (agence HuntPilote, agence rivale,
+compte Acme, contact Sophie). 38 assertions au total.
 
 `00_stub_supabase.sql` recrée le strict nécessaire de ce que Supabase fournit
 (`auth.users`, `auth.uid()`, le rôle `authenticated`). Il n'est jamais appliqué
@@ -97,6 +99,23 @@ Et côté vues (`03_regles_vues.sql`) :
 - `review_queue` ne montre **que** les relectures de sa propre agence.
 - `quote_total` ne montre **que** les devis de sa propre agence.
 - Un contact du portail n'atteint **ni l'une ni l'autre**.
+
+Et côté SEO local (`04_regles_local.sql`) :
+
+- « 6 champs sur 9 », « 12 annuaires sur 20 », « 3 incohérences », « +6 »,
+  « −4 », la moyenne, l'étendue et le relevé précédent d'une requête : tous
+  **se retrouvent** sans avoir été stockés une seule fois.
+- Les quatre alertes d'Acme se déduisent de ses données — le code n'en
+  affichait qu'une —, et **répondre à l'avis négatif fait tomber la sienne**,
+  sans intervention.
+- Une réponse à un avis **ne part pas sans relecture** : « à relire » porte un
+  brouillon, jamais un texte en ligne ; signaler un avis exige un motif.
+- Une citation incohérente **nomme** le champ fautif, et seule une citation
+  incohérente en porte.
+- La valeur attendue d'un champ de référence **ne se recopie pas** dans l'écart
+  qu'elle sert à constater.
+- Le portail voit sa fiche et ses relevés, **jamais l'inventaire** des
+  incohérences ni l'analyse de ses rivaux.
 
 Ce troisième fichier existe parce que les deux premiers avaient un trou : ils
 vérifiaient les politiques des *tables*, jamais ce que renvoient les *vues*. Or
