@@ -6,6 +6,7 @@
  * personne qui s'est connectée sans invitation ne voit aucune agence.
  */
 import { cache } from 'react';
+import { supabaseConfigured } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 
 export type Session = {
@@ -22,6 +23,7 @@ export type Session = {
 };
 
 export const getSession = cache(async (): Promise<Session | null> => {
+  if (!supabaseConfigured()) return null;
   const supabase = await createClient();
   const {
     data: { user },

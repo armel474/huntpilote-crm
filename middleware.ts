@@ -1,10 +1,15 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { supabaseConfigured } from '@/lib/supabase/config';
 import { updateSession } from '@/lib/supabase/middleware';
 
 /** Les chemins accessibles sans session : la connexion et ce qu'un client reçoit par lien. */
 const PUBLIC_PREFIXES = ['/connexion', '/r/', '/audit-prospect/', '/portail', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
+  // Sans variables d'environnement, il n'y a ni session à rafraîchir ni
+  // accès à garder : l'application se comporte comme avant la base.
+  if (!supabaseConfigured()) return NextResponse.next({ request });
+
   const { response, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
