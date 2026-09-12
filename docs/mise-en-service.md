@@ -62,9 +62,29 @@ qu'au prochain build.
 
 ## Ensuite
 
-1. Ouvrir `/connexion`, choisir **Continuer avec Google** avec le compte
-   `armel.nguimbi47@gmail.com` — ou demander un lien magique à cette adresse.
+1. ~~Ouvrir `/connexion`, choisir **Continuer avec Google** ou demander un
+   lien magique.~~ Fait : les deux fonctionnent.
 2. Ouvrir `/parametres` → **Catalogue** : vos six offres, lues dans la base.
+   Onglet **Membres d'équipe** : votre ligne porte la mention VOUS.
+3. **Verrouiller** : dans Vercel (étape 4), ajouter `AUTH_REQUIRED` = `on`,
+   type Config, environnement Production seulement, puis **Redeploy**. À
+   partir de là, toute page non publique renvoie vers `/connexion`. Si vous
+   vous retrouviez enfermé dehors, il suffit de supprimer la variable et de
+   redéployer.
+4. Facultatif, recommandé : Supabase → Authentication → Sign In / Providers →
+   **Password** → activer *Leaked password protection*. Un mot de passe déjà
+   apparu dans une fuite connue sera refusé à la création.
+
+## Ce que l'onglet Agence écrit maintenant
+
+- **Profil de l'agence** : nom, raison sociale, coordonnées, TPS et TVQ —
+  réservé à qui a le droit `manage_agency` (l'administration par défaut).
+- **Membres d'équipe** : inviter (prénom, nom, courriel, rôle, poste),
+  modifier un profil, changer le rôle, désactiver, et accorder ou retirer un
+  droit nommément — réservé à `manage_team`. Chacun peut corriger son propre
+  profil (nom, téléphone, adresse, photo) sans pouvoir toucher à son rôle.
+- Les photos et le logo s'indiquent par adresse d'image pour l'instant ; le
+  téléversement viendra avec le stockage.
 
 ## Deux valeurs encore vides dans la base
 

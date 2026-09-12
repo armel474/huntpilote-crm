@@ -3,9 +3,12 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
+import { AgencePanel } from '@/app/parametres/AgencePanel';
 import { CataloguePanel } from '@/app/parametres/CataloguePanel';
+import { EquipePanel } from '@/app/parametres/EquipePanel';
+import { Field, SectionHead } from '@/app/parametres/bits';
 import type { Session } from '@/lib/auth';
-import type { AgencyData, AgencyProfile, Member } from '@/lib/queries/agence';
+import { permissionsOf, type AgencyData } from '@/lib/queries/agence';
 import { ROLE_LABEL } from '@/lib/format';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
@@ -15,9 +18,6 @@ import {
   IcoCard,
   IcoCheck,
   IcoCoin,
-  IcoLogo,
-  IcoMore,
-  IcoPlus,
   IcoTool,
   IcoUsers,
   IcoWarn,
@@ -34,8 +34,6 @@ import {
   CONSO_TYPES,
   NOTIFICATIONS,
   PLAN_USAGE,
-  ROLE_TONES,
-  TEAM,
   fmt$,
   resolveConsoClient,
   type ConsoStateId,
@@ -67,12 +65,6 @@ function IcoBuilding(p: IconProps) {
   );
 }
 
-const ROLE_TONE: Record<Member['role'], 'green' | 'blue' | 'violet' | 'yellow'> = {
-  admin: 'green',
-  chef_projet: 'blue',
-  specialiste_seo: 'violet',
-  redacteur: 'yellow',
-};
 
 function IcoTag(p: IconProps) {
   return (
@@ -123,47 +115,6 @@ const SECTIONS: { id: SectionId; label: string; Icon: (p: IconProps) => React.Re
   { id: 'consommation', label: 'Consommation', Icon: IcoCoin },
 ];
 
-function Field({
-  label,
-  children,
-  span,
-  htmlFor,
-}: {
-  label: string;
-  children: React.ReactNode;
-  span?: boolean;
-  htmlFor?: string;
-}) {
-  return (
-    <div style={{ gridColumn: span ? '1 / -1' : 'auto' }}>
-      <label htmlFor={htmlFor} className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function SectionHead({
-  title,
-  sub,
-  action,
-}: {
-  title: string;
-  sub: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
-      <div style={{ flex: 1, minWidth: 220 }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.025em' }}>{title}</h2>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--fg3)', marginTop: 3 }}>{sub}</p>
-      </div>
-      {action}
-    </div>
-  );
-}
-
 function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; label: string }) {
   return (
     <button
@@ -181,256 +132,6 @@ function Toggle({ on, onClick, label }: { on: boolean; onClick: () => void; labe
 }
 
 /* ── Sections ── */
-
-function AgencePanel({ agency }: { agency: AgencyProfile | null }) {
-  const v = (x: string | null | undefined) => x ?? '';
-  const missingTax = agency && (!agency.gstNumber || !agency.qstNumber);
-  return (
-    <div>
-      <SectionHead
-        title="Profil de l'agence"
-        sub="Ces informations apparaissent sur les devis, les factures et les rapports envoyés aux clients."
-        action={
-          <button className="btn-pri" type="button" disabled title="Bientôt : l'enregistrement passera par ici">
-            <IcoCheck size={12} />
-            Enregistrer
-          </button>
-        }
-      />
-      {!agency && (
-        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--fg3)', fontSize: '0.8125rem', marginBottom: 14 }}>
-          Rien à afficher. Connectez-vous avec un compte rattaché à l&apos;agence pour voir son profil.
-        </div>
-      )}
-      {missingTax && (
-        <div className="cn-err" style={{ marginBottom: 14 }}>
-          <span style={{ display: 'flex', flexShrink: 0, marginTop: 2 }}>
-            <IcoWarn size={14} />
-          </span>
-          <span>
-            Les numéros d&apos;inscription à la TPS et à la TVQ ne sont pas saisis. Une facture qui réclame les
-            taxes doit les afficher, sinon le client ne peut pas récupérer ses crédits.
-          </span>
-        </div>
-      )}
-      <div className="card" style={{ padding: '1.25rem', marginBottom: 14 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            paddingBottom: 18,
-            borderBottom: '1px solid var(--bd)',
-            marginBottom: 18,
-            flexWrap: 'wrap',
-          }}
-        >
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 16,
-              background: 'var(--primary)',
-              color: 'var(--primary-fg)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}
-          >
-            {agency?.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={agency.logoUrl} alt="" width={64} height={64} style={{ objectFit: 'cover' }} />
-            ) : (
-              <IcoLogo size={28} />
-            )}
-          </div>
-          <div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-              {agency?.name ?? 'Agence'}
-            </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 2 }}>
-              Logo affiché sur les documents · PNG ou SVG, 512×512 px
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <Field label="Nom de l'agence" htmlFor="st-name">
-            <input id="st-name" className="fld" defaultValue={v(agency?.name)} readOnly />
-          </Field>
-          <Field label="Raison sociale" htmlFor="st-legal">
-            <input id="st-legal" className="fld" defaultValue={v(agency?.legalName)} readOnly />
-          </Field>
-          <Field label="Site web" htmlFor="st-web">
-            <input id="st-web" className="fld" defaultValue={v(agency?.website)} readOnly />
-          </Field>
-          <Field label="Courriel de contact" htmlFor="st-mail">
-            <input id="st-mail" className="fld" defaultValue={v(agency?.email)} readOnly />
-          </Field>
-          <Field label="Téléphone" htmlFor="st-tel">
-            <input id="st-tel" className="fld" defaultValue={v(agency?.phone)} readOnly />
-          </Field>
-          <Field label="Adresse" htmlFor="st-adr">
-            <input id="st-adr" className="fld" defaultValue={v(agency?.address)} readOnly />
-          </Field>
-          <Field label="Ville" htmlFor="st-city">
-            <input id="st-city" className="fld" defaultValue={v(agency?.city)} readOnly />
-          </Field>
-          <Field label="Province · code postal" htmlFor="st-pc">
-            <input
-              id="st-pc"
-              className="fld"
-              defaultValue={[agency?.province, agency?.postalCode].filter(Boolean).join(' · ')}
-              readOnly
-            />
-          </Field>
-          <Field label="Numéro de TPS" htmlFor="st-gst">
-            <input id="st-gst" className="fld" defaultValue={v(agency?.gstNumber)} placeholder="À saisir" readOnly />
-          </Field>
-          <Field label="Numéro de TVQ" htmlFor="st-qst">
-            <input id="st-qst" className="fld" defaultValue={v(agency?.qstNumber)} placeholder="À saisir" readOnly />
-          </Field>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EquipePanel({ members, session }: { members: Member[]; session: Session | null }) {
-  const cell: React.CSSProperties = { padding: '12px 0', borderBottom: '1px solid var(--bd)' };
-  const active = members.filter((m) => m.active);
-  const pending = active.filter((m) => m.pending).length;
-  const palette = ['var(--green)', 'var(--blue)', 'var(--violet)', 'var(--yellow-fg)', 'var(--red)'];
-
-  if (members.length === 0) {
-    return (
-      <div>
-        <SectionHead title="Membres d'équipe" sub="Qui fait partie de l'agence, et ce que chaque rôle autorise." />
-        <div className="card" style={{ padding: '2rem', textAlign: 'center', color: 'var(--fg3)', fontSize: '0.8125rem' }}>
-          Rien à afficher. Connectez-vous avec un compte rattaché à l&apos;agence pour voir son équipe.
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <SectionHead
-        title="Membres d'équipe"
-        sub={`${active.length} membre${active.length > 1 ? 's' : ''}${
-          pending ? ` · ${pending} invitation${pending > 1 ? 's' : ''} en attente` : ''
-        }`}
-        action={
-          <button className="btn-pri" type="button" disabled title="Bientôt : l'invitation passera par ici">
-            <IcoPlus size={12} />
-            Inviter un membre
-          </button>
-        }
-      />
-      <div className="card" style={{ padding: '0.5rem 1.125rem 0.875rem', overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}>
-          <thead>
-            <tr>
-              {['Membre', 'Rôle', 'Poste', ''].map((h, i) => (
-                <th
-                  key={h || 'actions'}
-                  className="lbl"
-                  style={{
-                    padding: '10px 0',
-                    borderBottom: '1px solid var(--bd-solid)',
-                    textAlign: i === 3 ? 'right' : 'left',
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((m, idx) => (
-              <tr key={m.id} style={!m.active ? { opacity: 0.5 } : undefined}>
-                <td style={cell}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-                    <div
-                      aria-hidden="true"
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: '50%',
-                        background: palette[idx % palette.length],
-                        color: '#fff',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.6875rem',
-                        fontWeight: 800,
-                        flexShrink: 0,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {m.avatarUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={m.avatarUrl} alt="" width={34} height={34} style={{ objectFit: 'cover' }} />
-                      ) : (
-                        m.initials
-                      )}
-                    </div>
-                    <div style={{ minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '0.8125rem',
-                          fontWeight: 700,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          flexWrap: 'wrap',
-                        }}
-                      >
-                        {m.fullName}
-                        {session?.memberId === m.id && (
-                          <span
-                            style={{
-                              fontSize: '0.5rem',
-                              fontWeight: 700,
-                              color: 'var(--fg4)',
-                              background: 'var(--bg-muted)',
-                              borderRadius: 999,
-                              padding: '1px 6px',
-                            }}
-                          >
-                            VOUS
-                          </span>
-                        )}
-                        {m.pending && <Badge label="Invitation en attente" tone="yellow" />}
-                        {!m.active && <Badge label="Désactivé" tone="neutral" />}
-                      </div>
-                      <div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{m.email ?? '—'}</div>
-                    </div>
-                  </div>
-                </td>
-                <td style={cell}>
-                  <Badge label={ROLE_LABEL[m.role]} tone={ROLE_TONE[m.role]} />
-                </td>
-                <td style={{ ...cell, fontSize: '0.8125rem', color: 'var(--fg2)' }}>{m.jobTitle ?? '—'}</td>
-                <td style={{ ...cell, textAlign: 'right' }}>
-                  <button className="btn-icon" type="button" aria-label={`Actions pour ${m.fullName}`} disabled>
-                    <IcoMore />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p style={{ fontSize: '0.75rem', color: 'var(--fg4)', marginTop: 10 }}>
-        Une personne invitée figure ici avant de s&apos;être connectée : son compte se rattache à l&apos;invitation
-        à la première connexion, par son courriel.
-      </p>
-    </div>
-  );
-}
 
 function IntegrationsPanel({
   ints,
@@ -1199,6 +900,7 @@ export function ParametresView({
   agency: AgencyData;
 }) {
   const [section, setSection] = useState<SectionId>('agence');
+  const mine = permissionsOf(agency.members, session?.memberId);
   const [ints, setInts] = useState<Integration[]>(AGENCY_INTEGRATIONS);
   const [notifs, setNotifs] = useState<Notification[]>(NOTIFICATIONS);
   const [consoState, setConsoState] = useState<ConsoStateId>('ok');
@@ -1347,9 +1049,18 @@ export function ParametresView({
 
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
-            {section === 'agence' && <AgencePanel agency={agency.agency} />}
+            {section === 'agence' && (
+              <AgencePanel agency={agency.agency} canEdit={mine.includes('manage_agency')} />
+            )}
             {section === 'catalogue' && <CataloguePanel items={agency.items} offers={agency.offers} />}
-            {section === 'equipe' && <EquipePanel members={agency.members} session={session} />}
+            {section === 'equipe' && (
+              <EquipePanel
+                members={agency.members}
+                session={session}
+                roleDefaults={agency.roleDefaults}
+                canManage={mine.includes('manage_team')}
+              />
+            )}
             {section === 'integrations' && <IntegrationsPanel ints={ints} onToggle={toggleInt} />}
             {section === 'notifications' && (
               <NotificationsPanel notifs={notifs} onToggle={toggleNotif} />

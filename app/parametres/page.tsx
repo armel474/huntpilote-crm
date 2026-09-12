@@ -11,7 +11,13 @@ export const metadata: Metadata = { title: 'Paramètres — HuntPilote' };
 // connectée : elle ne peut pas être prérendue.
 export const dynamic = 'force-dynamic';
 
-const EMPTY = { agency: null, items: [], offers: [], members: [] };
+const EMPTY = {
+  agency: null,
+  items: [],
+  offers: [],
+  members: [],
+  roleDefaults: { admin: [], chef_projet: [], specialiste_seo: [], redacteur: [] },
+};
 
 export default async function ParametresPage() {
   if (!supabaseConfigured()) {

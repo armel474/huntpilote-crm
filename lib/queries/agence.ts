@@ -57,17 +57,39 @@ export type Offer = {
   taskTemplates: number;
 };
 
+export type Role = Database['public']['Enums']['agency_role'];
+export type Permission = Database['public']['Enums']['permission'];
+
+/** Un ajustement nominatif : un droit accordé ou retiré malgré le rôle. */
+export type PermissionOverride = {
+  permission: Permission;
+  granted: boolean;
+  reason: string | null;
+};
+
 export type Member = {
   id: string;
   fullName: string;
+  firstName: string | null;
+  lastName: string | null;
   initials: string;
-  role: 'admin' | 'chef_projet' | 'specialiste_seo' | 'redacteur';
+  role: Role;
   jobTitle: string | null;
   email: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  province: string | null;
+  postalCode: string | null;
   avatarUrl: string | null;
+  startedOn: string | null;
+  hourlyRateCents: number | null;
   active: boolean;
   /** Invité mais pas encore connecté. */
   pending: boolean;
+  /** Ce que la personne peut réellement faire, rôle et ajustements combinés. */
+  permissions: Permission[];
+  overrides: PermissionOverride[];
 };
 
 export type AgencyProfile = {
@@ -91,10 +113,24 @@ export type AgencyData = {
   items: CatalogueItem[];
   offers: Offer[];
   members: Member[];
+  /** Ce que chaque rôle autorise par défaut — le référentiel du produit. */
+  roleDefaults: Record<Role, Permission[]>;
 };
 
+const NO_DEFAULTS: Record<Role, Permission[]> = {
+  admin: [],
+  chef_projet: [],
+  specialiste_seo: [],
+  redacteur: [],
+};
+
+/** Ce que la personne connectée peut faire, d'après la liste des membres. */
+export function permissionsOf(members: Member[], memberId: string | null | undefined): Permission[] {
+  return members.find((m) => m.id === memberId)?.permissions ?? [];
+}
+
 export async function loadAgencyData(db: Db): Promise<AgencyData> {
-  const [agency, items, offers, values, lines, benefits, segments, templates, members] =
+  const [agency, items, offers, values, lines, benefits, segments, templates, members, effective, overrides, defaults] =
     await Promise.all([
       db.from('agency').select('*').maybeSingle(),
       db.from('catalog_item').select('*').order('position'),
@@ -110,7 +146,30 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
       db.from('offer_segment').select('offer_id, position, label').order('position'),
       db.from('offer_task_template').select('offer_id'),
       db.from('agency_member').select('*').order('created_at'),
+      db.from('member_effective_permission').select('member_id, permission'),
+      db.from('member_permission').select('member_id, permission, granted, reason'),
+      db.from('role_permission').select('role, permission'),
     ]);
+
+  const effectiveBy = new Map<string, Permission[]>();
+  for (const e of effective.data ?? []) {
+    if (!e.member_id || !e.permission) continue;
+    effectiveBy.set(e.member_id, [...(effectiveBy.get(e.member_id) ?? []), e.permission]);
+  }
+  const overridesBy = new Map<string, PermissionOverride[]>();
+  for (const o of overrides.data ?? []) {
+    overridesBy.set(o.member_id, [
+      ...(overridesBy.get(o.member_id) ?? []),
+      { permission: o.permission, granted: o.granted, reason: o.reason },
+    ]);
+  }
+  const roleDefaults: Record<Role, Permission[]> = {
+    admin: [],
+    chef_projet: [],
+    specialiste_seo: [],
+    redacteur: [],
+  };
+  for (const d of defaults.data ?? []) roleDefaults[d.role].push(d.permission);
 
   const valueByOffer = new Map(
     (values.data ?? []).map((v) => [
@@ -197,13 +256,25 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
     members: (members.data ?? []).map((m) => ({
       id: m.id,
       fullName: m.full_name ?? '',
+      firstName: m.first_name,
+      lastName: m.last_name,
       initials: m.initials,
       role: m.role,
       jobTitle: m.job_title,
       email: m.email,
+      phone: m.phone,
+      address: m.address,
+      city: m.city,
+      province: m.province,
+      postalCode: m.postal_code,
       avatarUrl: m.avatar_url,
+      startedOn: m.started_on,
+      hourlyRateCents: m.hourly_rate_cents,
       active: m.active,
       pending: !m.accepted_at,
+      permissions: effectiveBy.get(m.id) ?? [],
+      overrides: overridesBy.get(m.id) ?? [],
     })),
+    roleDefaults: defaults.data ? roleDefaults : NO_DEFAULTS,
   };
 }

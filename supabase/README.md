@@ -28,11 +28,12 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0016_equipe_et_permissions.sql` | Profils d'équipe et onze permissions appliquées | ✅ appliquée |
 | `0017_membre_avant_connexion.sql` | Inviter avant de connecter ; `user_profile` disparaît | ✅ appliquée |
 | `0018_connexion.sql` | `whoami()` et `accept_my_invitation()`, les deux points d'entrée publics de la connexion | ✅ appliquée |
+| `0019_ecriture_profil.sql` | Le profil de l'agence s'écrit avec `manage_agency` ; chacun corrige le sien sans se promouvoir | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
 
 **Le modèle est complet, la base est peuplée, et l'application y est
 branchée.** Le projet Supabase `huntpilote` (région `ca-central-1`) porte les
-dix-neuf migrations et le semis. Côté application : `lib/supabase/` (clients
+vingt migrations et le semis. Côté application : `lib/supabase/` (clients
 serveur et navigateur, middleware de session), `lib/auth.ts` (la session en
 un aller-retour), `lib/queries/` (les lectures, par écran), et
 `lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
@@ -45,7 +46,10 @@ vocabulaires, 37 fonctions, aucune table sans RLS.
 L'audit de sécurité ne remonte qu'une information : `number_counter` a RLS
 sans aucune politique. C'est voulu — personne n'y touche depuis
 l'application, seule `app.next_number()` y accède avec ses propres droits. Y
-ajouter une politique affaiblirait la garantie.
+ajouter une politique affaiblirait la garantie. Il signale aussi que la
+protection contre les mots de passe divulgués est désactivée : c'est un
+réglage de console (Authentication → Sign In / Providers → Password), pas une
+migration ; `docs/mise-en-service.md` le mentionne.
 
 ### Le semis
 
@@ -103,11 +107,12 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/09_regles_documents.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/10_regles_offre_reelle.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/11_regles_contrat.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/12_regles_permissions.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/13_regles_profil.sql
 ```
 
-Les douze fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les treize fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). **151 assertions** au total.
+Sophie). **159 assertions** au total.
 
 Les trois derniers montent des données réelles — les six offres telles
 qu'elles sont vendues, et le mandat SHGM tel qu'il est signé — parce que c'est
