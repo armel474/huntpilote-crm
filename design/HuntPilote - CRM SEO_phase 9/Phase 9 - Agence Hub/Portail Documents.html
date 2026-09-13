@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Vos documents — Acme Corp. · HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="pc-data.jsx"></script>
+<script type="text/babel" src="pc-nav.jsx"></script>
+<script type="text/babel" src="hp-agence-data.jsx"></script>
+<script type="text/babel" src="hp-tpl-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-data.jsx"></script>
+<link rel="stylesheet" href="rp-doc.css">
+<link rel="stylesheet" href="pc-portal.css">
+<style>
+.pd-row{display:flex;align-items:center;gap:14px;padding:1.1rem 1.25rem;background:var(--bg-solid);border:1px solid var(--bd-solid);border-radius:14px;box-shadow:var(--shadow);text-decoration:none;color:inherit;margin-bottom:9px}
+.pd-row:hover{border-color:var(--bd-strong)}
+.pd-ico{width:38px;height:38px;border-radius:10px;background:var(--bg-muted);border:1px solid var(--bd-solid);color:var(--fg2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pd-t{font-size:0.9375rem;font-weight:700;color:var(--fg1);line-height:1.35}
+.pd-m{font-size:0.8125rem;color:var(--fg3);margin-top:2px}
+.pd-tag{display:inline-flex;align-items:center;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { PortalHeader, PNI } = window;
+
+const PD_TAG = {
+  envoye: ['En attente', 'var(--blue-m)', 'var(--blue-b)', 'var(--blue-fg)'],
+  accepte: ['Accepté', 'var(--green-m)', 'var(--green-b)', 'var(--green-fg)'],
+  signe: ['Signé', 'var(--green-m)', 'var(--green-b)', 'var(--green-fg)'],
+  payee: ['Payée', 'var(--green-m)', 'var(--green-b)', 'var(--green-fg)'],
+  refuse: ['Refusé', 'var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'],
+  expire: ['Expiré', 'var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'],
+  retard: ['En retard', 'var(--yellow-m)', 'var(--yellow-b)', 'var(--yellow-fg)'],
+};
+const PD_KIND_LABEL = { proposition: 'Proposition', devis: 'Devis', contrat: 'Contrat', annexe: 'Annexe', avenant: 'Avenant', facture: 'Facture' };
+
+const DocRow = ({ d }) => {
+  const [label, bg, bd, fg] = PD_TAG[d.statut] || ['—', 'var(--bg-muted)', 'var(--bd-solid)', 'var(--fg3)'];
+  return (
+    <a className="pd-row" href={`Portail Document.html?id=${d.id}`}>
+      <span className="pd-ico"><PNI.Doc /></span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="pd-t">{d.objet}</div>
+        <div className="pd-m">{PD_KIND_LABEL[d.kind]} · {d.id}{d.emis ? ` · reçu le ${d.emis}` : ''}</div>
+      </div>
+      <span className="pd-tag" style={{ background: bg, border: `1px solid ${bd}`, color: fg }}>{label}</span>
+    </a>);
+};
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  useEffect(() => { const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme); try { localStorage.setItem('hp-theme', theme); } catch {} const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t); }, [theme]);
+
+  const mine = GEN_DOCUMENTS.filter((d) => d.clientName === PC_ACCOUNT.client && d.statut !== 'brouillon').sort((a, b) => (b.emis || '').localeCompare(a.emis || ''));
+  const awaiting = mine.filter((d) => d.statut === 'envoye').length;
+
+  return (
+    <React.Fragment>
+      <PortalHeader theme={theme} onToggleTheme={() => setTheme((t) => t === 'dark' ? 'light' : 'dark')} active="documents" unread={0} />
+      <div className="pr-wrap">
+        <div className="eyebrow" style={{ marginBottom: 10 }}>Vos documents</div>
+        {mine.length === 0 ? (
+          <div className="pc-wait-card">
+            <h2 style={{ marginBottom: 8 }}>Aucun document pour l’instant</h2>
+            <p style={{ color: 'var(--fg3)' }}>Les propositions, devis, contrats et factures que nous vous envoyons apparaîtront ici.</p>
+          </div>
+        ) : (
+          <React.Fragment>
+            <h1 style={{ fontSize: '1.75rem', marginBottom: 10 }}>{mine.length} document{mine.length > 1 ? 's' : ''}{awaiting > 0 ? ` · ${awaiting} en attente de votre geste` : ''}</h1>
+            <p className="lead" style={{ marginBottom: '1.5rem' }}>Propositions, devis, contrats et factures — tels qu’ils vous ont été envoyés. Ouvrez-en un pour le relire, l’accepter ou le signer.</p>
+            <div>{mine.map((d) => <DocRow key={d.id} d={d} />)}</div>
+          </React.Fragment>
+        )}
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
