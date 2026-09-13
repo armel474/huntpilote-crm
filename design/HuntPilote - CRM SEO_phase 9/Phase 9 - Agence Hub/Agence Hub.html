@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HuntPilote — Agence hub</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="hp-states.jsx"></script>
+<script type="text/babel" src="hp-agence-data.jsx"></script>
+<script type="text/babel" src="hp-agence-panels.jsx"></script>
+<script type="text/babel" src="hp-cat-data.jsx"></script>
+<script type="text/babel" src="hp-cat-panels.jsx"></script>
+<script type="text/babel" src="hp-tpl-data.jsx"></script>
+<script type="text/babel" src="hp-tpl-panels.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-states.css">
+<link rel="stylesheet" href="dl-panel.css">
+<link rel="stylesheet" href="hp-cat.css">
+<link rel="stylesheet" href="hp-doc-render.css">
+<link rel="stylesheet" href="hp-doc-gen.css">
+<style>
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');
+  font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base: #F2EFEA; --bg-solid: #FFFFFF; --bg-surface: rgba(255,255,255,0.54); --bg-muted: #E3DDD1;
+  --bd: rgba(0,0,0,0.075); --bd-solid: #D0CBBF; --bd-strong: #BAB4A6; --border: rgba(0,0,0,0.075);
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF; --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px; --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46; --border: rgba(255,255,255,0.08);
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching],[data-theme-switching] *,
+[data-theme-switching] *::before,[data-theme-switching] *::after {
+  transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important;
+}
+body { font-family: var(--font); background: var(--bg-base); color: var(--fg1); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+body::before, body::after { content: ''; position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); opacity: 0.5; }
+body::before { width: 40rem; height: 40rem; top: -16rem; left: 14rem; background: radial-gradient(circle, rgba(74,222,128,0.26) 0%, transparent 68%); }
+body::after { width: 32rem; height: 32rem; bottom: -12rem; right: -4rem; background: radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 68%); }
+[data-theme="dark"] body::before { opacity: 0.28; }
+[data-theme="dark"] body::after { opacity: 0.26; }
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.crm-header { height: var(--header-h); flex-shrink: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.68); display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem; position: relative; isolation: isolate; box-shadow: 0 1px 0 var(--border), 0 2px 20px rgba(0,0,0,0.05); }
+.crm-header::before { content: ''; position: absolute; inset: 0; z-index: -1; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+.btn-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 160ms; position: relative; }
+.btn-icon:hover { color: var(--fg1); }
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 150ms; }
+.btn-pri:hover { opacity: 0.84; }
+.btn-pri:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 150ms; }
+.btn-out:hover { background: var(--bg-muted); }
+.btn-out:disabled { opacity: 0.5; cursor: not-allowed; }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+.sc { overflow-y: auto; }
+.sc::-webkit-scrollbar { width: 7px; }
+.sc::-webkit-scrollbar-thumb { background: var(--bd-strong); border-radius: 999px; }
+.sc::-webkit-scrollbar-track { background: transparent; }
+.fld { font-family: var(--font); font-size: 0.8125rem; color: var(--fg1); background: var(--bg-base); border: 1px solid var(--bd-solid); border-radius: 9px; padding: 0.55rem 0.75rem; outline: none; transition: border-color 150ms, box-shadow 150ms; width: 100%; }
+.fld:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.12); }
+.fld::placeholder { color: var(--fg4); }
+.fld:disabled { opacity: 0.6; cursor: not-allowed; }
+.set-nav { display: flex; align-items: center; gap: 9px; padding: 0.5rem 0.7rem; border-radius: 9px; cursor: pointer; transition: all 140ms; color: var(--fg3); font-size: 0.8125rem; font-weight: 500; }
+.set-nav:hover { background: var(--bg-muted); color: var(--fg1); }
+.set-nav.on { background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+.tgl { width: 38px; height: 22px; border-radius: 999px; position: relative; cursor: pointer; flex-shrink: 0; transition: background 200ms; }
+.tgl-knob { position: absolute; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 200ms; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.ag-spin { animation: ag-spin 800ms linear infinite; }
+@keyframes ag-spin { to { transform: rotate(360deg); } }
+a { color: var(--accent); }
+a:hover { color: var(--green-fg); }
+.crumb { font-size: 0.75rem; color: var(--fg4); display: flex; align-items: center; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.crumb b { color: var(--fg2); font-weight: 600; cursor: pointer; }
+.crumb b:hover { color: var(--fg1); }
+</style>
+<meta name="color-scheme" content="light dark">
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme');}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const AH_SECTIONS = [
+  { id: 'profil', label: 'Profil', Icon: AgI.Building },
+  { id: 'equipe', label: 'Équipe', Icon: AgI.Team },
+  { id: 'catalogue', label: 'Catalogue', Icon: AgI.Box },
+  { id: 'offres', label: 'Offres', Icon: AgI.Tag },
+  { id: 'modeles', label: 'Modèles de documents', Icon: AgI.FileText },
+  { id: 'documents', label: 'Documents', Icon: AgI.Folder },
+];
+
+const AhI = {
+  Bell: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>,
+  Sun: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>,
+  Moon: () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>,
+};
+
+const CRMHeader = ({ theme, onToggleTheme }) => (
+  <div className="crm-header">
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--fg1)', lineHeight: 1 }}>Agence hub</div>
+      <div style={{ fontSize: '0.6875rem', color: 'var(--fg3)', marginTop: 2 }}>HuntPilote · Agence SEO</div>
+    </div>
+    <button className="btn-icon"><AhI.Bell /></button>
+    <button className="btn-icon" onClick={onToggleTheme} title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}>{theme === 'dark' ? <AhI.Sun /> : <AhI.Moon />}</button>
+    <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--green-m)', color: 'var(--green-fg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.625rem', fontWeight: 700, flexShrink: 0, border: '1.5px solid var(--green-b)' }}>MC</div>
+  </div>
+);
+
+const App = () => {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('hp-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { return (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } });
+  const [section, setSection] = useState(() => { try { return new URLSearchParams(location.search).get('section') || null; } catch { return null; } });
+  useEffect(() => {
+    const h = document.documentElement;
+    h.setAttribute('data-theme-switching', '');
+    h.setAttribute('data-theme', theme);
+    try { localStorage.setItem('hp-theme', theme); } catch {}
+    const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500);
+    return () => clearTimeout(t);
+  }, [theme]);
+  useEffect(() => {
+    try { const u = new URL(location.href); if (section) u.searchParams.set('section', section); else u.searchParams.delete('section'); history.replaceState(null, '', u); } catch {}
+  }, [section]);
+  const toggleTheme = () => setTheme((t) => t === 'dark' ? 'light' : 'dark');
+  const activeLabel = AH_SECTIONS.find((s) => s.id === section);
+  useEffect(() => { window.__agNav = setSection; }, []);
+  const wide = section === 'catalogue' || section === 'offres' || section === 'modeles' || section === 'documents';
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="agencehub" />
+      <div className="main">
+        <CRMHeader theme={theme} onToggleTheme={toggleTheme} />
+        <div className="content" style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <div style={{ width: 230, flexShrink: 0, borderRight: '1px solid var(--bd-solid)', background: 'var(--bg-solid)', padding: '1.25rem 0.875rem', display: 'flex', flexDirection: 'column' }}>
+            <div className="lbl" style={{ padding: '0 0.7rem', marginBottom: 10, cursor: 'pointer' }} onClick={() => setSection(null)}>Agence hub</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {AH_SECTIONS.map((s) => (
+                <div key={s.id} className={`set-nav${section === s.id ? ' on' : ''}`} onClick={() => setSection(s.id)}>
+                  <s.Icon />{s.label}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 'auto', padding: '0.875rem', borderRadius: 12, background: 'var(--bg-muted)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--green)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.6875rem', fontWeight: 800 }}>MC</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Marie Chen</div>
+                  <div style={{ fontSize: '0.5625rem', color: 'var(--fg4)' }}>Administratrice</div>
+                </div>
+              </div>
+              <a href="Parametres.html" className="btn-out" style={{ width: '100%', justifyContent: 'center', padding: '0.35rem', fontSize: '0.6875rem', textDecoration: 'none' }}>Paramètres de l'application</a>
+            </div>
+          </div>
+          <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
+            <div style={{ maxWidth: wide ? 1320 : 900, margin: '0 auto' }}>
+              <div className="crumb"><span>HuntPilote</span><span>›</span><b onClick={() => setSection(null)}>Agence hub</b>{activeLabel && <React.Fragment><span>›</span><span>{activeLabel.label}</span></React.Fragment>}</div>
+              {!section && <HubHome onNav={setSection} />}
+              {section === 'profil' && <ProfilPanel />}
+              {section === 'equipe' && <EquipePanel />}
+              {section === 'catalogue' && <CataloguePanel />}
+              {section === 'offres' && <OffresPanel />}
+              {section === 'modeles' && <ModelesPanel />}
+              {section === 'documents' && <DocumentsListPanel />}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+<script type="text/babel" src="hp-search-data.jsx"></script>
+<script type="text/babel" src="hp-notif-data.jsx"></script>
+<script type="text/babel" src="hp-overlays.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Document à signer — SHGM · HuntPilote</title>
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme')}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="pc-data.jsx"></script>
+<script type="text/babel" src="pc-nav.jsx"></script>
+<script type="text/babel" src="hp-agence-data.jsx"></script>
+<script type="text/babel" src="hp-tpl-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-panels.jsx"></script>
+<link rel="stylesheet" href="rp-doc.css">
+<link rel="stylesheet" href="pc-portal.css">
+<link rel="stylesheet" href="hp-doc-render.css">
+<link rel="stylesheet" href="hp-doc-gen.css">
+<style>.pc-demo select{font-family:var(--font)}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+const { PortalHeader, PNI, PC_ACCOUNT } = window;
+
+const SCENARIOS = [['devis', 'Démo — devis en attente'], ['contrat', 'Démo — contrat en attente'], ['signe', 'Démo — contrat déjà signé']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'light');
+  const urlId = (() => { try { return new URLSearchParams(location.search).get('id'); } catch { return null; } })();
+  const [scenario, setScenario] = useState('devis');
+  const [accepted, setAccepted] = useState(false);
+  const [signing, setSigning] = useState(false);
+  const [signedName, setSignedName] = useState('');
+  const [signed, setSigned] = useState(false);
+  useEffect(() => { setAccepted(false); setSigning(false); setSigned(scenario === 'signe'); setSignedName(''); }, [scenario]);
+  useEffect(() => { const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme); try { localStorage.setItem('hp-theme', theme); } catch {} const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t); }, [theme]);
+
+  const realDoc = urlId ? genById(urlId) : null;
+  const baseDoc = realDoc || (scenario === 'devis' ? genById('DV-2026-015') : genById('CT-2026-007'));
+  const doc = realDoc ? realDoc : { ...baseDoc, statut: scenario === 'signe' ? 'signe' : 'envoye' };
+  const template = DOC_TEMPLATES.find((t) => t.id === doc.templateId);
+  const isContrat = doc.kind === 'contrat';
+  const isAcceptable = doc.kind === 'devis' || doc.kind === 'proposition';
+  const alreadyDone = ['accepte', 'signe', 'payee'].includes(doc.statut);
+  const closedNoAction = ['refuse', 'expire', 'retard', 'brouillon'].includes(doc.statut);
+  const done = alreadyDone || (isContrat ? signed : accepted);
+  const kindLabel = { proposition: 'Proposition', devis: 'Devis', contrat: 'Contrat', annexe: 'Annexe', avenant: 'Avenant', facture: 'Facture' }[doc.kind] || doc.kind;
+
+  return (
+    <React.Fragment>
+      {!urlId && <div className="pc-demo"><select value={scenario} onChange={(e) => setScenario(e.target.value)} aria-label="État de démonstration">{SCENARIOS.map(([id, l]) => <option key={id} value={id}>{l}</option>)}</select></div>}
+      <PortalHeader theme={theme} onToggleTheme={() => setTheme((t) => t === 'dark' ? 'light' : 'dark')} active="documents" unread={0} />
+      <div className="portail-doc-wrap" style={{ paddingTop: '1.5rem', paddingBottom: '2.5rem' }}>
+        <a href="Portail Documents.html" style={{ fontSize: '0.8125rem', display: 'inline-block', marginBottom: 12 }}>‹ Vos documents</a>
+        <div className="eyebrow" style={{ marginBottom: 10 }}>{kindLabel} · {doc.id}</div>
+        <h1 style={{ fontSize: '1.5rem', marginBottom: 6 }}>{doc.objet}</h1>
+        <p className="lead" style={{ marginBottom: '1.25rem' }}>{done ? (isContrat ? 'Ce contrat a été signé. Vous pouvez le relire ou le télécharger à tout moment.' : 'Ce document a été accepté. Le mandat démarre selon l’échéancier convenu.') : closedNoAction ? 'Ce document ne demande aucun geste de votre part pour le moment.' : (isContrat ? 'Relisez le contrat ci-dessous, puis signez-le pour lancer le mandat.' : isAcceptable ? 'Relisez le document ci-dessous. Vous pouvez l’accepter directement depuis cet écran.' : 'Voici votre document.')}</p>
+
+        <DocRender doc={doc} template={template} />
+
+        <div className="portail-accept-bar">
+          {done ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, color: 'var(--green-fg)', fontWeight: 700, fontSize: '0.875rem' }}><PNI.Check />{isContrat ? `Signé par ${signedName || doc.contactName} — ${doc.dateSignature || 'aujourd’hui'}.` : `Accepté — ${doc.contactName}.`}</div>
+          ) : closedNoAction ? (
+            <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>{doc.statut === 'refuse' ? 'Ce document a été refusé.' : doc.statut === 'expire' ? 'Ce document a expiré.' : doc.statut === 'retard' ? 'Paiement en retard — voir vos instructions de paiement ci-dessus.' : 'En préparation par votre chargée de projet.'}</div>
+          ) : isContrat ? (
+            signing ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600 }}>Tapez votre nom complet pour signer<input className="pc-input" style={{ display: 'block', width: '100%', marginTop: 6 }} value={signedName} onChange={(e) => setSignedName(e.target.value)} placeholder={doc.contactName} /></label>
+                <p style={{ fontSize: '0.6875rem', color: 'var(--fg-3)', lineHeight: 1.5 }}>Signature simple : votre nom tapé, la date et l’adresse IP de cet appareil seront consignés avec le contrat. Ce n’est pas une signature électronique certifiée.</p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="pc-btn" onClick={() => setSigning(false)}>Annuler</button>
+                  <button className="pc-btn solid" disabled={!signedName.trim()} onClick={() => { setSigned(true); setSigning(false); if (realDoc) { realDoc.statut = 'signe'; realDoc.dateSignature = 'aujourd’hui'; realDoc.journal = [...realDoc.journal, { at: 'aujourd’hui', event: 'Signé par le client', who: signedName }]; } }}>Confirmer la signature</button>
+                </div>
+              </div>
+            ) : <button className="pc-btn solid big" style={{ alignSelf: 'flex-start', width: 'auto' }} onClick={() => setSigning(true)}>Signer le contrat</button>
+          ) : isAcceptable ? (
+            <button className="pc-btn solid big" style={{ alignSelf: 'flex-start', width: 'auto' }} onClick={() => { setAccepted(true); if (realDoc) { realDoc.statut = 'accepte'; realDoc.journal = [...realDoc.journal, { at: 'aujourd’hui', event: 'Accepté par le client', who: realDoc.contactName }]; } }}>Accepter ce document</button>
+          ) : <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>Rien à faire de votre côté pour ce document.</div>}
+        </div>
+
+        <p className="pc-hint" style={{ marginTop: '1rem' }}>Une question avant de {isContrat ? 'signer' : 'accepter'} ? <a href="Portail Echanges.html">Écrivez à {PC_ACCOUNT.pm}</a>.</p>
+      </div>
+    </React.Fragment>);
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

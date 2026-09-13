@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HuntPilote — Document</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="hp-sidebar.jsx"></script>
+<script type="text/babel" src="hp-states.jsx"></script>
+<script type="text/babel" src="hp-agence-data.jsx"></script>
+<script type="text/babel" src="hp-agence-panels.jsx"></script>
+<script type="text/babel" src="hp-cat-data.jsx"></script>
+<script type="text/babel" src="hp-cat-panels.jsx"></script>
+<script type="text/babel" src="hp-tpl-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-data.jsx"></script>
+<script type="text/babel" src="hp-doc-gen-panels.jsx"></script>
+<link rel="stylesheet" href="hp-shell.css">
+<link rel="stylesheet" href="hp-states.css">
+<link rel="stylesheet" href="dl-panel.css">
+<link rel="stylesheet" href="hp-cat.css">
+<link rel="stylesheet" href="hp-doc-render.css">
+<link rel="stylesheet" href="hp-doc-gen.css">
+<style>
+@font-face { font-family: 'Noto Sans'; src: url('fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations'); font-weight: 100 900; font-stretch: 62.5% 100%; font-style: normal; font-display: swap; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-base: #F2EFEA; --bg-solid: #FFFFFF; --bg-surface: rgba(255,255,255,0.54); --bg-muted: #E3DDD1;
+  --bd: rgba(0,0,0,0.075); --bd-solid: #D0CBBF; --bd-strong: #BAB4A6; --border: rgba(0,0,0,0.075);
+  --fg1: #18181B; --fg2: #3F3F46; --fg3: #71717A; --fg4: #A1A1AA;
+  --primary: #1F1F1F; --primary-fg: #FFFFFF; --accent: #16A34A;
+  --green: #16A34A; --green-m: #DCEFD4; --green-b: #BBE3AA; --green-fg: #2D5A27;
+  --yellow: #E5C66B; --yellow-m: #F5E8B5; --yellow-fg: #7A5D14; --yellow-b: #D4B24A;
+  --blue: #3B82F6; --blue-m: #DBEAFE; --blue-fg: #1D4ED8; --blue-b: #93C5FD;
+  --red: #C44545; --red-m: rgba(196,69,69,0.08); --red-b: rgba(196,69,69,0.28);
+  --violet: #7C3AED; --violet-m: rgba(124,58,237,0.07); --violet-b: rgba(124,58,237,0.2); --violet-fg: #5B21B6;
+  --header-h: 58px; --blur: blur(22px) saturate(175%);
+  --shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 20px -2px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] {
+  --bg-base: #131316; --bg-solid: #1E1E22; --bg-surface: rgba(255,255,255,0.06); --bg-muted: #27272A;
+  --bd: rgba(255,255,255,0.08); --bd-solid: #2A2A2D; --bd-strong: #3F3F46; --border: rgba(255,255,255,0.08);
+  --fg1: #FAFAFA; --fg2: #D4D4D8; --fg3: #A1A1AA; --fg4: #71717A;
+  --primary: #FAFAFA; --primary-fg: #18181B;
+  --green: #4ADE80; --green-m: rgba(74,222,128,0.13); --green-b: rgba(74,222,128,0.28); --green-fg: #86efac;
+  --yellow-m: rgba(229,198,107,0.14); --yellow-fg: #E5C66B; --yellow-b: rgba(229,198,107,0.28);
+  --blue-m: rgba(59,130,246,0.13); --blue-fg: #93C5FD; --blue-b: rgba(59,130,246,0.28);
+  --red-m: rgba(196,69,69,0.13); --red-b: rgba(196,69,69,0.28);
+  --violet-m: rgba(124,58,237,0.1); --violet-b: rgba(124,58,237,0.28); --violet-fg: #c4b5fd;
+  --shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 4px 20px rgba(0,0,0,0.4);
+}
+[data-theme-switching],[data-theme-switching] *,[data-theme-switching] *::before,[data-theme-switching] *::after { transition: background-color 420ms ease, color 320ms ease, border-color 420ms ease, box-shadow 420ms ease !important; }
+body { font-family: var(--font); background: var(--bg-base); color: var(--fg1); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+.app-shell { display: flex; height: 100vh; overflow: hidden; position: relative; z-index: 1; }
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.crm-header { height: var(--header-h); flex-shrink: 0; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.68); display: flex; align-items: center; padding: 0 1.125rem; gap: 0.625rem; }
+[data-theme="dark"] .crm-header { background: rgba(30,30,34,0.75); }
+.card { background: var(--bg-solid); border: 1px solid var(--bd-solid); border-radius: 14px; box-shadow: var(--shadow); }
+.btn-icon { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; background: var(--bg-solid); border: 1px solid var(--bd-solid); color: var(--fg3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.btn-pri { display: inline-flex; align-items: center; gap: 6px; padding: 0.45rem 1rem; border-radius: 999px; background: var(--primary); color: var(--primary-fg); border: none; font-family: var(--font); font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn-pri:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-out { display: inline-flex; align-items: center; gap: 5px; padding: 0.4rem 0.875rem; border-radius: 999px; background: transparent; color: var(--fg2); border: 1px solid var(--bd-strong); font-family: var(--font); font-size: 0.75rem; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.btn-out:hover { background: var(--bg-muted); }
+.btn-out:disabled { opacity: 0.5; cursor: not-allowed; }
+.lbl { font-size: 0.5625rem; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: 0.07em; }
+.fld { font-family: var(--font); font-size: 0.8125rem; color: var(--fg1); background: var(--bg-base); border: 1px solid var(--bd-solid); border-radius: 9px; padding: 0.55rem 0.75rem; outline: none; width: 100%; }
+.sc { overflow-y: auto; }
+a { color: var(--accent); }
+a:hover { color: var(--green-fg); }
+</style>
+<meta name="color-scheme" content="light dark">
+<script>(function(){var s=null;try{s=localStorage.getItem('hp-theme');}catch(e){}document.documentElement.setAttribute('data-theme',s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))})();</script>
+<link rel="stylesheet" href="hp-mobile.css">
+<link rel="stylesheet" href="hp-overlays.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const DOCV = [['edit', 'Droits complets'], ['readonly', 'Lecture seule — sans droit'], ['error', 'Envoi en erreur (démo)']];
+
+const App = () => {
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem('hp-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { return 'light'; } });
+  useEffect(() => { const h = document.documentElement; h.setAttribute('data-theme-switching', ''); h.setAttribute('data-theme', theme); try { localStorage.setItem('hp-theme', theme); } catch {} const t = setTimeout(() => h.removeAttribute('data-theme-switching'), 500); return () => clearTimeout(t); }, [theme]);
+
+  const startId = (() => { try { return new URLSearchParams(location.search).get('id'); } catch { return null; } })() || 'DV-2026-018';
+  const [docsVersion, setDocsVersion] = useState(0);
+  const [id, setId] = useState(startId);
+  const [view, setView] = useState('edit');
+  const [newPanel, setNewPanel] = useState(null);
+  const doc = genById(id) || GEN_DOCUMENTS[0];
+  const template = DOC_TEMPLATES.find((t) => t.id === doc.templateId);
+  const canManage = view === 'edit';
+  const missingTaxes = agProfileMissing(AG_PROFILE).length > 0;
+  const kindLabel = (DOC_KINDS.find((k) => k.id === doc.kind) || {}).label;
+  const canSend = doc.kind === 'facture' ? true : true; // droit simulé via le sélecteur de vue
+
+  const touch = (patch) => { Object.assign(doc, patch); setDocsVersion((v) => v + 1); };
+  const envoyer = () => { if (missingTaxes || !canManage) return; touch({ statut: 'envoye', emis: 'Aujourd\u2019hui', journal: [...doc.journal, { at: 'Aujourd\u2019hui', event: 'Envoyé au client', who: 'Marie Chen' }] }); };
+  const relancer = () => touch({ journal: [...doc.journal, { at: 'Aujourd\u2019hui', event: 'Relance envoyée', who: 'Marie Chen' }] });
+  const marquer = (statut, label) => touch({ statut, journal: [...doc.journal, { at: 'Aujourd\u2019hui', event: label, who: 'Marie Chen' }] });
+  const corriger = () => { const v = doc.versions.length + 1; touch({ versions: [...doc.versions, { v, at: 'Aujourd\u2019hui', who: 'Marie Chen', note: 'Correction — nouvelle version.' }], journal: [...doc.journal, { at: 'Aujourd\u2019hui', event: `Corrigé — nouvelle version (v${v})`, who: 'Marie Chen' }] }); };
+  const creerSuite = () => {
+    const nextKind = doc.kind === 'proposition' ? 'contrat' : doc.kind === 'contrat' ? 'facture' : null;
+    setNewPanel({ clientName: doc.clientName, clientRaison: doc.clientRaison, contactName: doc.contactName, contactTitre: doc.contactTitre, objetSuggere: doc.objet, defaultKind: nextKind || 'devis', defaultMode: 'existant', defaultExistingId: doc.id });
+  };
+
+  const printIt = () => window.print();
+  const fromDoc = doc.from ? genById(doc.from) : null;
+  const producedDocs = (doc.produced || []).map((pid) => genById(pid)).filter(Boolean);
+
+  return (
+    <div className="app-shell">
+      <NavSidebar active="agencehub" />
+      <div className="main">
+        <div className="crm-header">
+          <a href="Agence Hub.html?section=documents" style={{ fontSize: '0.75rem', color: 'var(--fg3)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>‹ Documents</a>
+          <div style={{ flex: 1, minWidth: 0, marginLeft: 10 }}>
+            <div style={{ fontSize: '1.0625rem', fontWeight: 800, letterSpacing: '-0.025em' }}>{doc.id} <span style={{ fontWeight: 500, color: 'var(--fg3)', fontSize: '0.75rem' }}>· {kindLabel}</span></div>
+          </div>
+          <select className="fld" style={{ width: 'auto', padding: '0.4rem 0.6rem', fontSize: '0.75rem' }} value={view} onChange={(e) => setView(e.target.value)} aria-label="Vue de démonstration">{DOCV.map(([id2, l]) => <option key={id2} value={id2}>{l}</option>)}</select>
+          <button className="btn-icon" onClick={() => setTheme((t) => t === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? '☀' : '☾'}</button>
+        </div>
+        <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
+          <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+            <div className="docg-wrap">
+              <div>
+                <DocRender doc={doc} template={template} printable />
+                <div className="docg-doc-actions">
+                  <button className="btn-out" onClick={printIt}>Télécharger en PDF</button>
+                  <button className="btn-out" onClick={printIt}>Imprimer</button>
+                </div>
+              </div>
+              <div>
+                <div className="cs-block">
+                  <div className="cs-block-h">Statut</div>
+                  <div style={{ marginBottom: 8 }}><GenBadge statut={doc.statut} /></div>
+                  <div className="cs-row"><span>Référence</span><span>{doc.id}</span></div>
+                  <div className="cs-row"><span>Client</span><span>{doc.clientName}</span></div>
+                  <div className="cs-row"><span>Contact</span><span>{doc.contactName || '—'}</span></div>
+                  <div className="cs-row"><span>Montant TTC</span><span>{genFmt(genMontantTTC(doc))}</span></div>
+                  <div className="cs-row"><span>Émis</span><span>{doc.emis || 'Non émis'}</span></div>
+                  {doc.expire && <div className="cs-row"><span>Expire</span><span>{doc.expire}</span></div>}
+                  {doc.echeance && doc.kind === 'facture' && <div className="cs-row"><span>Échéance</span><span>{doc.echeance}</span></div>}
+                </div>
+
+                <div className="cs-block">
+                  <div className="cs-block-h">Action</div>
+                  {missingTaxes && doc.statut === 'brouillon' && <div className="dl-banner yellow" style={{ marginBottom: 10 }}><span><AgI.Warn /></span><span>Numéros de TPS/TVQ manquants — <a href="Agence Hub.html?section=profil">complétez le profil de l\u2019agence</a> avant d\u2019envoyer.</span></div>}
+                  {!canManage && <div className="dl-note" style={{ marginBottom: 10 }}>Lecture seule — le droit requis n\u2019est pas accordé dans cette vue de démonstration.</div>}
+                  {view === 'error' && doc.statut === 'brouillon' && <div className="dl-banner red" style={{ marginBottom: 10 }}><span><AgI.Warn /></span><span><b>L\u2019envoi a échoué.</b> Réessayez ; si ça persiste, vérifiez votre connexion.</span></div>}
+                  {doc.statut === 'brouillon' && <button className="btn-pri" style={{ width: '100%' }} disabled={missingTaxes || !canManage || view === 'error'} onClick={envoyer}>Envoyer</button>}
+                  {doc.statut === 'envoye' && <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <button className="btn-out" disabled={!canManage} onClick={relancer}>Relancer</button>
+                    {(doc.kind === 'devis' || doc.kind === 'proposition') && <React.Fragment><button className="btn-out" disabled={!canManage} onClick={() => marquer('accepte', 'Marqué accepté')}>Marquer accepté</button><button className="btn-out" disabled={!canManage} onClick={() => marquer('refuse', 'Marqué refusé')}>Marquer refusé</button></React.Fragment>}
+                    {doc.kind === 'contrat' && <button className="btn-out" disabled={!canManage} onClick={() => marquer('signe', 'Marqué signé')}>Marquer signé</button>}
+                    {doc.kind === 'facture' && <button className="btn-out" disabled={!canManage} onClick={() => marquer('payee', 'Marqué payée')}>Marquer payée</button>}
+                    <button className="btn-out" disabled={!canManage} onClick={corriger}>Corriger — nouvelle version</button>
+                  </div>}
+                  {doc.statut === 'retard' && <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}><button className="btn-out" disabled={!canManage} onClick={relancer}>Relancer</button><button className="btn-out" disabled={!canManage} onClick={() => marquer('payee', 'Marqué payée')}>Marquer payée</button></div>}
+                  {(doc.statut === 'accepte' || doc.statut === 'signe') && (doc.kind === 'proposition' || doc.kind === 'contrat') && <button className="btn-pri" style={{ width: '100%' }} disabled={!canManage} onClick={creerSuite}>Créer la suite</button>}
+                  {doc.statut === 'payee' && <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>Payée — rien à faire.</div>}
+                  {doc.statut === 'refuse' && <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>Refusé{doc.motifRefus ? ` — ${doc.motifRefus}` : ''}.</div>}
+                  {doc.statut === 'expire' && <div style={{ fontSize: '0.8125rem', color: 'var(--fg3)' }}>Expiré sans réponse.</div>}
+                </div>
+
+                {(fromDoc || producedDocs.length > 0) && <div className="cs-block">
+                  <div className="cs-block-h">Chaîne</div>
+                  <div className="cs-chain">
+                    {fromDoc && <div><div className="cs-chain-lbl">Depuis</div><a href={`Document.html?id=${fromDoc.id}`}>{kindLabel} depuis {(DOC_KINDS.find((k) => k.id === fromDoc.kind) || {}).label.toLowerCase()} {fromDoc.id}</a></div>}
+                    {producedDocs.map((p) => <div key={p.id}><div className="cs-chain-lbl">A produit</div><a href={`Document.html?id=${p.id}`}>{(DOC_KINDS.find((k) => k.id === p.kind) || {}).label} {p.id}</a></div>)}
+                  </div>
+                </div>}
+
+                <div className="cs-block">
+                  <div className="cs-block-h">Versions{doc.versions.length ? ` · ${doc.versions.length}` : ''}</div>
+                  {doc.versions.length === 0 ? <div style={{ fontSize: '0.75rem', color: 'var(--fg4)' }}>Pas encore envoyé.</div> : [...doc.versions].reverse().map((v, i) => (
+                    <div key={v.v} className="cs-version-row"><span style={{ fontSize: '0.6875rem', fontWeight: 700, flexShrink: 0 }}>{i === 0 ? `v${v.v}` : <s style={{ color: 'var(--fg4)' }}>{`v${v.v}`}</s>}</span><div style={{ minWidth: 0 }}><div style={{ fontSize: '0.6875rem', color: 'var(--fg2)' }}>{v.note}</div><div style={{ fontSize: '0.625rem', color: 'var(--fg4)' }}>{v.at} · {v.who}</div></div></div>
+                  ))}
+                </div>
+
+                <div className="cs-block">
+                  <div className="cs-block-h">Journal</div>
+                  <div className="cs-journal">{doc.journal.map((j, i) => <div key={i} className="cs-journal-row"><span className="cs-journal-dot"></span><div><div className="cs-journal-t">{j.event}</div><div className="cs-journal-m">{j.at} · {j.who}</div></div></div>)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {newPanel && <NewDocumentPanel context={newPanel} onClose={() => setNewPanel(null)} onCreated={(d) => { touch({ produced: [...doc.produced, d.id] }); setNewPanel(null); location.href = `Document.html?id=${d.id}`; }} />}
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
