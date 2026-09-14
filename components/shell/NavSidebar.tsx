@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   IcoAlert,
+  IcoBuilding,
   IcoCal,
   IcoCog,
   IcoDash,
@@ -38,6 +39,7 @@ const TOP_NAV: NavItem[] = [
   { href: routes.agenda(), label: 'Agenda', Icon: IcoCal },
   { href: routes.rapportsAProduire(), label: 'Rapports à produire', Icon: IcoDoc },
   { href: routes.clients(), label: 'Client hub', Icon: IcoUsers, match: [routes.clients(), routes.onboarding()] },
+  { href: routes.agence(), label: 'Agence hub', Icon: IcoBuilding },
   { href: routes.pipeline(), label: 'Pipeline', Icon: IcoPipe },
   { href: routes.workflow(), label: 'Workflow', Icon: IcoZap },
 ];
