@@ -192,10 +192,29 @@ ou de l'**opportunité** (panneau de deal, étapes Proposition et Négociation).
 Le panneau de création en quatre étapes reste le geste pour créer. Deux ajouts
 à l'étape 2, « Le contenu » :
 
-- une quatrième source, **« Depuis le brief »** (session 9.5) : l'offre
-  suggérée est présélectionnée avec sa justification en trois phrases, les
-  options au choix sont tranchées d'après le brief, les balises `brief.*` sont
-  remplies ; sans brief validé, la source est grisée avec la raison ;
+- une quatrième source, **« Depuis le brief »** (session 9.5) : la
+  recommandation s'affiche comme une **suggestion**, en violet, avec sa
+  justification en trois phrases, ce qu'elle couvre et ce qu'elle ne couvre
+  pas ; un geste « Retenir » la transforme en choix, et la sélection manuelle
+  dans le catalogue reste possible à tout moment. Les options au choix sont
+  **proposées** d'après le brief, marquées « à confirmer » ; une option
+  incertaine ne devient jamais un choix vendu tant qu'une personne ne l'a pas
+  confirmée. Les balises `brief.*` connues sont remplies ; celles marquées
+  inconnues ou sans objet restent vides et leurs phrases conditionnelles ne
+  se rendent pas. Sans brief validé, la source est grisée avec la raison.
+
+  États de cette source, tous à dessiner : **aucune offre adaptée** (la
+  recommandation le conclut, avec la raison ; le panneau propose les lignes
+  libres et le catalogue) · **plusieurs offres possibles** (deux ou trois
+  suggestions côte à côte avec leurs couvertures, aucune présélectionnée,
+  choix manuel requis) · **options non tranchées** (le brouillon peut être
+  créé, l'option reste « à trancher » dans les éléments manquants et bloque
+  l'envoi) · **recommandation indisponible** (IA absente, non autorisée,
+  plafond atteint ou erreur : la source reste utilisable, elle remplit les
+  balises du brief et laisse choisir l'offre à la main) · **sélection
+  manuelle** (une offre choisie sans suggestion, ou contre la suggestion :
+  la justification n'est pas copiée, la section « recommandation » repart du
+  texte par défaut) ;
 - pour « Depuis une offre » : le choix des **offres présentées** dans le
   document (D-06 : par défaut la seule offre recommandée, option « comparer »),
   la **maintenance recommandée** (D-01, affichée « exemple » tant que la
@@ -246,14 +265,31 @@ affiché « Offert »), **remise** (en pourcentage ou en montant, prix avant
 remise visible), **informatif** (budget média payé à un tiers : hors totaux,
 hors taxes, dans un bloc à part libellé « non facturé par l'agence »).
 
-Les totaux affichés, dans la colonne et dans le rendu : **investissement
-initial** (ponctuel HT, taxes, TTC) · **récurrent** (par période, et le total
-sur l'engagement quand il y en a un : « 295 $ × 3 mois ») · **budget externe**
-(informatif) · un « total estimé » optionnel qui additionne honoraires et
-budget externe avec le libellé qui dit ce qui est facturé. Le catalogue reste
-la seule source de prix : une ligne dont le prix s'écarte du catalogue le
-signale (« prix catalogue 700 $ ») ; une offre « à partir de » accepte un prix
-supérieur sans avertissement.
+Les totaux affichés, dans la colonne et dans le rendu, **séparés par
+périodicité** : **investissement initial** (ponctuel, avant remises, remises,
+HT, taxes, TTC) · **par mois**, et s'il y a lieu **par trimestre**, **par
+année** (un bloc par périodicité présente, jamais un « récurrent » qui les
+additionne) · **budget externe** (informatif, avec sa période de référence :
+« 600 $ par mois, 20 $ par jour »).
+
+- La **durée d'engagement** est propre à chaque prestation récurrente, sur
+  sa ligne (« 295 $ par mois · engagement 3 mois : 885 $ »), copiée de
+  l'offre et modifiable ligne par ligne ; deux lignes mensuelles peuvent
+  différer.
+- Une **remise** affiche son pourcentage, son assiette (« −25 % sur la phase
+  ponctuelle, 1 200 $ ») et le montant calculé (« −300 $ ») comme trois
+  informations distinctes ; une remise saisie en montant affiche l'assiette
+  et le montant, sans pourcentage inventé.
+- Le **total estimé** n'apparaît que si le composeur a fixé son horizon
+  (« sur 3 mois ») et si la liste de ce qu'il additionne est affichée sous
+  lui, chaque élément marqué « facturé par l'agence » ou « payé à un tiers ».
+  Sans horizon, le bloc dit « Choisissez un horizon pour afficher un total
+  estimé » ; il ne calcule rien.
+
+Le catalogue reste la seule source de prix : une ligne dont le prix s'écarte
+du catalogue le signale (« prix catalogue 700 $ ») ; une offre « à partir de »
+accepte un prix supérieur sans avertissement. Les exemples de rendu
+attendus sont dans l'analyse 001, section 5.6.
 
 L'**échéancier de paiement** (50 % à la signature, 50 % avant mise en ligne,
 15 jours — libellés sous réserve de D-07) s'affiche depuis l'offre, dans la
@@ -264,8 +300,12 @@ déclencheurs, délai), pas en texte libre.
 
 Une liste, dans la colonne, chaque élément cliquable vers l'endroit à
 corriger : section à relire · balise requise vide (`brief.*` dans une section
-activée, contact sans courriel, adresse manquante pour un contrat) · numéros
-de taxes non renseignés · ligne sans prix · offre devenue inactive · modèle
+activée, contact sans courriel, adresse manquante pour un contrat) · valeur
+proposée non confirmée (raison sociale proposée depuis le nom commercial,
+signataire proposé depuis le destinataire, zone cible proposée depuis la
+ville) · option d'offre non tranchée · ligne récurrente sans engagement quand
+un total sur engagement est rendu · total estimé sans horizon · numéros de
+taxes non renseignés · ligne sans prix · offre devenue inactive · modèle
 incomplet. Tant qu'elle n'est pas vide, **« Envoyer »** reste à sa place,
 verrouillé, avec le compte (« 3 éléments manquants »).
 
@@ -350,6 +390,10 @@ validées.
 - Ne pas réécrire un texte modifié à la main, quel que soit le geste.
 - Ne pas faire calculer ni proposer un prix par l'IA : les prix viennent du
   catalogue, les calculs du moteur.
+- Ne pas transformer une suggestion d'offre ou d'option en choix vendu sans
+  un geste explicite de la personne.
+- Ne pas remplir la raison sociale, le signataire ou la zone cible depuis une
+  autre donnée sans afficher la proposition et sa confirmation.
 - Ne pas mélanger budget média et honoraires dans un même total sans le dire.
 - Ne pas afficher la transcription, le brief brut ni la légende d'un gabarit
   dans le document.

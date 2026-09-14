@@ -113,11 +113,32 @@ Deux colonnes (`.detail-row`) :
 | Propre à l'acquisition | canal publicitaire · canal de contact actuel · taux d'annulation · cœur de métier · offre spécialisée · système de réservation | Modèle Meta Ads |
 | Informations à confirmer | liste de questions ouvertes, chacune avec son origine | Bloquent ou non l'envoi selon la section (9.4) |
 
-Chaque champ porte, en petit sous sa valeur, **sa provenance** : « extrait de
-l'appel du 12 sept., 14:32 » (cliquable, ouvre le passage à droite), « saisi
-par Julien », « depuis le résumé du 12 sept. » (sans passage), ou « à
-confirmer ». Un champ extrait par l'IA et non encore relu est marqué en violet
-« à relire » ; le corriger ou le confirmer le fait passer en état relu.
+Chaque champ porte **deux états indépendants**, visibles l'un et l'autre :
+
+- **Ce qu'on sait** : *connu* (une valeur), *inconnu* (l'échange ne l'a pas
+  dit ; le champ affiche « Inconnu » et rejoint les informations à confirmer),
+  *sans objet* (ne s'applique pas à ce projet : « Sans objet », avec la raison
+  en une ligne). Un geste par champ permet de passer de l'un à l'autre. Un
+  résultat chiffré ou une zone cible **inconnus ou sans objet n'empêchent
+  pas de valider le brief** ; la proposition rendra la phrase qui les emploie
+  seulement s'ils sont connus.
+- **Ce qu'on a relu** : *à relire* (proposé par l'IA ou importé, en violet)
+  ou *relu* (une personne a confirmé la valeur, ou a confirmé que le champ
+  est inconnu ou sans objet). Corriger un champ le rend relu ; le confirmer
+  tel quel aussi. « Relu » ne veut pas dire « connu » : les deux états
+  s'affichent séparément, par exemple « Inconnu · relu par Julien ».
+
+Chaque champ porte aussi, en petit sous sa valeur, **sa provenance** :
+« extrait de l'appel du 12 sept., 14:32 » (cliquable, ouvre le passage à
+droite), « saisi par Julien », « depuis le résumé du 12 sept. » (sans
+passage), ou « proposé depuis la fiche client ».
+
+**Aucune substitution silencieuse.** Quand l'écran peut proposer une valeur
+depuis une autre donnée (la zone cible depuis la ville du client, le secteur
+depuis la fiche), il l'affiche comme **proposition**, distinguée visuellement
+d'une valeur confirmée, avec un geste « Confirmer » ou « Modifier ». Tant
+qu'elle n'est pas confirmée, elle reste « à relire » et ne sert pas de fait
+validé : la proposition ne la rend pas. Dessine les deux états côte à côte.
 
 Un groupe qui ne s'applique pas (acquisition pour un projet web) se replie et
 le dit ; il ne se remplit pas de vide.
@@ -143,7 +164,10 @@ main), la colonne montre un état vide qui explique comment consigner un appel.
   question »** crée une communication sortante préremplie vers le contact
   (session 7.2), sans quitter l'écran.
 - L'action principale verte : **« Valider le brief »**. Verrouillée tant
-  qu'un champ de l'essentiel est vide ou à relire ; la raison est dite.
+  qu'un champ de l'essentiel est **à relire** ; la raison est dite (« 2 champs
+  à relire : résultat visé, zone cible »). Un champ relu comme inconnu ou
+  sans objet ne bloque pas. Après validation, l'en-tête résume : « validé le
+  … · 2 informations inconnues à confirmer ».
   Un brief validé peut être rouvert : toute modification le repasse « à
   revalider », et la proposition déjà créée depuis lui ne change pas (elle
   le dit dans ses éléments manquants : « le brief a changé depuis la création
@@ -161,11 +185,28 @@ consigné. Consignez l'appel découverte pour préparer la proposition. »
 
 ## Les droits
 
-| Droit | Ce qu'il ouvre |
-|---|---|
-| Gérer les comptes | Consigner un échange, rédiger, corriger, valider le brief |
-| Déclencher un appel facturé au fournisseur | Lancer l'extraction par l'IA (usage compté dans Consommation) ; laisse une note : ce rattachement est une proposition |
-| Aucun des deux | Lecture du brief et des sources ; boutons verrouillés avec leur raison |
+Trois choses distinctes, qui ne se déduisent pas l'une de l'autre :
+
+| Ce qui est vérifié | Ce qu'il ouvre | D'où ça vient |
+|---|---|---|
+| **Accès au dossier** du client (voir la fiche, ses communications, ses sources) | Lire le brief, les échanges consignés, les passages sources | L'accès existant au compte client, comme pour le reste de la fiche ; sans lui, rien de cette section n'existe pour la personne, pas même le nom du client |
+| **Modifier le brief** | Consigner un échange avec sa source, rédiger, corriger, confirmer, valider, poser une question | Droit « Gérer les comptes » |
+| **Consommer de l'IA** | Lancer l'extraction, relancer, obtenir une proposition de champ | Une autorisation propre à l'IA, comptée dans Consommation ; le rattachement au droit existant « Déclencher un appel facturé au fournisseur » est une proposition, laisse une note. **Ce droit n'ouvre jamais un dossier à lui seul** : sans accès au client, il ne sert à rien ici |
+
+Les combinaisons à dessiner :
+
+- **Accès au dossier, sans modification** (par exemple un membre qui lit
+  le compte sans « Gérer les comptes ») : le brief et les sources se lisent
+  en entier, l'en-tête dit « Lecture seule : vous n'avez pas le droit de
+  modifier les comptes », tous les gestes d'écriture restent à leur place,
+  verrouillés avec cette raison, y compris « Extraire le brief » même si la
+  personne a l'autorisation d'IA (une extraction est une modification).
+- **Modification, sans IA** : tout se rédige à la main ; les gestes violets
+  sont verrouillés (« IA non autorisée pour votre compte ») ou absents si
+  l'agence n'a pas configuré l'IA.
+- **Modification et IA** : tous les gestes.
+- **Autorisation d'IA, sans accès au dossier** : la personne ne voit pas le
+  client ; il n'y a rien à dessiner, mais le README le dit.
 
 Un contact du portail ne voit jamais rien de cette section.
 
@@ -177,13 +218,15 @@ résumé importé · opportunité non rattachée (avertissement, pas de blocage)
 Brief : aucun brief, aucun échange · échange consigné, brief non commencé
 (deux gestes : extraire, rédiger) · extraction en cours · extraction échouée
 (raison, relancer, ou rédiger à la main) · proposé, à relire · en cours de
-saisie manuelle · partiellement confirmé · validé · à revalider après
-modification · depuis un résumé (sans passages) · plusieurs sources ·
-IA non configurée (gestes violets absents ou verrouillés) · plafond d'IA
-atteint · lecture seule sans droit · transcription purgée (le brief reste, la
-colonne de droite le dit) · enregistrement automatique, enregistré,
-non enregistré (connexion perdue), conflit d'édition, reprise après
-rechargement.
+saisie manuelle · partiellement relu · champ inconnu (relu ou à relire) ·
+champ sans objet avec sa raison · valeur proposée depuis la fiche, non
+confirmée · valeur confirmée · validé, avec ou sans informations inconnues ·
+à revalider après modification · depuis un résumé (sans passages) · plusieurs
+sources · IA non autorisée pour le compte · IA non configurée par l'agence ·
+plafond d'IA atteint · lecture seule avec accès au dossier (gestes
+verrouillés, raison dite) · transcription purgée (le brief reste, la colonne
+de droite le dit) · enregistrement automatique, enregistré, non enregistré
+(connexion perdue), conflit d'édition, reprise après rechargement.
 
 ## Transitions
 
@@ -192,7 +235,8 @@ rechargement.
 | aucun échange | Consigner (avec source) | échange consigné, brief non commencé |
 | échange consigné | Extraire le brief | extraction en cours → proposé, à relire ; ou échec relançable |
 | échange consigné | Rédiger le brief | saisie manuelle |
-| proposé, à relire | corriger ou confirmer chaque champ | partiellement confirmé → prêt à valider |
+| proposé, à relire | corriger, confirmer, ou marquer inconnu ou sans objet chaque champ | partiellement relu → prêt à valider (tout l'essentiel relu, connu ou non) |
+| valeur proposée depuis la fiche | Confirmer ou Modifier | valeur confirmée, relue ; sans geste, elle reste une proposition non rendue |
 | prêt à valider | Valider le brief | validé (la source « Depuis le brief » de 9.4 s'active) |
 | validé | modifier un champ | à revalider (les propositions créées ne changent pas) |
 | validé ou à revalider | nouvel appel consigné, Extraire | propositions à côté des champs, rien d'écrasé |
@@ -215,6 +259,10 @@ rien n'est écrit dans un document client depuis cet écran.
 - Ne pas écraser un champ corrigé à la main ou confirmé par une nouvelle
   extraction.
 - Ne pas laisser croire qu'un résumé importé cite l'interlocuteur.
+- Ne pas remplir un champ du brief depuis la fiche client sans le montrer
+  comme une proposition à confirmer.
+- Ne pas bloquer la validation parce qu'un résultat chiffré ou une zone
+  cible est inconnu : le dire, et continuer.
 - Ne pas bloquer la consignation d'un appel parce que l'IA est absente : le
   brief se rédige à la main.
 - Ne pas redessiner le panneau de deal, le fil de communications ni l'Aperçu :

@@ -210,9 +210,11 @@ hypothèses ou laisse une note, elle ne tranche pas.
    l'appel découverte), `offres` et `offre.` (cartes d'offres présentées),
    `offre_recommandee.`, `maintenance_recommandee.`, `seo_recommande.`,
    lignes par nature (`lignes_offertes`, `lignes_remises`,
-   `lignes_informatives`) et par récurrence (`lignes_ponctuelles`,
-   `lignes_recurrentes`), `total.ponctuel_*`, `total.mensuel_*`,
-   `total.informatif`, `total.estime`, `paiements`, `accompagnement`,
+   `lignes_informatives`) et par périodicité (`lignes_ponctuelles`,
+   `lignes_mensuelles`, `lignes_trimestrielles`, `lignes_annuelles`),
+   `total.ponctuel_*`, `total.mensuel_*` et ses équivalents par périodicité,
+   `total.informatif_horizon`, `total.estime` avec son horizon et ses
+   composants, `paiements`, `accompagnement`,
    `signataire.`, `contrat.personne_contact.`, `facture.echeance`. Deux
    corrections de sens : `document.echeance` est scindé en
    `document.expire_le` (fin de validité d'une offre) et `facture.echeance`
@@ -225,14 +227,25 @@ hypothèses ou laisse une note, elle ne tranche pas.
    un bandeau dit « Modèle hérité : 22 balises convertibles, 2 sans
    correspondance » et propose la conversion en un geste, d'après la table de
    l'analyse 001. Les balises sans correspondance restent inconnues, avec la
-   suggestion la plus proche. Sous réserve de D-13 (syntaxe canonique) : laisse
-   une note dans la maquette, comme le brief le demandait déjà.
+   suggestion la plus proche. Montre une conversion vérifiée : dans le
+   gabarit d'acquisition, `{{ESCOMPTE_PCT}}` devient
+   `{{ligne.remise_pourcentage}}` (un pourcentage) et `{{MONTANT_ESCOMPTE}}`
+   devient `{{ligne.remise_montant}}` (le montant calculé) ; les deux ne se
+   confondent pas. Sous réserve de D-13 (syntaxe canonique) : laisse une note
+   dans la maquette, comme le brief le demandait déjà.
 
-6. **Montants ponctuels et récurrents.** L'aperçu d'une proposition rend
-   deux totaux, « Total de l'investissement initial » et « par mois + taxes »,
-   plus un bloc « Budget média » quand une ligne informative existe
-   (« non facturé par l'agence »). Le dictionnaire montre les balises des deux
-   sous-totaux et celles des remises (`total.avant_remise`, `total.remise`).
+6. **Montants par périodicité.** L'aperçu d'une proposition rend un total
+   par périodicité présente : « Total de l'investissement initial », puis
+   « par mois + taxes » (et par trimestre ou par année s'il y a lieu), jamais
+   un total récurrent qui les mélange ; chaque ligne récurrente porte son
+   propre engagement (« 295 $ par mois · engagement 3 mois : 885 $ »). Une
+   remise montre son pourcentage, son assiette et son montant calculé. Un
+   bloc « Budget externe » apparaît quand une ligne informative existe, avec
+   sa période de référence et « non facturé par l'agence ». Le « total estimé »
+   ne se rend que si le document fixe son horizon et liste ce qu'il
+   additionne ; l'aperçu montre l'état où il manque. Le dictionnaire des
+   balises reprend les noms de la section 5.6 de l'analyse 001 et ses
+   exemples de rendu.
 
 7. **Versions figées.** « Enregistrer le modèle » crée la version N du
    modèle ; la ligne près du bouton devient « 14 documents rendus avec les

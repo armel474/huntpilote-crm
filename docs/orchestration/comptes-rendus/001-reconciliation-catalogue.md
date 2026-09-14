@@ -2,7 +2,7 @@
 
 - Date : 14 septembre 2026
 - Auteur / rôle : Claude Code, préparation métier et briefs de conception
-- Statut réel : prête pour revue (Codex), puis arbitrages d'Armel
+- Statut réel : revue documentaire faite ; corrections ciblées apportées le 14 septembre 2026 (voir « Revue ») ; en attente des arbitrages d'Armel
 - Branche : `claude/laughing-fermat-bd7riu`, créée depuis `origin/docs/orchestration-huntpilote` (commit `62b858f`) ; la pull request nº 1 était ouverte en brouillon, non fusionnée
 - Commit livré ou examiné : base applicative `main` à `ada3eb2` ; livraison au commit indiqué dans la pull request
 - Pull request : brouillon, cible `docs/orchestration-huntpilote`
@@ -51,9 +51,19 @@ Aucune modification de code, de migration, de semis ni d'export de design.
 
 ## Revue
 
-À faire par Codex. Points à vérifier en priorité : la lecture des jalons de l'annexe (W12), la proposition de deux recommandations typées par offre (M3), la scission de `document.echeance`, et le rattachement de l'extraction IA au droit « Déclencher un appel facturé au fournisseur » (brief 9.5), qui est une proposition.
+Revue documentaire de la pull request nº 2 reçue le 14 septembre 2026 ; structure et analyse générale conservées. Corrections apportées sur la même branche, sans reprise des matrices :
 
-Limites connues : l'analyse ne constitue pas une validation juridique des clauses (P4, D-07) ; aucune transcription réelle n'a été lue, le brief 9.5 a été écrit depuis les balises des gabarits et l'analyse générale ; le brief 9.2 n'est pas amendé, ses corrections dépendent des décisions D-01 à D-05.
+1. **Champs du brief** : deux états séparés, « connu / inconnu / sans objet » et « relu / à relire » ; la validation exige des champs relus, pas connus ; résultat chiffré et zone cible inconnus ou sans objet ne bloquent plus (brief 9.5 ; analyse, section 5.3 et conventions de la section 5).
+2. **Substitutions silencieuses retirées** : raison sociale depuis le nom commercial, zone cible depuis la ville du client, signataire depuis le destinataire deviennent des propositions affichées et confirmées visiblement, jamais rendues sans confirmation (analyse 5.2 et 5.3, briefs 9.4 et 9.5).
+3. **Droits de découverte** : accès au dossier, modification du brief et consommation d'IA distingués, avec les combinaisons à dessiner, dont « lecture autorisée, modification interdite » ; l'autorisation d'IA n'ouvre jamais un dossier (brief 9.5, mission 002).
+4. **« Depuis le brief »** : cinq états ajoutés (aucune offre adaptée, plusieurs offres possibles, options non tranchées, recommandation indisponible, sélection manuelle) ; une recommandation reste une suggestion, une option incertaine n'est jamais vendue sans geste explicite (brief 9.4).
+5. **Dictionnaire financier** (analyse 5.6, briefs 9.3 et 9.4) : totaux par périodicité, engagement propre à chaque ligne récurrente, remise avec pourcentage, assiette et montant calculé distincts, budget externe avec période de référence, total estimé conditionné à un horizon et à une liste de composants, exemples de rendu ajoutés. La conversion de `{{ESCOMPTE_PCT}}` (graphie exacte du gabarit Meta) mène à `ligne.remise_pourcentage`, un pourcentage ; `{{MONTANT_ESCOMPTE}}` à `ligne.remise_montant`.
+6. **`quote.kind`** reclassé en recommandation technique à confirmer : l'analyse générale le propose (4.1) mais le liste encore parmi ses décisions à prendre (§9, point 3), et aucune source du dépôt ne l'acte (analyse, section 6).
+7. **Mission 002** : gabarit Acquisition Meta ajouté aux sources de la session 9.3 ; liste de transmission refaite avec les versions les plus récentes (les fichiers modifiés en phase 9, dont `dl-sheet.jsx` et `fc3-panels.jsx`, remplacent ceux des phases précédentes) et les dépendances réelles de chaque écran, relevées dans les balises `script` et `link` des HTML de la phase 9 ; message de lancement et complément pour la session 9.5 actualisés.
+
+Points restant à vérifier par Codex : la lecture des jalons de l'annexe (W12), la proposition de deux recommandations typées par offre (M3), la scission de `document.echeance`. Points à vérifier en priorité : la lecture des jalons de l'annexe (W12), la proposition de deux recommandations typées par offre (M3), la scission de `document.echeance`, et le rattachement de l'extraction IA au droit « Déclencher un appel facturé au fournisseur » (brief 9.5), qui est une proposition.
+
+Limites connues : l'analyse ne constitue pas une validation juridique des clauses (P4, D-07) ; aucune transcription réelle n'a été lue, le brief 9.5 a été écrit depuis les balises des gabarits et l'analyse générale ; le brief 9.2 n'est pas amendé, ses corrections dépendent des décisions D-01 à D-05 ; le rattachement de l'autorisation d'IA à un droit existant reste une proposition.
 
 ## Décisions et prochaine action
 

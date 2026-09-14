@@ -2,6 +2,8 @@
 
 Mission : `../missions/001-reconciliation-catalogue.md`. Rédigée le 14 septembre 2026 sur la branche `claude/laughing-fermat-bd7riu`, créée depuis `docs/orchestration-huntpilote` (commit `62b858f`). Base applicative examinée : `main` au commit `ada3eb2`. Complète [l'analyse générale](https://github.com/armel474/huntpilote-crm/blob/0e46e4bb56eb24f0734aca84ef6d57604e2e59e8/docs/analyse-generateur-propositions.md) de la branche `claude/huntpilote-proposal-generator-5cc3id` sans la réécrire : ses sections 3 et 4 et son annexe A restent la référence pour la syntaxe des balises, le modèle de sections et le parcours cible.
 
+Révisé le 14 septembre 2026 après la revue documentaire de la pull request nº 2 : champs du brief (connu, inconnu, sans objet, relu), suppression des substitutions silencieuses, dictionnaire financier par périodicité, reclassement de `quote.kind`. Les matrices des sections 2 à 4 n'ont pas été reprises.
+
 Ce document ne fixe aucune valeur commerciale. Il distingue trois choses, signalées par une étiquette dans chaque ligne :
 
 - **Fait** : ce qu'une source dit, avec son chemin.
@@ -99,8 +101,9 @@ Syntaxe canonique : celle des maquettes 9.3 (`{{groupe.champ}}`, blocs `{{#bloc}
 Conventions :
 
 - **Type** : texte · texte long · nombre · montant · date · booléen · image · bloc (liste).
-- **Requis** : obligatoire pour envoyer (O), facultatif (F), calculé (C). Une balise requise vide bloque l'envoi (B9.4) ; une balise facultative vide se rend vide, et un bloc conditionnel sur une valeur vide ne se rend pas.
+- **Requis** : obligatoire pour envoyer (O), facultatif (F), calculé (C). Une balise requise vide bloque l'envoi (B9.4) ; une balise facultative vide se rend vide, et un bloc conditionnel sur une valeur vide ne se rend pas. Une balise du brief marquée « inconnu » ou « sans objet » (5.3) est vide au rendu : la phrase qui la porte doit être dans un bloc conditionnel, sinon l'aperçu la signale.
 - **Source** : table ou objet d'où vient la valeur ; « à ajouter » quand la colonne n'existe pas au commit examiné.
+- **Aucune substitution silencieuse.** Quand une valeur peut être *proposée* depuis une autre (raison sociale depuis le nom commercial, zone cible depuis la ville du client, signataire depuis le destinataire), l'écran l'affiche comme proposition à confirmer ; tant qu'elle n'est pas confirmée, la balise est vide et signalée. Le rendu ne remplace jamais une valeur par une autre de lui-même.
 - Un montant se rend formaté en français canadien avec le symbole (« 8 740,00 $ ») ; la variante `_nombre` rend le nombre seul quand le modèle place lui-même le symbole, comme G-OFF et G-CT le font.
 
 ### 5.1 Agence
@@ -120,12 +123,12 @@ Conventions :
 
 ### 5.2 Client, contact, signataire
 
-Trois personnes peuvent différer sur un même mandat : le **destinataire** de la proposition (G-OFF « Bonjour {{PRENOM_CLIENT}} »), le **signataire** du contrat (G-CT « représentée par… dûment autorisée ») et la **personne-contact unique** du mandat (G-AN 5.1). Le dictionnaire les sépare ; par défaut le composeur propose la même personne pour les trois.
+Trois personnes peuvent différer sur un même mandat : le **destinataire** de la proposition (G-OFF « Bonjour {{PRENOM_CLIENT}} »), le **signataire** du contrat (G-CT « représentée par… dûment autorisée ») et la **personne-contact unique** du mandat (G-AN 5.1). Le dictionnaire les sépare ; le composeur peut proposer la même personne pour les trois, en l'affichant comme proposition, et chaque rôle est confirmé visiblement avant de servir dans un document.
 
 | Balise | Sens | Type | Requis | Source | Héritées et ambiguïtés |
 |---|---|---|---|---|---|
 | `client.nom` | Nom commercial | texte | O | `client.name` | `{{ENTREPRISE_CLIENT}}` |
-| `client.raison_sociale` | Nom légal complet | texte | O contrat | à ajouter (`client.legal_name`) ; repli sur `client.name` | `[NOM DU CLIENT]` : la légende G-CT dit « nom légal », pas le nom commercial |
+| `client.raison_sociale` | Nom légal complet | texte | O contrat | à ajouter (`client.legal_name`). Peut être **proposée** depuis `client.name`, jamais substituée : la proposition s'affiche, la confirmation est visible, et sans confirmation la balise reste vide et signalée | `[NOM DU CLIENT]` : la légende G-CT dit « nom légal », pas le nom commercial |
 | `client.forme_juridique` | Statut juridique | texte | O contrat | à ajouter (AN 3.5) | `[FORME JURIDIQUE DU CLIENT]` |
 | `client.adresse`, `client.ville`, `client.province`, `client.code_postal` | Adresse postale | texte | O contrat, F proposition | `client.address` (un seul champ aujourd'hui) ; structuration à ajouter | `[ADRESSE DU CLIENT]`, `{{ADRESSE_CLIENT}}` (rue) + `{{VILLE_CLIENT}}` (ville, province, code postal). **Ne pas confondre avec `{{VILLE}}` de G-OFF**, qui est la zone ciblée (→ `brief.zone_cible`) |
 | `client.secteur` | Secteur d'activité | texte | F | `client.sector` | `{{SECTEUR}}`, `{{SECTEUR_CLIENT}}` |
@@ -140,15 +143,22 @@ Trois personnes peuvent différer sur un même mandat : le **destinataire** de l
 
 ### 5.3 Opportunité et brief de découverte
 
+Chaque champ du brief porte **deux états indépendants**, que le brief 9.5 affiche :
+
+- **Connaissance** : *connu* (une valeur), *inconnu* (l'échange ne l'a pas dit ; à confirmer plus tard), *sans objet* (ne s'applique pas à ce projet). Un champ inconnu ou sans objet a une balise vide ; la phrase du modèle qui l'emploie doit être conditionnelle.
+- **Relecture** : *à relire* (proposé par l'IA ou importé, pas encore vu par une personne), *relu* (une personne a confirmé la valeur, ou l'état inconnu ou sans objet).
+
+La validation du brief exige que les champs de l'essentiel soient **relus**, pas qu'ils soient connus : « résultat visé : inconnu, relu » est un état valide. La colonne « Requis » ci-dessous indique ce qui bloque l'**envoi d'une proposition** quand la section qui l'emploie est activée, pas la validation du brief.
+
 | Balise | Sens | Type | Requis | Source | Héritées |
 |---|---|---|---|---|---|
 | `opportunite.reference`, `opportunite.objet` | L'opportunité d'où part la proposition | texte | F | `deal` (colonnes à préciser) ; rarement rendu | — |
 | `brief.date_appel` | Date de l'échange source | date | F | brief de découverte (à créer, AN 4.4) | `{{DATE_RENCONTRE}}` |
-| `brief.atout_principal` | Force actuelle du client | texte | O proposition web | brief | `{{ATOUT_PRINCIPAL}}` (G-OFF), `{{ATOUT_CONCURRENTIEL}}` (G-META) : même notion, une seule balise |
-| `brief.probleme_cardinal` | Problème principal, une phrase | texte | O proposition | brief | `{{PROBLEME_CARDINAL}}` |
-| `brief.objectif_principal` | Objectif nº 1 | texte | O proposition | brief | `{{OBJECTIF_PRINCIPAL}}` (les deux gabarits) |
-| `brief.resultat_vise` | Résultat mesurable | texte | F | brief | `{{RESULTAT_CHIFFRE}}` |
-| `brief.zone_cible` | Ville ou zone visée | texte | F | brief ; repli `client.ville` | `{{VILLE}}` de G-OFF (« ville ou zone géographique ciblée ») |
+| `brief.atout_principal` | Force actuelle du client | texte | O si la section « résumé » est activée | brief | `{{ATOUT_PRINCIPAL}}` (G-OFF), `{{ATOUT_CONCURRENTIEL}}` (G-META) : même notion, une seule balise |
+| `brief.probleme_cardinal` | Problème principal, une phrase | texte | O si la section « résumé » est activée | brief | `{{PROBLEME_CARDINAL}}` |
+| `brief.objectif_principal` | Objectif nº 1 | texte | O si la section « résumé » est activée | brief | `{{OBJECTIF_PRINCIPAL}}` (les deux gabarits) |
+| `brief.resultat_vise` | Résultat mesurable | texte | F ; peut être *inconnu* ou *sans objet* sans bloquer la validation du brief ; la phrase « Résultat visé : … » du modèle est conditionnelle | brief | `{{RESULTAT_CHIFFRE}}` |
+| `brief.zone_cible` | Ville ou zone visée | texte | F ; peut être *inconnu* ou *sans objet*. Peut être **proposée** depuis `client.ville`, affichée comme proposition et confirmée visiblement ; jamais substituée au rendu | brief | `{{VILLE}}` de G-OFF (« ville ou zone géographique ciblée ») |
 | `brief.coeur_metier`, `brief.offre_specialisee` | Cœur de métier, spécialités | texte | F | brief | `{{COEUR_METIER}}`, `{{OFFRE_SPECIALISEE}}` |
 | `brief.canal_actuel`, `brief.canal_pub`, `brief.taux_annulation`, `brief.systeme_reservation` | Champs propres à l'acquisition | texte | F | brief | `{{CANAL_ACTUEL}}`, `{{CANAL_PUB}}`, `{{TAUX_ANNULATION}}`, `{{SYSTEME_RESERVATION}}` |
 
@@ -163,7 +173,6 @@ Trois personnes peuvent différer sur un même mandat : le **destinataire** de l
 | `facture.echeance`, `facture.delai_jours` | Échéance de paiement d'une facture | date, nombre | O facture | `invoice.due_on`, `document_template.payment_terms_days` | `document.echeance` de MK-TPL servait aux deux sens ; scindé |
 | `document.objet` | Objet | texte | O | `quote.subject` | — |
 | `document.introduction`, `document.mentions`, `document.pied`, `document.paiement` | Textes du modèle | texte long | F | `document_template.intro, legal_mentions, footer, payment_instructions` | — |
-| `document.engagement_mois` | Engagement initial des récurrents | nombre | F | ligne récurrente ou offre (M11) | `{{ENGAGEMENT_MOIS}}` |
 | `document.version` | Numéro de version figée | nombre | C | `quote_version` | — |
 | `section.<cle>` | Texte d'une section narrative | texte long | O si la section est activée | `document_section` (AN 4.2) ; clés prévues : `resume`, `besoins`, `objectifs`, `recommandation`, `preuve`, `plan_action`, `gestion_projet`, `modalites`, `couts_externes`, `accord` | puces « [Compléter : …] » de G-OFF |
 | `proposition.reference`, `proposition.date` | Proposition source d'un contrat | texte, date | O contrat | `contract.source_quote_id` (à ajouter, AN 4.1) | `[NUMÉRO DE PROPOSITION]`, `[DATE DE LA PROPOSITION]` |
@@ -181,29 +190,66 @@ Trois personnes peuvent différer sur un même mandat : le **destinataire** de l
 | `offre.populaire` | Badge | booléen | F | `is_popular` | `card-dark` |
 | `{{#offre.segments}}`, `{{#offre.lignes}}`, `{{#offre.benefices}}` | Listes de la carte | bloc | F | `offer_segment`, `offer_line` (offres incluses dépliées ou « Tout ce qui est dans… »), `offer_benefit` | listes en dur |
 | `offre.limites.pages`, `.collections`, `.produits` | Limites typées (D-04) | nombre | F | à ajouter | « max. 10 pages », `[NOMBRE DE PAGES]` |
-| `offre.engagement_mois`, `offre.preavis_jours` | Engagement et préavis (M11) | nombre | F | à ajouter | « sans engagement, 30 jours » |
+| `offre.engagement_mois`, `offre.preavis_jours` | Engagement et préavis (M11), copiés sur chaque ligne récurrente créée depuis l'offre (`ligne.engagement_periodes`) | nombre | F | à ajouter | « sans engagement, 30 jours » |
 | `offre_recommandee.*` | Mêmes champs, pour l'offre retenue | | O proposition | choix du composeur | `{{FORFAIT_RECOMMANDE}}`, `{{PRIX_FORFAIT}}`, `{{DUREE}}` |
 | `maintenance_recommandee.nom`, `.prix_mensuel`, `.heures_incluses`, `.taux_depassement` | Maintenance proposée (M1, M3) | texte, montant, nombre, montant | F | offre de maintenance (D-01) | `{{FORFAIT_MAINTENANCE}}`, `{{PRIX_MAINTENANCE}}` |
 | `seo_recommande.*` | Pack SEO proposé (M3) | | F | offre SEO | légende « Module SEO mensuel » |
 
 ### 5.6 Lignes, totaux, paiements
 
+Règles du dictionnaire financier :
+
+- Les totaux sont **séparés par périodicité** : un total ponctuel, puis un total par période récurrente réellement présente (mensuel, trimestriel, annuel). Il n'existe pas de total « récurrent » qui additionne des périodes différentes.
+- La **durée d'engagement** appartient à chaque prestation récurrente (ligne), copiée de l'offre ; deux lignes mensuelles peuvent avoir des engagements différents, et le total sur engagement se calcule ligne par ligne.
+- Une **remise** porte un pourcentage **ou** un montant saisi, une **assiette** explicite (la ou les lignes sur lesquelles elle s'applique) et un montant calculé ; le pourcentage et le montant calculé sont deux balises.
+- Une ligne **informative** (budget payé à un tiers) porte sa **période de référence** (par jour, par mois, ou pour un horizon en mois) ; son total n'existe que pour un horizon donné.
+- Le **total estimé** n'est rendu que si son horizon en mois et la liste de ses composants sont définis dans le document ; sinon la balise est vide et l'aperçu le signale.
+
 | Balise | Sens | Type | Requis | Source | Héritées |
 |---|---|---|---|---|---|
 | `{{#lignes}}` | Toutes les lignes | bloc | O | `quote_line` | tableau MK-TPL |
-| `{{#lignes_ponctuelles}}`, `{{#lignes_recurrentes}}` | Par récurrence | bloc | F | `quote_line.billing` (à ajouter, AN 4.3) | « Phase 1 · frais unique », « Phase 2 · mensualité » |
+| `{{#lignes_ponctuelles}}`, `{{#lignes_mensuelles}}`, `{{#lignes_trimestrielles}}`, `{{#lignes_annuelles}}` | Par périodicité | bloc | F | `quote_line.billing` (à ajouter, AN 4.3) | « Phase 1 · frais unique », « Phase 2 · mensualité » |
 | `{{#lignes_offertes}}`, `{{#lignes_remises}}`, `{{#lignes_informatives}}` | Par nature | bloc | F | `quote_line.kind` (à ajouter) | `{{BONUS_SIGNATURE}}`, escompte, budget Meta |
-| `ligne.description`, `ligne.quantite`, `ligne.unite`, `ligne.prix`, `ligne.montant`, `ligne.recurrence`, `ligne.nature` | Champs d'une ligne | | | `quote_line` | `{{PRIX_LANDING}}`, `{{PRIX_META_CONFIG}}` deviennent deux lignes |
-| `total.ponctuel_ht`, `total.ponctuel_tps`, `total.ponctuel_tvq`, `total.ponctuel_ttc` | Investissement initial | montant | C | vue `quote_total` (à étendre) | « Total de l'investissement initial », `{{PRIX_PHASE1}}` |
-| `total.mensuel_ht`, `total.mensuel_ttc` | Par période | montant | C | idem | `{{PRIX_MENSUEL}}`, « par mois + taxes » |
-| `total.engagement_ht` | Mensuel × engagement | montant | C | idem | `{{TOTAL_PHASE2}}` |
-| `total.avant_remise`, `total.remise` | Avant et montant des remises | montant | C | lignes `remise` | `{{PRIX_PHASE1_BARRE}}`, `{{MONTANT_ESCOMPTE}}`, `{{ESCOMPTE_PCT}}` |
-| `total.honoraires_ht` | Ponctuel + engagement | montant | C | | `{{TOTAL_HONORAIRES}}` |
-| `total.informatif` | Somme des lignes informatives, hors taxes et hors facturation | montant | C | | `{{BUDGET_META_TOTAL}}` |
-| `total.estime` | Honoraires + informatif, libellé « non facturé par l'agence » pour la part informative | montant | C | | `{{TOTAL_GLOBAL}}` |
+| `ligne.description`, `ligne.quantite`, `ligne.unite`, `ligne.prix`, `ligne.montant`, `ligne.periodicite`, `ligne.nature` | Champs d'une ligne | | | `quote_line` | `{{PRIX_LANDING}}`, `{{PRIX_META_CONFIG}}` deviennent deux lignes |
+| `ligne.engagement_periodes`, `ligne.montant_engagement` | Engagement propre à une ligne récurrente et son total (`montant × périodes`) | nombre, montant | F | ligne, copié de `offre.engagement_mois` | `{{ENGAGEMENT_MOIS}}`, `{{TOTAL_PHASE2}}` (885 $ = 295 $ × 3) |
+| `ligne.remise_pourcentage` | Taux d'une remise saisie en pourcentage | nombre | F | ligne `remise` | `{{ESCOMPTE_PCT}}` (graphie exacte du gabarit G-META, ligne 95 de la légende) : **un pourcentage, pas un montant** |
+| `ligne.remise_assiette` | Ce sur quoi la remise s'applique (libellé et montant des lignes visées) | texte, montant | O pour une remise | ligne `remise` | « sur la Phase 1 » (1 200 $) |
+| `ligne.remise_montant` | Montant calculé (`assiette × pourcentage`) ou montant saisi | montant | C | | `{{MONTANT_ESCOMPTE}}` (300 $ = 1 200 $ × 25 %) |
+| `ligne.periode_reference` | Période d'une ligne informative : jour, mois, ou horizon | texte | O pour une ligne informative | ligne `informatif` | `{{BUDGET_JOUR}}` (20 $ par jour), `{{BUDGET_MENSUEL}}` (600 $ par mois) |
+| `total.ponctuel_avant_remise` | Ponctuel avant remises | montant | C | vue `quote_total` (à étendre) | `{{PRIX_PHASE1_BARRE}}` (1 200 $) |
+| `total.ponctuel_remises` | Somme des remises sur le ponctuel | montant | C | | « −300 $ » |
+| `total.ponctuel_ht`, `total.ponctuel_tps`, `total.ponctuel_tvq`, `total.ponctuel_ttc` | Investissement initial, après remises | montant | C | | « Total de l'investissement initial », `{{PRIX_PHASE1}}` (900 $) |
+| `total.mensuel_ht`, `total.mensuel_ttc` (idem `trimestriel_*`, `annuel_*`) | Par période, pour chaque périodicité présente ; vide et non rendu si aucune ligne de cette périodicité | montant | C | | `{{PRIX_MENSUEL}}`, « par mois + taxes » |
+| `total.mensuel_engagement_ht` (idem par périodicité) | Somme des `ligne.montant_engagement` de la périodicité | montant | C | | `{{TOTAL_PHASE2}}` |
+| `total.honoraires_ht` | Ponctuel après remises + engagements de toutes périodicités ; rendu seulement si chaque ligne récurrente a un engagement, sinon vide et signalé | montant | C | | `{{TOTAL_HONORAIRES}}` (1 785 $) |
+| `total.informatif_horizon` | Somme des lignes informatives ramenées à l'horizon `total.estime_horizon_mois` | montant | C | | `{{BUDGET_META_TOTAL}}` (1 800 $ sur 3 mois) |
+| `total.estime_horizon_mois` | Horizon du total estimé, saisi dans le document | nombre | O pour rendre `total.estime` | document | « 3 premiers mois » |
+| `{{#total.estime_composants}}` | Liste des éléments additionnés (libellé, montant, facturé par l'agence ou par un tiers) | bloc | O pour rendre `total.estime` | calculé | tableau « Récapitulatif de l'investissement » de G-META p. 5 |
+| `total.estime` | Somme des composants sur l'horizon, libellée avec la part non facturée par l'agence ; vide si horizon ou composants manquent | montant | C | | `{{TOTAL_GLOBAL}}` (3 585 $) |
 | `total.ht`, `total.tps`, `total.tvq`, `total.ttc` | Totaux du document taxé (devis, facture, contrat) | montant | C | `quote_total`, `invoice_total` | `[MONTANT DES HONORAIRES]`, `[MONTANT HONORAIRES]` (doublon), `[MONTANT TPS]`, `[MONTANT TVQ]`, `[MONTANT TOTAL TTC]` |
 | `{{#paiements}}` | Échéancier | bloc | O contrat et proposition | `payment_milestone` ou échéancier de l'offre (P1) | tableau G-META p. 6, 6.2 de G-CT |
-| `paiement.titre`, `paiement.pourcentage`, `paiement.montant_ht`, `paiement.montant_ttc`, `paiement.declencheur`, `paiement.echeance`, `paiement.delai_jours` | Champs d'un versement | | | idem | `{{ACOMPTE}}`, `{{SOLDE}}`, `[MONTANT ACOMPTE TTC]`, `[MONTANT ACOMPTE HT]`, `[MONTANT SOLDE TTC]`, `[MONTANT SOLDE HT]` |
+| `paiement.titre`, `paiement.pourcentage`, `paiement.assiette`, `paiement.montant_ht`, `paiement.montant_ttc`, `paiement.declencheur`, `paiement.echeance`, `paiement.delai_jours` | Champs d'un versement ; l'assiette dit sur quel total le pourcentage s'applique (ponctuel après remises) | | | idem | `{{ACOMPTE}}`, `{{SOLDE}}` (450 $ = 50 % de 900 $), `[MONTANT ACOMPTE TTC]`, `[MONTANT ACOMPTE HT]`, `[MONTANT SOLDE TTC]`, `[MONTANT SOLDE HT]` |
+
+Exemples de rendu attendus, à reproduire dans les jeux d'exemple des maquettes (valeurs du gabarit Meta, données comme exemples et non comme tarif) :
+
+```
+Investissement initial
+  Landing page haute conversion            700,00 $
+  Configuration Meta Ads complète          500,00 $
+  Escompte de bienvenue, −25 % sur 1 200,00 $   −300,00 $
+  Total de l'investissement initial        900,00 $ + taxes
+
+Par mois
+  Gestion mensuelle et optimisation        295,00 $ par mois + taxes · engagement 3 mois : 885,00 $
+
+Budget externe (payé à Meta, non facturé par l'agence)
+  Budget publicitaire                      600,00 $ par mois (20,00 $ par jour)
+
+Total estimé sur 3 mois
+  Honoraires de l'agence (initial + 3 mois)      1 785,00 $
+  Budget publicitaire (3 mois, payé à Meta)      1 800,00 $
+  Total estimé                                   3 585,00 $ dont 1 800,00 $ non facturés par l'agence
+```
 
 ### 5.7 Contrat, annexe, signature
 
@@ -248,7 +294,9 @@ Chaque décision indique ce qui reste possible sans elle. Les recommandations so
 | D-14 | La proposition web est-elle acceptée ou signée ? La proposition Meta vaut-elle entente sans contrat ? | Acceptation ; section de signature conditionnelle | Modèle de proposition ; portail | Le reste |
 | D-15 | Un récurrent vendu par proposition demande-t-il une entente signée, ou l'acceptation suffit-elle avant l'abonnement ? | Acceptation + première facture ; contrat pour le ponctuel seulement | « Créer la suite » | Le reste |
 
-Décisions déjà prises que cette analyse ne rouvre pas : `quote.kind` plutôt qu'une table générique (AN §9.3) ; signature simple (B9.4) ; le devis de la session 7.3 n'est pas redessiné (B9.4).
+Décisions déjà prises que cette analyse ne rouvre pas : signature simple (B9.4) ; le devis de la session 7.3 n'est pas redessiné (B9.4).
+
+Recommandation technique à confirmer, et non décision : porter la proposition par `quote.kind` (`devis` | `proposition`) plutôt que par une table générique. L'analyse générale la propose (AN 4.1) et la liste encore parmi ses décisions à prendre (AN §9, point 3) ; aucune source du dépôt ne l'acte. Elle se confirme dans la mission de code qui touchera `quote`, avec Codex.
 
 ## 7. Corrections à reporter une fois les valeurs actées
 
