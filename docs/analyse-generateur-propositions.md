@@ -655,21 +655,28 @@ générique (`quote.kind` suffit) ; pas de nouvelle table d'instantané
 
 ---
 
-## 9. Décisions à prendre, et ce qu'il reste à fournir
+## 9. Décisions prises, et ce qu'il reste à fournir
 
-Cinq décisions, toutes petites, toutes bloquantes pour l'étape 2 :
+Les cinq décisions ont été tranchées par Armel le 14 septembre 2026,
+toutes dans le sens proposé :
 
-1. **La syntaxe** : la forme des maquettes devient canonique, les
-   gabarits sont convertis (3.1). Oui ou non.
-2. **Le format** : Lettre ou A4 (3.6).
+1. **La syntaxe** des maquettes devient canonique ; les gabarits sont
+   convertis à l'import selon l'annexe A (3.1).
+2. **Le format** est Lettre (3.6).
 3. **`quote.kind`** plutôt qu'une table `document` (4.1).
-4. **Les packs de maintenance** entrent au catalogue ; que deviennent
-   les packs SEO du semis (3.4).
-5. **Le gabarit d'offre passe en flux paginé** plutôt qu'en pages fixes
-   (3.6) — sinon les sections rédigées par client seront tronquées.
+4. **Les packs de maintenance** entrent au catalogue ; les packs SEO du
+   semis restent (3.4).
+5. **Le gabarit d'offre passe en flux paginé** (3.6).
 
-Ce qui reste à fournir pour la conception de 9.5 : **une transcription
-réelle** d'appel découverte, anonymisée. Les gabarits, eux, sont là.
+Le brief de la session 9.5 est écrit :
+[`briefs/9-5-appel-decouverte.md`](briefs/9-5-appel-decouverte.md). La
+passation (`passation-agence-hub.md`, sections 4 et 5) et le README des
+briefs portent ces décisions et l'ordre de travail révisé.
+
+Ce qui reste à fournir : **une transcription réelle** d'appel découverte,
+anonymisée, pour concevoir 9.5 ; et, quand ils existeront, les gabarits
+de **devis** et de **facture** de l'agence (ceux des maquettes 9.3 servent
+en attendant).
 
 ---
 
