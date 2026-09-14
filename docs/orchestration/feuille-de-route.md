@@ -16,6 +16,8 @@ Les étapes 2 et 3 peuvent progresser indépendamment sur des fichiers distincts
 
 ## Compléments à demander à Claude Design
 
+> **Préparés le 14 septembre 2026** par la mission 001 : amendements des briefs 9.3 et 9.4, brief 9.5, et `missions/002-conception-propositions-claude-design.md` avec les fichiers à transmettre et le message de lancement. La liste ci-dessous reste l'intention ; les briefs font foi.
+
 Faire évoluer les briefs existants, en conservant la structure et le socle visuel de HuntPilote :
 
 - Dans la fiche client, un espace Découverte : import de transcript ou résumé, provenance et date de l'appel, besoins, objectifs, contraintes et informations à confirmer.

@@ -44,3 +44,13 @@ La passation documente Vercel et une authentification existante. Certaines déci
 La branche `claude/huntpilote-proposal-generator-5cc3id`, examinée au commit `0e46e4bb56eb24f0734aca84ef6d57604e2e59e8`, ajoute `docs/analyse-generateur-propositions.md` par rapport à la base ci-dessus. Aucune pull request ouverte n'a été trouvée lors de cette vérification.
 
 [Lire l'analyse existante](https://github.com/armel474/huntpilote-crm/blob/0e46e4bb56eb24f0734aca84ef6d57604e2e59e8/docs/analyse-generateur-propositions.md). Elle couvre déjà la découverte, la composition, les versions, les liens métier et une correspondance des balises. La mission 001 doit compléter ce travail par une matrice détaillée des divergences commerciales et corriger les correspondances ambiguës, sans refaire l'analyse générale. Les propositions de schéma et de signature de ce document restent à examiner dans les missions concernées.
+
+## Mise à jour du 14 septembre 2026 — mission 001 exécutée
+
+Faits vérifiés sur la branche `claude/laughing-fermat-bd7riu`, créée depuis `docs/orchestration-huntpilote` (commit `62b858f`) parce que la pull request nº 1 était encore ouverte en brouillon. La base applicative n'a pas changé : `main` reste à `ada3eb2`.
+
+- La mission 001 est exécutée : `analyses/001-reconciliation-catalogue.md` (matrice des écarts en trois tables, dictionnaire des variables, quinze décisions D-01 à D-15 avec recommandation) et `comptes-rendus/001-reconciliation-catalogue.md`.
+- Constat qui change la lecture des maquettes : le catalogue de la maquette 9.2 est fictif (39 articles avec prix, différents des 39 articles sans prix du semis, qui reprennent le gabarit d'offre). Les délais, consultations, option « hébergement » et tarif d'entrée de 525 $ des maquettes ne sont pas des décisions.
+- Les briefs 9.3 et 9.4 portent une section « Amendements du 14 septembre 2026 » ; le brief 9.5 (appel découverte) existe ; la mission 002 prépare les trois sessions Claude Design avec la liste exacte des fichiers et le message de lancement.
+- Aucune valeur commerciale n'a été fixée. Aucun code, migration, semis ni export de design modifié.
+- Prochaine étape : arbitrages D-01 à D-15 par Armel ; mission 002 à Claude Design ; cadre applicatif de l'Agence hub par Codex sur des fichiers distincts.

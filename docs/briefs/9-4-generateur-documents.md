@@ -174,3 +174,228 @@ comptes. Un bouton verrouillé dit lequel des droits manque.
 - Ne pas inventer un troisième canal d'envoi ni un second rendu de
   document.
 - Ne pas faire du portail une deuxième application : un écran, un geste.
+
+---
+
+## Amendements du 14 septembre 2026 — composition du brouillon, montants, versions figées, états
+
+Issus de la mission 001 (`../orchestration/analyses/001-reconciliation-catalogue.md`),
+de l'analyse générale du générateur (sections 3.7, 4 et 5) et de la feuille de
+route (étapes 3 à 6). Ce qui précède reste valable ; ce qui suit le précise ou
+le remplace. Les décisions `D-nn` ne sont pas prises : la maquette montre les
+deux hypothèses ou laisse une note.
+
+### Le point de départ ne change pas
+
+Une proposition part de la **fiche client** (onglet « Contrat & facturation »)
+ou de l'**opportunité** (panneau de deal, étapes Proposition et Négociation).
+Le panneau de création en quatre étapes reste le geste pour créer. Deux ajouts
+à l'étape 2, « Le contenu » :
+
+- une quatrième source, **« Depuis le brief »** (session 9.5) : la
+  recommandation s'affiche comme une **suggestion**, en violet, avec sa
+  justification en trois phrases, ce qu'elle couvre et ce qu'elle ne couvre
+  pas ; un geste « Retenir » la transforme en choix, et la sélection manuelle
+  dans le catalogue reste possible à tout moment. Les options au choix sont
+  **proposées** d'après le brief, marquées « à confirmer » ; une option
+  incertaine ne devient jamais un choix vendu tant qu'une personne ne l'a pas
+  confirmée. Les balises `brief.*` connues sont remplies ; celles marquées
+  inconnues ou sans objet restent vides et leurs phrases conditionnelles ne
+  se rendent pas. Sans brief validé, la source est grisée avec la raison.
+
+  États de cette source, tous à dessiner : **aucune offre adaptée** (la
+  recommandation le conclut, avec la raison ; le panneau propose les lignes
+  libres et le catalogue) · **plusieurs offres possibles** (deux ou trois
+  suggestions côte à côte avec leurs couvertures, aucune présélectionnée,
+  choix manuel requis) · **options non tranchées** (le brouillon peut être
+  créé, l'option reste « à trancher » dans les éléments manquants et bloque
+  l'envoi) · **recommandation indisponible** (IA absente, non autorisée,
+  plafond atteint ou erreur : la source reste utilisable, elle remplit les
+  balises du brief et laisse choisir l'offre à la main) · **sélection
+  manuelle** (une offre choisie sans suggestion, ou contre la suggestion :
+  la justification n'est pas copiée, la section « recommandation » repart du
+  texte par défaut) ;
+- pour « Depuis une offre » : le choix des **offres présentées** dans le
+  document (D-06 : par défaut la seule offre recommandée, option « comparer »),
+  la **maintenance recommandée** (D-01, affichée « exemple » tant que la
+  décision manque) et la séparation visible entre **prestations ponctuelles**
+  et **prestations récurrentes**.
+
+### « Créer le brouillon » ouvre la composition, pas le rendu figé
+
+`/documents/[id]` en mode brouillon est un **atelier**, en pleine page. Deux
+colonnes (`.detail-row`) :
+
+- à gauche, le document dans `.client-doc`, blanc, **éditable en place** :
+  chaque section narrative est un champ long à sa position dans la mise en
+  page, chaque ligne du tableau se modifie ou se retire ; ce n'est pas un
+  éditeur visuel de mise en page, seulement le contenu ;
+- à droite, `.col-side` : le brief (résumé, lien vers la session 9.5), la
+  liste des sections avec leur état, les lignes avec les deux sous-totaux,
+  la liste des éléments manquants, un geste « Aperçu » qui montre le rendu
+  tel qu'il partira.
+
+### Les sections, une à une
+
+Chaque section a un état visible : **à rédiger** (texte par défaut du modèle,
+pas encore touché) · **proposée par l'IA** (violet, à relire) · **modifiée à la
+main** · **relue** · **verrouillée** (plus jamais touchée par une régénération)
+· **retirée** (section optionnelle désactivée) · **verrouillée par l'agence**
+(clause, lecture seule avec cadenas).
+
+- Une suggestion de l'IA s'affiche **à côté** du texte courant, jamais à sa
+  place, avec deux gestes : « Retenir » et « Ignorer ». Le geste violet
+  « Rédiger avec le brief » existe par section et pour toutes les sections
+  autorisées à la fois.
+- **Un texte modifié à la main est conservé.** Changer d'offre, de contact, de
+  modèle ou relancer l'IA ne le réécrit pas ; l'atelier le dit : « 3 sections
+  modifiées à la main conservées ». C'est la correction du défaut du
+  prototype Docus-Gen.
+- **Sans IA**, tout fonctionne : le texte par défaut est le guide, on écrit
+  dedans ; les gestes violets sont absents (ou verrouillés avec la raison
+  « IA non configurée pour cette agence »). Dessine cet état.
+- Une section proposée par l'IA et non relue bloque l'envoi (règle 1 de
+  `decisions.md`).
+
+### Les lignes : récurrence, nature, deux totaux
+
+Chaque ligne porte une **récurrence** (ponctuel, mensuel, trimestriel, annuel)
+et une **nature** : facturable, **offert** (bonus à la signature, montant
+affiché « Offert »), **remise** (en pourcentage ou en montant, prix avant
+remise visible), **informatif** (budget média payé à un tiers : hors totaux,
+hors taxes, dans un bloc à part libellé « non facturé par l'agence »).
+
+Les totaux affichés, dans la colonne et dans le rendu, **séparés par
+périodicité** : **investissement initial** (ponctuel, avant remises, remises,
+HT, taxes, TTC) · **par mois**, et s'il y a lieu **par trimestre**, **par
+année** (un bloc par périodicité présente, jamais un « récurrent » qui les
+additionne) · **budget externe** (informatif, avec sa période de référence :
+« 600 $ par mois, 20 $ par jour »).
+
+- La **durée d'engagement** est propre à chaque prestation récurrente, sur
+  sa ligne (« 295 $ par mois · engagement 3 mois : 885 $ »), copiée de
+  l'offre et modifiable ligne par ligne ; deux lignes mensuelles peuvent
+  différer.
+- Une **remise** affiche son pourcentage, son assiette (« −25 % sur la phase
+  ponctuelle, 1 200 $ ») et le montant calculé (« −300 $ ») comme trois
+  informations distinctes ; une remise saisie en montant affiche l'assiette
+  et le montant, sans pourcentage inventé.
+- Le **total estimé** n'apparaît que si le composeur a fixé son horizon
+  (« sur 3 mois ») et si la liste de ce qu'il additionne est affichée sous
+  lui, chaque élément marqué « facturé par l'agence » ou « payé à un tiers ».
+  Sans horizon, le bloc dit « Choisissez un horizon pour afficher un total
+  estimé » ; il ne calcule rien.
+
+Le catalogue reste la seule source de prix : une ligne dont le prix s'écarte
+du catalogue le signale (« prix catalogue 700 $ ») ; une offre « à partir de »
+accepte un prix supérieur sans avertissement. Les exemples de rendu
+attendus sont dans l'analyse 001, section 5.6.
+
+L'**échéancier de paiement** (50 % à la signature, 50 % avant mise en ligne,
+15 jours — libellés sous réserve de D-07) s'affiche depuis l'offre, dans la
+colonne et le rendu ; il se change par ses règles (pourcentages,
+déclencheurs, délai), pas en texte libre.
+
+### Les éléments manquants
+
+Une liste, dans la colonne, chaque élément cliquable vers l'endroit à
+corriger : section à relire · balise requise vide (`brief.*` dans une section
+activée, contact sans courriel, adresse manquante pour un contrat) · valeur
+proposée non confirmée (raison sociale proposée depuis le nom commercial,
+signataire proposé depuis le destinataire, zone cible proposée depuis la
+ville) · option d'offre non tranchée · ligne récurrente sans engagement quand
+un total sur engagement est rendu · total estimé sans horizon · numéros de
+taxes non renseignés · ligne sans prix · offre devenue inactive · modèle
+incomplet. Tant qu'elle n'est pas vide, **« Envoyer »** reste à sa place,
+verrouillé, avec le compte (« 3 éléments manquants »).
+
+### Envoyer, c'est figer
+
+À l'envoi, la **version 1** est figée : lignes, sections, taux de taxes,
+modèle et sa version, contact destinataire, rendu HTML. La colonne montre
+« Version 1 · figée le 14 septembre · envoyée à … par courriel ». Une version
+envoyée ne se modifie plus ; **« Corriger »** ouvre l'atelier sur une
+version 2 initialisée depuis la version 1, et la version 1 reste consultable,
+marquée « remplacée » quand la version 2 part. Chaque version figée se rend
+telle qu'elle était, même si le catalogue, le modèle ou les taux ont changé
+depuis ; un bandeau dans le rendu figé le rappelle.
+
+Le **journal** distingue les événements : créé · envoyé (version,
+destinataire, canal) · ouvert par le client · accepté · refusé (motif) ·
+expiré · signé · facturé · remplacé par la version N. Chaque ligne est datée
+et nomme la personne.
+
+### « Créer la suite » depuis une proposition mixte
+
+Une proposition acceptée qui contient du ponctuel et du récurrent engendre
+plusieurs objets : le **contrat** (mandat ponctuel), l'**abonnement**
+(prestations récurrentes ; D-15 dit si une entente signée est requise), la
+**facture d'acompte**. L'écran dit ce qu'il va créer avant de le faire, avec
+les montants, et ce qui existe déjà (pas de doublon si on recommence).
+
+### Le portail
+
+Inchangé : acceptation d'un geste, signature simple. Si le modèle de
+proposition active la section « Accord et signature » (D-14), le geste du
+portail devient « Accepter et signer » et consigne nom tapé, date et adresse
+IP comme pour un contrat.
+
+### États — complément
+
+Atelier : brouillon vide (sections au texte par défaut, aucune ligne) ·
+brouillon depuis une offre · brouillon depuis le brief · section proposée en
+attente · IA indisponible ou en erreur (« Réessayer » ou rédiger à la main) ·
+plafond d'utilisation de l'IA atteint · éléments manquants · prêt à envoyer ·
+enregistrement automatique en cours · « enregistré à 14 h 32 » · non
+enregistré, connexion perdue (les modifications seront réessayées, ne pas
+fermer) · conflit (un autre membre a modifié ce brouillon : recharger, pas
+d'écrasement silencieux) · reprise après rechargement (« brouillon repris là
+où vous l'aviez laissé ») · prix catalogue changé depuis la création (« ce
+brouillon garde 700 $ · mettre à jour ? ») · modèle changé depuis la création
+(même chose pour les sections non touchées) · lecture seule sans « Gérer les
+comptes » · envoi verrouillé sans « Envoyer des documents » · facture
+verrouillée sans « Facturer ». Document : version envoyée verrouillée avec
+« Corriger » · version remplacée · rendu figé avec bandeau.
+
+### Transitions
+
+| De | Geste ou événement | Vers |
+|---|---|---|
+| brouillon (composition) | Envoyer | envoyé, version 1 figée |
+| envoyé | Corriger | brouillon version 2 ; version 1 en attente |
+| brouillon version 2 | Envoyer | envoyé version 2 ; version 1 remplacée |
+| envoyé | Marquer accepté, ou acceptation dans le portail | accepté |
+| envoyé | Marquer refusé, avec motif | refusé |
+| envoyé | date d'expiration passée | expiré ; « Relancer » crée une version avec une nouvelle date |
+| accepté | Créer la suite | contrat en brouillon, abonnement, facture d'acompte ; la proposition ne change pas |
+| contrat envoyé | signature dans le portail, ou Marquer signé | signé |
+| facture envoyée | paiement | payée ; ou en retard à l'échéance |
+
+Aucune transition ne ramène un document envoyé à brouillon sans nouvelle
+version.
+
+### Données lues et écrites
+
+Lues : client, contacts, opportunité, brief validé, offres actives avec
+lignes, options, livrables, échéancier, modèle par défaut de la sorte avec
+ses sections, taux de taxes, profil et numéros de l'agence, droits de la
+personne. Écrites : le document (sorte proposition ou devis, opportunité
+d'origine), lignes avec récurrence et nature, sections et leurs états, choix
+d'options, versions figées, événements du journal, communication d'envoi.
+Jamais : la transcription, le contenu du brief au-delà des balises `brief.*`
+validées.
+
+### Ce qu'il ne faut pas faire — compléments
+
+- Ne pas réécrire un texte modifié à la main, quel que soit le geste.
+- Ne pas faire calculer ni proposer un prix par l'IA : les prix viennent du
+  catalogue, les calculs du moteur.
+- Ne pas transformer une suggestion d'offre ou d'option en choix vendu sans
+  un geste explicite de la personne.
+- Ne pas remplir la raison sociale, le signataire ou la zone cible depuis une
+  autre donnée sans afficher la proposition et sa confirmation.
+- Ne pas mélanger budget média et honoraires dans un même total sans le dire.
+- Ne pas afficher la transcription, le brief brut ni la légende d'un gabarit
+  dans le document.
+- Ne pas dessiner un second rendu : l'atelier, l'aperçu, le PDF et le portail
+  montrent le même document.

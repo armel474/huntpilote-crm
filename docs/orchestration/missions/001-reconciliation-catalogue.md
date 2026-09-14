@@ -1,6 +1,6 @@
 # Mission 001 — Réconcilier les offres et les documents
 
-Statut : préparée, non exécutée. Responsable proposé : Claude Code ou Codex. Relecture proposée : Codex. Base d'analyse : commit `ada3eb29e526181a9e7cfd76306547f45c77efc9`. Type : documentation et analyse métier.
+Statut : exécutée le 14 septembre 2026 par Claude Code, prête pour revue (Codex). Livrables : `../analyses/001-reconciliation-catalogue.md` et `../comptes-rendus/001-reconciliation-catalogue.md`, sur la branche `claude/laughing-fermat-bd7riu`. Le périmètre documentaire a été étendu à la demande d'Armel aux amendements des briefs 9.3 et 9.4, au brief 9.5 et à la mission 002. Responsable : Claude Code. Relecture proposée : Codex. Base d'analyse : commit `ada3eb29e526181a9e7cfd76306547f45c77efc9`. Type : documentation et analyse métier.
 
 ## Objectif
 
