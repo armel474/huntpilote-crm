@@ -5,11 +5,11 @@ import { useMemo, useState } from 'react';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { ClientCard, ProspectCard, type CardView } from '@/components/clients/ClientCards';
-import { CLIENTS, HUB_KPIS } from '@/lib/data/clients';
+import { CLIENTS, HUB_KPIS, type Entry, type HubKpi } from '@/lib/data/clients';
 import { IcoDl, IcoDown, IcoGrid, IcoList, IcoPlus, IcoUp } from '@/components/ui/Icons';
 import { Lbl } from '@/components/ui/Atoms';
 import { DemoOnly } from '@/components/ui/Demo';
-import { EmptyFilter, SkelLine, SkelTable } from '@/components/ui/States';
+import { EmptyFilter, EmptyInitial, SkelLine, SkelTable } from '@/components/ui/States';
 import { routes } from '@/lib/routes';
 
 type Filter = 'all' | 'client' | 'prospect';
@@ -59,7 +59,21 @@ function segmentStyle(active: boolean): React.CSSProperties {
   };
 }
 
-export function ClientHubView() {
+export type ClientHubViewProps = {
+  /** Les comptes lus en base ; sans base, le jeu de démonstration. */
+  entries?: Entry[];
+  kpis?: HubKpi[];
+  subtitle?: string;
+  /** Vrai quand la base est branchée mais que personne n'est connecté : elle ne rend rien, et c'est normal. */
+  signedOut?: boolean;
+};
+
+export function ClientHubView({
+  entries = CLIENTS,
+  kpis = HUB_KPIS,
+  subtitle = '12 clients · 8 prospects · mai 2026',
+  signedOut = false,
+}: ClientHubViewProps) {
   const [scenario, setScenario] = useState<HubScenarioId>('normal');
   const [view, setView] = useState<CardView>('grid');
   const [search, setSearch] = useState('');
@@ -68,19 +82,19 @@ export function ClientHubView() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return CLIENTS.filter((c) => {
+    return entries.filter((c) => {
       if (filter !== 'all' && c.type !== filter) return false;
       if (q && !c.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [filter, search]);
+  }, [entries, filter, search]);
 
   return (
     <AppShell
       header={
         <CRMHeader
           title="Client Hub"
-          subtitle="12 clients · 8 prospects · mai 2026"
+          subtitle={subtitle}
           period=""
         />
       }
@@ -98,7 +112,7 @@ export function ClientHubView() {
         }}
       >
         <div style={{ display: 'flex', gap: '0.75rem', flex: 1, minWidth: 460, flexWrap: 'wrap' }}>
-          {HUB_KPIS.map((k) => (
+          {kpis.map((k) => (
             <div
               key={k.label}
               className="card"
@@ -285,6 +299,20 @@ export function ClientHubView() {
           ) : (
             <SkelTable rows={6} cols={5} />
           )
+        ) : signedOut && entries.length === 0 ? (
+          <EmptyInitial
+            title="Connectez-vous pour voir vos comptes"
+            text="Le Client hub lit la base avec les droits de la personne connectée. Sans session, il n’a rien à montrer."
+            primaryLabel="Se connecter"
+            primaryHref="/connexion?suite=/clients"
+          />
+        ) : entries.length === 0 ? (
+          <EmptyInitial
+            title="Aucun client ni prospect"
+            text="Le portefeuille est vide. Ajoutez un premier compte depuis l’onboarding, ou un prospect depuis le pipeline."
+            primaryLabel="Ajouter un compte"
+            primaryHref={routes.onboarding()}
+          />
         ) : filtered.length === 0 ? (
           <EmptyFilter
             title="Aucun résultat pour cette recherche"

@@ -30,6 +30,7 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0018_connexion.sql` | `whoami()` et `accept_my_invitation()`, les deux points d'entrée publics de la connexion | ✅ appliquée |
 | `0019_ecriture_profil.sql` | Le profil de l'agence s'écrit avec `manage_agency` ; chacun corrige le sien sans se promouvoir | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
+| `seed_02_pipeline.sql` — opportunités, contacts de prospects, scores d'audit, échanges, appel découverte fictif, numéros de taxes de démonstration | ✅ passé · rejouable |
 
 **Le modèle est complet, la base est peuplée, et l'application y est
 branchée.** Le projet Supabase `huntpilote` (région `ca-central-1`) porte les
@@ -37,7 +38,7 @@ vingt migrations et le semis. Côté application : `lib/supabase/` (clients
 serveur et navigateur, middleware de session), `lib/auth.ts` (la session en
 un aller-retour), `lib/queries/` (les lectures, par écran), et
 `lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
-après chaque migration. `/parametres` est le premier écran lu dans la base ;
+après chaque migration. `/parametres`, `/travail`, `/clients` et `/pipeline` sont lus dans la base — le pipeline y écrit aussi (étape, victoire, perte, échange consigné) ;
 `docs/mise-en-service.md` liste les quatre réglages de console qui restent. Le schéma en ligne correspond exactement à celui validé en local, sur
 les huit compteurs : 109 tables, 134 politiques, 23 vues — toutes en
 `security_invoker` —, 178 contraintes de vérification, 46 déclencheurs, 50
@@ -65,6 +66,19 @@ c'est l'offre qui dit ce qu'elle engage. Le revenu récurrent s'élève à
 2 200 $ par mois, calculé sur les abonnements actifs.
 
 Un garde-fou empêche de le rejouer sur une base déjà peuplée.
+
+`seed_02_pipeline.sql` complète le portefeuille pour que le Client hub et
+le pipeline, lus dans la base, aient quelque chose à montrer : une
+opportunité par prospect, un contact principal chacun, quatorze audits
+terminés (la courbe des scores), une partie des tâches du mois marquées
+faites, un devis envoyé, dix échanges consignés. Il ajoute un neuvième
+compte, **Ébénisterie Rivard**, prospect fictif dont l'appel découverte est
+consigné avec son résumé ; la transcription complète est dans
+`docs/fixtures/appel-decouverte-ebenisterie-rivard.md`, prête pour la
+session 9.5. Chaque ligne porte un identifiant fixe et un `on conflict do
+nothing` : le fichier se rejoue sans dommage, après `seed.sql`. Les numéros
+de TPS et de TVQ qu'il pose sont des valeurs de démonstration au bon
+format, pas ceux de l'agence.
 
 **Il reste deux valeurs à saisir**, signalées dans le fichier :
 les numéros d'inscription à la TPS et à la TVQ de l'agence, et le tarif
