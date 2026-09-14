@@ -28,6 +28,9 @@ function Svg({ size = 12, children, ...rest }: IconProps & { children: React.Rea
 }
 
 /* ── Navigation ── */
+export function IcoFolder(p: IconProps) {
+  return <Svg {...p}><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /></Svg>;
+}
 export const IcoDash = (p: IconProps) => (
   <Svg size={14} {...p}>
     <rect x="3" y="3" width="7" height="7" />

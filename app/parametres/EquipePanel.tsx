@@ -112,7 +112,7 @@ function MemberDialog({
   const v = (x: string | null | undefined) => x ?? '';
   const pickRole = (r: Role) => {
     setRole(r);
-    setGranted(new Set(roleDefaults[r]));
+    setGranted(new Set([...roleDefaults[r], ...(self ? ['manage_team' as const] : [])]));
   };
   const toggle = (p: Permission) =>
     setGranted((s) => {
@@ -129,6 +129,7 @@ function MemberDialog({
         <input type="hidden" name="member_id" value={member.id} />
         {manage && <input type="hidden" name="manage" value="1" />}
         <Notice state={state} />
+        {!manage && <Notice tone="warn">Vous pouvez modifier votre identité et vos coordonnées. Le rôle, le poste, le taux et les droits sont réservés à la gestion d’équipe.</Notice>}
 
         <div className="st-grid2">
           <Field label="Prénom" htmlFor="mb-first">
@@ -203,6 +204,7 @@ function MemberDialog({
               <Field label="Accès" span>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8125rem' }}>
                   <input type="checkbox" name="active" value="1" defaultChecked={member.active} disabled={self} />
+                  {self && <input type="hidden" name="active" value="1" />}
                   Compte actif
                   {self && <span style={{ color: 'var(--fg4)', fontSize: '0.6875rem' }}>· vous ne pouvez pas vous désactiver</span>}
                 </label>
@@ -223,7 +225,8 @@ function MemberDialog({
                 const exception = on !== defaults.has(p);
                 return (
                   <label key={p} className={`st-perm${on ? ' on' : ''}`}>
-                    <input type="checkbox" name="permission" value={p} checked={on} onChange={() => toggle(p)} />
+                    <input type="checkbox" name="permission" value={p} checked={on} disabled={self && p === 'manage_team'} onChange={() => toggle(p)} />
+                    {self && p === 'manage_team' && <input type="hidden" name="permission" value={p} />}
                     <span style={{ minWidth: 0 }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.8125rem' }}>
                         {PERMISSION_LABEL[p].label}
@@ -231,6 +234,7 @@ function MemberDialog({
                       </span>
                       <span style={{ display: 'block', fontSize: '0.6875rem', color: 'var(--fg4)' }}>
                         {PERMISSION_LABEL[p].hint}
+                        {self && p === 'manage_team' && ' · Vous ne pouvez pas vous retirer ce droit.'}
                       </span>
                     </span>
                   </label>
@@ -239,6 +243,17 @@ function MemberDialog({
             </div>
           </>
         )}
+
+        {!manage && <>
+          <div className="st-sep" />
+          <div className="lbl" style={{ marginBottom: 10 }}>Réservé à la gestion d’équipe</div>
+          <div className="st-grid2">
+            <Field label="Rôle"><span>{ROLE_LABEL[member.role]}</span></Field>
+            <Field label="Poste"><span>{member.jobTitle ?? 'Non renseigné'}</span></Field>
+            <Field label="Taux horaire"><span>{member.hourlyRateCents === null ? 'Non renseigné' : `${member.hourlyRateCents / 100} $`}</span></Field>
+            <Field label="Droits" span><ul>{member.permissions.map((p) => <li key={p}>{PERMISSION_LABEL[p].label}</li>)}</ul></Field>
+          </div>
+        </>}
 
         <div className="st-dlg-actions">
           <button className="btn-out" type="button" onClick={onClose}>
@@ -402,6 +417,7 @@ export function EquipePanel({
                       type="button"
                       aria-label={self ? 'Modifier mon profil' : `Modifier ${m.fullName}`}
                       disabled={!editable}
+                      title={!editable ? 'Réservé à la gestion d’équipe' : undefined}
                       onClick={() => setEditing(m.id)}
                     >
                       <IcoMore />

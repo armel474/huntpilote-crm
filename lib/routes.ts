@@ -10,6 +10,7 @@
 export const routes = {
   dashboard: () => '/dashboard',
   clients: () => '/clients',
+  agence: (section?: string) => (section ? `/agence/${section}` : '/agence'),
   client: (id: string) => `/clients/${id}`,
   priorite: (id: string, p: string) => `/clients/${id}/priorites/${p}`,
   tache: (id: string, t: string) => `/clients/${id}/taches/${t}`,

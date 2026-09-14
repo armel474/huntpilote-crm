@@ -1,14 +1,11 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
-import { AgencePanel } from '@/app/parametres/AgencePanel';
-import { CataloguePanel } from '@/app/parametres/CataloguePanel';
-import { EquipePanel } from '@/app/parametres/EquipePanel';
 import { Field, SectionHead } from '@/app/parametres/bits';
 import type { Session } from '@/lib/auth';
-import { permissionsOf, type AgencyData } from '@/lib/queries/agence';
 import { ROLE_LABEL } from '@/lib/format';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Badge } from '@/components/ui/Atoms';
@@ -19,7 +16,6 @@ import {
   IcoCheck,
   IcoCoin,
   IcoTool,
-  IcoUsers,
   IcoWarn,
   type IconProps,
 } from '@/components/ui/Icons';
@@ -42,49 +38,6 @@ import {
   type SectionId,
 } from '@/lib/data/settings';
 
-function IcoBuilding(p: IconProps) {
-  return (
-    <svg
-      width={p.size ?? 15}
-      height={p.size ?? 15}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="4" y="2" width="16" height="20" rx="2" />
-      <line x1="9" y1="9" x2="9" y2="9.01" />
-      <line x1="15" y1="9" x2="15" y2="9.01" />
-      <line x1="9" y1="13" x2="9" y2="13.01" />
-      <line x1="15" y1="13" x2="15" y2="13.01" />
-      <line x1="9" y1="17" x2="15" y2="17" />
-    </svg>
-  );
-}
-
-
-function IcoTag(p: IconProps) {
-  return (
-    <svg
-      width={p.size ?? 15}
-      height={p.size ?? 15}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
-      <line x1="7" y1="7" x2="7.01" y2="7" />
-    </svg>
-  );
-}
-
 /**
  * Lit `?section=` une fois au montage et applique la section demandée —
  * utilisé par le geste « Connecter » de Communications (session 7.2), qui
@@ -106,9 +59,6 @@ function SectionFromQuery({ onSection }: { onSection: (s: SectionId) => void }) 
 }
 
 const SECTIONS: { id: SectionId; label: string; Icon: (p: IconProps) => React.ReactElement }[] = [
-  { id: 'agence', label: "Profil de l'agence", Icon: IcoBuilding },
-  { id: 'catalogue', label: 'Catalogue', Icon: IcoTag },
-  { id: 'equipe', label: "Membres d'équipe", Icon: IcoUsers },
   { id: 'integrations', label: 'Intégrations', Icon: IcoTool },
   { id: 'notifications', label: 'Notifications', Icon: IcoBell },
   { id: 'facturation', label: 'Abonnement', Icon: IcoCard },
@@ -894,13 +844,10 @@ function ConsommationPanel({
 
 export function ParametresView({
   session,
-  agency,
 }: {
   session: Session | null;
-  agency: AgencyData;
 }) {
-  const [section, setSection] = useState<SectionId>('agence');
-  const mine = permissionsOf(agency.members, session?.memberId);
+  const [section, setSection] = useState<SectionId>('integrations');
   const [ints, setInts] = useState<Integration[]>(AGENCY_INTEGRATIONS);
   const [notifs, setNotifs] = useState<Notification[]>(NOTIFICATIONS);
   const [consoState, setConsoState] = useState<ConsoStateId>('ok');
@@ -935,7 +882,7 @@ export function ParametresView({
         <CRMHeader
           title="Paramètres"
           period=""
-          subtitle={section === 'consommation' ? undefined : "Configuration de l'agence"}
+          subtitle={section === 'consommation' ? undefined : "Configuration de l’application"}
           crumbs={
             section === 'consommation'
               ? [
@@ -981,6 +928,8 @@ export function ParametresView({
               </button>
             ))}
           </div>
+
+          <Link className="set-nav" href="/agence" style={{ marginTop: 20, textDecoration: 'none' }}>Profil, équipe et catalogue → Agence hub</Link>
 
           <div
             style={{
@@ -1049,18 +998,6 @@ export function ParametresView({
 
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
-            {section === 'agence' && (
-              <AgencePanel agency={agency.agency} canEdit={mine.includes('manage_agency')} />
-            )}
-            {section === 'catalogue' && <CataloguePanel items={agency.items} offers={agency.offers} />}
-            {section === 'equipe' && (
-              <EquipePanel
-                members={agency.members}
-                session={session}
-                roleDefaults={agency.roleDefaults}
-                canManage={mine.includes('manage_team')}
-              />
-            )}
             {section === 'integrations' && <IntegrationsPanel ints={ints} onToggle={toggleInt} />}
             {section === 'notifications' && (
               <NotificationsPanel notifs={notifs} onToggle={toggleNotif} />

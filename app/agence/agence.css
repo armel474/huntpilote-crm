@@ -1,0 +1,27 @@
+/* Cadre 9.1 : jetons et .set-nav du socle commun. */
+.ag-layout { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+.ag-nav { width: 230px; flex-shrink: 0; padding: 1.25rem .875rem; border-right: 1px solid var(--bd-solid); background: var(--bg-solid); overflow-y: auto; }
+.ag-nav .set-nav { text-decoration: none; margin-bottom: 2px; }
+.ag-nav .set-nav svg { flex-shrink: 0; }
+.ag-nav-label { padding: 0 .7rem; margin: 18px 0 10px; }
+.ag-nav .ag-home { font-weight: 700; }
+.ag-home[aria-current="page"] { color: var(--green-fg); background: var(--green-m); }
+.ag-soon { display: block; font-size: .625rem; font-weight: 400; }
+.ag-nav .ag-settings { margin-top: 24px; font-size: .75rem; }
+.ag-content { flex: 1; min-width: 0; padding: 1.75rem 2rem; }
+.ag-inner { max-width: 1000px; margin: 0 auto; }
+.ag-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ag-card { padding: 1.125rem; display: flex; flex-direction: column; gap: 12px; }
+.ag-card h3 { font-size: .9375rem; font-weight: 800; }
+.ag-card p { flex: 1; font-size: .75rem; line-height: 1.6; color: var(--fg2); }
+.ag-card .btn-out { text-decoration: none; white-space: normal; justify-content: space-between; }
+.ag-card-status { color: var(--fg3); font-size: .6875rem; }
+@media (max-width: 1200px) { .ag-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+  .ag-layout { flex-direction: column; overflow-y: auto; }
+  .ag-nav { width: auto; display: flex; flex-wrap: wrap; gap: 4px; padding: .75rem; border-right: 0; border-bottom: 1px solid var(--bd-solid); overflow: visible; }
+  .ag-nav .set-nav { width: auto; margin: 0; }
+  .ag-nav-label { display: none; }
+  .ag-content { overflow: visible; padding: 1rem; }
+}
+@media (max-width: 560px) { .ag-cards { grid-template-columns: 1fr; } }

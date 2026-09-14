@@ -151,6 +151,13 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
       db.from('role_permission').select('role, permission'),
     ]);
 
+  // Une lecture refusée ou interrompue n'est pas un catalogue vide ni un
+  // profil complet. Le hub affiche son état d'erreur et permet de réessayer.
+  if ([agency, items, offers, values, lines, benefits, segments, templates, members, effective, overrides, defaults]
+    .some((result) => result.error)) {
+    throw new Error('Les informations de l’agence n’ont pas pu être chargées.');
+  }
+
   const effectiveBy = new Map<string, Permission[]>();
   for (const e of effective.data ?? []) {
     if (!e.member_id || !e.permission) continue;

@@ -1,29 +1,20 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { ParametresView } from '@/app/parametres/ParametresView';
 import { getSession } from '@/lib/auth';
-import { loadAgencyData } from '@/lib/queries/agence';
 import { supabaseConfigured } from '@/lib/supabase/config';
-import { createClient } from '@/lib/supabase/server';
+import { routes } from '@/lib/routes';
 
 export const metadata: Metadata = { title: 'Paramètres — HuntPilote' };
-
-// La page lit la base à chaque requête, avec les droits de la personne
-// connectée : elle ne peut pas être prérendue.
 export const dynamic = 'force-dynamic';
 
-const EMPTY = {
-  agency: null,
-  items: [],
-  offers: [],
-  members: [],
-  roleDefaults: { admin: [], chef_projet: [], specialiste_seo: [], redacteur: [] },
-};
-
-export default async function ParametresPage() {
-  if (!supabaseConfigured()) {
-    return <ParametresView session={null} agency={EMPTY} />;
-  }
-  const [session, supabase] = await Promise.all([getSession(), createClient()]);
-  const agency = await loadAgencyData(supabase);
-  return <ParametresView session={session} agency={agency} />;
+export default async function ParametresPage({ searchParams }: {
+  searchParams: Promise<{ section?: string | string[] }>;
+}) {
+  const { section } = await searchParams;
+  // Compatibilité des favoris et des liens déjà partagés, avant toute lecture.
+  if (section === 'agence' || section === 'profil') redirect(routes.agence('profil'));
+  if (section === 'equipe' || section === 'catalogue') redirect(routes.agence(section));
+  const session = supabaseConfigured() ? await getSession() : null;
+  return <ParametresView session={session} />;
 }
