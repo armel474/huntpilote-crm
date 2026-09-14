@@ -106,6 +106,20 @@ export type AgencyProfile = {
   logoUrl: string | null;
   gstNumber: string | null;
   qstNumber: string | null;
+  neq: string | null;
+  representativeName: string | null;
+  representativeTitle: string | null;
+  judicialDistrict: string | null;
+  paymentInstructions: string | null;
+};
+
+/** Ce que l'accueil de l'Agence hub dit de chaque section : un manque, pas une décoration. */
+export type AgencyHubCounts = {
+  /** Sortes de documents couvertes par au moins un modèle. */
+  templateKinds: string[];
+  quotesPending: number;
+  invoicesLate: number;
+  itemsWithoutPrice: number;
 };
 
 export type AgencyData = {
@@ -115,6 +129,7 @@ export type AgencyData = {
   members: Member[];
   /** Ce que chaque rôle autorise par défaut — le référentiel du produit. */
   roleDefaults: Record<Role, Permission[]>;
+  hub: AgencyHubCounts;
 };
 
 const NO_DEFAULTS: Record<Role, Permission[]> = {
@@ -130,7 +145,10 @@ export function permissionsOf(members: Member[], memberId: string | null | undef
 }
 
 export async function loadAgencyData(db: Db): Promise<AgencyData> {
-  const [agency, items, offers, values, lines, benefits, segments, templates, members, effective, overrides, defaults] =
+  const [
+    agency, items, offers, values, lines, benefits, segments, templates, members, effective, overrides, defaults,
+    docTemplates, quotesPending, invoicesLate,
+  ] =
     await Promise.all([
       db.from('agency').select('*').maybeSingle(),
       db.from('catalog_item').select('*').order('position'),
@@ -149,6 +167,9 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
       db.from('member_effective_permission').select('member_id, permission'),
       db.from('member_permission').select('member_id, permission, granted, reason'),
       db.from('role_permission').select('role, permission'),
+      db.from('document_template').select('kind').eq('active', true),
+      db.from('quote').select('id', { count: 'exact', head: true }).eq('status', 'envoye'),
+      db.from('invoice').select('id', { count: 'exact', head: true }).eq('status', 'en_retard'),
     ]);
 
   const effectiveBy = new Map<string, Permission[]>();
@@ -206,6 +227,11 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
           logoUrl: agency.data.logo_url,
           gstNumber: agency.data.gst_number,
           qstNumber: agency.data.qst_number,
+          neq: agency.data.neq,
+          representativeName: agency.data.representative_name,
+          representativeTitle: agency.data.representative_title,
+          judicialDistrict: agency.data.judicial_district,
+          paymentInstructions: agency.data.payment_instructions,
         }
       : null,
     items: (items.data ?? []).map((i) => ({
@@ -276,5 +302,11 @@ export async function loadAgencyData(db: Db): Promise<AgencyData> {
       overrides: overridesBy.get(m.id) ?? [],
     })),
     roleDefaults: defaults.data ? roleDefaults : NO_DEFAULTS,
+    hub: {
+      templateKinds: [...new Set((docTemplates.data ?? []).map((t) => t.kind as string))],
+      quotesPending: quotesPending.count ?? 0,
+      invoicesLate: invoicesLate.count ?? 0,
+      itemsWithoutPrice: (items.data ?? []).filter((i) => i.active && i.price_cents == null).length,
+    },
   };
 }

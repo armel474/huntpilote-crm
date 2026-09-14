@@ -26,12 +26,14 @@ interface, documentation, commentaires, messages de commit.
 | Modèle de données | Complet : 20 migrations, 109 tables, 23 vues, 134 politiques RLS, 159 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
 | Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007 avec livrables, jalons, exclusions. |
 | Connexion | Mot de passe, lien magique et Google fonctionnent en production. Rattachement d'une invitation à la première connexion, par courriel. |
-| Écrans lus dans la base | `/parametres` (profil, catalogue, équipe) et `/travail`. **Tous les autres écrans tournent encore sur les fichiers de démonstration** de `lib/data/`. |
-| Écrans qui écrivent dans la base | `/parametres` seulement : profil de l'agence, invitation, fiche membre, droits nominatifs (`app/parametres/actions.ts`). |
+| Écrans lus dans la base | `/agence` (profil, catalogue, équipe), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre). Les autres écrans — la fiche client en premier — tournent encore sur les fichiers de démonstration de `lib/data/`. |
+| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). |
+| Stockage | Seau `public-assets` (migration 0021), public en lecture, écriture cloisonnée par agence. Logo et photos s'y téléversent depuis l'écran. |
 | Verrou d'accès | `AUTH_REQUIRED=on` n'est pas encore posé sur Vercel. Tant qu'il ne l'est pas, les pages restent visibles sans connexion (vides, mais visibles). |
 
-Deux valeurs restent à saisir dans l'écran Profil : les numéros de TPS et
-de TVQ. Les tarifs d'entrée des packs SEO (« 3 premiers mois à tarif
+Les numéros de TPS et de TVQ du profil sont **des valeurs de démonstration**
+(`seed_02_pipeline.sql`), à remplacer par les vrais avant le premier envoi
+réel. Les tarifs d'entrée des packs SEO (« 3 premiers mois à tarif
 préférentiel ») ne sont pas connus non plus (`offer.intro_price_cents`).
 
 ## 2. Conventions à respecter
@@ -228,8 +230,8 @@ production.
 |---|---|---|---|
 | D | **Design** : 9.1 → 9.4 ✅ livrées. Reste **9.5** à faire passer dans Claude Design, après 9.4 intégrée. Armel. | 1 session | brief 9.5 |
 | 0 | `AUTH_REQUIRED=on` sur Vercel (Armel). Bucket Storage `public-assets` (migration + politique). | petite | — |
-| 1 | Brancher `/clients` et `/pipeline` sur la base (semer opportunités et mesures pour les 8 comptes fictifs). Passé en premier : le générateur n'a de sens qu'avec de vrais prospects. | grande | 0 |
-| 2 | Intégrer 9.1 : `/agence`, navigation, accueil ; déplacer Profil, Équipe, alléger `/parametres` ; téléversement logo et photos ; NEQ, instructions de paiement, représentant, district judiciaire. | moyenne | 0 |
+| 1 | ✅ **Fait (14 sept.)** — `/clients` et `/pipeline` lisent la base, le pipeline y écrit ; `seed_02_pipeline.sql` sème opportunités, contacts, audits, échanges et le prospect Ébénisterie Rivard avec son appel découverte. | grande | 0 |
+| 2 | ✅ **Fait (14 sept.)** — `/agence` avec navigation par section et accueil en cartes ; Profil, Équipe et Catalogue déplacés, `/parametres` allégé (anciens liens redirigés) ; téléversement du logo et des photos (Storage) ; NEQ, représentant, district, instructions de paiement (migration 0020). Offres, Modèles, Documents : cartes d'attente avec les comptes réels. | moyenne | 0 |
 | 3 | Intégrer 9.2 : catalogue (créer, modifier, archiver, réordonner) ; constructeur d'offres ; migration `offer_deliverable_template` ; **semer les packs de maintenance**. | grande | 2 |
 | 4 | Intégrer 9.3 : `body_html`, **sections de modèle**, analyse des balises avec conversion des formes héritées, blocs conditionnels, aperçu ; **semer les quatre gabarits convertis**, format Lettre, flux paginé. | grande | 2, gabarits |
 | 5 | Intégrer 9.4 : `quote.kind`, `deal_id`, récurrence et nature des lignes, taux figés ; panneau de création ; **mode composition** du brouillon ; envoi et figeage ; versions ; liste ; portail (acceptation, signature simple). Sans IA. | grande | 3, 4 |
@@ -278,18 +280,19 @@ précis vaut mieux qu'une liste de souhaits.
 À coller tel quel dans la première invite :
 
 > Lis `docs/passation-agence-hub.md` en entier, puis `supabase/README.md`,
-> `docs/modele-donnees.md` et les quatre briefs `docs/briefs/9-*.md`.
-> Respecte les conventions de la section 2 sans exception. Je te fournis
-> les maquettes HTML produites par Claude Design à partir de ces briefs
-> (jointes à ce message ou déposées dans `docs/maquettes/phase-9/`).
-> Commence par l'étape 1 de la section 5 : intégrer la maquette 9.1 —
-> créer `/agence` (« Agence hub »), sa navigation et sa page d'accueil, y
-> déplacer Profil et Équipe depuis `/parametres`, ajouter le téléversement
-> du logo et des photos via Supabase Storage, le NEQ et les instructions de
-> paiement. Réutilise les composants existants (`app/parametres/*Panel.tsx`,
-> `bits.tsx`, `actions.ts`) au lieu de les réécrire. Valide toute migration
-> en local avant de l'appliquer en ligne, vérifie au navigateur en thème
-> clair et sombre, déploie, et dis-moi ce que je dois vérifier en
-> production avant de passer à l'étape suivante. Ne me demande pas de
-> permission pour les actions réversibles : le mode automatique est activé.
-> En fin d'étape, mets à jour la section 1 et la section 8 de ce document.
+> `docs/modele-donnees.md`, `docs/analyse-generateur-propositions.md` et les
+> briefs `docs/briefs/9-*.md`. Respecte les conventions de la section 2 sans
+> exception. Les maquettes de la phase 9 sont dans
+> `design/HuntPilote - CRM SEO_phase 9/` et les gabarits réels dans
+> `design/Documentations DigiHunt/` et `design/Modèle de contrat DigiHunt/`.
+> Les étapes 1 et 2 de la section 5 sont faites. Commence par l'étape 3 :
+> intégrer la maquette 9.2 — le catalogue modifiable (créer, modifier,
+> archiver, réordonner, prix unitaire) et le constructeur d'offres, avec la
+> migration `offer_deliverable_template` et les trois packs de maintenance
+> semés au catalogue. Réutilise `app/agence/*` au lieu de le réécrire. Valide
+> toute migration en local avant de l'appliquer en ligne, vérifie au
+> navigateur en thème clair et sombre, déploie, et dis-moi ce que je dois
+> vérifier en production avant de passer à l'étape suivante. Ne me demande
+> pas de permission pour les actions réversibles : le mode automatique est
+> activé. En fin d'étape, mets à jour la section 1 et la section 8 de ce
+> document.

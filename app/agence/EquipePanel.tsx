@@ -1,10 +1,11 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { inviteMember, updateMember } from '@/app/parametres/actions';
-import { Dialog, Field, Notice, SectionHead } from '@/app/parametres/bits';
+import { inviteMember, updateMember } from '@/app/agence/actions';
+import { Dialog, Field, Notice, SectionHead } from '@/app/agence/bits';
 import { Badge } from '@/components/ui/Atoms';
 import { IcoMore, IcoPlus } from '@/components/ui/Icons';
+import { UploadZone } from '@/components/ui/UploadZone';
 import type { Session } from '@/lib/auth';
 import { PERMISSIONS, PERMISSION_LABEL, ROLE_LABEL } from '@/lib/format';
 import type { Member, Permission, Role } from '@/lib/queries/agence';
@@ -90,12 +91,15 @@ function MemberDialog({
   self,
   manage,
   roleDefaults,
+  agencyId,
   onClose,
 }: {
   member: Member;
   self: boolean;
   manage: boolean;
   roleDefaults: Record<Role, Permission[]>;
+  /** Le dossier de stockage des photos est celui de l'agence. */
+  agencyId: string;
   onClose: () => void;
 }) {
   const [state, action, pending] = useActionState(updateMember, null);
@@ -157,8 +161,15 @@ function MemberDialog({
               <input id="mb-pc" name="postal_code" className="fld" defaultValue={v(member.postalCode)} />
             </Field>
           </div>
-          <Field label="Photo" htmlFor="mb-avatar" span hint="Adresse d’une image carrée. Le téléversement viendra avec le stockage.">
-            <input id="mb-avatar" name="avatar_url" type="url" className="fld" defaultValue={v(member.avatarUrl)} placeholder="https://…" />
+          <Field label="Photo" span>
+            <UploadZone
+              name="avatar_url"
+              kind="photo"
+              shape="circle"
+              size={56}
+              value={member.avatarUrl}
+              folder={`${agencyId}/membres`}
+            />
           </Field>
         </div>
 
@@ -421,6 +432,7 @@ export function EquipePanel({
       {inviting && <InviteDialog onClose={() => setInviting(false)} />}
       {edited && (
         <MemberDialog
+          agencyId={session?.agencyId ?? 'sans-agence'}
           key={edited.id}
           member={edited}
           self={session?.memberId === edited.id}

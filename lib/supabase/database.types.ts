@@ -28,12 +28,17 @@ export type Database = {
           gst_number: string | null
           id: string
           legal_name: string | null
+          judicial_district: string | null
           logo_url: string | null
           name: string
+          neq: string | null
+          payment_instructions: string | null
           phone: string | null
           postal_code: string | null
           province: string | null
           qst_number: string | null
+          representative_name: string | null
+          representative_title: string | null
           slug: string
           updated_at: string
           website: string | null
@@ -47,12 +52,17 @@ export type Database = {
           gst_number?: string | null
           id?: string
           legal_name?: string | null
+          judicial_district?: string | null
           logo_url?: string | null
           name: string
+          neq?: string | null
+          payment_instructions?: string | null
           phone?: string | null
           postal_code?: string | null
           province?: string | null
           qst_number?: string | null
+          representative_name?: string | null
+          representative_title?: string | null
           slug: string
           updated_at?: string
           website?: string | null
@@ -66,12 +76,17 @@ export type Database = {
           gst_number?: string | null
           id?: string
           legal_name?: string | null
+          judicial_district?: string | null
           logo_url?: string | null
           name?: string
+          neq?: string | null
+          payment_instructions?: string | null
           phone?: string | null
           postal_code?: string | null
           province?: string | null
           qst_number?: string | null
+          representative_name?: string | null
+          representative_title?: string | null
           slug?: string
           updated_at?: string
           website?: string | null

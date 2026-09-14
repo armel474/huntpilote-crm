@@ -1,9 +1,10 @@
 'use client';
 
 import { useActionState } from 'react';
-import { saveAgencyProfile } from '@/app/parametres/actions';
-import { Field, Notice, SectionHead } from '@/app/parametres/bits';
-import { IcoCheck, IcoLogo } from '@/components/ui/Icons';
+import { saveAgencyProfile } from '@/app/agence/actions';
+import { Field, Notice, SectionHead } from '@/app/agence/bits';
+import { IcoCheck, IcoLock } from '@/components/ui/Icons';
+import { UploadZone } from '@/components/ui/UploadZone';
 import type { AgencyProfile } from '@/lib/queries/agence';
 
 export function AgencePanel({ agency, canEdit }: { agency: AgencyProfile | null; canEdit: boolean }) {
@@ -16,15 +17,15 @@ export function AgencePanel({ agency, canEdit }: { agency: AgencyProfile | null;
     <form action={action} key={agency?.id ?? 'none'}>
       <SectionHead
         title="Profil de l'agence"
-        sub="Ces informations apparaissent sur les devis, les factures et les rapports envoyés aux clients."
+        sub="Ces informations apparaissent sur les propositions, devis, contrats et factures envoyés aux clients."
         action={
           <button
-            className="btn-pri"
+            className={ro ? 'btn-out' : 'btn-pri'}
             type="submit"
             disabled={!agency || ro || pending}
-            title={ro ? 'Réservé à la gestion de l’agence' : undefined}
+            title={ro ? 'Verrouillé — droit « Gérer l’agence » requis' : undefined}
           >
-            <IcoCheck size={12} />
+            {ro ? <IcoLock size={12} /> : <IcoCheck size={12} />}
             {pending ? 'Enregistrement…' : 'Enregistrer'}
           </button>
         }
@@ -47,46 +48,19 @@ export function AgencePanel({ agency, canEdit }: { agency: AgencyProfile | null;
         </Notice>
       )}
       <div className="card" style={{ padding: '1.25rem', marginBottom: 14 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-            paddingBottom: 18,
-            borderBottom: '1px solid var(--bd)',
-            marginBottom: 18,
-            flexWrap: 'wrap',
-          }}
-        >
-          <div
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 16,
-              background: 'var(--primary)',
-              color: 'var(--primary-fg)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}
-          >
-            {agency?.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={agency.logoUrl} alt="" width={64} height={64} style={{ objectFit: 'cover' }} />
-            ) : (
-              <IcoLogo size={28} />
-            )}
-          </div>
-          <div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-              {agency?.name ?? 'Agence'}
-            </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--fg3)', marginTop: 2 }}>
-              Logo affiché sur les documents · PNG ou SVG, 512×512 px — le téléversement viendra avec le stockage.
-            </p>
-          </div>
+        <div style={{ paddingBottom: 18, borderBottom: '1px solid var(--bd)', marginBottom: 18 }}>
+          <UploadZone
+            name="logo_url"
+            kind="logo"
+            value={agency?.logoUrl ?? null}
+            folder={agency?.id ?? 'sans-agence'}
+            disabled={ro || !agency}
+            requireSquare
+          />
+          <p style={{ fontSize: '0.6875rem', color: 'var(--fg4)', marginTop: 8 }}>
+            Le logo apparaît sur les propositions, devis, contrats et factures — c&apos;est ce qui motive à le fournir.
+            Il s&apos;enregistre avec le reste du profil.
+          </p>
         </div>
 
         <div className="st-grid2">
@@ -124,6 +98,21 @@ export function AgencePanel({ agency, canEdit }: { agency: AgencyProfile | null;
           </Field>
           <Field label="Numéro de TVQ" htmlFor="st-qst" hint="Format : 1234567890 TQ0001">
             <input id="st-qst" name="qst_number" className="fld" defaultValue={v(agency?.qstNumber)} placeholder="À saisir" readOnly={ro} />
+          </Field>
+          <Field label="NEQ" htmlFor="st-neq" hint="Numéro d’entreprise du Québec — dix chiffres, affiché au contrat">
+            <input id="st-neq" name="neq" className="fld" defaultValue={v(agency?.neq)} placeholder="1234567890" inputMode="numeric" pattern="[0-9]{10}" readOnly={ro} />
+          </Field>
+          <Field label="District judiciaire" htmlFor="st-district" hint="Clause de juridiction du contrat">
+            <input id="st-district" name="judicial_district" className="fld" defaultValue={v(agency?.judicialDistrict)} placeholder="Ex. Rimouski" readOnly={ro} />
+          </Field>
+          <Field label="Représentant" htmlFor="st-rep" hint="Qui signe pour l’agence">
+            <input id="st-rep" name="representative_name" className="fld" defaultValue={v(agency?.representativeName)} readOnly={ro} />
+          </Field>
+          <Field label="Titre du représentant" htmlFor="st-rep-title">
+            <input id="st-rep-title" name="representative_title" className="fld" defaultValue={v(agency?.representativeTitle)} placeholder="Ex. Propriétaire" readOnly={ro} />
+          </Field>
+          <Field label="Instructions de paiement par défaut" htmlFor="st-pay" span hint="Reprises par les modèles de documents ; un modèle peut les surcharger.">
+            <textarea id="st-pay" name="payment_instructions" className="fld" rows={3} style={{ resize: 'vertical', fontFamily: 'var(--font)' }} defaultValue={v(agency?.paymentInstructions)} readOnly={ro} />
           </Field>
         </div>
       </div>

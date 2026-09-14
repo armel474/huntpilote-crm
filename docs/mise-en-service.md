@@ -64,7 +64,7 @@ qu'au prochain build.
 
 1. ~~Ouvrir `/connexion`, choisir **Continuer avec Google** ou demander un
    lien magique.~~ Fait : les deux fonctionnent.
-2. Ouvrir `/parametres` → **Catalogue** : vos six offres, lues dans la base.
+2. Ouvrir `/agence` → **Catalogue** : vos six offres, lues dans la base.
    Onglet **Membres d'équipe** : votre ligne porte la mention VOUS.
 3. **Verrouiller** : dans Vercel (étape 4), ajouter `AUTH_REQUIRED` = `on`,
    type Config, environnement Production seulement, puis **Redeploy**. À

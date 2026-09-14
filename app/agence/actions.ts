@@ -38,7 +38,7 @@ function explain(code: string | undefined, fallback: string): string {
     case '42501':
       return 'Vous n’avez pas ce droit.';
     case '23514':
-      return 'Une valeur ne respecte pas les règles : vérifiez les champs.';
+      return 'Une valeur ne respecte pas les règles : vérifiez les champs (le NEQ fait dix chiffres, sans espace).';
     default:
       return fallback;
   }
@@ -78,12 +78,19 @@ export async function saveAgencyProfile(_prev: ActionState, fd: FormData): Promi
       postal_code: text(fd, 'postal_code'),
       gst_number: text(fd, 'gst_number'),
       qst_number: text(fd, 'qst_number'),
+      neq: text(fd, 'neq'),
+      representative_name: text(fd, 'representative_name'),
+      representative_title: text(fd, 'representative_title'),
+      judicial_district: text(fd, 'judicial_district'),
+      payment_instructions: text(fd, 'payment_instructions'),
+      logo_url: text(fd, 'logo_url'),
     })
     .eq('id', session.agencyId)
     .select('id');
 
   if (error) return fail(explain(error.code, 'Le profil n’a pas pu être enregistré.'));
   if (!data?.length) return fail('Vous n’avez pas le droit de modifier le profil de l’agence.');
+  revalidatePath('/agence');
   revalidatePath('/parametres');
   return done('Profil enregistré.');
 }
@@ -114,6 +121,7 @@ export async function inviteMember(_prev: ActionState, fd: FormData): Promise<Ac
   });
 
   if (error) return fail(explain(error.code, 'L’invitation n’a pas pu être créée.'));
+  revalidatePath('/agence');
   revalidatePath('/parametres');
   return done(`${[first, last].filter(Boolean).join(' ')} fait partie de l’équipe. Son compte se rattachera à sa première connexion avec ${email}.`);
 }
@@ -206,6 +214,7 @@ export async function updateMember(_prev: ActionState, fd: FormData): Promise<Ac
     }
   }
 
+  revalidatePath('/agence');
   revalidatePath('/parametres');
   return done('Profil enregistré.');
 }

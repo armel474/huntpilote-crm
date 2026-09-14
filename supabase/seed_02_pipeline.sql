@@ -258,3 +258,18 @@ values
    'courriel', 'in', 'Bonjour Armel, merci pour l''appel. Je vous envoie une dizaine de photos de projets d''ici la fin de semaine. Julie aimerait voir la proposition avant le 25. — Martin',
    now() - interval '4 days', null)
 on conflict (id) do nothing;
+
+
+-- =============================================================================
+-- L'agence : ce que le profil complété attend (migration 0020)
+-- =============================================================================
+-- Le NEQ figure au contrat ; le reste est ce que les gabarits écrivent en dur.
+
+update public.agency
+   set neq = coalesce(neq, '2272419658'),
+       representative_name = coalesce(representative_name, 'Armel Junior Nguimbi'),
+       representative_title = coalesce(representative_title, 'Propriétaire, Agence DigiHunt'),
+       judicial_district = coalesce(judicial_district, 'Rimouski'),
+       payment_instructions = coalesce(payment_instructions,
+         'Virement bancaire ou Interac. Factures payables sous 15 jours.')
+ where id = '11110000-0000-0000-0000-000000000001';

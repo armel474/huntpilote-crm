@@ -35,7 +35,8 @@ Autres scripts : `npm run build`, `npm start`, `npm run lint`,
 | `/pipeline` | Kanban commercial à 5 étapes, glisser-déposer |
 | `/workflow` | Automatisations « Quand → Alors » |
 | `/onboarding` | Assistant de création client en 5 étapes |
-| `/parametres` | Agence, équipe, intégrations, notifications, abonnement |
+| `/agence` | Agence hub — profil, équipe, catalogue et offres ; modèles et documents à venir (phase 9) |
+| `/parametres` | Réglages de l'application : intégrations, notifications, abonnement, consommation |
 | `/agenda`, `/outils` | Non encore conçus — écrans d'attente |
 
 ## Structure

@@ -3,10 +3,8 @@
 import type { Tone } from '@/components/ui/Atoms';
 import { CLIENTS } from '@/lib/data/clients';
 
+/** Ce qui reste dans Paramètres : Profil, Catalogue et Équipe vivent dans l'Agence hub (phase 9). */
 export type SectionId =
-  | 'agence'
-  | 'catalogue'
-  | 'equipe'
   | 'integrations'
   | 'notifications'
   | 'facturation'

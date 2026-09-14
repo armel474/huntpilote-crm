@@ -6139,3 +6139,42 @@ body:has(.page-scroll) {
   margin-top: 3px;
   flex-shrink: 0;
 }
+
+/* ── Agence hub (phase 9) ── */
+.crumb {
+  font-size: 0.75rem;
+  color: var(--fg4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.crumb a,
+.crumb button {
+  color: var(--fg2);
+  font-weight: 600;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.crumb a:hover,
+.crumb button:hover {
+  color: var(--fg1);
+}
+.ag-spin {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--bd-solid);
+  border-top-color: var(--accent);
+  animation: ag-spin 800ms linear infinite;
+}
+@keyframes ag-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
