@@ -162,3 +162,129 @@ lecture seule · modèle déjà utilisé (avertissement) · erreur d'enregistrem
 - Ne pas mettre l'aperçu dans l'interface beige : c'est `.client-doc`, blanc.
 - Ne pas laisser un modèle incomplet servir au générateur sans le dire.
 - Ne pas laisser croire qu'un modèle modifié réécrit les documents envoyés.
+
+---
+
+## Amendements du 14 septembre 2026 — modèles à sections, blocs conditionnels, montants, versions
+
+Issus de la mission 001 (`../orchestration/analyses/001-reconciliation-catalogue.md`)
+et de l'analyse générale du générateur (sections 3 et 4). Tout ce qui précède
+reste valable ; ce qui suit le précise ou le remplace point par point. Les
+décisions notées `D-nn` ne sont pas prises : la maquette montre les deux
+hypothèses ou laisse une note, elle ne tranche pas.
+
+### Ce qui change
+
+1. **Le modèle de proposition de la maquette est remplacé par le gabarit réel.**
+   `PROP_HTML` de `hp-tpl-data.jsx` est un devis d'une page ; la proposition de
+   l'agence a onze sections sur seize pages. Colle dans la session le HTML de
+   `design/Documentations DigiHunt/export/Gabarits-DigiHunt/Gabarit Offre de Service.dc.html`
+   et celui du contrat : l'éditeur se conçoit autour d'eux.
+   Leur page « Légende d'utilisation » n'existe plus dans le modèle ; son
+   contenu, c'est le dictionnaire des balises.
+
+2. **Un modèle a des sections, en plus de son HTML.** Une colonne ou un
+   panneau « Sections » à côté du code liste, dans l'ordre du document :
+   clé (`resume`, `besoins`, `objectifs`, `recommandation`, `preuve`,
+   `plan_action`, `gestion_projet`, `modalites`, `couts_externes`, `accord`),
+   titre, texte par défaut (le guide « [Compléter : …] » du gabarit, qui
+   devient ce que l'agence ou l'IA remplit), et quatre drapeaux : optionnelle
+   (se retire si vide), IA autorisée, verrouillée par l'agence (clause
+   approuvée, jamais réécrite), longueur indicative. Éditer une section, c'est
+   éditer son texte par défaut et ses drapeaux ; la mise en page reste dans le
+   HTML, où `{{section.besoins}}` place le texte. Un modèle de devis ou de
+   facture peut n'avoir aucune section : la colonne le dit.
+
+3. **Les blocs conditionnels.** Le gabarit réel porte des commentaires
+   « masquer si aucun bonus », « maintenance optionnelle », « phase 2
+   optionnelle ». Ils deviennent des blocs `{{#si nom}} … {{/si}}` ; un bloc
+   répété sur une liste vide ne se rend pas non plus. Cas à montrer : ligne
+   bonus, maintenance recommandée, phase récurrente, section « Preuve »,
+   section « Accord et signature » (D-14), exclusion SEO de l'annexe. La barre
+   d'analyse compte trois choses : balises, blocs répétés, blocs
+   conditionnels. Dans l'aperçu, un interrupteur par condition permet de
+   vérifier les deux états sans changer de jeu d'exemple.
+
+4. **Les groupes de balises s'étendent.** Le dictionnaire de l'écran reprend
+   les groupes de la section 5 de l'analyse 001 : `brief.` (conclusions de
+   l'appel découverte), `offres` et `offre.` (cartes d'offres présentées),
+   `offre_recommandee.`, `maintenance_recommandee.`, `seo_recommande.`,
+   lignes par nature (`lignes_offertes`, `lignes_remises`,
+   `lignes_informatives`) et par récurrence (`lignes_ponctuelles`,
+   `lignes_recurrentes`), `total.ponctuel_*`, `total.mensuel_*`,
+   `total.informatif`, `total.estime`, `paiements`, `accompagnement`,
+   `signataire.`, `contrat.personne_contact.`, `facture.echeance`. Deux
+   corrections de sens : `document.echeance` est scindé en
+   `document.expire_le` (fin de validité d'une offre) et `facture.echeance`
+   (date de paiement) ; `client.contact.nom` devient `nom_complet`, avec
+   `prenom` et `nom_famille` à part. Chaque balise garde un exemple de valeur,
+   fictif.
+
+5. **La syntaxe héritée est reconnue, pas rendue.** Quand le HTML collé
+   contient des balises `[EN MAJUSCULES ENTRE CROCHETS]` ou `{{EN_MAJUSCULES}}`,
+   un bandeau dit « Modèle hérité : 22 balises convertibles, 2 sans
+   correspondance » et propose la conversion en un geste, d'après la table de
+   l'analyse 001. Les balises sans correspondance restent inconnues, avec la
+   suggestion la plus proche. Sous réserve de D-13 (syntaxe canonique) : laisse
+   une note dans la maquette, comme le brief le demandait déjà.
+
+6. **Montants ponctuels et récurrents.** L'aperçu d'une proposition rend
+   deux totaux, « Total de l'investissement initial » et « par mois + taxes »,
+   plus un bloc « Budget média » quand une ligne informative existe
+   (« non facturé par l'agence »). Le dictionnaire montre les balises des deux
+   sous-totaux et celles des remises (`total.avant_remise`, `total.remise`).
+
+7. **Versions figées.** « Enregistrer le modèle » crée la version N du
+   modèle ; la ligne près du bouton devient « 14 documents rendus avec les
+   versions 1 à 3 ; ils gardent leur rendu. Enregistrer crée la version 4. »
+   Un document envoyé cite la version du modèle qui l'a rendu ; le modèle ne
+   sait rien des documents, il ne les touche jamais.
+
+8. **Format et pagination.** L'aperçu impression a un sélecteur Lettre / A4
+   (D-13 : ne tranche pas). Plus de page à hauteur fixe : le rendu est en
+   flux, l'aperçu montre les sauts de page calculés, et une section rédigée
+   trop longue pousse la suite au lieu d'être coupée. La longueur indicative
+   d'une section s'affiche sous son texte (« 640 / 900 caractères »).
+
+9. **Données d'exemple fictives.** Le brief demandait « le client SHGM, le
+   contrat 2026-007 » : ce n'est plus le cas. Les jeux d'exemple sont
+   inventés et le disent (« Exemple — Boulangerie Fictive »). Trois jeux :
+   proposition web (forfait, pack SEO de démarrage, maintenance, bonus),
+   proposition acquisition (phase ponctuelle, phase mensuelle avec engagement,
+   escompte, budget média), contrat et annexe (livrables, jalons, attendus,
+   exclusions, accompagnement). Le sélecteur de client d'exemple devient un
+   sélecteur de jeu d'exemple ; le cas « nom et adresse longs » reste.
+
+10. **Textes courts.** Introduction, mentions, pied de page et instructions
+    de paiement restent des réglages du modèle. `document.paiement` se
+    préremplit avec les instructions de paiement du profil de l'agence
+    (session 9.1) et peut être surchargé ici ; l'écran montre d'où vient la
+    valeur.
+
+### États à ajouter
+
+Modèle hérité détecté (bandeau, conversion proposée) · conversion faite, N
+balises sans correspondance · bloc conditionnel jamais vrai dans le jeu
+d'exemple (avertissement, interrupteur) · section sans texte par défaut ·
+section verrouillée par l'agence (cadenas et raison) · modèle incomplet pour
+sa sorte (une proposition sans bloc `{{#paiements}}`, une facture sans
+`{{agence.tps}}`) · enregistrement en cours · enregistré, « version N » ·
+erreur d'enregistrement (le message dit quoi faire) · modifications non
+enregistrées, confirmation à la sortie qui dit que le texte sera perdu (pas
+de brouillon local) · lecture seule sans « Gérer le catalogue ».
+
+### Données lues et écrites
+
+Lues : le modèle et ses sections, le dictionnaire, les jeux d'exemple, le
+profil de l'agence (pour les valeurs par défaut), le nombre de documents
+rendus par version. Écrites : nom, réglages, corps HTML, sections et leurs
+drapeaux, version du modèle. Jamais : un document déjà produit.
+
+### Ce qu'il ne faut pas faire — compléments
+
+- Ne pas mettre la liste des sections dans le HTML : elle vit à côté.
+- Ne pas rendre une balise héritée : la convertir ou la signaler.
+- Ne pas utiliser un vrai client, un vrai contact ni un vrai contrat comme
+  exemple dans la maquette.
+- Ne pas dessiner un éditeur de texte riche pour les sections : un champ long
+  par section, avec sa longueur indicative.
