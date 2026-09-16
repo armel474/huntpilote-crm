@@ -116,7 +116,9 @@ function MemberDialog({
   const v = (x: string | null | undefined) => x ?? '';
   const pickRole = (r: Role) => {
     setRole(r);
-    setGranted(new Set(roleDefaults[r]));
+    // Sa propre gestion d'équipe ne se décoche pas, un changement de rôle
+    // ne doit pas la faire disparaître non plus.
+    setGranted(new Set([...roleDefaults[r], ...(self ? (['manage_team'] as Permission[]) : [])]));
   };
   const toggle = (p: Permission) =>
     setGranted((s) => {
@@ -133,6 +135,12 @@ function MemberDialog({
         <input type="hidden" name="member_id" value={member.id} />
         {manage && <input type="hidden" name="manage" value="1" />}
         <Notice state={state} />
+        {!manage && (
+          <Notice tone="warn">
+            Vous pouvez modifier votre identité et vos coordonnées. Le rôle, le poste, le taux et les droits sont
+            réservés à la gestion d&apos;équipe.
+          </Notice>
+        )}
 
         <div className="st-grid2">
           <Field label="Prénom" htmlFor="mb-first">
@@ -214,6 +222,8 @@ function MemberDialog({
               <Field label="Accès" span>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8125rem' }}>
                   <input type="checkbox" name="active" value="1" defaultChecked={member.active} disabled={self} />
+                  {/* Un contrôle désactivé ne part pas avec le formulaire : la valeur suit à part. */}
+                  {self && <input type="hidden" name="active" value="1" />}
                   Compte actif
                   {self && <span style={{ color: 'var(--fg4)', fontSize: '0.6875rem' }}>· vous ne pouvez pas vous désactiver</span>}
                 </label>
@@ -232,9 +242,18 @@ function MemberDialog({
               {PERMISSIONS.map((p) => {
                 const on = granted.has(p);
                 const exception = on !== defaults.has(p);
+                const lockedForSelf = self && p === 'manage_team';
                 return (
                   <label key={p} className={`st-perm${on ? ' on' : ''}`}>
-                    <input type="checkbox" name="permission" value={p} checked={on} onChange={() => toggle(p)} />
+                    <input
+                      type="checkbox"
+                      name="permission"
+                      value={p}
+                      checked={on}
+                      disabled={lockedForSelf}
+                      onChange={() => toggle(p)}
+                    />
+                    {lockedForSelf && <input type="hidden" name="permission" value={p} />}
                     <span style={{ minWidth: 0 }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.8125rem' }}>
                         {PERMISSION_LABEL[p].label}
@@ -242,6 +261,7 @@ function MemberDialog({
                       </span>
                       <span style={{ display: 'block', fontSize: '0.6875rem', color: 'var(--fg4)' }}>
                         {PERMISSION_LABEL[p].hint}
+                        {lockedForSelf && ' · Vous ne pouvez pas vous retirer ce droit.'}
                       </span>
                     </span>
                   </label>
