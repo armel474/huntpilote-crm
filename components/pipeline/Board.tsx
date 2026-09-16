@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { IcoClock, IcoPlus } from '@/components/ui/Icons';
 import {
-  OWNERS,
+  NO_OWNER,
   STAGES,
   STAGE_PROBABILITY,
   fmt,
   initials,
   probColor,
   type Deal,
+  type Owners,
   type StageId,
 } from '@/lib/data/pipeline';
 
@@ -48,6 +49,7 @@ const stepBtn: React.CSSProperties = {
 
 function DealCard({
   deal,
+  owners,
   dragging,
   onDragStart,
   onDragEnd,
@@ -55,13 +57,14 @@ function DealCard({
   onOpen,
 }: {
   deal: Deal;
+  owners: Owners;
   dragging: boolean;
-  onDragStart: (e: React.DragEvent, id: number) => void;
+  onDragStart: (e: React.DragEvent, id: string) => void;
   onDragEnd: () => void;
-  onMove: (id: number, direction: -1 | 1) => void;
-  onOpen: (id: number) => void;
+  onMove: (id: string, direction: -1 | 1) => void;
+  onOpen: (id: string) => void;
 }) {
-  const owner = OWNERS[deal.owner];
+  const owner = owners[deal.owner] ?? owners[NO_OWNER] ?? { name: 'Sans responsable', color: 'var(--fg4)' };
   const hot = deal.prob >= 70;
   const stageIndex = STAGES.findIndex((s) => s.id === deal.stage);
 
@@ -254,36 +257,39 @@ function DealCard({
 
 export function Board({
   deals,
+  owners,
   setDeals,
   onOpen,
+  onMoved,
 }: {
   deals: Deal[];
+  owners: Owners;
   setDeals: React.Dispatch<React.SetStateAction<Deal[]>>;
-  onOpen: (id: number) => void;
+  onOpen: (id: string) => void;
+  /** Après un déplacement : ce que la page fait durer (en ligne, l'écriture en base). */
+  onMoved?: (id: string, stage: StageId) => void;
 }) {
-  const [dragId, setDragId] = useState<number | null>(null);
+  const [dragId, setDragId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<StageId | null>(null);
 
   /** Déplace une opportunité vers une étape et recale sa probabilité. */
-  const moveTo = (id: number, stage: StageId) =>
+  const moveTo = (id: string, stage: StageId) => {
+    const current = deals.find((d) => d.id === id);
+    if (!current || current.stage === stage) return;
     setDeals((prev) =>
-      prev.map((d) =>
-        d.id === id && d.stage !== stage
-          ? { ...d, stage, days: 0, prob: STAGE_PROBABILITY[stage] }
-          : d,
-      ),
+      prev.map((d) => (d.id === id ? { ...d, stage, days: 0, prob: STAGE_PROBABILITY[stage] } : d)),
     );
+    onMoved?.(id, stage);
+  };
 
-  const moveByStep = (id: number, direction: -1 | 1) =>
-    setDeals((prev) =>
-      prev.map((d) => {
-        if (d.id !== id) return d;
-        const i = STAGES.findIndex((s) => s.id === d.stage);
-        const next = STAGES[i + direction];
-        if (!next) return d;
-        return { ...d, stage: next.id, days: 0, prob: STAGE_PROBABILITY[next.id] };
-      }),
-    );
+  const moveByStep = (id: string, direction: -1 | 1) => {
+    const current = deals.find((d) => d.id === id);
+    if (!current) return;
+    const i = STAGES.findIndex((s) => s.id === current.stage);
+    const next = STAGES[i + direction];
+    if (!next) return;
+    moveTo(id, next.id);
+  };
 
   return (
     <div
@@ -388,6 +394,7 @@ export function Board({
                   <DealCard
                     key={d.id}
                     deal={d}
+                    owners={owners}
                     dragging={dragId === d.id}
                     onDragStart={(e, id) => {
                       setDragId(id);

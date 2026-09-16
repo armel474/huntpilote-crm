@@ -29,19 +29,24 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0017_membre_avant_connexion.sql` | Inviter avant de connecter ; `user_profile` disparaît | ✅ appliquée |
 | `0018_connexion.sql` | `whoami()` et `accept_my_invitation()`, les deux points d'entrée publics de la connexion | ✅ appliquée |
 | `0019_ecriture_profil.sql` | Le profil de l'agence s'écrit avec `manage_agency` ; chacun corrige le sien sans se promouvoir | ✅ appliquée |
+| `0020_profil_complet.sql` | NEQ, représentant, district judiciaire, instructions de paiement — ce que les gabarits écrivaient en dur | ✅ appliquée |
+| `0021_stockage_public.sql` | Seau `public-assets` : logo et photos, lecture publique, écriture cloisonnée par agence (ne s'exécute que si la plateforme fournit `storage`) | ✅ appliquée |
+| `0022_livrables_offre.sql` | `offer_deliverable_template` (ce qu'une offre promet, distinct des tâches), taux de dépassement horaire sur `offer`, « Gérer le catalogue » étendu aux lignes, segments, bénéfices, tâches et livrables d'une offre | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
+| `seed_02_pipeline.sql` — opportunités, contacts de prospects, scores d'audit, échanges, appel découverte fictif, numéros de taxes de démonstration | ✅ passé · rejouable |
+| `seed_03_maintenance.sql` — les trois packs de maintenance (Essentiel, Croissance, Partenaire Stratégique) et leurs services, les livrables promis par chaque offre | ✅ passé · rejouable |
 
 **Le modèle est complet, la base est peuplée, et l'application y est
 branchée.** Le projet Supabase `huntpilote` (région `ca-central-1`) porte les
-vingt migrations et le semis. Côté application : `lib/supabase/` (clients
+vingt-trois migrations et les trois semis. Côté application : `lib/supabase/` (clients
 serveur et navigateur, middleware de session), `lib/auth.ts` (la session en
 un aller-retour), `lib/queries/` (les lectures, par écran), et
 `lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
-après chaque migration. `/parametres` est le premier écran lu dans la base ;
+après chaque migration. `/parametres`, `/travail`, `/clients` et `/pipeline` sont lus dans la base — le pipeline y écrit aussi (étape, victoire, perte, échange consigné) ;
 `docs/mise-en-service.md` liste les quatre réglages de console qui restent. Le schéma en ligne correspond exactement à celui validé en local, sur
-les huit compteurs : 109 tables, 134 politiques, 23 vues — toutes en
-`security_invoker` —, 178 contraintes de vérification, 46 déclencheurs, 50
-vocabulaires, 37 fonctions, aucune table sans RLS.
+les huit compteurs : 110 tables, 142 politiques, 23 vues — toutes en
+`security_invoker` —, 181 contraintes de vérification, 47 déclencheurs, 50
+vocabulaires, 40 fonctions, aucune table sans RLS.
 
 L'audit de sécurité ne remonte qu'une information : `number_counter` a RLS
 sans aucune politique. C'est voulu — personne n'y touche depuis
@@ -65,6 +70,29 @@ c'est l'offre qui dit ce qu'elle engage. Le revenu récurrent s'élève à
 2 200 $ par mois, calculé sur les abonnements actifs.
 
 Un garde-fou empêche de le rejouer sur une base déjà peuplée.
+
+`seed_02_pipeline.sql` complète le portefeuille pour que le Client hub et
+le pipeline, lus dans la base, aient quelque chose à montrer : une
+opportunité par prospect, un contact principal chacun, quatorze audits
+terminés (la courbe des scores), une partie des tâches du mois marquées
+faites, un devis envoyé, dix échanges consignés. Il ajoute un neuvième
+compte, **Ébénisterie Rivard**, prospect fictif dont l'appel découverte est
+consigné avec son résumé ; la transcription complète est dans
+`docs/fixtures/appel-decouverte-ebenisterie-rivard.md`, prête pour la
+session 9.5. Chaque ligne porte un identifiant fixe et un `on conflict do
+nothing` : le fichier se rejoue sans dommage, après `seed.sql`. Les numéros
+de TPS et de TVQ qu'il pose sont des valeurs de démonstration au bon
+format, pas ceux de l'agence.
+
+`seed_03_maintenance.sql` ajoute ce que le gabarit d'offre de service vend
+et que le semis ne connaissait pas : les trois **packs de maintenance**
+mensuels — Essentiel 200 $ (2 h), Croissance 450 $ (4 h), Partenaire
+Stratégique 750 $ (8 h), chacun avec son taux au-delà des heures incluses
+(95, 90, 85 $/h) et « Idéal avec » le forfait web qu'il prolonge — avec les
+dix services qui les composent, leurs tâches mensuelles, et les **livrables
+promis** par les neuf offres (`offer_deliverable_template`, migration 0022).
+Rejouable : identifiants fixes, `on conflict do nothing`, et une tâche ne se
+crée que si son titre n'existe pas déjà sur l'offre.
 
 **Il reste deux valeurs à saisir**, signalées dans le fichier :
 les numéros d'inscription à la TPS et à la TVQ de l'agence, et le tarif
@@ -108,11 +136,13 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/10_regles_offre_reelle.s
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/11_regles_contrat.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/12_regles_permissions.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/13_regles_profil.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/14_regles_profil_complet.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/15_regles_livrables_offre.sql
 ```
 
-Les treize fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les quinze fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). **159 assertions** au total.
+Sophie). **177 assertions** au total.
 
 Les trois derniers montent des données réelles — les six offres telles
 qu'elles sont vendues, et le mandat SHGM tel qu'il est signé — parce que c'est

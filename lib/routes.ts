@@ -22,6 +22,12 @@ export const routes = {
   workflow: () => '/workflow',
   onboarding: () => '/onboarding',
   parametres: (section?: string) => (section ? `/parametres?section=${section}` : '/parametres'),
+  /** L'Agence hub (phase 9) : qui vous êtes, qui y travaille, ce que vous vendez. */
+  agence: (section?: string) => (section ? `/agence?section=${section}` : '/agence'),
+  /** La page d'une offre dans le constructeur (9.2) ; `nouvelle` pour en créer une. */
+  offre: (id: string) => `/agence?section=offres&offre=${id}`,
+  /** Un article du catalogue, ouvert dans son panneau. */
+  article: (id: string) => `/agence?section=catalogue&article=${id}`,
   /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
   auditProspect: (token: string) => `/audit-prospect/${token}`,
 

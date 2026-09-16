@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/shell/AppShell';
+import { logExchange, loseDeal, moveDeal, winDeal, type PipelineResult } from '@/app/pipeline/actions';
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Board } from '@/components/pipeline/Board';
 import { DealPanel } from '@/components/pipeline/DealPanel';
@@ -13,13 +15,17 @@ import { IcoFilter, IcoGrid, IcoList, IcoPipe, IcoPlus } from '@/components/ui/I
 import { routes } from '@/lib/routes';
 import {
   DEALS,
+  NO_OWNER,
   OWNERS,
   STAGES,
   fmt,
   initials,
   probColor,
   type Deal,
+  type DealDetail,
   type Exchange,
+  type Owners,
+  type StageId,
 } from '@/lib/data/pipeline';
 
 /* ── Démo · état — silhouette de colonnes pendant le chargement ── */
@@ -126,7 +132,15 @@ function StatStrip({ deals }: { deals: Deal[] }) {
 
 /* ── Vue liste ── */
 
-function ListView({ deals, onOpen }: { deals: Deal[]; onOpen: (id: number) => void }) {
+function ListView({
+  deals,
+  owners,
+  onOpen,
+}: {
+  deals: Deal[];
+  owners: Owners;
+  onOpen: (id: string) => void;
+}) {
   const stageMap = Object.fromEntries(STAGES.map((s) => [s.id, s]));
   const ordered = [...deals].sort(
     (a, b) =>
@@ -155,7 +169,7 @@ function ListView({ deals, onOpen }: { deals: Deal[]; onOpen: (id: number) => vo
         <tbody>
           {ordered.map((d) => {
             const st = stageMap[d.stage];
-            const owner = OWNERS[d.owner];
+            const owner = owners[d.owner] ?? owners[NO_OWNER] ?? { name: 'Sans responsable', color: 'var(--fg4)' };
             return (
               <tr
                 key={d.id}
@@ -284,31 +298,80 @@ const PIPE_SCENARIOS: [PipeScenarioId, string][] = [
   ['vide', 'Vide initial — aucun prospect'],
 ];
 
-export function PipelineView() {
+export type PipelineViewProps = {
+  /** Les opportunités lues en base ; sans base, le jeu de démonstration. */
+  deals?: Deal[];
+  owners?: Owners;
+  details?: Record<string, DealDetail>;
+  /** Vrai quand les gestes écrivent en base (session et variables présentes). */
+  live?: boolean;
+  /** Qui consigne un échange — la personne connectée. */
+  who?: string;
+  /** Vrai quand la base est branchée mais que personne n'est connecté : elle ne rend rien, et c'est normal. */
+  signedOut?: boolean;
+};
+
+export function PipelineView({
+  deals: initialDeals,
+  owners = OWNERS,
+  details,
+  live = false,
+  who,
+  signedOut = false,
+}: PipelineViewProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+  const source = initialDeals ?? DEALS;
   const [scenario, setScenarioRaw] = useState<PipeScenarioId>('normal');
-  const [deals, setDeals] = useState<Deal[]>(DEALS);
+  const [deals, setDeals] = useState<Deal[]>(source);
   const [view, setView] = useState<'kanban' | 'liste'>('kanban');
-  const [openId, setOpenId] = useState<number | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
 
   const setScenario = (s: PipeScenarioId) => {
     setScenarioRaw(s);
-    setDeals(s === 'vide' ? [] : DEALS);
+    setDeals(s === 'vide' ? [] : source);
     setOpenId(null);
   };
   const loading = scenario === 'chargement';
 
-  const active = deals.filter((d) => d.stage !== 'gagne');
+  const active = deals.filter((d) => d.stage !== 'gagne' && !d.lost);
   const totalMrr = active.reduce((s, d) => s + d.mrr, 0);
   const openDeal = openId != null ? (deals.find((d) => d.id === openId) ?? null) : null;
 
+  /**
+   * En ligne, chaque geste écrit en base après avoir mis l'écran à jour ; si
+   * la base refuse, l'écran se remet d'aplomb sur ce qu'elle contient
+   * vraiment, et la raison s'affiche.
+   */
+  const persist = useCallback(
+    (run: () => Promise<PipelineResult>) => {
+      if (!live) return;
+      startTransition(async () => {
+        const result = await run();
+        if (!result.ok) {
+          setProblem(result.message);
+          router.refresh();
+        } else {
+          setProblem(null);
+        }
+      });
+    },
+    [live, router],
+  );
+
+  const handleMoved = (id: string, stage: StageId) => persist(() => moveDeal(id, stage));
+
   /** « Marquer gagné » enclenche vraiment la bascule d'étape — la conséquence
       annoncée dans le panneau (client + onboarding) n'est pas qu'un texte. */
-  const handleWin = (id: number) =>
+  const handleWin = (id: string) => {
     setDeals((prev) =>
       prev.map((d) => (d.id === id ? { ...d, stage: 'gagne', prob: 100, days: 0, next: 'Onboarding lancé' } : d)),
     );
+    persist(() => winDeal(id));
+  };
 
-  const handleLose = (id: number, reason: string, note: string) =>
+  const handleLose = (id: string, reason: string, note: string) => {
     setDeals((prev) =>
       prev.map((d) =>
         d.id === id
@@ -316,11 +379,16 @@ export function PipelineView() {
           : d,
       ),
     );
+    persist(() => loseDeal(id, reason, note));
+  };
 
-  const handleLog = (id: number, exchange: Exchange) =>
+  const handleLog = (id: string, exchange: Exchange) => {
     setDeals((prev) =>
       prev.map((d) => (d.id === id ? { ...d, extraHistory: [exchange, ...(d.extraHistory ?? [])] } : d)),
     );
+    const deal = deals.find((d) => d.id === id);
+    if (deal) persist(() => logExchange(deal.clientId, exchange.ch, exchange.text));
+  };
 
   return (
     <AppShell
@@ -376,7 +444,9 @@ export function PipelineView() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 4 }}>
           <span className="lbl">Équipe</span>
           <div style={{ display: 'flex' }}>
-            {Object.entries(OWNERS).map(([k, o], i) => (
+            {Object.entries(owners)
+              .filter(([k]) => k !== NO_OWNER)
+              .map(([k, o], i) => (
               <div
                 key={k}
                 title={o.name}
@@ -432,6 +502,12 @@ export function PipelineView() {
         </div>
       </div>
 
+      {problem && (
+        <div className="st-msg err" role="alert" style={{ margin: '0.875rem 1.125rem 0' }}>
+          <span>{problem}</span>
+        </div>
+      )}
+
       {loading ? (
         <>
           <div style={{ padding: '0.875rem 1.125rem 0', flexShrink: 0 }}>
@@ -439,7 +515,17 @@ export function PipelineView() {
           </div>
           <BoardSkeleton />
         </>
-      ) : scenario === 'vide' ? (
+      ) : signedOut && deals.length === 0 ? (
+        <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.125rem' }}>
+          <EmptyInitial
+            icon={<IcoPipe size={20} />}
+            title="Connectez-vous pour voir le pipeline"
+            text="Le pipeline lit la base avec les droits de la personne connectée. Sans session, il n’a rien à montrer."
+            primaryLabel="Se connecter"
+            primaryHref="/connexion?suite=/pipeline"
+          />
+        </div>
+      ) : scenario === 'vide' || deals.length === 0 ? (
         <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.125rem' }}>
           <EmptyInitial
             icon={<IcoPipe size={20} />}
@@ -453,10 +539,10 @@ export function PipelineView() {
         <>
           <StatStrip deals={deals} />
           {view === 'kanban' ? (
-            <Board deals={deals} setDeals={setDeals} onOpen={setOpenId} />
+            <Board deals={deals} owners={owners} setDeals={setDeals} onOpen={setOpenId} onMoved={handleMoved} />
           ) : (
             <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.125rem' }}>
-              <ListView deals={deals} onOpen={setOpenId} />
+              <ListView deals={deals} owners={owners} onOpen={setOpenId} />
             </div>
           )}
         </>
@@ -464,6 +550,9 @@ export function PipelineView() {
 
       <DealPanel
         deal={openDeal}
+        owners={owners}
+        detail={openDeal && details ? details[openDeal.id] : undefined}
+        who={who}
         onClose={() => setOpenId(null)}
         onWin={handleWin}
         onLose={handleLose}

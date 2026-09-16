@@ -1,4 +1,4 @@
-# Séquence de conception — 29 sessions Claude Design
+# Séquence de conception — 30 sessions Claude Design
 
 Un fichier par session. Ouvre le fichier, copie tout son contenu, colle-le dans
 une session Claude Design du projet *HuntPilote - CRM SEO*.
@@ -41,7 +41,7 @@ phase 1, ne disait rien de ce qui est urgent à l'échelle du portefeuille.
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
 | 8 — Dashboard enrichi | 1 | ✅ intégrée |
-| 9 — L'Agence hub | 4 sessions, 10 écrans | 📐 briefs prêts |
+| 9 — L'Agence hub | 5 sessions, 13 écrans | ✅ 9.1 et 9.2 intégrées · 🎨 9.3–9.4 conçues, à intégrer · 9.5 à concevoir |
 
 ---
 
@@ -266,16 +266,32 @@ section 3) : cette phase dessine les écrans qui manquent.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | 📐 à concevoir |
-| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | 📐 à concevoir |
-| 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 📐 à concevoir |
-| 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 📐 à concevoir |
+| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | ✅ intégré |
+| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | ✅ intégré |
+| 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 🎨 conçu, à intégrer |
+| 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 🎨 conçu, à intégrer |
+| 9.5 | Joindre un appel · le brief de découverte · la source « Depuis le brief » | [`9-5-appel-decouverte.md`](9-5-appel-decouverte.md) | 📐 à concevoir |
 
 > **9.1 d'abord**, seule : elle pose le cadre dont les trois autres sont des
 > sections. **9.2 et 9.3 sont indépendantes** et peuvent se concevoir en
 > parallèle. **9.4 vient en dernier** : elle assemble les offres de 9.2 et
 > les modèles de 9.3. Pour 9.3, colle aussi dans la session le HTML d'un
 > vrai modèle de l'agence.
+
+> **Les maquettes de 9.1 à 9.4 sont livrées** dans
+> `design/HuntPilote - CRM SEO_phase 9/`, avec un `README-PHASE-9.md` qui
+> liste les fichiers créés et ceux qui en écrasent d'anciens. Les gabarits
+> réels de l'agence (offre de service, Meta Ads, contrat, Annexe A) sont
+> dans `design/Documentations DigiHunt/` et `design/Modèle de contrat
+> DigiHunt/`. Ce qu'ils changent à l'intégration de 9.3 et 9.4 — syntaxe
+> canonique des balises, sections narratives, mode composition du
+> brouillon, packs de maintenance à ajouter au catalogue — est dans
+> [`../analyse-generateur-propositions.md`](../analyse-generateur-propositions.md),
+> sections 3, 4 et 6, avec les cinq décisions prises le 14 septembre.
+>
+> **9.5 vient après 9.4** : elle étend le panneau de deal, le fil de
+> communications et le panneau « Nouveau document ». Colle dans la session
+> une transcription réelle d'appel découverte, anonymisée.
 
 Deux choses distinguent cette phase des précédentes. **L'application est
 branchée sur la base** : les états vides, les états « pas le droit » et les

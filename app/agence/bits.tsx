@@ -1,7 +1,7 @@
 'use client';
 
 /** Petites pièces partagées par les sections des paramètres. */
-import type { ActionState } from '@/app/parametres/actions';
+import type { ActionState } from '@/app/agence/actions';
 import { IcoCheck, IcoWarn } from '@/components/ui/Icons';
 
 export function Field({

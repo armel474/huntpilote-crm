@@ -251,8 +251,10 @@ export const CLIENTS: Entry[] = [
   },
 ];
 
-export const HUB_KPIS = [
+export type HubKpi = { label: string; value: string; sub: string; up: boolean | null };
+
+export const HUB_KPIS: HubKpi[] = [
   { label: 'Clients actifs', value: '12', sub: '+2 ce mois', up: true },
   { label: 'Prospects en cours', value: '8', sub: '3 devis envoyés', up: null },
   { label: 'MRR total', value: '18 400 $ CA', sub: '+12 % vs avril', up: true },
-] as const;
+];

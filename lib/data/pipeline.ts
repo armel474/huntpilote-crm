@@ -21,22 +21,33 @@ export const STAGE_PROBABILITY: Record<StageId, number> = {
   gagne: 100,
 };
 
-export type OwnerId = 'MC' | 'JD' | 'AL';
+/** Les responsables, par initiales — le jeu de démonstration ou, en ligne, les membres de l'agence. */
+export type Owners = Record<string, { name: string; color: string }>;
 
-export const OWNERS: Record<OwnerId, { name: string; color: string }> = {
+/** Couleurs attribuées aux responsables, dans l'ordre des membres. */
+export const OWNER_COLORS = ['var(--green)', 'var(--blue)', 'var(--violet)', 'var(--yellow-fg)', 'var(--red)'];
+
+/** Un deal sans responsable : visible, et justement à prendre. */
+export const NO_OWNER = '—';
+
+export const OWNERS: Owners = {
   MC: { name: 'Marie Chen', color: 'var(--green)' },
   JD: { name: 'Julien Dubois', color: 'var(--blue)' },
   AL: { name: 'Aïcha Lemaire', color: 'var(--violet)' },
+  [NO_OWNER]: { name: 'Sans responsable', color: 'var(--fg4)' },
 };
 
 export type Deal = {
-  id: number;
+  id: string;
   company: string;
   sector: string;
+  /** Le compte du prospect — identifiant en base, slug en démonstration. */
+  clientId: string;
   /** MRR mensuel en dollars canadiens. */
   mrr: number;
   services: string[];
-  owner: OwnerId;
+  /** Initiales du responsable — une clé de `Owners`. */
+  owner: string;
   /** Jours passés dans l'étape courante. */
   days: number;
   prob: number;
@@ -49,19 +60,19 @@ export type Deal = {
 };
 
 export const DEALS: Deal[] = [
-  { id: 1, company: 'Boutique Lumière', sector: 'E-commerce', mrr: 900, services: ['SEO Tech.', 'Contenu'], owner: 'MC', days: 4, prob: 15, stage: 'prospect', next: 'Appel de découverte' },
-  { id: 2, company: 'Garage Méca-Pro', sector: 'Automobile', mrr: 700, services: ['SEO Local'], owner: 'JD', days: 9, prob: 10, stage: 'prospect', next: 'Envoyer présentation' },
-  { id: 3, company: 'Pharmacie Centrale', sector: 'Santé', mrr: 1100, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 2, prob: 20, stage: 'prospect', next: 'Qualifier le besoin' },
-  { id: 4, company: 'Resto Le Margaux', sector: 'Restauration', mrr: 850, services: ['SEO Local'], owner: 'MC', days: 6, prob: 35, stage: 'qualifie', next: 'Audit gratuit planifié' },
-  { id: 5, company: 'Académie Vélo', sector: 'Éducation', mrr: 1200, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 12, prob: 40, stage: 'qualifie', next: "Présenter l'audit" },
-  { id: 6, company: 'Maison Bois Franc', sector: 'Construction', mrr: 1500, services: ['SEO Tech.', 'Contenu'], owner: 'AL', days: 8, prob: 35, stage: 'qualifie', next: 'Relance audit' },
-  { id: 7, company: 'TechNord Solutions', sector: 'SaaS B2B', mrr: 2200, services: ['SEO Tech.', 'Contenu', 'Backlinks'], owner: 'MC', days: 5, prob: 60, stage: 'proposition', next: 'Proposition envoyée' },
-  { id: 8, company: 'Cabinet Lefebvre', sector: 'Juridique', mrr: 1800, services: ['SEO Local', 'Contenu'], owner: 'JD', days: 11, prob: 50, stage: 'proposition', next: 'Suivi de proposition' },
-  { id: 9, company: 'Voyages Évasion', sector: 'Tourisme', mrr: 1300, services: ['Contenu', 'Backlinks'], owner: 'AL', days: 7, prob: 55, stage: 'proposition', next: 'Ajuster le devis' },
-  { id: 10, company: 'Clinique Santé Plus', sector: 'Santé', mrr: 1900, services: ['SEO Tech.', 'SEO Local'], owner: 'MC', days: 3, prob: 75, stage: 'negociation', next: "Négocier l'engagement" },
-  { id: 11, company: 'Studio Pixel', sector: 'Agence créative', mrr: 1400, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 14, prob: 80, stage: 'negociation', next: 'Signature imminente' },
-  { id: 12, company: 'Immobilier Vista', sector: 'Immobilier', mrr: 1600, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 1, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
-  { id: 13, company: 'Brasserie Houblon', sector: 'Agroalimentaire', mrr: 1000, services: ['SEO Local'], owner: 'MC', days: 2, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
+  { id: '1', company: 'Boutique Lumière', clientId: 'boutique-lumiere', sector: 'E-commerce', mrr: 900, services: ['SEO Tech.', 'Contenu'], owner: 'MC', days: 4, prob: 15, stage: 'prospect', next: 'Appel de découverte' },
+  { id: '2', company: 'Garage Méca-Pro', clientId: 'garage-meca-pro', sector: 'Automobile', mrr: 700, services: ['SEO Local'], owner: 'JD', days: 9, prob: 10, stage: 'prospect', next: 'Envoyer présentation' },
+  { id: '3', company: 'Pharmacie Centrale', clientId: 'pharmacie-centrale', sector: 'Santé', mrr: 1100, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 2, prob: 20, stage: 'prospect', next: 'Qualifier le besoin' },
+  { id: '4', company: 'Resto Le Margaux', clientId: 'resto-le-margaux', sector: 'Restauration', mrr: 850, services: ['SEO Local'], owner: 'MC', days: 6, prob: 35, stage: 'qualifie', next: 'Audit gratuit planifié' },
+  { id: '5', company: 'Académie Vélo', clientId: 'academie-velo', sector: 'Éducation', mrr: 1200, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 12, prob: 40, stage: 'qualifie', next: "Présenter l'audit" },
+  { id: '6', company: 'Maison Bois Franc', clientId: 'maison-bois-franc', sector: 'Construction', mrr: 1500, services: ['SEO Tech.', 'Contenu'], owner: 'AL', days: 8, prob: 35, stage: 'qualifie', next: 'Relance audit' },
+  { id: '7', company: 'TechNord Solutions', clientId: 'technord-solutions', sector: 'SaaS B2B', mrr: 2200, services: ['SEO Tech.', 'Contenu', 'Backlinks'], owner: 'MC', days: 5, prob: 60, stage: 'proposition', next: 'Proposition envoyée' },
+  { id: '8', company: 'Cabinet Lefebvre', clientId: 'cabinet-lefebvre', sector: 'Juridique', mrr: 1800, services: ['SEO Local', 'Contenu'], owner: 'JD', days: 11, prob: 50, stage: 'proposition', next: 'Suivi de proposition' },
+  { id: '9', company: 'Voyages Évasion', clientId: 'voyages-evasion', sector: 'Tourisme', mrr: 1300, services: ['Contenu', 'Backlinks'], owner: 'AL', days: 7, prob: 55, stage: 'proposition', next: 'Ajuster le devis' },
+  { id: '10', company: 'Clinique Santé Plus', clientId: 'clinique-sante-plus', sector: 'Santé', mrr: 1900, services: ['SEO Tech.', 'SEO Local'], owner: 'MC', days: 3, prob: 75, stage: 'negociation', next: "Négocier l'engagement" },
+  { id: '11', company: 'Studio Pixel', clientId: 'studio-pixel', sector: 'Agence créative', mrr: 1400, services: ['SEO Tech.', 'Backlinks'], owner: 'JD', days: 14, prob: 80, stage: 'negociation', next: 'Signature imminente' },
+  { id: '12', company: 'Immobilier Vista', clientId: 'immobilier-vista', sector: 'Immobilier', mrr: 1600, services: ['SEO Local', 'Contenu'], owner: 'AL', days: 1, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
+  { id: '13', company: 'Brasserie Houblon', clientId: 'brasserie-houblon', sector: 'Agroalimentaire', mrr: 1000, services: ['SEO Local'], owner: 'MC', days: 2, prob: 100, stage: 'gagne', next: 'Onboarding lancé' },
 ];
 
 /** Format monétaire québécois (espace insécable comme séparateur de milliers). */
@@ -145,8 +156,8 @@ export type DealDetail = {
   wonAt?: string;
 };
 
-const DEAL_DETAILS: Record<number, DealDetail> = {
-  10: {
+const DEAL_DETAILS: Record<string, DealDetail> = {
+  '10': {
     // Clinique Santé Plus — négociation
     contact: 'Dre Sophie Nadeau',
     role: 'Directrice de clinique',
@@ -201,7 +212,7 @@ const DEAL_DETAILS: Record<number, DealDetail> = {
       top10: 4,
     },
   },
-  1: {
+  '1': {
     // Boutique Lumière — deal neuf
     contact: 'Élise Gauthier',
     role: 'Propriétaire',
@@ -221,7 +232,7 @@ const DEAL_DETAILS: Record<number, DealDetail> = {
     docs: [],
     seo: { done: false },
   },
-  11: {
+  '11': {
     // Studio Pixel — dormant
     contact: 'Karim Belhadj',
     role: 'Directeur artistique',
@@ -261,7 +272,7 @@ const DEAL_DETAILS: Record<number, DealDetail> = {
       top10: 9,
     },
   },
-  12: {
+  '12': {
     // Immobilier Vista — gagné, onboarding lancé
     contact: 'Patrick Rousseau',
     role: 'Directeur des ventes',

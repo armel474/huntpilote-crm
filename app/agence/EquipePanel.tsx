@@ -1,10 +1,11 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
-import { inviteMember, updateMember } from '@/app/parametres/actions';
-import { Dialog, Field, Notice, SectionHead } from '@/app/parametres/bits';
+import { inviteMember, updateMember } from '@/app/agence/actions';
+import { Dialog, Field, Notice, SectionHead } from '@/app/agence/bits';
 import { Badge } from '@/components/ui/Atoms';
 import { IcoMore, IcoPlus } from '@/components/ui/Icons';
+import { UploadZone } from '@/components/ui/UploadZone';
 import type { Session } from '@/lib/auth';
 import { PERMISSIONS, PERMISSION_LABEL, ROLE_LABEL } from '@/lib/format';
 import type { Member, Permission, Role } from '@/lib/queries/agence';
@@ -90,12 +91,15 @@ function MemberDialog({
   self,
   manage,
   roleDefaults,
+  agencyId,
   onClose,
 }: {
   member: Member;
   self: boolean;
   manage: boolean;
   roleDefaults: Record<Role, Permission[]>;
+  /** Le dossier de stockage des photos est celui de l'agence. */
+  agencyId: string;
   onClose: () => void;
 }) {
   const [state, action, pending] = useActionState(updateMember, null);
@@ -112,7 +116,9 @@ function MemberDialog({
   const v = (x: string | null | undefined) => x ?? '';
   const pickRole = (r: Role) => {
     setRole(r);
-    setGranted(new Set(roleDefaults[r]));
+    // Sa propre gestion d'équipe ne se décoche pas, un changement de rôle
+    // ne doit pas la faire disparaître non plus.
+    setGranted(new Set([...roleDefaults[r], ...(self ? (['manage_team'] as Permission[]) : [])]));
   };
   const toggle = (p: Permission) =>
     setGranted((s) => {
@@ -129,6 +135,12 @@ function MemberDialog({
         <input type="hidden" name="member_id" value={member.id} />
         {manage && <input type="hidden" name="manage" value="1" />}
         <Notice state={state} />
+        {!manage && (
+          <Notice tone="warn">
+            Vous pouvez modifier votre identité et vos coordonnées. Le rôle, le poste, le taux et les droits sont
+            réservés à la gestion d&apos;équipe.
+          </Notice>
+        )}
 
         <div className="st-grid2">
           <Field label="Prénom" htmlFor="mb-first">
@@ -157,8 +169,15 @@ function MemberDialog({
               <input id="mb-pc" name="postal_code" className="fld" defaultValue={v(member.postalCode)} />
             </Field>
           </div>
-          <Field label="Photo" htmlFor="mb-avatar" span hint="Adresse d’une image carrée. Le téléversement viendra avec le stockage.">
-            <input id="mb-avatar" name="avatar_url" type="url" className="fld" defaultValue={v(member.avatarUrl)} placeholder="https://…" />
+          <Field label="Photo" span>
+            <UploadZone
+              name="avatar_url"
+              kind="photo"
+              shape="circle"
+              size={56}
+              value={member.avatarUrl}
+              folder={`${agencyId}/membres`}
+            />
           </Field>
         </div>
 
@@ -203,6 +222,8 @@ function MemberDialog({
               <Field label="Accès" span>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8125rem' }}>
                   <input type="checkbox" name="active" value="1" defaultChecked={member.active} disabled={self} />
+                  {/* Un contrôle désactivé ne part pas avec le formulaire : la valeur suit à part. */}
+                  {self && <input type="hidden" name="active" value="1" />}
                   Compte actif
                   {self && <span style={{ color: 'var(--fg4)', fontSize: '0.6875rem' }}>· vous ne pouvez pas vous désactiver</span>}
                 </label>
@@ -221,9 +242,18 @@ function MemberDialog({
               {PERMISSIONS.map((p) => {
                 const on = granted.has(p);
                 const exception = on !== defaults.has(p);
+                const lockedForSelf = self && p === 'manage_team';
                 return (
                   <label key={p} className={`st-perm${on ? ' on' : ''}`}>
-                    <input type="checkbox" name="permission" value={p} checked={on} onChange={() => toggle(p)} />
+                    <input
+                      type="checkbox"
+                      name="permission"
+                      value={p}
+                      checked={on}
+                      disabled={lockedForSelf}
+                      onChange={() => toggle(p)}
+                    />
+                    {lockedForSelf && <input type="hidden" name="permission" value={p} />}
                     <span style={{ minWidth: 0 }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: '0.8125rem' }}>
                         {PERMISSION_LABEL[p].label}
@@ -231,6 +261,7 @@ function MemberDialog({
                       </span>
                       <span style={{ display: 'block', fontSize: '0.6875rem', color: 'var(--fg4)' }}>
                         {PERMISSION_LABEL[p].hint}
+                        {lockedForSelf && ' · Vous ne pouvez pas vous retirer ce droit.'}
                       </span>
                     </span>
                   </label>
@@ -421,6 +452,7 @@ export function EquipePanel({
       {inviting && <InviteDialog onClose={() => setInviting(false)} />}
       {edited && (
         <MemberDialog
+          agencyId={session?.agencyId ?? 'sans-agence'}
           key={edited.id}
           member={edited}
           self={session?.memberId === edited.id}

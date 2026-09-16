@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   IcoAlert,
+  IcoBuilding,
   IcoCal,
   IcoCog,
   IcoDash,
@@ -183,6 +184,7 @@ export function NavSidebar() {
     );
 
   const settingsActive = pathname.startsWith(routes.parametres());
+  const agencyActive = pathname.startsWith(routes.agence());
   const toolsActive = pathname.startsWith(routes.outils());
 
   /* ── Vue compacte : icônes seules + tooltips ── */
@@ -215,6 +217,14 @@ export function NavSidebar() {
         </div>
 
         <div className="sidebar-foot">
+          <Link
+            href={routes.agence()}
+            className={`nav-cpt${agencyActive ? ' active' : ''}`}
+            data-label="Agence hub"
+            aria-label="Agence hub"
+          >
+            <IcoBuilding size={15} />
+          </Link>
           <Link
             href={routes.parametres()}
             className={`nav-cpt${settingsActive ? ' active' : ''}`}
@@ -334,6 +344,17 @@ export function NavSidebar() {
       </div>
 
       <div className="sidebar-foot">
+        <Link
+          href={routes.agence()}
+          className={`nav-item${agencyActive ? ' active' : ''}`}
+          aria-current={agencyActive ? 'page' : undefined}
+        >
+          <IcoBuilding size={15} />
+          Agence hub
+          <span className="nav-trail" style={{ marginLeft: 'auto', color: 'var(--fg-4)' }}>
+            <IcoArrow />
+          </span>
+        </Link>
         <Link
           href={routes.parametres()}
           className={`nav-item${settingsActive ? ' active' : ''}`}

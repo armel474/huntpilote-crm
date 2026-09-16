@@ -34,15 +34,17 @@ import {
   CHANNELS,
   DORMANT_DAYS,
   LOST_REASONS,
-  OWNERS,
+  NO_OWNER,
   SNAPSHOT_PURGE_DAYS,
   STAGES,
   WON_EFFECTS,
   dealDetail,
   fmt,
   type Deal,
+  type DealDetail,
   type Exchange,
   type ExchangeChannel,
+  type Owners,
 } from '@/lib/data/pipeline';
 
 const CHANNEL_ICON: Record<ExchangeChannel, (p: IconProps) => React.ReactElement> = {
@@ -260,16 +262,24 @@ function LostConfirm({
 
 export function DealPanel({
   deal,
+  owners,
+  detail,
+  who,
   onClose,
   onWin,
   onLose,
   onLog,
 }: {
   deal: Deal | null;
+  owners: Owners;
+  /** Le détail lu en base ; sans lui, le complément de démonstration. */
+  detail?: DealDetail;
+  /** Qui consigne un échange — la personne connectée, sinon le responsable du deal. */
+  who?: string;
   onClose: () => void;
-  onWin: (id: number) => void;
-  onLose: (id: number, reason: string, note: string) => void;
-  onLog: (id: number, exchange: Exchange) => void;
+  onWin: (id: string) => void;
+  onLose: (id: string, reason: string, note: string) => void;
+  onLog: (id: string, exchange: Exchange) => void;
 }) {
   const [mode, setMode] = useState<null | 'log' | 'won' | 'lost'>(null);
 
@@ -288,9 +298,9 @@ export function DealPanel({
 
   if (!deal) return null;
 
-  const d = dealDetail(deal);
+  const d = detail ?? dealDetail(deal);
   const stage = STAGES.find((s) => s.id === deal.stage) ?? STAGES[0];
-  const owner = OWNERS[deal.owner];
+  const owner = owners[deal.owner] ?? owners[NO_OWNER] ?? { name: 'Sans responsable', color: 'var(--fg4)' };
   const isWon = deal.stage === 'gagne';
   const isLost = !!deal.lost;
   const dormant = deal.days >= DORMANT_DAYS && !isWon && !isLost;
@@ -494,7 +504,7 @@ export function DealPanel({
               <LogExchangeForm
                 onCancel={() => setMode(null)}
                 onAdd={(ex) => {
-                  onLog(deal.id, { ...ex, at: 'à l’instant', who: owner.name });
+                  onLog(deal.id, { ...ex, at: 'à l’instant', who: who ?? owner.name });
                   setMode(null);
                 }}
               />

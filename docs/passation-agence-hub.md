@@ -23,15 +23,17 @@ interface, documentation, commentaires, messages de commit.
 
 | Couche | État |
 |---|---|
-| Modèle de données | Complet : 20 migrations, 109 tables, 23 vues, 134 politiques RLS, 159 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
-| Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007 avec livrables, jalons, exclusions. |
+| Modèle de données | Complet : 23 fichiers de migration (jusqu'à `0022_livrables_offre.sql`), 110 tables, 23 vues, 142 politiques RLS, 177 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
+| Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007. `seed_02_pipeline.sql` : le pipeline et l'appel découverte fictif. `seed_03_maintenance.sql` (16 sept.) : les trois **packs de maintenance**, dix services de plus (49 articles, 9 offres) et les livrables promis par chaque offre. |
 | Connexion | Mot de passe, lien magique et Google fonctionnent en production. Rattachement d'une invitation à la première connexion, par courriel. |
-| Écrans lus dans la base | `/parametres` (profil, catalogue, équipe) et `/travail`. **Tous les autres écrans tournent encore sur les fichiers de démonstration** de `lib/data/`. |
-| Écrans qui écrivent dans la base | `/parametres` seulement : profil de l'agence, invitation, fiche membre, droits nominatifs (`app/parametres/actions.ts`). |
+| Écrans lus dans la base | `/agence` (profil, équipe, catalogue, offres), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre). Les autres écrans — la fiche client en premier — tournent encore sur les fichiers de démonstration de `lib/data/`. |
+| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`) ; **catalogue** (créer, modifier, archiver, réordonner) et **constructeur d'offres** — identité, prix, contenu avec offres incluses et groupes d'options, bénéfices, tâches engagées, livrables promis (`app/agence/catalogue-actions.ts`, étape 3, 16 septembre). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). |
+| Stockage | Seau `public-assets` (migration 0021), public en lecture, écriture cloisonnée par agence. Logo et photos s'y téléversent depuis l'écran. |
 | Verrou d'accès | `AUTH_REQUIRED=on` n'est pas encore posé sur Vercel. Tant qu'il ne l'est pas, les pages restent visibles sans connexion (vides, mais visibles). |
 
-Deux valeurs restent à saisir dans l'écran Profil : les numéros de TPS et
-de TVQ. Les tarifs d'entrée des packs SEO (« 3 premiers mois à tarif
+Les numéros de TPS et de TVQ du profil sont **des valeurs de démonstration**
+(`seed_02_pipeline.sql`), à remplacer par les vrais avant le premier envoi
+réel. Les tarifs d'entrée des packs SEO (« 3 premiers mois à tarif
 préférentiel ») ne sont pas connus non plus (`offer.intro_price_cents`).
 
 ## 2. Conventions à respecter
@@ -149,10 +151,12 @@ Aujourd'hui une offre engendre des **tâches** (`offer_task_template`). Le
 contrat SHGM montre qu'un mandat porte aussi des **livrables** soumis à
 approbation, avec rondes de révision (`deliverable`). Les deux ne sont pas
 la même chose : la tâche est du travail interne, le livrable est ce que le
-client approuve. Proposition : une table `offer_deliverable_template`
-(offre, code, nom, rondes incluses, ordre) qui, à la vente, produit les
-lignes `deliverable` du contrat comme `apply_offer_tasks` produit les
-tâches. Une migration, un test, une section dans le constructeur d'offres.
+client approuve. **Fait (migration 0022, 16 septembre)** : la table
+`offer_deliverable_template` (offre, code, titre, rondes incluses, ordre)
+existe, chaque offre du semis porte ses livrables, et le constructeur les
+édite à côté des tâches. Ce qui reste : la génération des lignes
+`deliverable` d'un contrat à la vente, comme `apply_offer_tasks` produit
+les tâches — avec l'étape 7, « Créer la suite ».
 
 ### Le générateur de documents
 
@@ -178,22 +182,43 @@ en ligne plus que d'un CRM. Ce qui est décidé et ce qui reste à décider.
   pour qu'une modification ultérieure du modèle ne réécrive pas ce que le
   client a reçu. Même logique que l'immuabilité des factures.
 
-**À décider avec Armel, en début de session :**
+**Décidé le 14 septembre 2026**, après lecture des gabarits réels et des
+maquettes de la phase 9 (le détail et les raisons sont dans
+`docs/analyse-generateur-propositions.md`, sections 3, 4 et 9) :
 
-- **La syntaxe des balises.** Les modèles construits avec Claude Design en
-  portent déjà : il faut les voir avant de trancher. Proposition par
-  défaut : `{{agence.nom}}`, `{{client.raison_sociale}}`,
-  `{{document.reference}}`, `{{lignes}}` (bloc répété), `{{total.ttc}}`,
-  avec un dictionnaire des balises publié dans l'écran des modèles. Si les
-  modèles existants utilisent une autre forme, on l'adopte.
-- **Le HTML des modèles.** Armel fournit le HTML de ses modèles (offre de
-  service, contrat, annexe A, devis, facture). Ils deviennent les lignes
-  `document_template` de l'agence, HTML compris, via une migration de
-  semis ou directement dans l'écran une fois construit.
-- **Ce que produit une vente.** Une offre acceptée engendre un contrat,
-  ses livrables, ses tâches, une première facture (acompte selon
-  `payment_milestone`). Ce chaînage n'est pas écrit ; il est le sujet
-  d'une migration à part quand le générateur existe.
+- **La syntaxe des balises** est celle des maquettes 9.3 :
+  `{{agence.nom}}`, `{{client.raison_sociale}}`, `{{document.reference}}`,
+  `{{#lignes}}…{{/lignes}}`, `{{total.ttc}}`. Les gabarits réels en
+  utilisent deux autres (`[NOM DU CLIENT]` dans le contrat et l'annexe,
+  `{{ENTREPRISE_CLIENT}}` dans l'offre) : ils sont **convertis une fois à
+  l'import**, par la table de correspondance de l'annexe A de l'analyse.
+  L'éditeur reconnaît les formes héritées et propose la conversion ; il ne
+  les rend pas. La syntaxe gagne un bloc conditionnel, un groupe `brief.`
+  et un bloc `{{#offres}}` sur le catalogue.
+- **Le format** des documents est **Lettre**, pas A4.
+- **La proposition est un devis** au sens de la base : `quote.kind`
+  (`devis` | `proposition`), `quote.deal_id`, `contract.source_quote_id`.
+  Pas de table `document` générique.
+- **Les packs de maintenance** (Essentiel 200 $, Croissance 450 $,
+  Partenaire Stratégique 750 $ par mois) entrent au catalogue ; les packs
+  SEO du semis restent.
+- **Le gabarit d'offre passe en flux paginé** (comme le contrat), pas en
+  pages fixes à débordement caché : les sections rédigées par client ne
+  doivent pas être tronquées.
+- **Le HTML des modèles** est fourni : `design/Documentations DigiHunt/`
+  (offre de service, Meta Ads) et `design/Modèle de contrat DigiHunt/`
+  (contrat, Annexe A). Ils deviennent les lignes `document_template` de
+  l'agence, sections comprises, par une migration de semis.
+- **Ce que produit une vente** (contrat, livrables, tâches, acompte) reste
+  le sujet d'une migration à part, après le générateur — avec, avant elle,
+  le rattachement des tâches au mandat (analyse, section 4.7).
+
+Ce que l'analyse ajoute au périmètre de la phase 9, et que les briefs 9.3
+et 9.4 ne disaient pas : les **sections narratives** d'un modèle et d'un
+document, le **mode composition** d'un brouillon, la récurrence et la
+nature d'une ligne, les taux de taxe figés à l'envoi, et une session
+**9.5** (`docs/briefs/9-5-appel-decouverte.md`) pour l'appel découverte
+et le brief.
 
 ## 5. Ordre de travail proposé
 
@@ -205,14 +230,18 @@ production.
 
 | # | Étape | Taille | Dépend de |
 |---|---|---|---|
-| D | **Design** : faire passer les briefs 9.1 → (9.2 ‖ 9.3) → 9.4 dans Claude Design, valider chaque maquette (shell intact, classes du socle reprises, états présents). Armel. | 4 sessions | briefs |
+| D | **Design** : 9.1 → 9.4 ✅ livrées. Reste **9.5** à faire passer dans Claude Design, après 9.4 intégrée. Armel. | 1 session | brief 9.5 |
 | 0 | `AUTH_REQUIRED=on` sur Vercel (Armel). Bucket Storage `public-assets` (migration + politique). | petite | — |
-| 1 | Intégrer 9.1 : `/agence`, sa navigation, sa page d'accueil ; déplacer Profil, Équipe, alléger `/parametres` ; téléversement du logo et des photos ; NEQ et instructions de paiement (migration de trois colonnes). | moyenne | D, 0 |
-| 2 | Intégrer 9.2 — catalogue : actions serveur créer / modifier / archiver / réordonner. | moyenne | 1 |
-| 3 | Intégrer 9.2 — constructeur d'offres : édition complète de `offer`, `offer_line`, `offer_benefit`, `offer_segment`, `offer_task_template`. Migration `offer_deliverable_template`. | grande | 2 |
-| 4 | Intégrer 9.3 : `document_template.body_html`, analyse des balises, éditeur, aperçu sur données d'exemple, semis des modèles réels d'Armel. | grande | 1, HTML fourni |
-| 5 | Intégrer 9.4 : panneau de création, rendu `/documents/[id]`, envoi = figeage (`rendered_html`), versions, chaîne proposition → contrat → facture → mandat ; liste `/agence/documents` ; écran du portail. | grande | 3, 4 |
-| 6 | Brancher `/clients` et `/pipeline` sur la base (semer opportunités et mesures pour les 8 comptes fictifs). Indépendant de l'Agence hub, mais nécessaire pour que le générateur ait des clients réels sous la main. | grande | — |
+| 1 | ✅ **Fait (14 sept.)** — `/clients` et `/pipeline` lisent la base, le pipeline y écrit ; `seed_02_pipeline.sql` sème opportunités, contacts, audits, échanges et le prospect Ébénisterie Rivard avec son appel découverte. | grande | 0 |
+| 2 | ✅ **Fait (14 sept.)** — `/agence` avec navigation par section et accueil en cartes ; Profil, Équipe et Catalogue déplacés, `/parametres` allégé (anciens liens redirigés) ; téléversement du logo et des photos (Storage) ; NEQ, représentant, district, instructions de paiement (migration 0020). Offres, Modèles, Documents : cartes d'attente avec les comptes réels. | moyenne | 0 |
+| 3 | ✅ **Fait (16 sept.)** — Catalogue modifiable (panneau latéral, glissement pour réordonner, archivage avec avertissement, « où l'article est utilisé ») ; constructeur d'offres en deux colonnes avec aperçu partagé (`OfferCard`) ; migration 0022 (`offer_deliverable_template`, taux de dépassement, droit « Gérer le catalogue » sur tout ce qui compose une offre) ; `seed_03_maintenance.sql` (packs de maintenance, livrables promis). L'adresse porte l'état : `?section=offres&offre=<id>`. | grande | 2 |
+| 4 | Intégrer 9.3 : `body_html`, **sections de modèle**, analyse des balises avec conversion des formes héritées, blocs conditionnels, aperçu ; **semer les quatre gabarits convertis**, format Lettre, flux paginé. | grande | 2, gabarits |
+| 5 | Intégrer 9.4 : `quote.kind`, `deal_id`, récurrence et nature des lignes, taux figés ; panneau de création ; **mode composition** du brouillon ; envoi et figeage ; versions ; liste ; portail (acceptation, signature simple). Sans IA. | grande | 3, 4 |
+| 6 | Concevoir puis intégrer 9.5 : appels, transcriptions, brief manuel ou extrait, source « Depuis le brief », suggestion d'offre, sections proposées à côté du texte. Routes serveur IA, `ai_usage`. | grande | 5, brief 9.5 conçu |
+| 7 | « Créer la suite » : contrat, Annexe A, facture d'acompte, tâches rattachées au mandat (migration d'unicité par origine d'abord). | grande | 5 |
+
+Le détail des migrations, dans l'ordre où elles débloquent quelque chose,
+est dans `docs/analyse-generateur-propositions.md`, section 6.
 
 Le reste de l'arriéré, pour mémoire : contrat à l'écran (livrables, jalons,
 exclusions), automatisation de rappel d'acceptation tacite, migration des
@@ -221,11 +250,14 @@ figés encore présents sur `client` (`health_score_prev` et semblables).
 
 ## 6. À apporter à la nouvelle session
 
-- Les **maquettes HTML** produites par Claude Design à partir des briefs
-  9.1 à 9.4, un fichier par écran, telles que validées.
-- Le **HTML des modèles de documents** de l'agence (proposition, contrat,
-  Annexe A, devis, facture), un fichier par document, et la **liste des
-  balises** qu'ils contiennent.
+- ~~Les maquettes HTML de 9.1 à 9.4~~ — livrées dans
+  `design/HuntPilote - CRM SEO_phase 9/`.
+- ~~Le HTML des modèles de documents~~ — livré dans `design/` (offre de
+  service, Meta Ads, contrat, Annexe A). Il manque encore un modèle de
+  **devis** et de **facture** de l'agence ; ceux des maquettes 9.3 servent
+  en attendant.
+- Une **transcription réelle d'appel découverte**, anonymisée, pour la
+  conception de 9.5.
 - Les numéros de **TPS, TVQ et NEQ** (ou les saisir dans Profil avant).
 - Le **logo** de l'agence et les **photos** des membres réels.
 - Les **tarifs d'entrée** des packs SEO, s'ils existent.
@@ -250,18 +282,22 @@ précis vaut mieux qu'une liste de souhaits.
 À coller tel quel dans la première invite :
 
 > Lis `docs/passation-agence-hub.md` en entier, puis `supabase/README.md`,
-> `docs/modele-donnees.md` et les quatre briefs `docs/briefs/9-*.md`.
-> Respecte les conventions de la section 2 sans exception. Je te fournis
-> les maquettes HTML produites par Claude Design à partir de ces briefs
-> (jointes à ce message ou déposées dans `docs/maquettes/phase-9/`).
-> Commence par l'étape 1 de la section 5 : intégrer la maquette 9.1 —
-> créer `/agence` (« Agence hub »), sa navigation et sa page d'accueil, y
-> déplacer Profil et Équipe depuis `/parametres`, ajouter le téléversement
-> du logo et des photos via Supabase Storage, le NEQ et les instructions de
-> paiement. Réutilise les composants existants (`app/parametres/*Panel.tsx`,
-> `bits.tsx`, `actions.ts`) au lieu de les réécrire. Valide toute migration
-> en local avant de l'appliquer en ligne, vérifie au navigateur en thème
-> clair et sombre, déploie, et dis-moi ce que je dois vérifier en
-> production avant de passer à l'étape suivante. Ne me demande pas de
-> permission pour les actions réversibles : le mode automatique est activé.
-> En fin d'étape, mets à jour la section 1 et la section 8 de ce document.
+> `docs/modele-donnees.md`, `docs/analyse-generateur-propositions.md` et les
+> briefs `docs/briefs/9-*.md`. Respecte les conventions de la section 2 sans
+> exception. Les maquettes de la phase 9 sont dans
+> `design/HuntPilote - CRM SEO_phase 9/` et les gabarits réels dans
+> `design/Documentations DigiHunt/` et `design/Modèle de contrat DigiHunt/`.
+> Les étapes 1 à 3 de la section 5 sont faites. Commence par l'étape 4 :
+> intégrer la maquette 9.3 — les modèles de documents avec leur corps HTML
+> (`document_template.body_html`), les **sections de modèle**, l'analyse des
+> balises avec conversion des formes héritées (annexe A de l'analyse), les
+> blocs conditionnels et l'aperçu sur des données d'exemple ; puis semer les
+> quatre gabarits convertis (offre de service, Meta Ads, contrat, Annexe A),
+> au format Lettre et en flux paginé. Réutilise `app/agence/*` — l'Agence
+> hub, ses sections, `bits.tsx`, `action-base.ts` — au lieu de le réécrire.
+> Valide toute migration en local avant de l'appliquer en ligne, vérifie au
+> navigateur en thème clair et sombre, déploie, et dis-moi ce que je dois
+> vérifier en production avant de passer à l'étape suivante. Ne me demande
+> pas de permission pour les actions réversibles : le mode automatique est
+> activé. En fin d'étape, mets à jour la section 1 et la section 8 de ce
+> document.
