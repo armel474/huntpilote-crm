@@ -28,6 +28,8 @@ export const routes = {
   offre: (id: string) => `/agence?section=offres&offre=${id}`,
   /** Un article du catalogue, ouvert dans son panneau. */
   article: (id: string) => `/agence?section=catalogue&article=${id}`,
+  /** Un modèle de document, ouvert dans son éditeur (9.3). */
+  modele: (id: string) => `/agence?section=modeles&modele=${id}`,
   /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
   auditProspect: (token: string) => `/audit-prospect/${token}`,
 

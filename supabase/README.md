@@ -32,13 +32,15 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0020_profil_complet.sql` | NEQ, représentant, district judiciaire, instructions de paiement — ce que les gabarits écrivaient en dur | ✅ appliquée |
 | `0021_stockage_public.sql` | Seau `public-assets` : logo et photos, lecture publique, écriture cloisonnée par agence (ne s'exécute que si la plateforme fournit `storage`) | ✅ appliquée |
 | `0022_livrables_offre.sql` | `offer_deliverable_template` (ce qu'une offre promet, distinct des tâches), taux de dépassement horaire sur `offer`, « Gérer le catalogue » étendu aux lignes, segments, bénéfices, tâches et livrables d'une offre | ✅ appliquée |
+| `0023_corps_des_modeles.sql` | `document_template.body_html` (le HTML d'un modèle vit dans la base) et `document_template_section` (les sections rédigées par client : clé, guide, longueur, optionnelle, IA, clause verrouillée) | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
 | `seed_02_pipeline.sql` — opportunités, contacts de prospects, scores d'audit, échanges, appel découverte fictif, numéros de taxes de démonstration | ✅ passé · rejouable |
 | `seed_03_maintenance.sql` — les trois packs de maintenance (Essentiel, Croissance, Partenaire Stratégique) et leurs services, les livrables promis par chaque offre | ✅ passé · rejouable |
+| `seed_04_gabarits.sql` — les corps des six modèles de documents : les quatre gabarits réels convertis (offre de service, Meta Ads, contrat, Annexe A) et les deux modèles simples (devis, facture), avec les sections de modèle | ✅ passé · rejouable |
 
 **Le modèle est complet, la base est peuplée, et l'application y est
 branchée.** Le projet Supabase `huntpilote` (région `ca-central-1`) porte les
-vingt-trois migrations et les trois semis. Côté application : `lib/supabase/` (clients
+vingt-quatre migrations et les quatre semis. Côté application : `lib/supabase/` (clients
 serveur et navigateur, middleware de session), `lib/auth.ts` (la session en
 un aller-retour), `lib/queries/` (les lectures, par écran), et
 `lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
@@ -94,6 +96,19 @@ promis** par les neuf offres (`offer_deliverable_template`, migration 0022).
 Rejouable : identifiants fixes, `on conflict do nothing`, et une tâche ne se
 crée que si son titre n'existe pas déjà sur l'offre.
 
+`seed_04_gabarits.sql` est **produit par `scripts/convertir-gabarits.py`**, pas
+écrit à la main : le script lit les quatre gabarits réels de `design/`,
+retire leur page interne « légende », convertit les formes héritées
+(`{{ENTREPRISE_CLIENT}}`, `[NOM DU CLIENT]`) à la syntaxe canonique
+`{{groupe.champ}}`, passe le format en Lettre et les pages fixes en flux,
+remplace les tableaux figés par des blocs `{{#livrables}}…{{/livrables}}`,
+et extrait les puces « [Compléter : …] » en **sections de modèle**. Il y
+ajoute le devis et la facture de la maquette 9.3, sur le socle `.cdoc` de
+`lib/documents/apercu.ts`. Les corps sont relisibles dans
+`supabase/gabarits/`, et l'analyse de `lib/documents/balises.ts` les
+déclare tous complets. Rejouable : un corps déjà saisi par l'agence n'est
+jamais écrasé (`where body_html is null`), une section existante reste.
+
 **Il reste deux valeurs à saisir**, signalées dans le fichier :
 les numéros d'inscription à la TPS et à la TVQ de l'agence, et le tarif
 préférentiel des trois premiers mois de chaque pack SEO.
@@ -138,13 +153,14 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/12_regles_permissions.sq
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/13_regles_profil.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/14_regles_profil_complet.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/15_regles_livrables_offre.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/16_regles_corps_modeles.sql
 ```
 
-Les quinze fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les seize fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). **177 assertions** au total.
+Sophie). **189 assertions** au total.
 
-Les trois derniers montent des données réelles — les six offres telles
+Les fichiers `13` à `15` montent des données réelles — les six offres telles
 qu'elles sont vendues, et le mandat SHGM tel qu'il est signé — parce que c'est
 la seule façon de vérifier que le modèle les décrit sans rien perdre.
 

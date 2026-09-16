@@ -14,7 +14,8 @@
  * dit, avec ce que la base contient déjà.
  *
  * L'adresse porte l'état : `?section=offres&offre=<id>` ouvre le
- * constructeur, `?section=catalogue&article=<id>` ouvre un article.
+ * constructeur, `?section=catalogue&article=<id>` ouvre un article,
+ * `?section=modeles&modele=<id>` ouvre un modèle de document dans l'éditeur.
  */
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ import { useSearchParams } from 'next/navigation';
 import { AgencePanel } from '@/app/agence/AgencePanel';
 import { CataloguePanel } from '@/app/agence/CataloguePanel';
 import { EquipePanel } from '@/app/agence/EquipePanel';
+import { ModelesPanel } from '@/app/agence/ModelesPanel';
 import { OffresPanel } from '@/app/agence/OffresPanel';
 import { SectionHead } from '@/app/agence/bits';
 import { AppShell } from '@/components/shell/AppShell';
@@ -37,6 +39,7 @@ import {
   type IconProps,
 } from '@/components/ui/Icons';
 import type { Session } from '@/lib/auth';
+import type { ModelesData } from '@/lib/queries/modeles';
 import { ROLE_LABEL } from '@/lib/format';
 import { permissionsOf, type AgencyData } from '@/lib/queries/agence';
 import { routes } from '@/lib/routes';
@@ -62,22 +65,24 @@ const KIND_LABEL: Record<string, string> = {
 };
 const ALL_KINDS = Object.keys(KIND_LABEL);
 
-type HubQuery = { section: HubSectionId | null; offre: string | null; article: string | null };
+type HubQuery = { section: HubSectionId | null; offre: string | null; article: string | null; modele: string | null };
 
-/** Lit `?section=`, `?offre=` et `?article=` et suit leurs changements — un lien de la barre latérale ou d'une carte y mène. */
+/** Lit `?section=`, `?offre=`, `?article=` et `?modele=` et suit leurs changements — un lien de la barre latérale ou d'une carte y mène. */
 function SectionFromQuery({ onQuery }: { onQuery: (q: HubQuery) => void }) {
   const searchParams = useSearchParams();
   const requested = searchParams.get('section');
   const offre = searchParams.get('offre');
   const article = searchParams.get('article');
+  const modele = searchParams.get('modele');
   useEffect(() => {
     onQuery({
       section: requested && SECTIONS.some((s) => s.id === requested) ? (requested as HubSectionId) : null,
       offre,
       article,
+      modele,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requested, offre, article]);
+  }, [requested, offre, article, modele]);
   return null;
 }
 
@@ -236,17 +241,18 @@ function ComingSection({ title, sub, lines, session }: { title: string; sub: str
   );
 }
 
-export function AgenceHubView({ session, agency }: { session: Session | null; agency: AgencyData }) {
-  const [query, setQuery] = useState<HubQuery>({ section: null, offre: null, article: null });
+export function AgenceHubView({ session, agency, modeles }: { session: Session | null; agency: AgencyData; modeles: ModelesData }) {
+  const [query, setQuery] = useState<HubQuery>({ section: null, offre: null, article: null, modele: null });
   const section = query.section;
   const mine = permissionsOf(agency.members, session?.memberId);
   const activeLabel = SECTIONS.find((s) => s.id === section)?.label;
   const wide = section === 'catalogue' || section === 'offres' || section === 'modeles' || section === 'documents';
   const openedOffer = section === 'offres' && query.offre ? agency.offers.find((o) => o.id === query.offre) : undefined;
+  const openedModel = section === 'modeles' && query.modele ? modeles.templates.find((t) => t.id === query.modele) : undefined;
 
   /** Change de section ou d'objet ouvert, et l'écrit dans l'adresse sans recharger. */
   const go = (next: Partial<HubQuery> & { section: HubSectionId | null }) => {
-    const q: HubQuery = { section: next.section, offre: next.offre ?? null, article: next.article ?? null };
+    const q: HubQuery = { section: next.section, offre: next.offre ?? null, article: next.article ?? null, modele: next.modele ?? null };
     setQuery(q);
     try {
       const u = new URL(window.location.href);
@@ -259,8 +265,6 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
       // Pas de navigateur : rien à mémoriser.
     }
   };
-
-  const kindsMissing = ALL_KINDS.filter((k) => !agency.hub.templateKinds.includes(k));
 
   return (
     <AppShell
@@ -345,8 +349,8 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
               {activeLabel && (
                 <>
                   <span>›</span>
-                  {section === 'offres' && query.offre ? (
-                    <button type="button" onClick={() => go({ section: 'offres' })}>{activeLabel}</button>
+                  {(section === 'offres' && query.offre) || (section === 'modeles' && openedModel) ? (
+                    <button type="button" onClick={() => go({ section })}>{activeLabel}</button>
                   ) : (
                     <span>{activeLabel}</span>
                   )}
@@ -356,6 +360,12 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
                 <>
                   <span>›</span>
                   <span>{openedOffer?.name ?? 'Nouvelle offre'}</span>
+                </>
+              )}
+              {section === 'modeles' && openedModel && (
+                <>
+                  <span>›</span>
+                  <span>{openedModel.name}</span>
                 </>
               )}
             </div>
@@ -389,17 +399,11 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
               />
             )}
             {section === 'modeles' && (
-              <ComingSection
-                title="Modèles de documents"
-                sub="Le HTML de chaque sorte de document, ses balises, son aperçu sur des données d’exemple."
-                session="9.3"
-                lines={[
-                  `${agency.hub.templateKinds.length} sorte${agency.hub.templateKinds.length > 1 ? 's' : ''} de document couverte${agency.hub.templateKinds.length > 1 ? 's' : ''} par un modèle : ${agency.hub.templateKinds.map((k) => KIND_LABEL[k] ?? k).join(', ') || 'aucune'}.`,
-                  kindsMissing.length
-                    ? `Sans modèle pour l’instant : ${kindsMissing.map((k) => KIND_LABEL[k]).join(', ')} — ces documents ne pourront pas être générés.`
-                    : 'Toutes les sortes ont un modèle.',
-                  'Les gabarits réels de l’agence (offre de service, contrat, Annexe A) sont dans le dépôt et seront convertis à la syntaxe canonique à l’intégration.',
-                ]}
+              <ModelesPanel
+                data={modeles}
+                canManage={mine.includes('manage_catalogue')}
+                openId={query.modele}
+                onOpen={(id) => go({ section: 'modeles', modele: id })}
               />
             )}
             {section === 'documents' && (

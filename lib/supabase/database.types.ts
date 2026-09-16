@@ -2744,6 +2744,7 @@ export type Database = {
         Row: {
           active: boolean
           agency_id: string
+          body_html: string | null
           created_at: string
           footer: string | null
           id: string
@@ -2762,6 +2763,7 @@ export type Database = {
         Insert: {
           active?: boolean
           agency_id: string
+          body_html?: string | null
           created_at?: string
           footer?: string | null
           id?: string
@@ -2780,6 +2782,7 @@ export type Database = {
         Update: {
           active?: boolean
           agency_id?: string
+          body_html?: string | null
           created_at?: string
           footer?: string | null
           id?: string
@@ -2801,6 +2804,56 @@ export type Database = {
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "agency"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_template_section: {
+        Row: {
+          ai_assist: boolean
+          created_at: string
+          default_body: string | null
+          id: string
+          key: string
+          locked_by_agency: boolean
+          max_chars: number | null
+          optional: boolean
+          position: number
+          template_id: string
+          title: string
+        }
+        Insert: {
+          ai_assist?: boolean
+          created_at?: string
+          default_body?: string | null
+          id?: string
+          key: string
+          locked_by_agency?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position?: number
+          template_id: string
+          title: string
+        }
+        Update: {
+          ai_assist?: boolean
+          created_at?: string
+          default_body?: string | null
+          id?: string
+          key?: string
+          locked_by_agency?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position?: number
+          template_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_template_section_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_template"
             referencedColumns: ["id"]
           },
         ]

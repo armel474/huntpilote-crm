@@ -1,0 +1,246 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap');
+@page {
+    size: Letter;
+    margin: 0.9in;
+    @top-left { content: "Contrat de services professionnels"; font-family: Archivo, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+    @top-right { content: "{{client.raison_sociale}}"; font-family: Archivo, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.02em; color: #1C3254; }
+    @bottom-left { content: "Agence DigiHunt — Contrat de services"; font-family: Archivo, sans-serif; font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+    @bottom-right { content: "Page " counter(page) " sur " counter(pages); font-family: Archivo, sans-serif; font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+  }
+  html, body { margin: 0; padding: 0; }
+  body { background: #fff; font-family: 'Noto Sans', 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.65; color: #1a1a1a; }
+  /* Pagination propre : aucun paragraphe, puce ou tableau coupé entre deux pages ; jamais de titre orphelin en bas de page */
+  .content p, .content li, .content table { break-inside: avoid; }
+  .content h2 { break-after: avoid; }
+  .content { orphans: 3; widows: 3; }
+  /* filled tokens render plain; only remaining to-fill fields stay amber */
+  [data-token] { background: transparent !important; color: inherit !important; padding: 0 !important; }
+  [data-todo] { background: #FBE9C7 !important; color: #8A5B00 !important; padding: 0 3px !important; border-radius: 2px !important; font-style: normal !important; }
+.content { max-width: 8.5in; margin: 0 auto; padding: 0.9in; background: #fff; box-sizing: border-box; }
+@media print { .content { max-width: none; padding: 0; } }
+
+</style>
+<div class="content">
+
+
+        <div style="min-height:8.85in;display:flex;flex-direction:column;justify-content:space-between;break-after:page;break-inside:avoid;">
+      <div style="padding-top:18px;">
+        <img src="{{agence.logo}}" alt="Agence DigiHunt" style="height:54px;display:block;">
+      </div>
+      <div>
+        <div style="width:44px;border-top:3px solid #1C3254;margin-bottom:26px;"></div>
+        <div style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A8F98;margin-bottom:16px;">Proposition {{proposition.reference}}</div>
+        <h1 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:34px;font-weight:800;letter-spacing:0.01em;text-transform:uppercase;line-height:1.2;color:#1a1a1a;margin:0 0 26px;max-width:9em;">Contrat de services professionnels</h1>
+        <p style="margin:0;font-size:18px;color:#3A3B3C;">intervenu entre <strong>{{agence.nom}}</strong></p>
+        <p style="margin:6px 0 0;font-size:18px;color:#3A3B3C;">et <strong>{{client.raison_sociale}}</strong></p>
+      </div>
+      <div style="border-top:1px solid #E3E6EB;padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;">
+        <span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#8A8F98;">{{agence.ville}}, Canada</span>
+        <span style="font-size:15px;color:#3A3B3C;">Date : {{document.date}}</span>
+      </div>
+    </div>
+
+    <div style="break-inside:avoid;">
+      <p style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;">Entre :</p>
+      <p style="margin:0 0 8px;"><strong>{{agence.raison_sociale}}</strong>, NEQ {{agence.neq}}, ayant son établissement au {{agence.adresse}}, agissant personnellement,</p>
+      <p style="margin:0 0 20px;color:#3A3B3C;">ci-après désigné « <strong>le Prestataire</strong> » ;</p>
+      <p style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;">Et :</p>
+      <p style="margin:0 0 8px;"><strong>{{client.raison_sociale}}</strong>, {{client.forme_juridique}}, ayant son établissement au {{client.adresse}}, représentée aux fins des présentes par {{client.contact.nom}}, {{client.contact.titre}}, dûment autorisée à cet effet,</p>
+      <p style="margin:0 0 20px;color:#3A3B3C;">ci-après désignée « <strong>le Client</strong> » ;</p>
+      <p style="margin:0;font-size:15px;color:#6E7178;font-style:italic;">(ci-après collectivement « les Parties » et individuellement « une Partie »)</p>
+    </div>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;">Préambule</h2>
+      <p style="margin:0 0 10px;">ATTENDU QUE le Client a pris connaissance de la proposition de services numéro {{proposition.reference}} datée du {{proposition.date}} (ci-après la « Proposition ») et l'a acceptée ;</p>
+      <p style="margin:0 0 10px;">ATTENDU QUE le Prestataire œuvre dans le domaine du développement web, du référencement (SEO) et de la stratégie numérique, et possède l'expertise nécessaire à la réalisation du mandat décrit aux présentes ;</p>
+      <p style="margin:0 0 10px;">ATTENDU QUE les Parties souhaitent établir par écrit les modalités de leur entente ;</p>
+      <p style="margin:0;"><strong>EN CONSÉQUENCE, LES PARTIES CONVIENNENT DE CE QUI SUIT :</strong></p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 1 — Objet du contrat</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">1.1</span>&nbsp; Le présent contrat a pour objet d'établir les modalités selon lesquelles le Prestataire fournira au Client les services décrits à l'Annexe A (ci-après le <br>« Mandat »).</p>
+      <p style="margin:0 0 6px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">1.2</span>&nbsp; Le présent contrat est constitué des documents suivants, lesquels en font partie intégrante :</p>
+      <div style="padding-left:40px;">
+        <p style="margin:0 0 4px;">(a) le corps du présent contrat ;</p>
+        <p style="margin:0 0 4px;">(b) l'Annexe A — Description détaillée des livrables et échéancier ;</p>
+        <p style="margin:0 0 10px;">(c) la Proposition acceptée par le Client.</p>
+        <p style="margin:0;">En cas de conflit entre ces documents, l'ordre de priorité ci-dessus prévaut, sauf indication contraire expresse.</p>
+      </div>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 2 — Livrables et portée du mandat</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">2.1</span>&nbsp; Les livrables, fonctionnalités, pages, contenus et étapes du Mandat sont décrits de façon exhaustive à l'Annexe A.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">2.2</span>&nbsp; Toute demande ne figurant pas explicitement à l'Annexe A est considérée hors portée (« hors scope ») et fera l'objet d'une offre de service distincte ou d'un avenant écrit au présent contrat, incluant le cas échéant un ajustement des honoraires et de l'échéancier.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">2.3</span>&nbsp; Toute modification substantielle au Mandat en cours de réalisation doit être convenue par écrit entre les Parties (courriel suffisant) avant exécution, et peut entraîner une révision des honoraires et des délais.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 3 — Responsabilités du Prestataire</h2>
+      <p style="margin:0 0 10px;">Le Prestataire s'engage à :</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">3.1</span>&nbsp; Réaliser le Mandat avec professionnalisme, diligence et selon les règles de l'art reconnues dans son domaine (incluant, le cas échéant, les meilleures pratiques Webflow et les conventions Client-First) ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">3.2</span>&nbsp; Respecter l'échéancier convenu à l'Annexe A, sous réserve des délais additionnels résultant d'un manquement du Client à ses obligations (article 4 et article 5) ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">3.3</span>&nbsp; Maintenir une communication régulière avec le Client sur l'avancement du Mandat ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">3.4</span>&nbsp; Soumettre les livrables à l'approbation du Client aux étapes clés identifiées à l'Annexe A ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">3.5</span>&nbsp; Aviser promptement le Client de tout enjeu susceptible d'affecter les délais, les coûts ou la qualité du Mandat.</p>
+      <p style="margin:0;">Le Prestataire n'est pas responsable des retards, défauts ou limitations résultant du contenu, des accès ou des approbations fournis (ou non fournis) par le Client.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 4 — Responsabilités du Client</h2>
+      <p style="margin:0 0 10px;">Le Client s'engage à :</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">4.1</span>&nbsp; Désigner une personne-contact unique autorisée à approuver les livrables et à prendre les décisions relatives au Mandat ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">4.2</span>&nbsp; Fournir, dans les délais convenus, l'ensemble du contenu nécessaire à la réalisation du Mandat (textes, images, logos, accès aux comptes tiers, identifiants, etc.), et garantir qu'il détient tous les droits nécessaires sur ce contenu ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">4.3</span>&nbsp; Répondre aux demandes d'approbation, de rétroaction ou de clarification du Prestataire dans un délai de <strong>5 jours ouvrables</strong>, à défaut de quoi l'échéancier prévu à l'Annexe A sera prolongé d'autant, sans pénalité pour le Prestataire ;</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">4.4</span>&nbsp; Effectuer les paiements selon les modalités et échéances prévues à l'article 6 ;</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">4.5</span>&nbsp; Collaborer de bonne foi et fournir au Prestataire l'ensemble des informations pertinentes à la bonne exécution du Mandat.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 5 — Échéancier et délais de réalisation</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">5.1</span>&nbsp; L'échéancier prévisionnel du Mandat est détaillé à l'Annexe A.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">5.2</span>&nbsp; Cet échéancier est établi en fonction d'une collaboration diligente des deux Parties. Tout retard attribuable au Client (contenu manquant, approbations tardives, changements de direction en cours de mandat) reporte d'autant les dates de livraison, sans que cela ne constitue un manquement du Prestataire.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;">
+      <div style="break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 6 — Honoraires et modalités de paiement</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">6.1</span>&nbsp; <strong>Montant total.</strong> Le montant total des honoraires pour le Mandat est de <strong>{{total.ht}}</strong> <strong>$ CAD</strong>, avant les taxes applicables, tel que détaillé dans la Proposition. Le détail est le suivant :</p>
+      </div>
+      <table style="border-collapse:collapse;width:100%;max-width:440px;margin:4px 0 16px 40px;font-size:15px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid #D9DDE4;"></th>
+            <th style="text-align:right;font-family:Archivo,'Helvetica Neue',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8F98;padding:6px 0;border-bottom:1px solid #D9DDE4;">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #E3E6EB;">Honoraires professionnels</td><td style="padding:7px 0;border-bottom:1px solid #E3E6EB;text-align:right;">{{total.ht}}</td></tr>
+          <tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #E3E6EB;">TPS</td><td style="padding:7px 0;border-bottom:1px solid #E3E6EB;text-align:right;">{{total.tps}}</td></tr>
+          <tr><td style="padding:7px 10px 7px 0;border-bottom:1px solid #E3E6EB;">TVQ</td><td style="padding:7px 0;border-bottom:1px solid #E3E6EB;text-align:right;">{{total.tvq}}</td></tr>
+          <tr style="background:#F2F4F8;"><td style="padding:9px 10px 9px 8px;border-bottom:1px solid #D9DDE4;font-weight:700;">Total à payer (taxes incluses)</td><td style="padding:9px 4px 9px 0;border-bottom:1px solid #D9DDE4;text-align:right;font-weight:700;">{{total.ttc}} CAD</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="margin:0 0 8px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">6.2</span>&nbsp; <strong>Échéancier de paiement.</strong> Les montants ci-dessous s'entendent taxes incluses et correspondent aux sommes effectivement exigibles.</p>
+      <ul style="margin:0 0 10px;padding-left:60px;">
+        <li style="margin-bottom:8px;">Un acompte de <strong>{{acompte.pourcentage}} %</strong>, soit <strong>{{acompte.montant_ttc}} CAD taxes incluses</strong> ({{acompte.montant_ht}} + taxes), est exigible à la signature du présent contrat et doit être acquitté avant le début des travaux ;</li>
+        <li style="margin-bottom:0;">Le solde de <strong>{{solde.pourcentage}} %</strong>, soit <strong>{{solde.montant_ttc}} CAD taxes incluses</strong> ({{solde.montant_ht}} + taxes), est facturé à la livraison finale du Mandat et payable dans les <strong>15 jours</strong> suivant la date de facturation.</li>
+      </ul>
+      <p style="margin:0 0 10px;padding-left:40px;">Les taux de taxes applicables sont ceux en vigueur à la date de facturation. Toute modification législative des taux ajuste les montants en conséquence.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">6.3</span>&nbsp; <strong>Modes de paiement acceptés :</strong> {{document.paiement}}.</p>
+      <p style="margin:0 0 8px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">6.4</span>&nbsp; <strong>Retard de paiement.</strong> Tout retard de paiement doit être signalé par le Client dans les meilleurs délais. Les Parties conviennent de discuter de bonne foi d'un calendrier de paiement ajusté lorsque le retard résulte de délais administratifs indépendants de la volonté du Client (ex. : processus d'approbation interne, versement d'une subvention, cycle de reddition de comptes). En l'absence d'entente ou en cas de retard dépassant <strong>60 jours</strong> sans justification, le Prestataire se réserve le droit d'appliquer des frais de retard raisonnables et de suspendre les services en cours jusqu'au règlement.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 7 — Annulation et remboursement</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">7.1</span>&nbsp; <strong>Annulation avant le début des travaux.</strong> Si le Client annule le Mandat avant le début des travaux, l'acompte versé demeure acquis au Prestataire et n'est pas remboursable, celui-ci couvrant la réservation de disponibilité, la planification et les travaux préparatoires déjà engagés.</p>
+      <p style="margin:0 0 6px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">7.2</span>&nbsp; <strong>Annulation en cours de mandat.</strong> Si le Client met fin au Mandat après le début des travaux :</p>
+      <div style="padding-left:40px;">
+        <p style="margin:0 0 4px;">(a) l'acompte versé demeure acquis au Prestataire et n'est pas remboursable ;</p>
+        <p style="margin:0 0 10px;">(b) toute somme versée au-delà de l'acompte est remboursée <strong>au prorata du travail réellement effectué</strong>, calculé en fonction de l'avancement des livrables prévus à l'Annexe A au moment de la résiliation. Le Prestataire fournit au Client, sur demande, un état détaillé du travail accompli justifiant ce calcul.</p>
+      </div>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">7.3</span>&nbsp; <strong>Annulation par le Prestataire.</strong> Si le Prestataire met fin au Mandat sans motif valable imputable au Client, il rembourse au Client les sommes versées correspondant au travail non réalisé.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;">
+      <div style="break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 8 — Propriété intellectuelle</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">8.1</span>&nbsp; <strong>Cession des droits.</strong> La cession des droits de propriété intellectuelle sur les livrables (code, design, gabarits produits spécifiquement pour le Mandat) au bénéfice du Client <strong>n'intervient qu'à la réception, par le Prestataire, du paiement intégral et complet du montant total prévu à l'article 6</strong>.</p>
+      </div>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">8.2</span>&nbsp; <strong>Avant paiement intégral.</strong> Tant que le paiement complet n'a pas été reçu, le Client bénéficie uniquement d'une licence d'utilisation limitée et non exclusive aux fins d'évaluation des livrables. Aucune reproduction, exploitation commerciale, mise en ligne définitive ou cession à un tiers n'est autorisée avant le règlement intégral des sommes dues.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">8.3</span>&nbsp; <strong>Éléments préexistants du Prestataire.</strong> Les méthodologies, gabarits génériques, composants réutilisables, bibliothèques de code et savoir-faire du Prestataire développés antérieurement ou indépendamment du Mandat demeurent en tout temps la propriété exclusive du Prestataire. Le Client se voit accorder une licence perpétuelle d'utilisation de ces éléments uniquement dans le cadre du livrable final qui lui est remis.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">8.4</span>&nbsp; <strong>Contenu fourni par le Client.</strong> Tout contenu fourni par le Client (textes, images, logos, marques) demeure sa propriété exclusive. Le Client garantit détenir tous les droits nécessaires sur ce contenu et s'engage à indemniser le Prestataire de toute réclamation d'un tiers découlant de l'utilisation de ce contenu.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">8.5</span>&nbsp; <strong>Droit de portfolio.</strong> Sauf entente de confidentialité contraire convenue par écrit, le Prestataire conserve le droit de mentionner le projet réalisé et de l'afficher à titre de référence dans son portfolio et ses communications commerciales.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 9 — Licences et outils tiers</h2>
+      <p style="margin:0;">Les abonnements, licences, noms de domaine, services d'hébergement et outils tiers nécessaires au projet (ex. : Webflow, plugins, extensions) sont, sauf entente contraire écrite, souscrits au nom du Client et demeurent sa propriété et sa responsabilité financière. Le Prestataire n'assume aucune responsabilité quant aux frais récurrents de ces services tiers.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 10 — Garantie et support post-livraison</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">10.1</span>&nbsp; Le Prestataire garantit la correction, sans frais, de toute anomalie ou défaut de fonctionnement directement attribuable à son travail, signalé dans les <strong>30 jours</strong> suivant la livraison finale.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">10.2</span>&nbsp; Cette garantie ne couvre pas : les demandes de modification de contenu ou de design, l'ajout de nouvelles fonctionnalités, ni les problèmes résultant de modifications apportées par le Client ou un tiers après la livraison.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">10.3</span>&nbsp; Au-delà de cette période, tout support, mise à jour ou maintenance est couvert par une entente de maintenance distincte.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 11 — Confidentialité</h2>
+      <p style="margin:0;">Chaque Partie s'engage à conserver confidentiels tous les renseignements de nature confidentielle ou commercialement sensible de l'autre Partie dont elle prendrait connaissance dans le cadre du Mandat, et à ne pas les divulguer à des tiers sans consentement écrit préalable, sauf obligation légale contraire. Cette obligation survit à la résiliation ou à l'échéance du présent contrat pour une durée de <strong>2 ans</strong>.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 12 — Protection des renseignements personnels</h2>
+      <p style="margin:0;">Chaque Partie s'engage à se conformer à la législation applicable en matière de protection des renseignements personnels, incluant la <em>Loi sur la protection des renseignements personnels dans le secteur privé</em> (Loi 25), pour tout renseignement personnel dont elle a la garde ou le contrôle dans le cadre du Mandat.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 13 — Limitation de responsabilité</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">13.1</span>&nbsp; La responsabilité totale du Prestataire envers le Client, pour quelque cause que ce soit découlant du présent contrat, est limitée au montant total des honoraires effectivement versés par le Client en vertu du présent contrat.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">13.2</span>&nbsp; En aucun cas le Prestataire ne pourra être tenu responsable de dommages indirects, accessoires, spéciaux ou consécutifs, incluant notamment la perte de profits, de revenus, de clientèle ou de données, même s'il a été avisé de la possibilité de tels dommages.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">13.3</span>&nbsp; Cette limitation ne s'applique pas en cas de faute lourde ou intentionnelle du Prestataire.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 14 — Force majeure</h2>
+      <p style="margin:0;">Aucune des Parties ne peut être tenue responsable d'un manquement à ses obligations résultant d'un cas de force majeure, soit un événement imprévisible et irrésistible échappant à son contrôle raisonnable (incluant, sans s'y limiter, catastrophe naturelle, panne majeure de services essentiels, acte gouvernemental). La Partie affectée doit aviser l'autre dans les meilleurs délais et les Parties conviendront de bonne foi des ajustements nécessaires à l'échéancier.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 15 — Résiliation</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">15.1</span>&nbsp; Une Partie peut résilier le présent contrat en cas de manquement substantiel de l'autre Partie à ses obligations, si ce manquement n'est pas corrigé dans les <strong>10 jours</strong> suivant un avis écrit détaillant le manquement.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">15.2</span>&nbsp; En cas de résiliation, le Client demeure tenu de payer le Prestataire pour l'ensemble du travail réalisé jusqu'à la date de résiliation, sous réserve des modalités de remboursement prévues à l'article 7.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 16 — Langue du contrat</h2>
+      <p style="margin:0;">Conformément à la Charte de la langue française, le présent contrat est rédigé et proposé en français. Si les Parties conviennent expressément d'une version dans une autre langue, celle-ci ne sera valide qu'après que le Client aura eu l'occasion de prendre connaissance de la présente version française.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 17 — Droit applicable et juridiction</h2>
+      <p style="margin:0;">Le présent contrat est régi par les lois de la province de Québec et les lois fédérales du Canada qui s'y appliquent. Les Parties conviennent de la compétence exclusive des tribunaux du district judiciaire de {{agence.district_judiciaire}} pour tout litige découlant du présent contrat.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;">
+      <div style="break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 12px;" class="art-title">Article 18 — Dispositions générales</h2>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">18.1</span>&nbsp; <strong>Intégralité de l'entente.</strong> Le présent contrat, incluant ses annexes, constitue l'intégralité de l'entente entre les Parties et remplace toute entente ou communication antérieure, écrite ou verbale, portant sur le même objet.</p>
+      </div>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">18.2</span>&nbsp; <strong>Divisibilité.</strong> Si une clause du présent contrat est jugée invalide ou inexécutable, les autres clauses demeurent en vigueur.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">18.3</span>&nbsp; <strong>Cession.</strong> Le Client ne peut céder ses droits ou obligations en vertu du présent contrat sans le consentement écrit préalable du Prestataire.</p>
+      <p style="margin:0 0 10px;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">18.4</span>&nbsp; <strong>Aucune renonciation implicite.</strong> Le fait pour une Partie de ne pas exercer un droit prévu aux présentes ne constitue pas une renonciation à ce droit.</p>
+      <p style="margin:0;padding-left:40px;text-indent:-40px;"><span style="font-family:Archivo,'Helvetica Neue',sans-serif;font-weight:600;font-size:14px;color:#1C3254;" class="cl-num">18.5</span>&nbsp; <strong>Signature électronique.</strong> Les Parties reconnaissent la validité juridique d'une signature électronique apposée au présent contrat.</p>
+    </section>
+
+    <section style="border-top:1px solid #D9DDE4;margin-top:30px;padding-top:18px;break-inside:avoid;">
+      <h2 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#1C3254;margin:0 0 8px;">Signatures</h2>
+      <p style="margin:0 0 24px;font-size:15px;color:#6E7178;">Les Parties reconnaissent avoir lu et compris le présent contrat et en acceptent les modalités.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;">
+        <div>
+          <p style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1C3254;margin:0 0 72px;">Pour le Prestataire</p>
+          <div style="border-bottom:1px solid #1a1a1a;margin-bottom:8px;"></div>
+          <p style="margin:0 0 20px;font-family:Archivo,'Helvetica Neue',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8F98;">Signature</p>
+          <p style="margin:0 0 10px;font-size:15px;">Nom : {{agence.representant}}</p>
+          <p style="margin:0 0 10px;font-size:15px;">Titre : {{agence.representant_titre}}, {{agence.nom}}</p>
+          <p style="margin:0;font-size:15px;">Date : <span style="display:inline-block;width:180px;border-bottom:1px solid #3A3B3C;">&nbsp;</span></p>
+        </div>
+        <div>
+          <p style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1C3254;margin:0 0 72px;">Pour le Client</p>
+          <div style="border-bottom:1px solid #1a1a1a;margin-bottom:8px;"></div>
+          <p style="margin:0 0 20px;font-family:Archivo,'Helvetica Neue',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8A8F98;">Signature</p>
+          <p style="margin:0 0 10px;font-size:15px;">Nom : {{client.contact.nom}}</p>
+          <p style="margin:0 0 10px;font-size:15px;">Titre : {{client.contact.titre}}</p>
+          <p style="margin:0;font-size:15px;">Date : <span style="display:inline-block;width:180px;border-bottom:1px solid #3A3B3C;">&nbsp;</span></p>
+        </div>
+      </div>
+    </section>
+
+    
+
+</div>

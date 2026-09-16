@@ -1,0 +1,138 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap');
+@page {
+    size: Letter;
+    margin: 0.9in;
+    @top-left { content: "Annexe A — Livrables et échéancier"; font-family: Archivo, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+    @top-right { content: "{{client.raison_sociale}}"; font-family: Archivo, sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.02em; color: #1C3254; }
+    @bottom-left { content: "DigiHunt — Contrat de services"; font-family: Archivo, sans-serif; font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+    @bottom-right { content: "Page " counter(page) " sur " counter(pages); font-family: Archivo, sans-serif; font-size: 8.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8F98; }
+  }
+  html, body { margin: 0; padding: 0; }
+  body { background: #fff; font-family: 'Noto Sans', 'Helvetica Neue', sans-serif; font-size: 16px; line-height: 1.65; color: #1a1a1a; }
+  a { color: #1C3254; } a:hover { color: #C49A2E; }
+  h2.sec { font-family: Archivo, 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #1C3254; margin: 0 0 12px; }
+  h3.sub { font-family: Archivo, 'Helvetica Neue', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: #1C3254; margin: 18px 0 8px; }
+  table.tab { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  table.tab th { background: #EEF1F5; font-family: Archivo, 'Helvetica Neue', sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #1C3254; text-align: left; padding: 9px 12px; border: 1px solid #D9DDE4; }
+  table.tab td { padding: 9px 12px; border: 1px solid #E3E6EB; vertical-align: top; line-height: 1.55; }
+  table.tab tr { break-inside: avoid; }
+  [data-token] { background: transparent !important; color: inherit !important; padding: 0 !important; }
+  [data-todo] { background: #FBE9C7 !important; color: #8A5B00 !important; padding: 0 3px !important; border-radius: 2px !important; font-style: normal !important; }
+  .todo { background: #FBE9C7; color: #8A5B00; padding: 0 3px; border-radius: 2px; }
+  section.blk { border-top: 1px solid #D9DDE4; margin-top: 30px; padding-top: 18px; }
+  h2.sec, h3.sub { break-after: avoid; }
+  table.tab thead { break-inside: avoid; break-after: avoid; }
+  section.pg { break-before: page; border-top: none; margin-top: 0; padding-top: 6px; }
+.content { max-width: 8.5in; margin: 0 auto; padding: 0.9in; background: #fff; box-sizing: border-box; }
+@media print { .content { max-width: none; padding: 0; } }
+
+</style>
+<div class="content">
+
+    <div style="padding-top:12px;break-inside:avoid;">
+    <img src="{{agence.logo}}" alt="DigiHunt" style="height:44px;display:block;margin-bottom:34px;">
+    <div style="width:44px;border-top:3px solid #1C3254;margin-bottom:22px;"></div>
+    <h1 style="font-family:Archivo,'Helvetica Neue',sans-serif;font-size:28px;font-weight:800;letter-spacing:0.01em;text-transform:uppercase;line-height:1.25;color:#1a1a1a;margin:0 0 10px;">Annexe A — Description détaillée des livrables et échéancier</h1>
+    <p style="margin:0 0 4px;font-size:16px;color:#3A3B3C;">Contrat de services professionnels n<sup>o</sup> {{contrat.reference}}</p>
+    <p style="margin:0;font-size:16px;color:#3A3B3C;"><strong>{{agence.nom}}</strong> × <strong>{{client.raison_sociale}}</strong></p>
+  </div>
+
+  
+
+  <section class="blk">
+    <h2 class="sec">1. Portée du mandat</h2>
+    {{section.portee}}
+  </section>
+
+  <section class="blk pg">
+    <h2 class="sec">2. Livrables et révisions incluses</h2>
+    <table class="tab">
+      <thead>
+        <tr>
+          <th style="white-space:nowrap;width:61px;font-size:12px;">N<sup>o</sup></th>
+          <th style="width:22%;">Livrable</th>
+          <th>Description détaillée</th>
+          <th style="white-space:nowrap;">Révisions<br>incluses</th>
+        </tr>
+      </thead>
+      <tbody>{{#livrables}}<tr><td><strong>{{livrable.code}}</strong></td><td>{{livrable.titre}}</td><td>{{livrable.description}}</td><td>{{livrable.rondes}}</td></tr>{{/livrables}}</tbody>
+    </table>
+
+    <h3 class="sub">2.1 Rondes de révision additionnelles</h3>
+    <p style="margin:0 0 10px;">Une « ronde de révision » désigne un ensemble de commentaires consolidés transmis en une seule fois par le Client sur un livrable donné.</p>
+    <p style="margin:0;">Toute ronde au-delà du nombre inclus ci-dessus est facturée au taux de {{contrat.taux_horaire}} $/h CAD (+ taxes), sur estimation préalable approuvée par écrit par le Client. Les commentaires transmis de façon fragmentée après la clôture d’une ronde sont considérés comme une nouvelle ronde.</p>
+
+    <h3 class="sub">2.2 Acceptation des livrables</h3>
+    <p style="margin:0;">Conformément à l’article 4.3 du contrat, le Client dispose de 5 jours ouvrables pour transmettre ses commentaires sur un livrable soumis à approbation. En l’absence de retour dans ce délai, le livrable est réputé accepté et le projet passe au jalon suivant. Cette disposition vise à éviter l’immobilisation du mandat ; le Prestataire s’engage à transmettre un rappel avant l’échéance.</p>
+  </section>
+
+  <section class="blk">
+    <h2 class="sec">3. Modalités de l’accompagnement post-lancement (L-11)</h2>
+    <p style="margin:0 0 10px;"><strong>3.1</strong>&nbsp; Les heures d’accompagnement (4 à 6 h/mois pendant 3 mois) couvrent le support technique, les ajustements mineurs et les conseils SEO de base.</p>
+    <p style="margin:0 0 10px;"><strong>3.2</strong>&nbsp; Les correctifs de bogues ou d’anomalies attribuables au travail du Prestataire ne sont pas décomptés de ces heures. Ils relèvent de la garantie prévue à l’article 10 du contrat (30 jours suivant la livraison finale) et sont effectués sans frais.</p>
+    <p style="margin:0 0 10px;"><strong>3.3</strong>&nbsp; Les heures non utilisées au cours d’un mois ne sont ni cumulables ni reportables sur le mois suivant, et ne donnent lieu à aucun remboursement.</p>
+    <p style="margin:0 0 10px;"><strong>3.4</strong>&nbsp; Les demandes dépassant le forfait mensuel sont facturées au taux de {{contrat.taux_horaire}} $/h (+ taxes), sur approbation préalable du Client.</p>
+    <p style="margin:0;"><strong>3.5</strong>&nbsp; Au terme des 3 mois, l’accompagnement prend fin. La maintenance continue est disponible séparément (voir section 6, Exclusions).</p>
+  </section>
+
+  <section class="blk pg">
+    <h2 class="sec">4. Jalons et échéancier prévisionnel</h2>
+    <p style="margin:0 0 14px;">Le projet débutera {{contrat.date_debut}}, après signature du contrat et réception de l’acompte. Les dates ci-dessous sont prévisionnelles et seront confirmées lors de la rencontre de démarrage.</p>
+    <table class="tab">
+      <thead>
+        <tr>
+          <th style="white-space:nowrap;">Jalon</th>
+          <th>Description</th>
+          <th style="white-space:nowrap;">Responsable</th>
+          <th style="width:24%;">Date prévisionnelle</th>
+        </tr>
+      </thead>
+      <tbody>{{#jalons}}<tr><td><strong>{{jalon.code}}</strong></td><td>{{jalon.titre}}</td><td>{{jalon.responsable}}</td><td>{{jalon.date}}</td></tr>{{/jalons}}</tbody>
+    </table>
+    <div style="margin-top:16px;padding:14px 18px;background:#F4F6F9;border:1px solid #D9DDE4;border-radius:4px;font-size:14.5px;break-inside:avoid;">
+      <p style="margin:0 0 8px;"><strong>Note sur l’ordre J-08 → J-10 :</strong> conformément à l’article 8.2 du contrat, la cession des droits et la mise en ligne définitive n’interviennent qu’après réception du paiement intégral. La facturation du solde est donc déclenchée dès l’approbation finale du Client (J-07), et la mise en ligne suit la réception du paiement. Le Client est avisé de cette séquence dès la signature afin de planifier le versement en conséquence.</p>
+      <p style="margin:0 0 8px;"><strong>Retards :</strong> tout retard attribuable au Client (contenu manquant, approbations tardives, changements de direction) reporte d’autant les jalons suivants, sans pénalité pour le Prestataire, conformément à l’article 5.2 du contrat.</p>
+      <p style="margin:0;"><strong>Date butoir sur le contenu :</strong> si le contenu brut prévu au jalon J-03 n’est pas reçu dans les 60 jours suivant J-01, le Prestataire peut suspendre le mandat et réviser l’échéancier ainsi que les honoraires, sur avis écrit au Client. L’acompte demeure acquis conformément à l’article 7.1.</p>
+    </div>
+  </section>
+
+  <section class="blk pg">
+    <h2 class="sec">5. Contenu à fournir par le Client</h2>
+    <p style="margin:0 0 14px;">Le Client s’engage à fournir les éléments suivants au plus tard au jalon J-03, sauf entente contraire écrite :</p>
+    <table class="tab">
+      <thead>
+        <tr>
+          <th style="width:24%;">Élément à fournir</th>
+          <th style="width:36%;">Format attendu</th>
+          <th>Remarques</th>
+        </tr>
+      </thead>
+      <tbody>{{#attendus_client}}<tr><td>{{attendu.texte}}</td><td>{{attendu.format}}</td><td>{{attendu.note}}</td></tr>{{/attendus_client}}</tbody>
+    </table>
+
+    <h3 class="sub">5.1 Personne-contact unique</h3>
+    <p style="margin:0 0 10px;">Conformément à l’article 4.1 du contrat, le Client désigne {{client.contact.nom}}, {{client.contact.titre}} comme personne-contact unique autorisée à approuver les livrables et à prendre les décisions relatives au Mandat.</p>
+    <p style="margin:0 0 10px;">Les approbations transmises par cette personne engagent le Client. Le Prestataire n’est pas tenu d’attendre une résolution du conseil d’administration pour poursuivre les travaux, sauf mention écrite contraire convenue à l’avance.</p>
+    <p style="margin:0;">Tout changement de personne-contact doit être communiqué par écrit au Prestataire.</p>
+  </section>
+
+  <section class="blk pg">
+    <h2 class="sec">6. Exclusions explicites</h2>
+    <p style="margin:0 0 14px;">Les éléments suivants ne font pas partie du présent mandat et feront l’objet d’une offre de service distincte si le Client souhaite les ajouter ultérieurement :</p>
+    <table class="tab">
+      <thead>
+        <tr>
+          <th style="width:34%;">Élément exclu</th>
+          <th>Précision</th>
+        </tr>
+      </thead>
+      <tbody>{{#exclusions}}<tr><td>{{exclusion.texte}}</td><td>{{exclusion.detail}}</td></tr>{{/exclusions}}</tbody>
+    </table>
+  </section>
+
+  <section class="blk" style="break-inside:avoid;">
+    <p style="margin:0;font-size:15px;color:#3A3B3C;">L’Annexe A fait partie intégrante du Contrat de services professionnels n<sup>o</sup> {{contrat.reference}} entre {{agence.nom}} et {{client.raison_sociale}}. En cas de conflit entre la présente Annexe et le corps du contrat, le corps du contrat prévaut.</p>
+  </section>
+
+</div>
