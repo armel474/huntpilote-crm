@@ -41,7 +41,7 @@ phase 1, ne disait rien de ce qui est urgent à l'échelle du portefeuille.
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
 | 8 — Dashboard enrichi | 1 | ✅ intégrée |
-| 9 — L'Agence hub | 4 sessions, 10 écrans | 📐 briefs prêts |
+| 9 — L'Agence hub et les propositions | 5 sessions, 12 écrans | 📐 exports 9.1 à 9.4 livrés dans `design/`, non intégrés · 9.3 et 9.4 amendées, 9.5 prête |
 
 ---
 
@@ -266,16 +266,27 @@ section 3) : cette phase dessine les écrans qui manquent.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | 📐 à concevoir |
-| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | 📐 à concevoir |
-| 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 📐 à concevoir |
-| 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 📐 à concevoir |
+| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | 📐 export livré (phase 9), non intégré |
+| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | 📐 export livré, non intégré · corrections en attente des décisions D-01 à D-05 |
+| 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 📐 export livré · **amendé le 14 septembre 2026** (sections, blocs conditionnels, versions) |
+| 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 📐 export livré · **amendé le 14 septembre 2026** (composition, montants, versions figées, états) |
+| 9.5 | Consigner l'appel découverte · brief de découverte | [`9-5-appel-decouverte.md`](9-5-appel-decouverte.md) | 📐 brief prêt |
 
 > **9.1 d'abord**, seule : elle pose le cadre dont les trois autres sont des
 > sections. **9.2 et 9.3 sont indépendantes** et peuvent se concevoir en
 > parallèle. **9.4 vient en dernier** : elle assemble les offres de 9.2 et
 > les modèles de 9.3. Pour 9.3, colle aussi dans la session le HTML d'un
 > vrai modèle de l'agence.
+>
+> **Depuis le 14 septembre 2026 :** les exports des sessions 9.1 à 9.4 sont
+> dans `design/HuntPilote - CRM SEO_phase 9/`. La mission 001 de
+> réconciliation a amendé 9.3 et 9.4 et créé 9.5 ; l'ordre des sessions à
+> refaire passer dans Claude Design, les fichiers à transmettre et le message
+> de lancement sont dans
+> [`../orchestration/missions/002-conception-propositions-claude-design.md`](../orchestration/missions/002-conception-propositions-claude-design.md).
+> **9.5 d'abord** (indépendante), puis 9.3 amendée, puis 9.4 amendée. Les
+> décisions ouvertes (D-01 à D-15) sont dans
+> [`../orchestration/analyses/001-reconciliation-catalogue.md`](../orchestration/analyses/001-reconciliation-catalogue.md).
 
 Deux choses distinguent cette phase des précédentes. **L'application est
 branchée sur la base** : les états vides, les états « pas le droit » et les
