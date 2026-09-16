@@ -27,8 +27,8 @@ export type Database = {
           email: string | null
           gst_number: string | null
           id: string
-          legal_name: string | null
           judicial_district: string | null
+          legal_name: string | null
           logo_url: string | null
           name: string
           neq: string | null
@@ -51,8 +51,8 @@ export type Database = {
           email?: string | null
           gst_number?: string | null
           id?: string
-          legal_name?: string | null
           judicial_district?: string | null
+          legal_name?: string | null
           logo_url?: string | null
           name: string
           neq?: string | null
@@ -75,8 +75,8 @@ export type Database = {
           email?: string | null
           gst_number?: string | null
           id?: string
-          legal_name?: string | null
           judicial_district?: string | null
+          legal_name?: string | null
           logo_url?: string | null
           name?: string
           neq?: string | null
@@ -4172,6 +4172,7 @@ export type Database = {
           intro_price_cents: number | null
           is_popular: boolean
           name: string
+          overage_hourly_rate_cents: number | null
           position: number
           price_cents: number | null
           price_is_from: boolean
@@ -4194,6 +4195,7 @@ export type Database = {
           intro_price_cents?: number | null
           is_popular?: boolean
           name: string
+          overage_hourly_rate_cents?: number | null
           position?: number
           price_cents?: number | null
           price_is_from?: boolean
@@ -4216,6 +4218,7 @@ export type Database = {
           intro_price_cents?: number | null
           is_popular?: boolean
           name?: string
+          overage_hourly_rate_cents?: number | null
           position?: number
           price_cents?: number | null
           price_is_from?: boolean
@@ -4273,6 +4276,54 @@ export type Database = {
           },
           {
             foreignKeyName: "offer_benefit_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offer_value"
+            referencedColumns: ["offer_id"]
+          },
+        ]
+      }
+      offer_deliverable_template: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          included_rounds: number | null
+          offer_id: string
+          position: number
+          title: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          included_rounds?: number | null
+          offer_id: string
+          position?: number
+          title: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          included_rounds?: number | null
+          offer_id?: string
+          position?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_deliverable_template_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offer"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_deliverable_template_offer_id_fkey"
             columns: ["offer_id"]
             isOneToOne: false
             referencedRelation: "offer_value"

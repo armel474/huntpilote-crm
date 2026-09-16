@@ -23,11 +23,11 @@ interface, documentation, commentaires, messages de commit.
 
 | Couche | État |
 |---|---|
-| Modèle de données | Complet : 20 migrations, 109 tables, 23 vues, 134 politiques RLS, 159 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
-| Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007 avec livrables, jalons, exclusions. |
+| Modèle de données | Complet : 23 fichiers de migration (jusqu'à `0022_livrables_offre.sql`), 110 tables, 23 vues, 142 politiques RLS, 177 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
+| Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007. `seed_02_pipeline.sql` : le pipeline et l'appel découverte fictif. `seed_03_maintenance.sql` (16 sept.) : les trois **packs de maintenance**, dix services de plus (49 articles, 9 offres) et les livrables promis par chaque offre. |
 | Connexion | Mot de passe, lien magique et Google fonctionnent en production. Rattachement d'une invitation à la première connexion, par courriel. |
-| Écrans lus dans la base | `/agence` (profil, catalogue, équipe), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre). Les autres écrans — la fiche client en premier — tournent encore sur les fichiers de démonstration de `lib/data/`. |
-| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). |
+| Écrans lus dans la base | `/agence` (profil, équipe, catalogue, offres), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre). Les autres écrans — la fiche client en premier — tournent encore sur les fichiers de démonstration de `lib/data/`. |
+| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`) ; **catalogue** (créer, modifier, archiver, réordonner) et **constructeur d'offres** — identité, prix, contenu avec offres incluses et groupes d'options, bénéfices, tâches engagées, livrables promis (`app/agence/catalogue-actions.ts`, étape 3, 16 septembre). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). |
 | Stockage | Seau `public-assets` (migration 0021), public en lecture, écriture cloisonnée par agence. Logo et photos s'y téléversent depuis l'écran. |
 | Verrou d'accès | `AUTH_REQUIRED=on` n'est pas encore posé sur Vercel. Tant qu'il ne l'est pas, les pages restent visibles sans connexion (vides, mais visibles). |
 
@@ -151,10 +151,12 @@ Aujourd'hui une offre engendre des **tâches** (`offer_task_template`). Le
 contrat SHGM montre qu'un mandat porte aussi des **livrables** soumis à
 approbation, avec rondes de révision (`deliverable`). Les deux ne sont pas
 la même chose : la tâche est du travail interne, le livrable est ce que le
-client approuve. Proposition : une table `offer_deliverable_template`
-(offre, code, nom, rondes incluses, ordre) qui, à la vente, produit les
-lignes `deliverable` du contrat comme `apply_offer_tasks` produit les
-tâches. Une migration, un test, une section dans le constructeur d'offres.
+client approuve. **Fait (migration 0022, 16 septembre)** : la table
+`offer_deliverable_template` (offre, code, titre, rondes incluses, ordre)
+existe, chaque offre du semis porte ses livrables, et le constructeur les
+édite à côté des tâches. Ce qui reste : la génération des lignes
+`deliverable` d'un contrat à la vente, comme `apply_offer_tasks` produit
+les tâches — avec l'étape 7, « Créer la suite ».
 
 ### Le générateur de documents
 
@@ -232,7 +234,7 @@ production.
 | 0 | `AUTH_REQUIRED=on` sur Vercel (Armel). Bucket Storage `public-assets` (migration + politique). | petite | — |
 | 1 | ✅ **Fait (14 sept.)** — `/clients` et `/pipeline` lisent la base, le pipeline y écrit ; `seed_02_pipeline.sql` sème opportunités, contacts, audits, échanges et le prospect Ébénisterie Rivard avec son appel découverte. | grande | 0 |
 | 2 | ✅ **Fait (14 sept.)** — `/agence` avec navigation par section et accueil en cartes ; Profil, Équipe et Catalogue déplacés, `/parametres` allégé (anciens liens redirigés) ; téléversement du logo et des photos (Storage) ; NEQ, représentant, district, instructions de paiement (migration 0020). Offres, Modèles, Documents : cartes d'attente avec les comptes réels. | moyenne | 0 |
-| 3 | Intégrer 9.2 : catalogue (créer, modifier, archiver, réordonner) ; constructeur d'offres ; migration `offer_deliverable_template` ; **semer les packs de maintenance**. | grande | 2 |
+| 3 | ✅ **Fait (16 sept.)** — Catalogue modifiable (panneau latéral, glissement pour réordonner, archivage avec avertissement, « où l'article est utilisé ») ; constructeur d'offres en deux colonnes avec aperçu partagé (`OfferCard`) ; migration 0022 (`offer_deliverable_template`, taux de dépassement, droit « Gérer le catalogue » sur tout ce qui compose une offre) ; `seed_03_maintenance.sql` (packs de maintenance, livrables promis). L'adresse porte l'état : `?section=offres&offre=<id>`. | grande | 2 |
 | 4 | Intégrer 9.3 : `body_html`, **sections de modèle**, analyse des balises avec conversion des formes héritées, blocs conditionnels, aperçu ; **semer les quatre gabarits convertis**, format Lettre, flux paginé. | grande | 2, gabarits |
 | 5 | Intégrer 9.4 : `quote.kind`, `deal_id`, récurrence et nature des lignes, taux figés ; panneau de création ; **mode composition** du brouillon ; envoi et figeage ; versions ; liste ; portail (acceptation, signature simple). Sans IA. | grande | 3, 4 |
 | 6 | Concevoir puis intégrer 9.5 : appels, transcriptions, brief manuel ou extrait, source « Depuis le brief », suggestion d'offre, sections proposées à côté du texte. Routes serveur IA, `ai_usage`. | grande | 5, brief 9.5 conçu |
@@ -285,12 +287,15 @@ précis vaut mieux qu'une liste de souhaits.
 > exception. Les maquettes de la phase 9 sont dans
 > `design/HuntPilote - CRM SEO_phase 9/` et les gabarits réels dans
 > `design/Documentations DigiHunt/` et `design/Modèle de contrat DigiHunt/`.
-> Les étapes 1 et 2 de la section 5 sont faites. Commence par l'étape 3 :
-> intégrer la maquette 9.2 — le catalogue modifiable (créer, modifier,
-> archiver, réordonner, prix unitaire) et le constructeur d'offres, avec la
-> migration `offer_deliverable_template` et les trois packs de maintenance
-> semés au catalogue. Réutilise `app/agence/*` au lieu de le réécrire. Valide
-> toute migration en local avant de l'appliquer en ligne, vérifie au
+> Les étapes 1 à 3 de la section 5 sont faites. Commence par l'étape 4 :
+> intégrer la maquette 9.3 — les modèles de documents avec leur corps HTML
+> (`document_template.body_html`), les **sections de modèle**, l'analyse des
+> balises avec conversion des formes héritées (annexe A de l'analyse), les
+> blocs conditionnels et l'aperçu sur des données d'exemple ; puis semer les
+> quatre gabarits convertis (offre de service, Meta Ads, contrat, Annexe A),
+> au format Lettre et en flux paginé. Réutilise `app/agence/*` — l'Agence
+> hub, ses sections, `bits.tsx`, `action-base.ts` — au lieu de le réécrire.
+> Valide toute migration en local avant de l'appliquer en ligne, vérifie au
 > navigateur en thème clair et sombre, déploie, et dis-moi ce que je dois
 > vérifier en production avant de passer à l'étape suivante. Ne me demande
 > pas de permission pour les actions réversibles : le mode automatique est

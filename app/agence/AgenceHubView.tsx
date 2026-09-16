@@ -9,8 +9,12 @@
  * cartes qui disent ce qui manque, pas ce qui décore.
  *
  * Profil, Équipe et Catalogue viennent tels quels de `/parametres`, qui ne
- * garde que ce qui est réglage. Offres, Modèles et Documents attendent les
- * sessions 9.2 à 9.4 : leur carte le dit, avec ce que la base contient déjà.
+ * garde que ce qui est réglage. Catalogue et Offres s'éditent (session 9.2).
+ * Modèles et Documents attendent les sessions 9.3 et 9.4 : leur carte le
+ * dit, avec ce que la base contient déjà.
+ *
+ * L'adresse porte l'état : `?section=offres&offre=<id>` ouvre le
+ * constructeur, `?section=catalogue&article=<id>` ouvre un article.
  */
 import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
@@ -18,6 +22,7 @@ import { useSearchParams } from 'next/navigation';
 import { AgencePanel } from '@/app/agence/AgencePanel';
 import { CataloguePanel } from '@/app/agence/CataloguePanel';
 import { EquipePanel } from '@/app/agence/EquipePanel';
+import { OffresPanel } from '@/app/agence/OffresPanel';
 import { SectionHead } from '@/app/agence/bits';
 import { AppShell } from '@/components/shell/AppShell';
 import { CRMHeader } from '@/components/shell/CRMHeader';
@@ -57,14 +62,22 @@ const KIND_LABEL: Record<string, string> = {
 };
 const ALL_KINDS = Object.keys(KIND_LABEL);
 
-/** Lit `?section=` et suit ses changements — un lien de la barre latérale ou d'une carte y mène. */
-function SectionFromQuery({ onSection }: { onSection: (s: HubSectionId | null) => void }) {
+type HubQuery = { section: HubSectionId | null; offre: string | null; article: string | null };
+
+/** Lit `?section=`, `?offre=` et `?article=` et suit leurs changements — un lien de la barre latérale ou d'une carte y mène. */
+function SectionFromQuery({ onQuery }: { onQuery: (q: HubQuery) => void }) {
   const searchParams = useSearchParams();
   const requested = searchParams.get('section');
+  const offre = searchParams.get('offre');
+  const article = searchParams.get('article');
   useEffect(() => {
-    onSection(requested && SECTIONS.some((s) => s.id === requested) ? (requested as HubSectionId) : null);
+    onQuery({
+      section: requested && SECTIONS.some((s) => s.id === requested) ? (requested as HubSectionId) : null,
+      offre,
+      article,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requested]);
+  }, [requested, offre, article]);
   return null;
 }
 
@@ -224,18 +237,24 @@ function ComingSection({ title, sub, lines, session }: { title: string; sub: str
 }
 
 export function AgenceHubView({ session, agency }: { session: Session | null; agency: AgencyData }) {
-  const [section, setSection] = useState<HubSectionId | null>(null);
+  const [query, setQuery] = useState<HubQuery>({ section: null, offre: null, article: null });
+  const section = query.section;
   const mine = permissionsOf(agency.members, session?.memberId);
   const activeLabel = SECTIONS.find((s) => s.id === section)?.label;
   const wide = section === 'catalogue' || section === 'offres' || section === 'modeles' || section === 'documents';
+  const openedOffer = section === 'offres' && query.offre ? agency.offers.find((o) => o.id === query.offre) : undefined;
 
-  const go = (id: HubSectionId | null) => {
-    setSection(id);
+  /** Change de section ou d'objet ouvert, et l'écrit dans l'adresse sans recharger. */
+  const go = (next: Partial<HubQuery> & { section: HubSectionId | null }) => {
+    const q: HubQuery = { section: next.section, offre: next.offre ?? null, article: next.article ?? null };
+    setQuery(q);
     try {
       const u = new URL(window.location.href);
-      if (id) u.searchParams.set('section', id);
-      else u.searchParams.delete('section');
-      window.history.replaceState(null, '', u);
+      for (const [k, v] of Object.entries(q)) {
+        if (v) u.searchParams.set(k, v);
+        else u.searchParams.delete(k);
+      }
+      window.history.pushState(null, '', u);
     } catch {
       // Pas de navigateur : rien à mémoriser.
     }
@@ -254,36 +273,25 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
       }
     >
       <Suspense fallback={null}>
-        <SectionFromQuery onSection={setSection} />
+        <SectionFromQuery onQuery={setQuery} />
       </Suspense>
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <nav
-          style={{
-            width: 230,
-            flexShrink: 0,
-            borderRight: '1px solid var(--bd-solid)',
-            background: 'var(--bg-solid)',
-            padding: '1.25rem 0.875rem',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-          aria-label="Sections de l’Agence hub"
-        >
+      <div className="ag-layout">
+        <nav className="ag-nav" aria-label="Sections de l’Agence hub">
           <button
             type="button"
             className="lbl"
-            onClick={() => go(null)}
+            onClick={() => go({ section: null })}
             style={{ padding: '0 0.7rem', marginBottom: 10, background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
           >
             Agence hub
           </button>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div className="ag-nav-list">
             {SECTIONS.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 className={`set-nav${section === s.id ? ' on' : ''}`}
-                onClick={() => go(s.id)}
+                onClick={() => go({ section: s.id })}
                 aria-current={section === s.id ? 'page' : undefined}
               >
                 <s.Icon size={15} />
@@ -291,7 +299,7 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
               </button>
             ))}
           </div>
-          <div style={{ marginTop: 'auto', padding: '0.875rem', borderRadius: 12, background: 'var(--bg-muted)' }}>
+          <div className="ag-nav-foot">
             <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
               <div
                 aria-hidden="true"
@@ -328,20 +336,30 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
             </Link>
           </div>
         </nav>
-        <div className="sc" style={{ flex: 1, overflowY: 'auto', padding: '1.75rem 2rem' }}>
+        <div className="sc ag-main">
           <div style={{ maxWidth: wide ? 1320 : 900, margin: '0 auto' }}>
             <div className="crumb">
               <span>HuntPilote</span>
               <span>›</span>
-              <button type="button" onClick={() => go(null)}>Agence hub</button>
+              <button type="button" onClick={() => go({ section: null })}>Agence hub</button>
               {activeLabel && (
                 <>
                   <span>›</span>
-                  <span>{activeLabel}</span>
+                  {section === 'offres' && query.offre ? (
+                    <button type="button" onClick={() => go({ section: 'offres' })}>{activeLabel}</button>
+                  ) : (
+                    <span>{activeLabel}</span>
+                  )}
+                </>
+              )}
+              {section === 'offres' && query.offre && (
+                <>
+                  <span>›</span>
+                  <span>{openedOffer?.name ?? 'Nouvelle offre'}</span>
                 </>
               )}
             </div>
-            {!section && <HubHome agency={agency} onOpen={go} />}
+            {!section && <HubHome agency={agency} onOpen={(id) => go({ section: id })} />}
             {section === 'profil' && <AgencePanel agency={agency.agency} canEdit={mine.includes('manage_agency')} />}
             {section === 'equipe' && (
               <EquipePanel
@@ -351,8 +369,24 @@ export function AgenceHubView({ session, agency }: { session: Session | null; ag
                 canManage={mine.includes('manage_team')}
               />
             )}
-            {(section === 'catalogue' || section === 'offres') && (
-              <CataloguePanel items={agency.items} offers={agency.offers} />
+            {section === 'catalogue' && (
+              <CataloguePanel
+                items={agency.items}
+                offers={agency.offers}
+                canManage={mine.includes('manage_catalogue')}
+                openArticleId={query.article}
+                onOpenOffer={(id) => go({ section: 'offres', offre: id })}
+              />
+            )}
+            {section === 'offres' && (
+              <OffresPanel
+                offers={agency.offers}
+                items={agency.items}
+                canManage={mine.includes('manage_catalogue')}
+                openId={query.offre}
+                onOpen={(id) => go({ section: 'offres', offre: id })}
+                onOpenArticle={(id) => go({ section: 'catalogue', article: id })}
+              />
             )}
             {section === 'modeles' && (
               <ComingSection

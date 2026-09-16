@@ -41,7 +41,7 @@ phase 1, ne disait rien de ce qui est urgent à l'échelle du portefeuille.
 | 6 — Contenu et socle | 4 | ✅ intégrée |
 | 7 — CRM avancé | 5 | ✅ intégrée |
 | 8 — Dashboard enrichi | 1 | ✅ intégrée |
-| 9 — L'Agence hub | 5 sessions, 13 écrans | 🎨 9.1–9.4 conçues, à intégrer · 9.5 à concevoir |
+| 9 — L'Agence hub | 5 sessions, 13 écrans | ✅ 9.1 et 9.2 intégrées · 🎨 9.3–9.4 conçues, à intégrer · 9.5 à concevoir |
 
 ---
 
@@ -266,8 +266,8 @@ section 3) : cette phase dessine les écrans qui manquent.
 
 | Session | Écrans | Fichier | État |
 |---|---|---|---|
-| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | 🎨 conçu, à intégrer |
-| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | 🎨 conçu, à intégrer |
+| 9.1 | Cadre de l'Agence hub · Profil · Équipe | [`9-1-agence-hub-cadre.md`](9-1-agence-hub-cadre.md) | ✅ intégré |
+| 9.2 | Catalogue · constructeur d'offre | [`9-2-catalogue-offres.md`](9-2-catalogue-offres.md) | ✅ intégré |
 | 9.3 | Modèles de documents · éditeur d'un modèle | [`9-3-modeles-documents.md`](9-3-modeles-documents.md) | 🎨 conçu, à intégrer |
 | 9.4 | Créer un document · le document · liste des documents | [`9-4-generateur-documents.md`](9-4-generateur-documents.md) | 🎨 conçu, à intégrer |
 | 9.5 | Joindre un appel · le brief de découverte · la source « Depuis le brief » | [`9-5-appel-decouverte.md`](9-5-appel-decouverte.md) | 📐 à concevoir |
