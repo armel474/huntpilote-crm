@@ -269,6 +269,7 @@ export function DealPanel({
   onWin,
   onLose,
   onLog,
+  onNewDocument,
 }: {
   deal: Deal | null;
   owners: Owners;
@@ -280,6 +281,8 @@ export function DealPanel({
   onWin: (id: string) => void;
   onLose: (id: string, reason: string, note: string) => void;
   onLog: (id: string, exchange: Exchange) => void;
+  /** Ouvrir le panneau « Nouveau document » (9.4) pour cette opportunité — absent en démonstration. */
+  onNewDocument?: (deal: Deal) => void;
 }) {
   const [mode, setMode] = useState<null | 'log' | 'won' | 'lost'>(null);
 
@@ -536,27 +539,50 @@ export function DealPanel({
             </div>
           </Section>
 
-          <Section title="Documents" sub={d.docs.length ? undefined : 'Aucun devis ni proposition pour l’instant.'}>
+          <Section
+            title="Documents"
+            sub={d.docs.length ? undefined : 'Aucun devis ni proposition pour l’instant.'}
+            right={
+              onNewDocument ? (
+                <button className="btn-out" type="button" style={{ fontSize: '0.625rem', padding: '0.3rem 0.65rem' }} onClick={() => onNewDocument(deal)}>
+                  <IcoPlus size={11} />
+                  Nouveau document
+                </button>
+              ) : undefined
+            }
+          >
             {d.docs.length === 0 ? (
               <div className="empty" style={{ textAlign: 'left' }}>
                 Rien à montrer. Le premier document arrive avec la proposition.
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {d.docs.map((doc) => (
-                  <div key={doc.name} className="dl-doc">
-                    <span className="dl-doc-i">
-                      <IcoDoc size={12} />
-                    </span>
-                    <span style={{ flex: 1, minWidth: 0 }}>
-                      <span className="dl-doc-t">{doc.name}</span>
-                      <span className="dl-doc-m">
-                        {doc.kind} · {doc.at}
-                        {doc.auto ? ' · généré depuis Organic Research' : ''}
+                {d.docs.map((doc) => {
+                  const body = (
+                    <>
+                      <span className="dl-doc-i">
+                        <IcoDoc size={12} />
                       </span>
-                    </span>
-                  </div>
-                ))}
+                      <span style={{ flex: 1, minWidth: 0 }}>
+                        <span className="dl-doc-t">{doc.name}</span>
+                        <span className="dl-doc-m">
+                          {doc.kind}
+                          {doc.status ? ` · ${doc.status}` : ''} · {doc.at}
+                          {doc.auto ? ' · généré depuis Organic Research' : ''}
+                        </span>
+                      </span>
+                    </>
+                  );
+                  return doc.href ? (
+                    <Link key={doc.href} href={doc.href} className="dl-doc" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {body}
+                    </Link>
+                  ) : (
+                    <div key={doc.name} className="dl-doc">
+                      {body}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </Section>

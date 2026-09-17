@@ -10,8 +10,8 @@
  *
  * Profil, Équipe et Catalogue viennent tels quels de `/parametres`, qui ne
  * garde que ce qui est réglage. Catalogue et Offres s'éditent (session 9.2).
- * Modèles et Documents attendent les sessions 9.3 et 9.4 : leur carte le
- * dit, avec ce que la base contient déjà.
+ * Modèles (9.3) s'éditent ici ; Documents (9.4) liste tout ce qui a été
+ * produit — la création part d'une fiche client ou d'une opportunité.
  *
  * L'adresse porte l'état : `?section=offres&offre=<id>` ouvre le
  * constructeur, `?section=catalogue&article=<id>` ouvre un article,
@@ -23,6 +23,7 @@ import { useSearchParams } from 'next/navigation';
 import { AgencePanel } from '@/app/agence/AgencePanel';
 import { CataloguePanel } from '@/app/agence/CataloguePanel';
 import { EquipePanel } from '@/app/agence/EquipePanel';
+import { DocumentsPanel } from '@/app/agence/DocumentsPanel';
 import { ModelesPanel } from '@/app/agence/ModelesPanel';
 import { OffresPanel } from '@/app/agence/OffresPanel';
 import { SectionHead } from '@/app/agence/bits';
@@ -39,6 +40,7 @@ import {
   type IconProps,
 } from '@/components/ui/Icons';
 import type { Session } from '@/lib/auth';
+import type { DocumentsList } from '@/lib/queries/documents';
 import type { ModelesData } from '@/lib/queries/modeles';
 import { ROLE_LABEL } from '@/lib/format';
 import { permissionsOf, type AgencyData } from '@/lib/queries/agence';
@@ -222,26 +224,7 @@ function HubHome({ agency, onOpen }: { agency: AgencyData; onOpen: (id: HubSecti
   );
 }
 
-/** Une section conçue (9.2 à 9.4) mais pas encore intégrée : dire ce que la base contient, et ce qui vient. */
-function ComingSection({ title, sub, lines, session }: { title: string; sub: string; lines: string[]; session: string }) {
-  return (
-    <div>
-      <SectionHead title={title} sub={sub} />
-      <div className="card" style={{ padding: '1.25rem' }}>
-        <ul style={{ margin: 0, paddingLeft: 18, fontSize: '0.8125rem', color: 'var(--fg2)', lineHeight: 1.7 }}>
-          {lines.map((l) => (
-            <li key={l}>{l}</li>
-          ))}
-        </ul>
-        <p style={{ fontSize: '0.75rem', color: 'var(--fg4)', marginTop: 12 }}>
-          L&apos;écran est conçu (session {session}) et s&apos;intègre à l&apos;étape suivante du plan de la phase 9.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-export function AgenceHubView({ session, agency, modeles }: { session: Session | null; agency: AgencyData; modeles: ModelesData }) {
+export function AgenceHubView({ session, agency, modeles, documents }: { session: Session | null; agency: AgencyData; modeles: ModelesData; documents: DocumentsList }) {
   const [query, setQuery] = useState<HubQuery>({ section: null, offre: null, article: null, modele: null });
   const section = query.section;
   const mine = permissionsOf(agency.members, session?.memberId);
@@ -406,18 +389,7 @@ export function AgenceHubView({ session, agency, modeles }: { session: Session |
                 onOpen={(id) => go({ section: 'modeles', modele: id })}
               />
             )}
-            {section === 'documents' && (
-              <ComingSection
-                title="Documents"
-                sub="Tout ce qui a été produit, toutes sortes confondues : référence, client, montant, statut."
-                session="9.4"
-                lines={[
-                  `${agency.hub.quotesPending} devis en attente de réponse.`,
-                  `${agency.hub.invoicesLate} facture${agency.hub.invoicesLate > 1 ? 's' : ''} en retard.`,
-                  'La création d’un document part d’une fiche client ou d’une opportunité du pipeline, là où sont les données.',
-                ]}
-              />
-            )}
+            {section === 'documents' && <DocumentsPanel data={documents} signedIn={session?.kind === 'membre'} />}
           </div>
         </div>
       </div>

@@ -2,7 +2,9 @@
 
 import { Badge, Lbl } from '@/components/ui/Atoms';
 import { IcoCard, IcoCheck, IcoDl, IcoEye, IcoRepeat } from '@/components/ui/Icons';
+import { DocumentsSection } from '@/components/fiche/DocumentsSection';
 import { QuotesSection } from '@/components/fiche/QuotePanels';
+import type { DocumentRow } from '@/lib/queries/documents';
 import {
   BILLING_STATS,
   CLIENT,
@@ -24,11 +26,16 @@ export function PanelContrat({
   contactsById,
   onOpenQuote,
   onNewQuote,
+  documents,
+  onNewDocument,
 }: {
   quotes: Quote[];
   contactsById: Record<string, Contact>;
   onOpenQuote: (id: string) => void;
   onNewQuote: () => void;
+  /** Les documents réels du compte (9.4) — avec `onNewDocument`, ils remplacent le devis de démonstration. */
+  documents?: DocumentRow[];
+  onNewDocument?: () => void;
 }) {
   const acceptedQuotes = quotes.filter((q) => q.statut === 'accepte' && q.contratRef);
   return (
@@ -351,7 +358,11 @@ export function PanelContrat({
         </div>
       </section>
 
-      <QuotesSection quotes={quotes} contactsById={contactsById} onOpen={onOpenQuote} onNew={onNewQuote} />
+      {onNewDocument ? (
+        <DocumentsSection documents={documents ?? []} onNew={onNewDocument} />
+      ) : (
+        <QuotesSection quotes={quotes} contactsById={contactsById} onOpen={onOpenQuote} onNew={onNewQuote} />
+      )}
     </div>
   );
 }

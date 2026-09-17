@@ -3,7 +3,7 @@ import { supabaseConfigured } from '@/lib/supabase/config';
 import { updateSession } from '@/lib/supabase/middleware';
 
 /** Les chemins accessibles sans session : la connexion et ce qu'un client reçoit par lien. */
-const PUBLIC_PREFIXES = ['/connexion', '/r/', '/audit-prospect/', '/portail', '/api/auth'];
+const PUBLIC_PREFIXES = ['/connexion', '/r/', '/d/', '/audit-prospect/', '/portail', '/api/auth'];
 
 export async function middleware(request: NextRequest) {
   // Sans variables d'environnement, il n'y a ni session à rafraîchir ni

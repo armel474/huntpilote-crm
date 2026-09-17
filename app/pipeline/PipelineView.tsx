@@ -8,6 +8,7 @@ import { logExchange, loseDeal, moveDeal, winDeal, type PipelineResult } from '@
 import { CRMHeader } from '@/components/shell/CRMHeader';
 import { Board } from '@/components/pipeline/Board';
 import { DealPanel } from '@/components/pipeline/DealPanel';
+import { NewDocumentSheet, type NewDocContext } from '@/app/documents/NewDocumentSheet';
 import { Lbl } from '@/components/ui/Atoms';
 import { DemoOnly } from '@/components/ui/Demo';
 import { EmptyInitial, SkelKpiRow, SkelLine } from '@/components/ui/States';
@@ -327,6 +328,8 @@ export function PipelineView({
   const [view, setView] = useState<'kanban' | 'liste'>('kanban');
   const [openId, setOpenId] = useState<string | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
+  /** Le panneau « Nouveau document » (9.4), ouvert pour une opportunité — seulement en ligne. */
+  const [newDoc, setNewDoc] = useState<NewDocContext | null>(null);
 
   const setScenario = (s: PipeScenarioId) => {
     setScenarioRaw(s);
@@ -557,7 +560,19 @@ export function PipelineView({
         onWin={handleWin}
         onLose={handleLose}
         onLog={handleLog}
+        onNewDocument={
+          live
+            ? (deal) =>
+                setNewDoc({
+                  clientId: deal.clientId,
+                  clientName: deal.company,
+                  dealId: deal.id,
+                  defaultKind: deal.stage === 'negociation' ? 'devis' : 'proposition',
+                })
+            : undefined
+        }
       />
+      {newDoc && <NewDocumentSheet context={newDoc} onClose={() => setNewDoc(null)} />}
     </AppShell>
   );
 }

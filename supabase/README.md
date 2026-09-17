@@ -33,6 +33,10 @@ Le schéma PostgreSQL qui remplacera les constantes de `lib/data/*.ts`.
 | `0021_stockage_public.sql` | Seau `public-assets` : logo et photos, lecture publique, écriture cloisonnée par agence (ne s'exécute que si la plateforme fournit `storage`) | ✅ appliquée |
 | `0022_livrables_offre.sql` | `offer_deliverable_template` (ce qu'une offre promet, distinct des tâches), taux de dépassement horaire sur `offer`, « Gérer le catalogue » étendu aux lignes, segments, bénéfices, tâches et livrables d'une offre | ✅ appliquée |
 | `0023_corps_des_modeles.sql` | `document_template.body_html` (le HTML d'un modèle vit dans la base) et `document_template_section` (les sections rédigées par client : clé, guide, longueur, optionnelle, IA, clause verrouillée) | ✅ appliquée |
+| `0024_documents_generes.sql` | Les documents générés (9.4) : `quote.kind` (devis ou proposition), `quote.deal_id`, nature et récurrence des lignes, taux de taxes figés, `rendered_html` et jeton d'accès sur `quote`, `contract_document` et `invoice` ; `document_section` (le texte rédigé par client), `document_event` (le journal), `document_signature` (nom tapé, date, IP) ; gel des lignes et sections après envoi ; envoi refusé sans droit ou sans numéros de taxes ; `document_by_token` et `decide_document_by_token` pour le lien du client (sans compte) | ✅ appliquée |
+| `0025_complements_document.sql` | `quote.extras` : les balises propres à un document (`brief.*`…), saisies à la main dans le brouillon | ✅ appliquée |
+| `0026_numerotation_exposee.sql` | `public.next_document_ref(template)` : la numérotation d'un document, exposée aux membres de l'agence propriétaire du modèle | ✅ appliquée |
+| `0027_numerotation_privee.sql` | Retire à `anon` le droit d'appeler `next_document_ref` (EXECUTE accordé à `public` par défaut, signalé par l'audit) | ✅ appliquée |
 | `seed.sql` — l'agence, son catalogue, son portefeuille | ✅ passé |
 | `seed_02_pipeline.sql` — opportunités, contacts de prospects, scores d'audit, échanges, appel découverte fictif, numéros de taxes de démonstration | ✅ passé · rejouable |
 | `seed_03_maintenance.sql` — les trois packs de maintenance (Essentiel, Croissance, Partenaire Stratégique) et leurs services, les livrables promis par chaque offre | ✅ passé · rejouable |
@@ -46,7 +50,7 @@ un aller-retour), `lib/queries/` (les lectures, par écran), et
 `lib/supabase/database.types.ts`, généré depuis le schéma — à régénérer
 après chaque migration. `/parametres`, `/travail`, `/clients` et `/pipeline` sont lus dans la base — le pipeline y écrit aussi (étape, victoire, perte, échange consigné) ;
 `docs/mise-en-service.md` liste les quatre réglages de console qui restent. Le schéma en ligne correspond exactement à celui validé en local, sur
-les huit compteurs : 110 tables, 142 politiques, 23 vues — toutes en
+les huit compteurs : 114 tables, 150 politiques, 23 vues — toutes en
 `security_invoker` —, 181 contraintes de vérification, 47 déclencheurs, 50
 vocabulaires, 40 fonctions, aucune table sans RLS.
 
@@ -154,11 +158,12 @@ psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/13_regles_profil.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/14_regles_profil_complet.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/15_regles_livrables_offre.sql
 psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/16_regles_corps_modeles.sql
+psql -q -d hp_test -v ON_ERROR_STOP=1 -f supabase/tests/17_regles_documents_generes.sql
 ```
 
-Les seize fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
+Les dix-sept fichiers s'enchaînent sur **la même base** : tous réutilisent le jeu
 d'essai monté par `01` (agence HuntPilote, agence rivale, compte Acme, contact
-Sophie). **189 assertions** au total.
+Sophie). **212 assertions** au total.
 
 Les fichiers `13` à `15` montent des données réelles — les six offres telles
 qu'elles sont vendues, et le mandat SHGM tel qu'il est signé — parce que c'est

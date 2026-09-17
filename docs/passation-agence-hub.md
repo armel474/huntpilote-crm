@@ -23,11 +23,11 @@ interface, documentation, commentaires, messages de commit.
 
 | Couche | État |
 |---|---|
-| Modèle de données | Complet : 24 fichiers de migration (jusqu'à `0023_corps_des_modeles.sql`), 111 tables, 23 vues, 144 politiques RLS, 189 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. |
+| Modèle de données | Complet : 28 fichiers de migration (jusqu'à `0027_numerotation_privee.sql`), 114 tables, 23 vues, 150 politiques RLS, 212 assertions de test. Voir `supabase/README.md` et `docs/modele-donnees.md`. Les migrations 0024 à 0027 (16 sept.) portent les **documents générés** : sorte et opportunité d'un devis, nature et récurrence des lignes, taux figés, HTML rendu et jeton d'accès, sections rédigées, journal, signature simple, compléments, numérotation exposée aux membres seulement. |
 | Semis | `supabase/seed.sql` : l'agence, 39 articles de catalogue, 6 offres réelles, 4 clients et 4 prospects fictifs, 3 abonnements qui engendrent 115 tâches, le contrat SHGM n° 2026-007. `seed_02_pipeline.sql` : le pipeline et l'appel découverte fictif. `seed_03_maintenance.sql` (16 sept.) : les trois **packs de maintenance**, dix services de plus (49 articles, 9 offres) et les livrables promis par chaque offre. `seed_04_gabarits.sql` (16 sept., produit par `scripts/convertir-gabarits.py`) : les **corps des six modèles de documents** — les quatre gabarits réels convertis à la syntaxe canonique, plus le devis et la facture — et leurs sections. |
 | Connexion | Mot de passe, lien magique et Google fonctionnent en production. Rattachement d'une invitation à la première connexion, par courriel. |
-| Écrans lus dans la base | `/agence` (profil, équipe, catalogue, offres, modèles de documents), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre). Les autres écrans — la fiche client en premier — tournent encore sur les fichiers de démonstration de `lib/data/`. |
-| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`) ; **catalogue** (créer, modifier, archiver, réordonner) et **constructeur d'offres** — identité, prix, contenu avec offres incluses et groupes d'options, bénéfices, tâches engagées, livrables promis (`app/agence/catalogue-actions.ts`, étape 3, 16 septembre) ; **modèles de documents** — réglages, textes, corps HTML, sections, modèle par défaut, création vierge ou par copie (`app/agence/modeles-actions.ts`, étape 4, 16 septembre). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). |
+| Écrans lus dans la base | `/agence` (profil, équipe, catalogue, offres, modèles de documents, **documents**), `/parametres`, `/travail`, **`/clients`** et **`/pipeline`** (étape 1, 14 septembre), **`/documents/[id]`** (un document produit) et **`/d/[jeton]`** (le lien remis au client, sans compte) — étape 5, 16 septembre. La fiche client reste sur les fichiers de démonstration de `lib/data/`, mais quand son slug est celui d'un compte réel, l'onglet « Contrat & facturation » liste les documents réels du compte et ouvre « Nouveau document ». Le panneau de deal du pipeline liste les propositions et devis rattachés à l'opportunité. Les autres écrans tournent encore sur `lib/data/`. |
+| Écrans qui écrivent dans la base | `/agence` : profil de l'agence (logo, NEQ, représentant, district, instructions de paiement compris), invitation, fiche membre avec photo, droits nominatifs (`app/agence/actions.ts`) ; **catalogue** (créer, modifier, archiver, réordonner) et **constructeur d'offres** — identité, prix, contenu avec offres incluses et groupes d'options, bénéfices, tâches engagées, livrables promis (`app/agence/catalogue-actions.ts`, étape 3, 16 septembre) ; **modèles de documents** — réglages, textes, corps HTML, sections, modèle par défaut, création vierge ou par copie (`app/agence/modeles-actions.ts`, étape 4, 16 septembre). `/pipeline` : étape, victoire, perte, échange consigné (`app/pipeline/actions.ts`). **Générateur de documents** (`app/documents/actions.ts`, étape 5, 16 septembre) : brouillon depuis une offre (groupes d'options tranchés), un document existant (totalité ou acompte de 50 %) ou des lignes libres ; retouche du brouillon (objet, contact, dates, lignes, sections, compléments des balises vides) ; envoi qui rend et fige le HTML, numérote une version, dépose le lien dans le fil du portail ou prépare le courriel ; relance, accepté, refusé, payée, annulée ; « Corriger » qui rouvre un brouillon ; et, par le lien `/d/[jeton]`, l'acceptation ou le refus du client (nom tapé, date, IP). |
 | Stockage | Seau `public-assets` (migration 0021), public en lecture, écriture cloisonnée par agence. Logo et photos s'y téléversent depuis l'écran. |
 | Verrou d'accès | `AUTH_REQUIRED=on` n'est pas encore posé sur Vercel. Tant qu'il ne l'est pas, les pages restent visibles sans connexion (vides, mais visibles). |
 
@@ -236,7 +236,7 @@ production.
 | 2 | ✅ **Fait (14 sept.)** — `/agence` avec navigation par section et accueil en cartes ; Profil, Équipe et Catalogue déplacés, `/parametres` allégé (anciens liens redirigés) ; téléversement du logo et des photos (Storage) ; NEQ, représentant, district, instructions de paiement (migration 0020). Offres, Modèles, Documents : cartes d'attente avec les comptes réels. | moyenne | 0 |
 | 3 | ✅ **Fait (16 sept.)** — Catalogue modifiable (panneau latéral, glissement pour réordonner, archivage avec avertissement, « où l'article est utilisé ») ; constructeur d'offres en deux colonnes avec aperçu partagé (`OfferCard`) ; migration 0022 (`offer_deliverable_template`, taux de dépassement, droit « Gérer le catalogue » sur tout ce qui compose une offre) ; `seed_03_maintenance.sql` (packs de maintenance, livrables promis). L'adresse porte l'état : `?section=offres&offre=<id>`. | grande | 2 |
 | 4 | ✅ **Fait (16 sept.)** — Modèles de documents : liste par sorte, éditeur en trois colonnes (réglages et sections, corps HTML avec numéros de ligne, aperçu rempli sur des données réelles de la base, réduit à la largeur du cadre) ; `lib/documents/balises.ts` (dictionnaire, analyse, conversion des formes héritées, rendu avec blocs répétés, conditionnels et inversés) ; migration 0023 (`body_html`, `document_template_section`) ; `seed_04_gabarits.sql` produit par `scripts/convertir-gabarits.py` — six corps semés, tous complets. L'adresse porte l'état : `?section=modeles&modele=<id>`. | grande | 2, gabarits |
-| 5 | Intégrer 9.4 : `quote.kind`, `deal_id`, récurrence et nature des lignes, taux figés ; panneau de création ; **mode composition** du brouillon ; envoi et figeage ; versions ; liste ; portail (acceptation, signature simple). Sans IA. | grande | 3, 4 |
+| 5 | ✅ **Fait (16 sept.)** — Générateur de documents : migrations 0024 à 0027 ; `lib/documents/donnees.ts` (totaux, blocs de lignes, données d'un document réel) et `lib/queries/documents.ts` ; panneau « Nouveau document » en quatre étapes depuis une fiche client ou un deal (offre avec options, document existant, lignes libres ; aperçu rendu par le serveur avec balises vides signalées) ; `/documents/[id]` en deux colonnes avec **mode composition** du brouillon (lignes, sections, compléments), envoi qui fige, versions consultables, chaîne, journal, lien du client ; liste « Documents » avec ses manques ; `/d/[jeton]` (acceptation ou refus, signature simple). Contrat, annexe et avenant attendent l'étape 7 (« Créer la suite »). Sans IA. | grande | 3, 4 |
 | 6 | Concevoir puis intégrer 9.5 : appels, transcriptions, brief manuel ou extrait, source « Depuis le brief », suggestion d'offre, sections proposées à côté du texte. Routes serveur IA, `ai_usage`. | grande | 5, brief 9.5 conçu |
 | 7 | « Créer la suite » : contrat, Annexe A, facture d'acompte, tâches rattachées au mandat (migration d'unicité par origine d'abord). | grande | 5 |
 
@@ -287,27 +287,25 @@ précis vaut mieux qu'une liste de souhaits.
 > exception. Les maquettes de la phase 9 sont dans
 > `design/HuntPilote - CRM SEO_phase 9/` et les gabarits réels dans
 > `design/Documentations DigiHunt/` et `design/Modèle de contrat DigiHunt/`.
-> Les étapes 1 à 4 de la section 5 sont faites. Commence par l'étape 5 :
-> intégrer la maquette 9.4 — le générateur de documents. D'abord la
-> migration : `quote.kind` (`devis` | `proposition`), `quote.deal_id`,
-> `contract.source_quote_id`, la récurrence et la nature des lignes
-> (ponctuelle, récurrente, offerte, informative), les taux de taxes figés
-> sur le document, `rendered_html` sur `quote`, `contract_document` et
-> `invoice`, et la table `document_section` (le texte rédigé par client,
-> section par section, d'après `document_template_section`). Puis les
-> écrans : le panneau « Nouveau document » depuis une fiche client ou une
-> opportunité (sorte, modèle, offre, lignes), le **mode composition** du
-> brouillon (les sections à côté du rendu, sans IA pour l'instant), l'envoi
-> qui fige le HTML rendu, les versions, la liste « Documents » de l'Agence
-> hub, et le portail (acceptation, signature simple). Le rendu passe par
-> `lib/documents/balises.ts` (`renderTemplate`) et `lib/documents/apercu.ts`
-> ; les données d'un document se construisent comme `loadSamples` dans
-> `lib/queries/modeles.ts`, à partir des vraies lignes. Réutilise
-> `app/agence/*` — l'Agence hub, ses sections, `bits.tsx`,
-> `action-base.ts`, `ModelEditor.tsx` pour l'aperçu — au lieu de le
-> réécrire. Valide toute migration en local avant de l'appliquer en ligne,
-> vérifie au navigateur en thème clair et sombre, déploie, et dis-moi ce
-> que je dois vérifier en production avant de passer à l'étape suivante.
+> Les étapes 1 à 5 de la section 5 sont faites. Commence par l'étape 6 :
+> la session 9.5 — l'appel découverte. D'abord la **conception**, dans
+> Claude Design, à partir du brief `docs/briefs/9-5-appel-decouverte.md` et
+> de la transcription anonymisée fournie (`docs/fixtures/` en attendant la
+> vraie) ; puis l'**intégration** : joindre un appel ou une transcription à
+> une opportunité, le brief de découverte (manuel ou extrait), la source
+> « Depuis le brief » dans le panneau « Nouveau document »
+> (`app/documents/NewDocumentSheet.tsx`), la suggestion d'offre, les
+> sections proposées à côté du texte dans le mode composition de
+> `app/documents/[id]/DocumentView.tsx`. Les routes serveur IA passent par
+> `ai_usage` ; une section écrite par l'IA reste `ai_generated` tant qu'elle
+> n'est pas relue (`document_section.reviewed_at`), et l'envoi la refuse.
+> Les balises `brief.*` d'un document se remplissent aujourd'hui à la main
+> dans `quote.extras` : le brief doit les alimenter. Réutilise
+> `lib/documents/donnees.ts` (données d'un document), `lib/queries/documents.ts`
+> et `app/documents/actions.ts` — le rendu, l'envoi et le journal existent.
+> Valide toute migration en local avant de l'appliquer en ligne, vérifie au
+> navigateur en thème clair et sombre, déploie, et dis-moi ce que je dois
+> vérifier en production avant de passer à l'étape suivante.
 > Ne me demande pas de permission pour les actions réversibles : le mode
 > automatique est activé. En fin d'étape, mets à jour la section 1 et la
 > section 8 de ce document.
