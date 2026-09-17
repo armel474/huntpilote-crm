@@ -2176,6 +2176,7 @@ export type Database = {
           signed_by_contact_id: string | null
           signed_by_member_id: string | null
           signed_on: string | null
+          source_quote_id: string | null
           started_on: string | null
           status: Database["public"]["Enums"]["contract_status"]
           title: string
@@ -2198,6 +2199,7 @@ export type Database = {
           signed_by_contact_id?: string | null
           signed_by_member_id?: string | null
           signed_on?: string | null
+          source_quote_id?: string | null
           started_on?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           title: string
@@ -2220,6 +2222,7 @@ export type Database = {
           signed_by_contact_id?: string | null
           signed_by_member_id?: string | null
           signed_on?: string | null
+          source_quote_id?: string | null
           started_on?: string | null
           status?: Database["public"]["Enums"]["contract_status"]
           title?: string
@@ -2268,6 +2271,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_effective_permission"
             referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "contract_source_quote_id_fkey"
+            columns: ["source_quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_source_quote_id_fkey"
+            columns: ["source_quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote_total"
+            referencedColumns: ["quote_id"]
           },
         ]
       }
@@ -2740,10 +2757,282 @@ export type Database = {
           },
         ]
       }
+      document_event: {
+        Row: {
+          agency_id: string
+          contact_id: string | null
+          contract_id: string | null
+          id: string
+          invoice_id: string | null
+          kind: Database["public"]["Enums"]["document_event_kind"]
+          member_id: string | null
+          note: string | null
+          occurred_at: string
+          quote_id: string | null
+          version: number | null
+        }
+        Insert: {
+          agency_id: string
+          contact_id?: string | null
+          contract_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          kind: Database["public"]["Enums"]["document_event_kind"]
+          member_id?: string | null
+          note?: string | null
+          occurred_at?: string
+          quote_id?: string | null
+          version?: number | null
+        }
+        Update: {
+          agency_id?: string
+          contact_id?: string | null
+          contract_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          kind?: Database["public"]["Enums"]["document_event_kind"]
+          member_id?: string | null
+          note?: string | null
+          occurred_at?: string
+          quote_id?: string | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_event_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agency"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contract"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contract_financials"
+            referencedColumns: ["contract_id"]
+          },
+          {
+            foreignKeyName: "document_event_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoice"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_total"
+            referencedColumns: ["invoice_id"]
+          },
+          {
+            foreignKeyName: "document_event_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "agency_member"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_effective_permission"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "document_event_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_event_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote_total"
+            referencedColumns: ["quote_id"]
+          },
+        ]
+      }
+      document_section: {
+        Row: {
+          ai_generated: boolean
+          body: string | null
+          created_at: string
+          enabled: boolean
+          id: string
+          key: string
+          locked: boolean
+          max_chars: number | null
+          optional: boolean
+          position: number
+          quote_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean
+          body?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          key: string
+          locked?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position: number
+          quote_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean
+          body?: string | null
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          key?: string
+          locked?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position?: number
+          quote_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_section_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_section_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote_total"
+            referencedColumns: ["quote_id"]
+          },
+          {
+            foreignKeyName: "document_section_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "agency_member"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_section_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "member_effective_permission"
+            referencedColumns: ["member_id"]
+          },
+        ]
+      }
+      document_signature: {
+        Row: {
+          contact_id: string | null
+          contract_id: string | null
+          id: string
+          ip: string | null
+          quote_id: string | null
+          rendered_html_sha256: string | null
+          signed_at: string
+          typed_name: string
+          user_agent: string | null
+          version: number
+        }
+        Insert: {
+          contact_id?: string | null
+          contract_id?: string | null
+          id?: string
+          ip?: string | null
+          quote_id?: string | null
+          rendered_html_sha256?: string | null
+          signed_at?: string
+          typed_name: string
+          user_agent?: string | null
+          version?: number
+        }
+        Update: {
+          contact_id?: string | null
+          contract_id?: string | null
+          id?: string
+          ip?: string | null
+          quote_id?: string | null
+          rendered_html_sha256?: string | null
+          signed_at?: string
+          typed_name?: string
+          user_agent?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_signature_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contact"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_signature_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contract"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_signature_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contract_financials"
+            referencedColumns: ["contract_id"]
+          },
+          {
+            foreignKeyName: "document_signature_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_signature_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quote_total"
+            referencedColumns: ["quote_id"]
+          },
+        ]
+      }
       document_template: {
         Row: {
           active: boolean
           agency_id: string
+          body_html: string | null
           created_at: string
           footer: string | null
           id: string
@@ -2762,6 +3051,7 @@ export type Database = {
         Insert: {
           active?: boolean
           agency_id: string
+          body_html?: string | null
           created_at?: string
           footer?: string | null
           id?: string
@@ -2780,6 +3070,7 @@ export type Database = {
         Update: {
           active?: boolean
           agency_id?: string
+          body_html?: string | null
           created_at?: string
           footer?: string | null
           id?: string
@@ -2801,6 +3092,56 @@ export type Database = {
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "agency"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_template_section: {
+        Row: {
+          ai_assist: boolean
+          created_at: string
+          default_body: string | null
+          id: string
+          key: string
+          locked_by_agency: boolean
+          max_chars: number | null
+          optional: boolean
+          position: number
+          template_id: string
+          title: string
+        }
+        Insert: {
+          ai_assist?: boolean
+          created_at?: string
+          default_body?: string | null
+          id?: string
+          key: string
+          locked_by_agency?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position?: number
+          template_id: string
+          title: string
+        }
+        Update: {
+          ai_assist?: boolean
+          created_at?: string
+          default_body?: string | null
+          id?: string
+          key?: string
+          locked_by_agency?: boolean
+          max_chars?: number | null
+          optional?: boolean
+          position?: number
+          template_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_template_section_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_template"
             referencedColumns: ["id"]
           },
         ]
@@ -3353,6 +3694,7 @@ export type Database = {
       }
       invoice: {
         Row: {
+          access_token: string | null
           agency_id: string
           client_id: string
           created_at: string
@@ -3362,12 +3704,16 @@ export type Database = {
           paid_on: string | null
           period_month: string
           ref: string
+          rendered_html: string | null
           sent_at: string | null
           status: Database["public"]["Enums"]["invoice_status"]
           template_id: string | null
+          tps_rate: number | null
+          tvq_rate: number | null
           updated_at: string
         }
         Insert: {
+          access_token?: string | null
           agency_id: string
           client_id: string
           created_at?: string
@@ -3377,12 +3723,16 @@ export type Database = {
           paid_on?: string | null
           period_month: string
           ref: string
+          rendered_html?: string | null
           sent_at?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           template_id?: string | null
+          tps_rate?: number | null
+          tvq_rate?: number | null
           updated_at?: string
         }
         Update: {
+          access_token?: string | null
           agency_id?: string
           client_id?: string
           created_at?: string
@@ -3392,9 +3742,12 @@ export type Database = {
           paid_on?: string | null
           period_month?: string
           ref?: string
+          rendered_html?: string | null
           sent_at?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           template_id?: string | null
+          tps_rate?: number | null
+          tvq_rate?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -4899,56 +5252,83 @@ export type Database = {
       quote: {
         Row: {
           accepted_on: string | null
+          access_token: string | null
           agency_id: string
           client_id: string
           conditions: string | null
           contact_id: string | null
           created_at: string
+          deal_id: string | null
           expires_on: string | null
+          extras: Json
           id: string
           issued_on: string | null
+          kind: Database["public"]["Enums"]["quote_kind"]
+          payment_terms_days: number | null
           ref: string
           refusal_note: string | null
           refused_on: string | null
+          rendered_html: string | null
+          sent_at: string | null
           status: Database["public"]["Enums"]["quote_status"]
           subject: string
           template_id: string | null
+          tps_rate: number | null
+          tvq_rate: number | null
           updated_at: string
         }
         Insert: {
           accepted_on?: string | null
+          access_token?: string | null
           agency_id: string
           client_id: string
           conditions?: string | null
           contact_id?: string | null
           created_at?: string
+          deal_id?: string | null
           expires_on?: string | null
+          extras?: Json
           id?: string
           issued_on?: string | null
+          kind?: Database["public"]["Enums"]["quote_kind"]
+          payment_terms_days?: number | null
           ref: string
           refusal_note?: string | null
           refused_on?: string | null
+          rendered_html?: string | null
+          sent_at?: string | null
           status?: Database["public"]["Enums"]["quote_status"]
           subject: string
           template_id?: string | null
+          tps_rate?: number | null
+          tvq_rate?: number | null
           updated_at?: string
         }
         Update: {
           accepted_on?: string | null
+          access_token?: string | null
           agency_id?: string
           client_id?: string
           conditions?: string | null
           contact_id?: string | null
           created_at?: string
+          deal_id?: string | null
           expires_on?: string | null
+          extras?: Json
           id?: string
           issued_on?: string | null
+          kind?: Database["public"]["Enums"]["quote_kind"]
+          payment_terms_days?: number | null
           ref?: string
           refusal_note?: string | null
           refused_on?: string | null
+          rendered_html?: string | null
+          sent_at?: string | null
           status?: Database["public"]["Enums"]["quote_status"]
           subject?: string
           template_id?: string | null
+          tps_rate?: number | null
+          tvq_rate?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -4974,6 +5354,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "quote_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deal"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "quote_template_id_fkey"
             columns: ["template_id"]
             isOneToOne: false
@@ -4984,9 +5371,11 @@ export type Database = {
       }
       quote_line: {
         Row: {
+          billing: Database["public"]["Enums"]["billing_period"]
           catalog_item_id: string | null
           description: string
           id: string
+          kind: Database["public"]["Enums"]["line_kind"]
           offer_id: string | null
           position: number
           quantity: number
@@ -4994,9 +5383,11 @@ export type Database = {
           unit_price_cents: number
         }
         Insert: {
+          billing?: Database["public"]["Enums"]["billing_period"]
           catalog_item_id?: string | null
           description: string
           id?: string
+          kind?: Database["public"]["Enums"]["line_kind"]
           offer_id?: string | null
           position: number
           quantity?: number
@@ -5004,9 +5395,11 @@ export type Database = {
           unit_price_cents: number
         }
         Update: {
+          billing?: Database["public"]["Enums"]["billing_period"]
           catalog_item_id?: string | null
           description?: string
           id?: string
+          kind?: Database["public"]["Enums"]["line_kind"]
           offer_id?: string | null
           position?: number
           quantity?: number
@@ -6752,7 +7145,9 @@ export type Database = {
       quote_total: {
         Row: {
           agency_id: string | null
+          ponctuel_cents: number | null
           quote_id: string | null
+          recurrent_cents: number | null
           subtotal_cents: number | null
           total_cents: number | null
           tps_cents: number | null
@@ -6825,6 +7220,37 @@ export type Database = {
     }
     Functions: {
       accept_my_invitation: { Args: never; Returns: string }
+      decide_document_by_token: {
+        Args: {
+          p_accept: boolean
+          p_ip: string
+          p_reason: string
+          p_token: string
+          p_typed_name: string
+          p_user_agent: string
+        }
+        Returns: string
+      }
+      document_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          agency_name: string
+          can_decide: boolean
+          client_name: string
+          contact_name: string
+          decided_on: string
+          due_on: string
+          expires_on: string
+          kind: string
+          ref: string
+          rendered_html: string
+          sent_at: string
+          status: string
+          subject: string
+          total_cents: number
+        }[]
+      }
+      next_document_ref: { Args: { p_template: string }; Returns: string }
       whoami: {
         Args: never
         Returns: {
@@ -6927,6 +7353,18 @@ export type Database = {
         | "accepte"
         | "accepte_tacitement"
       directory_authority: "haute" | "moyenne" | "faible"
+      document_event_kind:
+        | "cree"
+        | "modifie"
+        | "envoye"
+        | "relance"
+        | "ouvert"
+        | "accepte"
+        | "refuse"
+        | "signe"
+        | "paye"
+        | "corrige"
+        | "annule"
       document_kind:
         | "devis"
         | "facture"
@@ -6947,6 +7385,7 @@ export type Database = {
       gbp_post_type: "offre" | "mise_a_jour" | "evenement"
       gbp_state: "revendiquee" | "non_revendiquee" | "suspendue" | "tiers"
       invoice_status: "payee" | "en_attente" | "en_retard" | "annulee"
+      line_kind: "facturable" | "offert" | "remise" | "informatif"
       local_review_state: "sans_reponse" | "a_relire" | "publiee" | "signale"
       milestone_owner: "client" | "prestataire" | "les_deux"
       nap_field:
@@ -6988,6 +7427,7 @@ export type Database = {
         | "ignoree"
         | "faux_positif"
       priority_visibility: "interne" | "annonce" | "traitement"
+      quote_kind: "devis" | "proposition"
       quote_status: "brouillon" | "envoye" | "accepte" | "refuse" | "expire"
       report_state:
         | "apreparer"
@@ -7243,6 +7683,19 @@ export const Constants = {
         "accepte_tacitement",
       ],
       directory_authority: ["haute", "moyenne", "faible"],
+      document_event_kind: [
+        "cree",
+        "modifie",
+        "envoye",
+        "relance",
+        "ouvert",
+        "accepte",
+        "refuse",
+        "signe",
+        "paye",
+        "corrige",
+        "annule",
+      ],
       document_kind: [
         "devis",
         "facture",
@@ -7265,6 +7718,7 @@ export const Constants = {
       gbp_post_type: ["offre", "mise_a_jour", "evenement"],
       gbp_state: ["revendiquee", "non_revendiquee", "suspendue", "tiers"],
       invoice_status: ["payee", "en_attente", "en_retard", "annulee"],
+      line_kind: ["facturable", "offert", "remise", "informatif"],
       local_review_state: ["sans_reponse", "a_relire", "publiee", "signale"],
       milestone_owner: ["client", "prestataire", "les_deux"],
       nap_field: [
@@ -7310,6 +7764,7 @@ export const Constants = {
         "faux_positif",
       ],
       priority_visibility: ["interne", "annonce", "traitement"],
+      quote_kind: ["devis", "proposition"],
       quote_status: ["brouillon", "envoye", "accepte", "refuse", "expire"],
       report_state: [
         "apreparer",

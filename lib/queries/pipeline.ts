@@ -10,7 +10,9 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/database.types';
+import { routes } from '@/lib/routes';
 import {
+  type DealDoc,
   NO_OWNER,
   OWNER_COLORS,
   STAGE_PROBABILITY,
@@ -50,6 +52,8 @@ function daysSince(dateIso: string): number {
 
 const DEAL_CHANNELS: ExchangeChannel[] = ['appel', 'courriel', 'reunion', 'note'];
 
+const QUOTE_STATUS_LABEL: Record<string, string> = { brouillon: 'Brouillon', envoye: 'Envoyé', accepte: 'Accepté', refuse: 'Refusé', expire: 'Expiré' };
+
 const DOC_KIND_LABEL: Record<string, string> = {
   proposition: 'Proposition',
   devis: 'Devis',
@@ -59,7 +63,7 @@ const DOC_KIND_LABEL: Record<string, string> = {
 };
 
 export async function loadPipeline(db: Db): Promise<PipelineData> {
-  const [deals, members, contacts, comms, docs, snaps] = await Promise.all([
+  const [deals, members, contacts, comms, docs, snaps, quotes] = await Promise.all([
     db
       .from('deal')
       .select(
@@ -80,6 +84,7 @@ export async function loadPipeline(db: Db): Promise<PipelineData> {
       .order('occurred_at', { ascending: false }),
     db.from('deal_document').select('deal_id, name, kind, generated, created_at').order('created_at', { ascending: false }),
     db.from('deal_seo_snapshot').select('*'),
+    db.from('quote').select('id, deal_id, kind, ref, subject, status, expires_on, created_at').not('deal_id', 'is', null).order('created_at', { ascending: false }),
   ]);
 
   const owners: Owners = {};
@@ -103,6 +108,17 @@ export async function loadPipeline(db: Db): Promise<PipelineData> {
   }
   const docsBy = new Map<string, NonNullable<typeof docs.data>>();
   for (const d of docs.data ?? []) docsBy.set(d.deal_id, [...(docsBy.get(d.deal_id) ?? []), d]);
+  // Les documents du générateur (9.4) rattachés à l'opportunité : proposition ou devis, avec leur page.
+  const genBy = new Map<string, DealDoc[]>();
+  const todayIso = new Date().toISOString().slice(0, 10);
+  for (const q of quotes.data ?? []) {
+    if (!q.deal_id) continue;
+    const status = q.status === 'envoye' && q.expires_on && q.expires_on < todayIso ? 'expire' : q.status;
+    genBy.set(q.deal_id, [
+      ...(genBy.get(q.deal_id) ?? []),
+      { name: `${q.ref} — ${q.subject}`, kind: q.kind === 'proposition' ? 'Proposition' : 'Devis', at: fmtLong.format(new Date(q.created_at)), href: routes.document(q.id), status: QUOTE_STATUS_LABEL[status] ?? status },
+    ]);
+  }
   const snapBy = new Map((snaps.data ?? []).map((s) => [s.deal_id, s]));
 
   const out: Deal[] = [];
@@ -141,12 +157,15 @@ export async function loadPipeline(db: Db): Promise<PipelineData> {
         history.length > 0
           ? history
           : [{ ch: 'note', at: 'à la création', who: 'HuntPilote', text: 'Aucun échange consigné pour l’instant.' }],
-      docs: (docsBy.get(d.id) ?? []).map((doc) => ({
-        name: doc.name,
-        kind: DOC_KIND_LABEL[doc.kind] ?? doc.kind,
-        at: fmtLong.format(new Date(doc.created_at)),
-        ...(doc.generated ? { auto: true } : {}),
-      })),
+      docs: [
+        ...(genBy.get(d.id) ?? []),
+        ...(docsBy.get(d.id) ?? []).map((doc) => ({
+          name: doc.name,
+          kind: DOC_KIND_LABEL[doc.kind] ?? doc.kind,
+          at: fmtLong.format(new Date(doc.created_at)),
+          ...(doc.generated ? { auto: true } : {}),
+        })),
+      ],
       seo: snap
         ? {
             done: true,
