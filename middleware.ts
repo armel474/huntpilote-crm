@@ -22,7 +22,8 @@ export async function middleware(request: NextRequest) {
   if (authRequired && !user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/connexion';
-    url.searchParams.set('suite', pathname);
+    // Le chemin demandé, paramètres compris : `/parametres?section=profil` revient entier après la connexion.
+    url.searchParams.set('suite', pathname + request.nextUrl.search);
     return NextResponse.redirect(url);
   }
 
