@@ -1,11 +1,19 @@
-# Protocole de vérification — étapes 1 à 4 de l'Agence hub
+# Protocole de vérification — étapes 1 à 5 de l'Agence hub
+
+> **Mis à jour le 18 novembre 2026.** La PR nº 5 est fusionnée : la
+> production (`www.huntpilote.app`, alias `huntpilote-crm.vercel.app`) porte
+> maintenant les étapes 1 à 5, générateur de documents compris. Le protocole
+> gagne la section **M** (le générateur) et la section **N** (mise en veille
+> et signe de vie). Le projet Supabase s'était mis en pause après sept jours
+> sans activité ; il a été relancé le 18 novembre, et une tâche planifiée
+> l'empêche désormais de se rendormir (voir N).
 
 > **Pour Armel, avant l'étape 5.** Tout ce qui a été livré jusqu'ici (Client
 > hub et pipeline sur la base, Agence hub avec profil, équipe, catalogue,
-> offres et modèles de documents) a été vérifié en local avec des données
+> offres, modèles et générateur de documents) a été vérifié en local avec des données
 > semées et des tests automatiques, jamais en production par une personne
 > connectée. Ce protocole fait cette vérification-là. Fais-le **sur la
-> production** (`huntpilote-crm.vercel.app`), après fusion de la PR nº 5.
+> production** (`www.huntpilote.app`).
 >
 > **Comment consigner.** Pour chaque test, note dans la colonne « Résultat »
 > : `OK`, `KO` ou `?` (pas sûr), et en cas de `KO` ou `?`, ce que tu as vu —
@@ -17,7 +25,10 @@
 >
 > **Ordre.** Les sections se suivent : A prépare, B connecte, C à H
 > parcourent les écrans, I vérifie la base, J teste les refus avec un second
-> compte, K le rendu, L la mise en service. Compte environ deux heures.
+> compte, K le rendu, L la mise en service, M le générateur de documents,
+> N la veille. Compte environ trois heures. **Si tout échoue d'un coup**
+> (pages vides, connexion impossible) : Supabase → le projet est peut-être
+> en pause ; « Restore project », attendre cinq minutes, reprendre.
 
 ---
 
@@ -25,10 +36,10 @@
 
 | # | Action | Attendu | Résultat |
 |---|---|---|---|
-| A1 | Fusionner la [PR nº 5](https://github.com/armel474/huntpilote-crm/pull/5) sur `main`, attendre que Vercel affiche le déploiement de production **Ready**. | Le commit de production est celui de la fusion. | |
+| A1 | Vercel → Deployments : le dernier déploiement de **production** est **Ready**. | Son commit est la fusion de la PR nº 5 (`adc92e7`) ou un commit plus récent de `main`. | |
 | A2 | Supabase → Table Editor → `document_template` : compter les lignes et vérifier que `body_html` est rempli pour chacune. | **6 lignes**, aucune avec `body_html` vide. | |
 | A3 | Supabase → Table Editor → `document_template_section` : compter. | **9 lignes** (8 pour « Proposition de services », 1 pour l'Annexe A). | |
-| A4 | Supabase → Database → Migrations (ou Table Editor → `supabase_migrations.schema_migrations`) : la dernière migration. | `0023_corps_des_modeles` est présente. | |
+| A4 | Supabase → Database → Migrations (ou Table Editor → `supabase_migrations.schema_migrations`) : la dernière migration. | **29 lignes**, la dernière est `numerotation_privee` (0027). | |
 | A5 | Préparer **un second compte** de test : une adresse courriel à toi que tu n'utilises pas encore dans HuntPilote (ex. un alias `+test`). Il servira à la section J. | Adresse notée ici : ______ | |
 | A6 | Noter le navigateur et la version utilisés, et si tu testes aussi sur téléphone, lequel. | Navigateur : ______ · Téléphone : ______ | |
 
@@ -115,7 +126,7 @@
 |---|---|---|---|
 | G1 | Ouvrir `/clients`. Compter. | **9 comptes** : 4 clients, 4 prospects du semis, plus Ébénisterie Rivard (prospect). Les filtres Tous / Clients / Prospects donnent 9 / 4 / 5. | |
 | G2 | Basculer grille / liste, chercher « SHGM ». | La recherche filtre ; les deux vues montrent les mêmes comptes. | |
-| G3 | Ouvrir la fiche d'un client. | La fiche s'ouvre. **Attendu et connu** : cette fiche tourne encore sur les données de démonstration de `lib/data/`, pas sur la base — c'est la prochaine migration d'écran. Noter simplement si elle s'ouvre sans erreur. | |
+| G3 | Ouvrir la fiche d'un client. | La fiche s'ouvre. **Attendu et connu** : son contenu (aperçu, priorités, plan, rapports) tourne encore sur les données de démonstration de `lib/data/`, pas sur la base — c'est la prochaine migration d'écran. **Sauf** l'onglet « Contrat & facturation » : sa section du bas s'appelle « Documents », porte le bouton « Nouveau document » et liste les documents réels du compte (voir M). Noter si la fiche s'ouvre sans erreur. | |
 
 ## H. Pipeline
 
@@ -127,6 +138,7 @@
 | H4 | **Marquer perdu** une opportunité de test, **sans motif**. | Refusé : « Le motif de la perte est obligatoire. » | |
 | H5 | Marquer perdu **avec motif**. | Passe à l'étape Perdu. Supabase → `deal.lost_reason` rempli. | |
 | H6 | **Marquer gagné** une autre opportunité de test. | Passe à Gagné, probabilité 100, `won_at` rempli, prochaine action « Onboarding lancé ». | |
+| H7 | Ouvrir une opportunité en étape **Proposition** : la section « Documents » du panneau. | Elle porte un bouton **« Nouveau document »** (l'écran est branché sur la base). Son usage est au test M5. | |
 
 ## I. Vérifications dans la base (Supabase → SQL Editor)
 
@@ -141,6 +153,7 @@ Copier-coller chaque requête ; noter le résultat.
 | I5 | `select count(*) from offer_deliverable_template;` | Au moins 20 (les livrables promis des neuf offres), sans « Livrable test » après E7. | |
 | I6 | `select email, role, accepted_at from member order by created_at;` | Ta ligne avec `accepted_at` rempli ; l'invité avec `accepted_at` vide (avant J). | |
 | I7 | `select count(*) from communication where created_at::date = current_date;` | Au moins 1 (H3). | |
+| I8 | `select ref, kind, status, sent_at is not null as envoye, rendered_html is not null as fige, access_token is not null as jeton from quote order by created_at;` | Avant M : une seule ligne, `DV-2026-001` (semis), `envoye`, `fige` et `jeton` à **false** (il date d'avant le générateur). Après M : les documents que tu as créés, `fige` et `jeton` à **true** dès qu'ils sont envoyés. | |
 
 ## J. Refus et droits — avec le second compte
 
@@ -169,7 +182,7 @@ Copier-coller chaque requête ; noter le résultat.
 
 | # | Action | Attendu | Résultat |
 |---|---|---|---|
-| L1 | Vercel → Project → Settings → Environments → Production → ajouter `AUTH_REQUIRED` = `on` (Production seulement), puis **Redeploy**. | Déploiement Ready. | |
+| L1 | Vercel → Project → Settings → Environment Variables : `AUTH_REQUIRED` existe déjà, en **Production seulement** (posée en septembre). Rien à faire, juste constater. | La variable est là. | |
 | L2 | En fenêtre privée, ouvrir `huntpilote-crm.vercel.app/agence`. | Redirigé vers `/connexion`. | |
 | L3 | Se connecter : tout fonctionne comme avant. | Si tu te retrouves enfermé dehors : supprimer la variable et redéployer. | |
 | L4 | Supabase → Authentication → Providers → Password → activer **Leaked password protection**. | Activé (l'audit de sécurité ne le signalera plus). | |
@@ -177,10 +190,46 @@ Copier-coller chaque requête ; noter le résultat.
 
 ---
 
+## M. Le générateur de documents (étape 5)
+
+Tout se passe depuis un **compte réel** : la fiche d'un des neuf comptes
+(`/clients/<slug>`), ou une opportunité du pipeline. Avant M4, le profil de
+l'agence doit avoir des numéros de **TPS et TVQ** (ceux de démonstration
+suffisent pour tester ; les vrais au test L5).
+
+| # | Action | Attendu | Résultat |
+|---|---|---|---|
+| M1 | `/agence?section=documents`. | La liste montre **un** document : `DV-2026-001`, Devis, Spa Nordik Estrie, statut **Envoyé** (ou **Expiré** si sa date est passée). Aucun résumé rouge. Cliquer la ligne ouvre `/documents/<id>`. | |
+| M2 | Sur cette page : le rendu à gauche, la colonne de droite. | Le rendu est le devis rempli (lignes, TPS, TVQ, total) ; à droite : Statut, Action (Relancer, Marquer accepté, Marquer refusé, Corriger), Versions « pas encore envoyé », Journal. **Attendu et connu** : pas de bloc « Lien du client » (ce devis a été semé avant le générateur, il n'a ni HTML figé ni jeton). | |
+| M3 | Fiche d'un **client** (ex. Spa Nordik Estrie), onglet « Contrat & facturation » → **Nouveau document**. | Le panneau s'ouvre à droite, « Pour <nom du compte> ». Étape 1 : Proposition, Devis, Facture actifs ; Contrat, Annexe, Avenant grisés « étape suivante ». Étape 2 : « Depuis une offre », la liste des 9 offres. | |
+| M4 | Dans le panneau : sorte **Proposition**, offre **Croissance Digitale**, trancher une option si l'offre en propose, prix 9 000 $ ; étape 3 : objet « Test protocole », un contact ; étape 4 : attendre l'aperçu. Puis **Créer le brouillon**. | Les totaux (sous-total, TPS 5 %, TVQ 9,975 %, total) se recalculent à chaque changement. L'aperçu montre le document rendu ; une bannière jaune liste les balises restées vides, s'il y en a — **noter lesquelles** : ______. La page du document s'ouvre, statut **Brouillon**, référence `PR-2026-001` (ou le numéro suivant). | |
+| M5 | Depuis `/pipeline`, ouvrir un deal en étape Proposition → **Nouveau document** → sorte Devis, « Lignes libres », une ligne « Ligne test » à 500 $, objet, contact → Créer le brouillon. | Le brouillon s'ouvre, `DV-2026-002`. De retour dans le pipeline, la section Documents du deal liste ce devis avec son statut, et le clic l'ouvre. | |
+| M6 | Sur le brouillon M4 : onglet **Composer**. Modifier la quantité d'une ligne, ajouter une ligne « Offert test » de nature *Offert*, écrire un texte dans une section du modèle, remplir les compléments s'il y en a. **Enregistrer le brouillon**, revenir à **Aperçu**. | « Brouillon enregistré ». L'aperçu reflète les changements (la ligne offerte affiche « Offert »). Le journal gagne « Brouillon modifié ». Supabase → `quote_line` : les lignes du devis ; `document_section.body` : ton texte. | |
+| M7 | Toujours sur M4 : regarder le bouton **Envoyer**. | S'il est verrouillé, la raison est écrite juste au-dessus (balise vide, contact manquant, numéros de taxes). Corriger ce qu'il demande jusqu'à ce qu'il soit actif. Noter la ou les raisons rencontrées : ______ | |
+| M8 | **Envoyer** → « Déposer dans le fil du portail » → Envoyer. | Message de réussite, le lien du client affiché avec « Copier ». Le statut passe à **Envoyé**, « Versions · 1 », journal « Envoyé (v1) ». Le bloc **Lien du client** apparaît. L'onglet Composer a disparu. Supabase → `quote` : `sent_at`, `rendered_html`, `access_token`, `tps_rate`, `tvq_rate` remplis ; `quote_version` : une ligne ; `communication` : une ligne « portail » avec le lien. | |
+| M9 | Ouvrir le **lien du client** dans une fenêtre **privée** (sans compte). | La page s'affiche sans connexion : en-tête avec le nom de l'agence, le document, un encadré « Votre réponse » avec **Accepter cette proposition** et **Décliner**. Supabase → `document_event` : une ligne `ouvert`. | |
+| M10 | Dans cette fenêtre : **Accepter**, taper un nom, **Confirmer l'acceptation**. | « Accepté … » s'affiche ; recharger : toujours accepté, plus de bouton. Sur la page du document (fenêtre connectée, recharger) : statut **Accepté**, « Accepté le … par <nom> », signature avec date et adresse IP, bouton « Créer la suite » grisé avec sa note. Supabase → `document_signature` : une ligne. | |
+| M11 | Sur le devis M5 : Envoyer **par courriel**. | Le lien et le bouton « Ouvrir mon courriel » (si le contact a une adresse) ; ta messagerie s'ouvre avec le lien dans le corps. Aucune ligne `communication` ajoutée pour cet envoi. | |
+| M12 | Sur ce devis envoyé : **Corriger — nouvelle version** → Rouvrir en brouillon. Modifier une ligne, enregistrer, envoyer de nouveau (fil). | Après la correction : statut Brouillon, badge « Version 2 en préparation », Composer de retour. Après l'envoi : « Versions · 2 », la v1 barrée « Remplacée » avec **Voir** qui l'affiche telle qu'envoyée, et un bandeau pour revenir au document actuel. Le lien du client montre la v2. | |
+| M13 | Sur ce même devis : **Marquer refusé** avec un motif. | Statut **Refusé**, le motif dans la colonne Action. Le lien du client dit « Refusé ». | |
+| M14 | Fiche client → Nouveau document → sorte **Facture**, « Depuis un document », choisir la proposition acceptée (M10), « Un acompte de 50 % du ponctuel ». Créer, puis Envoyer. | Une ligne « Acompte de 50 % — PR-2026-001 » au bon montant ; référence `FA-…`. Envoi : statut **Envoyé** et une échéance de paiement ; « Marquer payée » et « Annuler la facture » disponibles. Marquer payée → **Payée — rien à faire**. | |
+| M15 | Dans la liste `/agence?section=documents` : filtres par sorte et statut, recherche sur « Test protocole », clic sur un résumé en tête (s'il y en a). | Les filtres se combinent ; chaque ligne mène à son document. | |
+| M16 | Avec le **second compte** (J, rôle Rédaction, sans droit) : ouvrir un brouillon et un document envoyé. | Lecture seule : bandeau « le droit n'est pas accordé », Envoyer et les gestes verrouillés, Composer non modifiable. **Contournement** comme en J6 sur « Envoyer » : le serveur refuse. | |
+| M17 | **Imprimer** et **Télécharger en PDF** sur un document envoyé. | Une nouvelle fenêtre avec le document seul, format Lettre ; la boîte d'impression s'ouvre. Noter le nombre de pages : ______ | |
+| M18 | Sur téléphone (390 px) : la page d'un document et le panneau « Nouveau document ». | Une seule colonne ; le panneau prend toute la largeur ; rien ne déborde. | |
+
+## N. Mise en veille et signe de vie
+
+| # | Action | Attendu | Résultat |
+|---|---|---|---|
+| N1 | Ouvrir `www.huntpilote.app/api/sante` (sans être connecté). | `{"ok":true,"base":"jointe","at":"…"}`. | |
+| N2 | Vercel → Project → Settings → Cron Jobs. | Une tâche `/api/sante` à `0 11 * * *` (tous les jours à 11 h UTC, 6 h ou 7 h au Québec). Un forfait Hobby accepte une exécution par jour : c'est suffisant pour que Supabase compte une activité chaque jour. | |
+| N3 | Une semaine plus tard : Supabase → le projet. | Toujours `Active`, jamais `Paused`. Si Vercel a désactivé la tâche (il le fait sur un projet Hobby sans déploiement depuis longtemps), la réactiver, ou passer Supabase au forfait Pro. | |
+
 ## Ce que j'attends en retour
 
 1. Ce fichier avec la colonne Résultat remplie, ou seulement la liste des tests `KO` et `?` avec leurs notes et captures.
-2. Les réponses aux blancs : A5, A6, F3, F5, K4, J9.
+2. Les réponses aux blancs : A5, A6, F3, F5, K4, J9, M4, M7, M17.
 3. Toute chose qui t'a paru **étrange sans être fausse** : un libellé qui ne dit pas ce que tu attendais, un geste qui demande un clic de trop, un message qui ne t'aide pas. Ce sont ces remarques-là qui améliorent le plus l'étape suivante.
 
-Je continue l'étape 5 (le générateur de documents, maquette 9.4) pendant ce temps ; ce que tu trouveras sera corrigé avant ou avec elle, selon la gravité.
+Pendant ce temps, l'étape 6 (session 9.5, l'appel découverte) attend sa conception dans Claude Design ; ce que tu trouveras ici sera corrigé avant ou avec elle, selon la gravité.
