@@ -124,7 +124,7 @@ export const CHANNELS: Record<ExchangeChannel, { label: string; tone: Tone }> = 
 
 export type Exchange = { ch: ExchangeChannel; at: string; who: string; text: string };
 
-export type DealDoc = { name: string; kind: string; at: string; auto?: boolean };
+export type DealDoc = { name: string; kind: string; at: string; auto?: boolean; /** La page du document, quand il est produit par le générateur (9.4). */ href?: string; status?: string };
 
 export type DealSeo =
   | { done: false }

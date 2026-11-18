@@ -13,6 +13,8 @@ import { PanelContrat } from '@/components/fiche/PanelContrat';
 import { PanelCommunications } from '@/components/fiche/PanelCommunications';
 import { ContactsAllSheet, ContactSheet, type NewContactData } from '@/components/fiche/ContactPanels';
 import { QuoteFormSheet, QuoteSheet } from '@/components/fiche/QuotePanels';
+import { NewDocumentSheet } from '@/app/documents/NewDocumentSheet';
+import type { DocumentRow } from '@/lib/queries/documents';
 import { FICHE_TABS, type FicheTab } from '@/components/fiche/tabs';
 import { DemoOnly } from '@/components/ui/Demo';
 import { IcoDoc, IcoPlus, IcoTarget, IcoZap } from '@/components/ui/Icons';
@@ -38,7 +40,10 @@ type ContactPanel = { kind: 'contact'; id: string } | { kind: 'all' } | { kind: 
 /** Devis ouvert : le document d'un devis précis, un nouveau devis, ou la correction d'un devis envoyé. */
 type QuoteView = { kind: 'view'; id: string } | { kind: 'new' } | { kind: 'edit'; id: string } | null;
 
-export function FicheClientView({ clientId }: { clientId: string }) {
+/** Le compte réel derrière la fiche, quand la base est branchée : le générateur de documents (9.4) s'y accroche. */
+export type FicheGenerator = { clientId: string; clientName: string; documents: DocumentRow[] };
+
+export function FicheClientView({ clientId, generator }: { clientId: string; generator?: FicheGenerator }) {
   const router = useRouter();
   const [tab, setTab] = useState<FicheTab>('apercu');
   const [uxState, setUxState] = useState<UxState>('active');
@@ -51,6 +56,8 @@ export function FicheClientView({ clientId }: { clientId: string }) {
   /* ── Devis — session 7.3 ── */
   const [quotes, setQuotes] = useState<Quote[]>(QUOTES);
   const [quoteView, setQuoteView] = useState<QuoteView>(null);
+  /* ── Nouveau document — session 9.4, seulement sur un compte réel ── */
+  const [newDocOpen, setNewDocOpen] = useState(false);
 
   /* ── Renvoi vers le fil de communications, filtré sur un contact — depuis un contact ou un devis ── */
   const [commContactFilter, setCommContactFilter] = useState<string | null>(null);
@@ -194,7 +201,14 @@ export function FicheClientView({ clientId }: { clientId: string }) {
         );
       case 'contrat':
         return (
-          <PanelContrat quotes={quotes} contactsById={contactsById} onOpenQuote={openQuote} onNewQuote={newQuote} />
+          <PanelContrat
+            quotes={quotes}
+            contactsById={contactsById}
+            onOpenQuote={openQuote}
+            onNewQuote={newQuote}
+            documents={generator?.documents}
+            onNewDocument={generator ? () => setNewDocOpen(true) : undefined}
+          />
         );
       case 'contenu':
         // Onglet de sortie : le clic navigue vers /clients/[id]/contenu, `tab` ne prend jamais cette valeur.
@@ -383,6 +397,10 @@ export function FicheClientView({ clientId }: { clientId: string }) {
           onSave={saveNewContact}
           onGoThread={goToThread}
         />
+      )}
+
+      {generator && newDocOpen && (
+        <NewDocumentSheet context={{ clientId: generator.clientId, clientName: generator.clientName, defaultKind: 'devis' }} onClose={() => setNewDocOpen(false)} />
       )}
 
       {currentQuote && (

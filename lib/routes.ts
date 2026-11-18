@@ -28,6 +28,14 @@ export const routes = {
   offre: (id: string) => `/agence?section=offres&offre=${id}`,
   /** Un article du catalogue, ouvert dans son panneau. */
   article: (id: string) => `/agence?section=catalogue&article=${id}`,
+  /** Un modèle de document, ouvert dans son éditeur (9.3). */
+  modele: (id: string) => `/agence?section=modeles&modele=${id}`,
+  /** La liste de tout ce qui a été produit (9.4). */
+  documents: () => '/agence?section=documents',
+  /** Un document produit — proposition, devis ou facture — avec ses gestes (9.4). */
+  document: (id: string) => `/documents/${id}`,
+  /** Le lien remis au client : le document rendu, et le geste d'acceptation. */
+  documentLien: (token: string) => `/d/${token}`,
   /** Document partageable, hors cockpit — dans l'esprit de `/r/[token]` (session 1.3). */
   auditProspect: (token: string) => `/audit-prospect/${token}`,
 

@@ -1,0 +1,489 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap');
+@font-face{font-family:'NS';src:url('/fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-display:swap;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'NS','Noto Sans',sans-serif;background:#55585C;}
+.ar{font-family:'Archivo',sans-serif;}
+.tk{display:inline;background:rgba(208,168,55,.17);color:#6B3E00;border:1px solid rgba(208,168,55,.38);border-radius:3px;padding:0 5px;font-family:ui-monospace,monospace;font-size:.87em;font-weight:700;white-space:nowrap;}
+.tki{display:inline;background:rgba(208,168,55,.22);color:#F5D070;border:1px solid rgba(208,168,55,.45);border-radius:3px;padding:0 5px;font-family:ui-monospace,monospace;font-size:.87em;font-weight:700;white-space:nowrap;}
+.opt{display:inline-flex;align-items:center;font-family:'NS',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;background:#F5F0F0;border:1px dashed #C8C3C3;border-radius:4px;padding:3px 8px;margin-left:10px;vertical-align:middle;}
+h1,h2,h3,h4{text-wrap:balance;}p,li{text-wrap:pretty;}
+.sec{margin-bottom:0;}
+.keep{break-inside:avoid;}
+.ch{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #E8E3E3;}
+.ch-num{font-family:'Archivo',sans-serif;font-weight:800;font-size:32px;line-height:1;color:#D0A837;}
+.ch-title{font-family:'Archivo',sans-serif;font-weight:700;font-size:25px;letter-spacing:-.01em;color:#232526;margin:0;}
+.card{background:#fff;border:1px solid #E8E3E3;border-radius:8px;box-shadow:0 2px 8px rgba(35,37,38,.05);}
+.card-dark{background:#232526;border-radius:8px;}
+.hl{font-family:'NS',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;}
+.bull{display:flex;gap:9px;align-items:flex-start;font-family:'NS',sans-serif;font-size:13px;line-height:1.55;color:#3A3B3C;}
+.bull-dot{color:#D0A837;font-weight:800;flex-shrink:0;margin-top:1px;}
+.fiche{flex:1 1 0;min-width:0;border-radius:8px;padding:20px 16px;display:flex;flex-direction:column;}
+
+.stack{display:flex;flex-direction:column;align-items:center;gap:22px;padding:30px 12px;}
+.page{position:relative;width:216mm;min-height:279mm;height:auto;background:#FFFAFA;padding:19mm 16mm 15mm;overflow:visible;box-shadow:0 6px 28px rgba(0,0,0,.32);}
+.pg-head{position:absolute;top:9mm;left:16mm;right:16mm;display:flex;justify-content:space-between;align-items:center;font-family:'Archivo',sans-serif;font-size:8px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#9A9594;}
+.pg-foot{position:absolute;bottom:8mm;left:16mm;right:16mm;display:flex;justify-content:space-between;align-items:baseline;font-family:'Archivo',sans-serif;font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9594;border-top:1px solid #E8E3E3;padding-top:5px;}
+
+@page{size:Letter;margin:0;}
+@media print{
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#fff;}
+  .stack{gap:0;padding:0;}
+  .page{box-shadow:none;break-after:page;}
+  .page:last-child{break-after:auto;}
+  .screen-only{display:none!important;}
+}
+</style>
+<div class="stack">
+
+<div class="page" style="padding:0;">
+  <div style="height:5px;background:#D0A837;"></div>
+  <div style="padding:24mm 18mm 18mm;height:calc(297mm - 5px);display:flex;flex-direction:column;justify-content:space-between;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;">
+      <img src="{{agence.logo}}" alt="DigiHunt" style="height:50px;width:auto;display:block;">
+      <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C49A2E;padding-top:8px;text-align:right;white-space:nowrap;">Agence Webflow &amp; SEO<br>Québec</div>
+    </div>
+    <div>
+      <div style="font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:#C49A2E;margin-bottom:20px;">Offre de service</div>
+      <h1 class="ar" style="font-weight:800;font-size:54px;line-height:1.04;letter-spacing:-.02em;color:#232526;margin:0 0 20px;">{{client.nom}}</h1>
+      <p style="font-size:15px;line-height:1.75;color:#3A3B3C;margin:0;max-width:52ch;">Présentée par {{agence.representant}}, {{agence.representant_titre}} de {{agence.nom}}, à l'intention de {{client.contact.nom}}, {{client.contact.titre}}.</p>
+    </div>
+    <div>
+      <div style="height:1px;background:#E8E3E3;margin-bottom:28px;"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px 28px;">
+        <div><div class="hl" style="color:#9A9594;margin-bottom:8px;">Pour</div><div class="ar" style="font-weight:700;font-size:15px;color:#232526;">{{client.nom}}</div><div style="font-size:12px;color:#7E7978;margin-top:4px;">{{client.ville}} · {{client.secteur}}</div></div>
+        <div><div class="hl" style="color:#9A9594;margin-bottom:8px;">Préparé par</div><div class="ar" style="font-weight:700;font-size:15px;color:#232526;">{{agence.representant}}</div><div style="font-size:12px;color:#7E7978;margin-top:4px;">{{agence.representant_titre}}, {{agence.nom}}</div></div>
+        <div><div class="hl" style="color:#9A9594;margin-bottom:8px;">Date</div><div class="ar" style="font-weight:700;font-size:15px;color:#232526;">{{document.date}}</div></div>
+        <div><div class="hl" style="color:#9A9594;margin-bottom:8px;">Expire le</div><div class="ar" style="font-weight:700;font-size:15px;color:#C49A2E;">{{document.echeance}}</div></div>
+        <div><div class="hl" style="color:#9A9594;margin-bottom:8px;">Forfait</div><div class="ar" style="font-weight:700;font-size:15px;color:#C49A2E;">{{offre_recommandee.nom}}</div></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid #E8E3E3;padding-top:20px;">
+      <div style="font-size:11.5px;line-height:1.85;color:#7E7978;">{{agence.nom}} · {{agence.adresse}}<br>{{agence.telephone}} · {{agence.courriel}}</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec" style="padding-top:16px;">
+  <div class="keep" style="max-width:58ch;">
+    <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#C49A2E;margin-bottom:28px;">{{client.ville}}, le {{document.date}}</div>
+    <p style="font-size:16px;line-height:1.78;color:#232526;margin:0 0 22px;font-weight:600;">Bonjour {{client.contact.prenom}},</p>
+    <p style="font-size:14.5px;line-height:1.82;color:#3A3B3C;margin:0 0 18px;">Merci d'avoir pris le temps d'échanger avec moi sur la vision de {{client.nom}}. J'apprécie travailler avec des entrepreneurs passionnés, et l'idée de collaborer avec vous m'enthousiasme.</p>
+    <p style="font-size:14.5px;line-height:1.82;color:#3A3B3C;margin:0 0 18px;">Dans cette proposition, chaque besoin que vous m'avez partagé est associé à une solution concrète. Mon objectif est simple : un seul interlocuteur, un plan clair, zéro surprise.</p>
+    <p style="font-size:14.5px;line-height:1.82;color:#3A3B3C;margin:0 0 40px;">Vous trouverez ci-après une analyse de votre situation, les solutions adaptées à vos objectifs, et un plan d'action avec des résultats mesurables. Cette offre est valable jusqu'au {{document.echeance}}.</p>
+    <div><div style="height:44px;border-bottom:1.5px solid #232526;width:180px;margin-bottom:10px;"></div><div class="ar" style="font-weight:700;font-size:15px;color:#232526;">{{agence.representant}}</div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7E7978;margin-top:3px;">{{agence.representant_titre}}, {{agence.nom}}</div><div style="font-size:12px;color:#9A9594;margin-top:8px;line-height:1.75;">{{agence.courriel}}<br>{{agence.telephone}}</div></div>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep" style="margin-bottom:26px;"><h2 class="ar" style="font-weight:800;font-size:28px;letter-spacing:-.01em;color:#232526;margin:0;">Table des matières</h2><div style="height:3px;background:#D0A837;width:48px;margin-top:12px;"></div></div>
+
+  <div style="border-top:2px solid #232526;">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">01</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Résumé analytique</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Vue d'ensemble : problème, solution, résultat, investissement</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">02</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Compréhension de vos besoins</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Positionnement métier, cible, différenciation concurrentielle</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">03</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Objectifs du projet</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Objectifs d'affaires, structure, fonctionnalités, zone géographique</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">04</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Nos forfaits</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Les forfaits du catalogue</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">05</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Forfait recommandé pour vous</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Justification personnalisée, maintenance proposée</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">06</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Plan d'action stratégique</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">7 phases, frise temporelle, livrables détaillés</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">07</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Preuve &amp; résultats <span class="opt">Si des cas clients sont fournis</span></div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Études de cas, témoignages, logos clients</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">08</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Récapitulatif financier</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Tableau d'investissement, bonus, maintenance, taxes</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">09</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Gestion de projet</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Plateformes, espace client, canaux de communication</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #E8E3E3;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">10</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Modalités &amp; conditions</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Paiement, propriété, coûts externes, valeurs DigiHunt</div></div></div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;"><div style="display:flex;align-items:baseline;gap:13px;"><span class="ar" style="font-weight:800;font-size:18px;color:#D0A837;min-width:30px;">11</span><div><div class="ar" style="font-weight:600;font-size:15px;color:#232526;">Accord de projet &amp; signature</div><div style="font-size:11.5px;color:#7E7978;margin-top:1px;">Engagements légaux, clause Loi 96, tableau de signature</div></div></div></div>
+  </div>
+  
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">01</span><h2 class="ch-title">Résumé analytique</h2></div>
+
+  <div class="keep" style="background:#232526;border-radius:8px;padding:28px 30px;margin-bottom:18px;">
+    <div class="hl" style="color:#D0A837;margin-bottom:14px;">Synthèse de la situation</div>
+    <p style="font-size:14.5px;line-height:1.82;color:rgba(255,250,250,.85);margin:0 0 14px;">{{client.nom}} possède un vrai atout : {{brief.atout_principal}}. Pourtant, {{brief.probleme_cardinal}} freine aujourd'hui votre croissance en ligne et vous fait perdre des occasions d'affaires.</p>
+    <p style="font-size:14.5px;line-height:1.82;color:rgba(255,250,250,.85);margin:0;">Cette proposition répond directement à ce défi avec le forfait <strong style="color:#D0A837;">{{offre_recommandee.nom}}</strong> : un site conçu pour {{brief.objectif_principal}}, livré en {{offre_recommandee.delai}}, accompagné d'un pack SEO de démarrage et d'une formation qui vous rend autonome.</p>
+  </div>
+
+  <div class="keep" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+    <div style="flex:1 1 200px;background:#F5F0F0;border-left:3px solid #D0A837;padding:20px 22px;border-radius:0 8px 8px 0;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Résultat visé</div>
+      <div class="ar" style="font-weight:700;font-size:17px;color:#232526;">{{brief.resultat_vise}}</div>
+    </div>
+    <div style="flex:1 1 200px;background:#232526;border-radius:8px;padding:20px 22px;">
+      <div class="hl" style="color:#D0A837;margin-bottom:10px;">Investissement total</div>
+      <div class="ar" style="font-weight:800;font-size:28px;color:#FFFAFA;line-height:1;">{{offre_recommandee.prix}} <span style="font-size:14px;color:#D0A837;">$</span></div>
+      <div style="font-size:11.5px;color:rgba(255,250,250,.42);margin-top:5px;">CAD + taxes applicables (TPS/TVQ)</div>
+    </div>
+    <div style="flex:1 1 200px;background:#fff;border:1px solid #E8E3E3;border-radius:8px;padding:20px 22px;box-shadow:0 2px 8px rgba(35,37,38,.05);">
+      <div class="hl" style="color:#9A9594;margin-bottom:10px;">Délai de livraison</div>
+      <div class="ar" style="font-weight:700;font-size:17px;color:#232526;">{{offre_recommandee.delai}}</div>
+      <div style="font-size:12px;color:#7E7978;margin-top:5px;">Forfait : {{offre_recommandee.nom}}</div>
+    </div>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">02</span><h2 class="ch-title">Compréhension de vos besoins</h2></div>
+  <p style="font-size:14.5px;line-height:1.78;color:#3A3B3C;margin:0 0 22px;">Ce différenciateur est au cœur de notre approche : nous prenons le temps de comprendre votre réalité avant de proposer quoi que ce soit. Voici notre lecture de {{client.nom}}.</p>
+
+  <div style="display:flex;flex-direction:column;gap:14px;">
+
+    <div class="keep card" style="padding:24px 26px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="display:inline-block;width:6px;height:6px;background:#D0A837;border-radius:50%;flex-shrink:0;"></span><h3 class="ar" style="font-weight:700;font-size:16px;color:#232526;margin:0;">Positionnement métier</h3></div>
+      <p style="font-size:13.5px;line-height:1.7;color:#3A3B3C;margin:0 0 12px;">{{client.nom}} opère dans le secteur {{client.secteur}}, principalement à {{client.ville}}. Son atout différenciant : {{brief.atout_principal}}. Son défi actuel : {{brief.probleme_cardinal}}.</p>
+      <div style="border-top:1px solid #E8E3E3;padding-top:12px;display:flex;flex-direction:column;gap:6px;">{{section.besoins_positionnement}}</div>
+    </div>
+
+    <div class="keep card" style="padding:24px 26px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="display:inline-block;width:6px;height:6px;background:#D0A837;border-radius:50%;flex-shrink:0;"></span><h3 class="ar" style="font-weight:700;font-size:16px;color:#232526;margin:0;">Cible principale</h3></div>
+      <p style="font-size:13.5px;line-height:1.7;color:#3A3B3C;margin:0 0 12px;">Votre clientèle cible est concentrée à {{client.ville}}, dans le secteur {{client.secteur}}.</p>
+      <div style="border-top:1px solid #E8E3E3;padding-top:12px;display:flex;flex-direction:column;gap:6px;">{{section.besoins_cible}}</div>
+    </div>
+
+    <div class="keep card" style="padding:24px 26px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="display:inline-block;width:6px;height:6px;background:#D0A837;border-radius:50%;flex-shrink:0;"></span><h3 class="ar" style="font-weight:700;font-size:16px;color:#232526;margin:0;">Différenciation concurrentielle</h3></div>
+      <p style="font-size:13.5px;line-height:1.7;color:#3A3B3C;margin:0 0 12px;">Votre positionnement dans le paysage concurrentiel de {{client.ville}} repose sur des éléments distinctifs que le site doit communiquer en priorité.</p>
+      <div style="border-top:1px solid #E8E3E3;padding-top:12px;display:flex;flex-direction:column;gap:6px;">{{section.besoins_differenciation}}</div>
+    </div>
+
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">03</span><h2 class="ch-title">Objectifs du projet</h2></div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+    <div class="keep card" style="flex:1 1 240px;padding:22px 24px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Objectifs d'affaires</div>
+      <div style="display:flex;flex-direction:column;gap:7px;"><div class="bull"><span class="bull-dot">—</span><span><strong style="color:#232526;">{{brief.objectif_principal}}</strong></span></div>{{section.objectifs_affaires}}</div>
+    </div>
+    <div class="keep card" style="flex:1 1 240px;padding:22px 24px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Structure du site</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">{{section.objectifs_structure}}</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;">
+    <div class="keep card" style="flex:1 1 240px;padding:22px 24px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Fonctionnalités ciblées</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">{{section.objectifs_fonctionnalites}}</div>
+    </div>
+    <div class="keep" style="flex:1 1 240px;background:#232526;border-radius:8px;padding:22px 24px;">
+      <div class="hl" style="color:#D0A837;margin-bottom:10px;">Zone géographique &amp; résultat</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="bull" style="color:rgba(255,250,250,.75);"><span style="color:#D0A837;font-weight:800;flex-shrink:0;">—</span><span>Zone cible : {{client.ville}} · Secteur : {{client.secteur}}</span></div>
+        <div class="bull" style="color:rgba(255,250,250,.75);"><span style="color:#D0A837;font-weight:800;flex-shrink:0;">—</span><span>Résultat visé : <strong style="color:#D0A837;">{{brief.resultat_vise}}</strong></span></div>
+        {{#brief.zone_secondaire}}<div class="bull" style="color:rgba(255,250,250,.75);"><span style="color:#D0A837;font-weight:800;flex-shrink:0;">—</span><span>Rayonnement élargi : {{brief.zone_secondaire}}</span></div>{{/brief.zone_secondaire}}
+      </div>
+    </div>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+{{#offres}}
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="sec">
+    <div class="keep ch"><span class="ch-num">04</span><h2 class="ch-title">Nos forfaits</h2></div>
+    <p style="font-size:13.5px;line-height:1.6;color:#7E7978;margin:0 0 22px;">Nos forfaits, une même exigence : un site qui performe. Tous incluent une consultation gratuite et un paiement en 2 versements sécurisés.</p>
+
+    <div class="keep" style="position:relative;display:flex;gap:26px;align-items:flex-start;border-radius:8px;padding:24px 26px;margin-bottom:18px;background:#fff;border:1px solid #E8E3E3;box-shadow:0 2px 8px rgba(35,37,38,.05);">
+      <div style="flex:1 1 0;min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap;"><span class="hl" style="color:#C49A2E;">Forfait création</span>{{#offre.populaire}}<span style="background:#D0A837;color:#232526;font-family:'Archivo',sans-serif;font-weight:800;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:4px;white-space:nowrap;">Le plus populaire</span>{{/offre.populaire}}</div>
+        <h3 class="ar" style="font-weight:800;font-size:33px;line-height:1.04;letter-spacing:-.01em;color:#232526;margin:0 0 12px;">{{offre.nom}}</h3>
+        <p style="font-size:13px;line-height:1.6;color:#3A3B3C;margin:0 0 14px;max-width:44ch;">{{offre.accroche}}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">{{#offre.segments}}<span style="font-size:10px;background:#F5F0F0;border-radius:4px;padding:3px 9px;color:#3A3B3C;">{{segment.nom}}</span>{{/offre.segments}}</div>
+      </div>
+      <div style="flex:0 0 188px;border-left:1px solid #E8E3E3;padding-left:24px;align-self:stretch;">
+        <div style="display:flex;align-items:baseline;gap:5px;white-space:nowrap;"><span class="ar" style="font-weight:800;font-size:40px;color:#232526;line-height:1;">{{offre.prix}}</span><span class="ar" style="font-weight:600;font-size:15px;color:#D0A837;">$ CAD</span></div>
+        <div style="font-size:11px;color:#7E7978;margin:7px 0 14px;">{{offre.prix_prefixe}}Paiement unique</div>
+        <div style="font-size:11px;background:#F5F0F0;border-radius:4px;padding:6px 11px;display:inline-block;color:#3A3B3C;">{{#offre.delai}}Livraison en {{offre.delai}}{{/offre.delai}}{{^offre.delai}}Délai convenu ensemble{{/offre.delai}}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:22px;margin-bottom:18px;">
+      <div style="flex:1 1 58%;min-width:0;">
+        <div class="hl" style="color:#9A9594;margin-bottom:13px;">Services inclus</div>
+        <div style="columns:2;column-gap:26px;">{{#offre.lignes}}<div class="bull" style="font-size:12.5px;line-height:1.5;margin-bottom:8px;break-inside:avoid;"><span class="bull-dot">—</span>{{ligne.texte}}</div>{{/offre.lignes}}</div>
+      </div>
+      <div style="flex:1 1 42%;min-width:0;">
+        {{#offre.description}}<div style="background:#F5F0F0;border-radius:8px;padding:15px 17px;margin-bottom:15px;"><div style="font-size:12px;line-height:1.62;color:#3A3B3C;">{{offre.description}}</div></div>{{/offre.description}}
+        <div class="hl" style="color:#9A9594;margin-bottom:11px;">Ce que vous gagnez</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">{{#offre.benefices}}<div style="font-size:12.5px;font-weight:600;color:#232526;line-height:1.38;padding-left:12px;border-left:2px solid #D0A837;">{{benefice.texte}}</div>{{/offre.benefices}}</div>
+      </div>
+    </div>
+
+    <div style="display:flex;background:#232526;border-radius:8px;overflow:hidden;">
+      <div style="flex:1;padding:14px 18px;border-right:1px solid rgba(255,250,250,.1);"><div class="ar" style="font-weight:700;font-size:13px;color:#D0A837;margin-bottom:4px;">Paiement sécurisé en 2 versements</div><p style="font-size:12px;line-height:1.55;color:rgba(255,250,250,.5);margin:0;">50 % à la signature, 50 % à la livraison. Aucun frais caché.</p></div>
+      <div style="flex:1;padding:14px 18px;border-right:1px solid rgba(255,250,250,.1);"><div class="ar" style="font-weight:700;font-size:13px;color:#D0A837;margin-bottom:4px;">Contrat clair et transparent</div><p style="font-size:12px;line-height:1.55;color:rgba(255,250,250,.5);margin:0;">Scope, délais et livrables définis dès la signature.</p></div>
+      <div style="flex:1;padding:14px 18px;"><div class="ar" style="font-weight:700;font-size:13px;color:#D0A837;margin-bottom:4px;">Maintenance mensuelle disponible</div><p style="font-size:12px;line-height:1.55;color:rgba(255,250,250,.5);margin:0;">À partir de 200 $/mois après la livraison.</p></div>
+    </div>
+  </section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+{{/offres}}
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">05</span><h2 class="ch-title">Forfait recommandé pour vous</h2></div>
+
+  <div class="keep" style="background:#F5F0F0;border-left:3px solid #D0A837;border-radius:0 8px 8px 0;padding:26px 28px;margin-bottom:20px;">
+    <div class="hl" style="color:#C49A2E;margin-bottom:12px;">Notre recommandation</div>
+    <div class="ar" style="font-weight:800;font-size:22px;color:#232526;margin-bottom:12px;">{{offre_recommandee.nom}}</div>
+    <p style="font-size:14.5px;line-height:1.8;color:#3A3B3C;margin:0 0 12px;">Compte tenu de {{brief.probleme_cardinal}} et de votre objectif de {{brief.objectif_principal}}, le forfait <strong style="color:#232526;">{{offre_recommandee.nom}}</strong> est le plus adapté à la situation de {{client.nom}}.</p>
+    <p style="font-size:14.5px;line-height:1.8;color:#3A3B3C;margin:0 0 12px;">Résultat visé : <strong>{{brief.resultat_vise}}</strong> · Livraison en <strong>{{offre_recommandee.delai}}</strong> · Investissement : <strong style="color:#232526;">{{offre_recommandee.prix}} $ CAD</strong>.</p>
+    <div style="font-size:14px;line-height:1.75;color:#3A3B3C;">{{section.recommandation}}</div>
+  </div>
+
+  <!-- Tableau maintenance -->
+  <div class="keep card" style="padding:24px 26px;">
+    <div class="hl" style="color:#9A9594;margin-bottom:14px;">Service complémentaire recommandé — Maintenance mensuelle <span class="opt">Optionnel</span></div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 16px 10px 0;border-bottom:1.5px solid #232526;width:24%;">Forfait</th>
+        <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 16px 10px 0;border-bottom:1.5px solid #232526;width:16%;">Prix / mois</th>
+        <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 0 10px;border-bottom:1.5px solid #232526;">Services inclus</th>
+      </tr></thead>
+      <tbody>{{#offres_maintenance}}<tr><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">{{offre.nom}}</td><td class="ar" style="font-weight:700;font-size:13px;color:#D0A837;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;white-space:nowrap;">{{offre.prix_mensuel}} $/mois</td><td style="font-size:12.5px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">{{#offre.heures}}{{offre.heures}} h/mois{{#offre.taux_depassement}} ({{offre.taux_depassement}} $/h supp.){{/offre.taux_depassement}} · {{/offre.heures}}{{#offre.lignes}}{{ligne.texte}}{{^dernier}} · {{/dernier}}{{/offre.lignes}}{{#offre.ideal_avec}} · <em>Idéal avec {{offre.ideal_avec}}</em>{{/offre.ideal_avec}}</td></tr>{{/offres_maintenance}}</tbody>
+    </table>
+    {{#maintenance_recommandee}}<div style="margin-top:16px;background:#F5F0F0;border-left:3px solid #D0A837;padding:14px 18px;">
+      <p style="font-size:14px;line-height:1.72;color:#232526;margin:0;">Pour {{client.nom}}, nous recommandons le forfait <strong>{{maintenance_recommandee.nom}}</strong> à <strong>{{maintenance_recommandee.prix_mensuel}} $/mois</strong> — sans engagement, résiliable avec 30 jours de préavis.</p>
+    </div>{{/maintenance_recommandee}}
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">06</span><h2 class="ch-title">Plan d'action stratégique</h2></div>
+  <p style="font-size:14px;line-height:1.75;color:#3A3B3C;margin:0 0 24px;">De la découverte au transfert de propriété : 7 phases calibrées pour livrer un site performant en {{offre_recommandee.delai}}.</p>
+
+  <!-- Frise timeline -->
+  <div class="keep" style="position:relative;margin:0 0 28px;overflow:hidden;">
+    <div style="position:absolute;top:18px;left:18px;right:18px;height:2px;background:#E8E3E3;z-index:0;"></div>
+    <div style="display:flex;align-items:flex-start;gap:0;position:relative;z-index:1;">
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#D0A837;color:#232526;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">1</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Diagnostic &amp;<br>Stratégie</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#D0A837;color:#232526;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">2</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Architecture<br>&amp; UX/UI</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#D0A837;color:#232526;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">3</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Développement<br>Webflow</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#D0A837;color:#232526;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">4</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Lancement &amp;<br>Stabilisation</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#3A3B3C;color:#D0A837;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">5</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">SEO &amp;<br>Visibilité</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#3A3B3C;color:#D0A837;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">6</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Suivi &amp;<br>Maintenance</div></div>
+      <div style="flex:1;text-align:center;padding:0 2px;"><div style="width:36px;height:36px;border-radius:50%;background:#3A3B3C;color:#D0A837;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">7</div><div style="font-size:10px;line-height:1.35;color:#232526;font-weight:600;font-family:'NS',sans-serif;">Autonomie &amp;<br>Formation</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:12px;"><span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#D0A837;">Début du projet</span><span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#D0A837;">Livraison · {{offre_recommandee.delai}}</span></div>
+  </div>
+
+  <!-- Table des phases -->
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr>
+      <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 10px 10px 0;border-bottom:1.5px solid #232526;width:26px;">#</th>
+      <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 16px 10px 0;border-bottom:1.5px solid #232526;width:25%;">Phase</th>
+      <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#9A9594;padding:0 0 10px;border-bottom:1.5px solid #232526;">Livrables &amp; activités clés</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">1</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Diagnostic &amp; Stratégie</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Analyse de l'existant, audit concurrentiel, définition des personas, stratégie de mots-clés, validation de la charte graphique.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">2</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Architecture &amp; UX/UI</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Sitemap validé, arborescence CMS, maquettes Figma desktop + mobile pour toutes les pages clés, approbation client.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">3</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Développement Webflow</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Intégration pixel-perfect des maquettes, configuration CMS, fonctionnalités (réservation, membres, e-commerce), optimisation mobile-first.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">4</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Lancement &amp; Stabilisation</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Tests QA multi-appareils, recette client (rétroactions + corrections), configuration du domaine, déploiement en production.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">5</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Optimisation locale &amp; SEO</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Déploiement du pack SEO de démarrage, optimisation Google Business Profile, indexation, publication des premiers articles de blogue.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">6</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Suivi &amp; Maintenance 3 mois</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;border-bottom:1px solid #E8E3E3;">Surveillance des performances, corrections mineures, rapport analytique mensuel, appel de suivi, ajustements SEO selon Search Console.</td></tr>
+      <tr><td class="ar" style="font-weight:800;font-size:13px;color:#D0A837;padding:12px 10px 12px 0;vertical-align:top;">7</td><td style="font-size:13px;color:#232526;font-weight:600;padding:12px 16px 12px 0;vertical-align:top;">Autonomie &amp; Formation</td><td style="font-size:13px;line-height:1.55;color:#3A3B3C;padding:12px 0;">Formation Webflow Editor, transfert de propriété complet (domaine, Webflow, Analytics), documentation remise.</td></tr>
+    </tbody>
+  </table>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+{{#section.preuve}}<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">07</span><h2 class="ch-title">Preuve &amp; résultats</h2></div>
+  {{section.preuve}}
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>{{/section.preuve}}
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">08</span><h2 class="ch-title">Récapitulatif financier</h2></div>
+
+  <div class="keep card" style="padding:26px 28px;margin-bottom:18px;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;padding:0 16px 11px 0;border-bottom:1.5px solid #232526;">Description</th>
+        <th style="text-align:right;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;padding:0 0 11px;border-bottom:1.5px solid #232526;white-space:nowrap;">Prix (CAD)</th>
+      </tr></thead>
+      <tbody>
+        {{#lignes_ponctuelles}}<tr>
+          <td style="font-size:14px;color:#232526;padding:16px 16px 16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">{{ligne.description}}</td>
+          <td class="ar" style="font-weight:700;font-size:15px;color:#232526;padding:16px 0;border-bottom:1px solid #E8E3E3;text-align:right;vertical-align:top;white-space:nowrap;">{{ligne.montant}}</td>
+        </tr>{{/lignes_ponctuelles}}
+        {{#lignes_offertes}}<tr>
+          <td style="font-size:14px;color:#D0A837;padding:16px 16px 16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;"><span class="opt" style="margin-left:0;margin-right:8px;">Bonus</span>{{ligne.description}}<div style="font-size:12px;color:#9A9594;margin-top:3px;">Valide si la proposition est acceptée avant le {{document.echeance}}</div></td>
+          <td class="ar" style="font-weight:700;font-size:15px;color:#D0A837;padding:16px 0;border-bottom:1px solid #E8E3E3;text-align:right;vertical-align:top;white-space:nowrap;">Offert</td>
+        </tr>{{/lignes_offertes}}
+        <tr>
+          <td style="font-size:15px;font-weight:700;color:#232526;padding:18px 16px 18px 0;border-bottom:1.5px solid #232526;vertical-align:top;">Total de l'investissement initial</td>
+          <td class="ar" style="font-weight:800;font-size:18px;color:#232526;padding:18px 0;border-bottom:1.5px solid #232526;text-align:right;vertical-align:top;white-space:nowrap;">{{total.ponctuel_ht}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {{#maintenance_recommandee}}<div class="keep" style="background:#F5F0F0;border-left:3px solid #D0A837;border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:18px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1 1 240px;">
+        <div class="hl" style="color:#C49A2E;margin-bottom:8px;"><span class="opt" style="margin-left:0;margin-right:8px;">Optionnel</span>Maintenance mensuelle après livraison</div>
+        <div class="ar" style="font-weight:700;font-size:16px;color:#232526;margin-bottom:4px;">{{maintenance_recommandee.nom}}</div>
+        <div style="font-size:13px;line-height:1.65;color:#3A3B3C;">Sans engagement. Résiliable avec 30 jours de préavis. Facturation mensuelle.</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="ar" style="font-weight:800;font-size:30px;color:#D0A837;line-height:1;">{{maintenance_recommandee.prix_mensuel}} $</div>
+        <div style="font-size:12px;color:#7E7978;margin-top:4px;">par mois + taxes</div>
+      </div>
+    </div>{{/maintenance_recommandee}}
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 18px;background:#fff;border:1px solid #E8E3E3;border-radius:8px;">
+    <span class="ar" style="font-weight:800;font-size:13px;color:#D0A837;flex-shrink:0;line-height:1.5;">i</span>
+    <p style="font-size:12.5px;line-height:1.72;color:#3A3B3C;margin:0;">Tous les montants sont en dollars canadiens (CAD) et s'entendent avant taxes applicables (TPS / TVQ). Le paiement s'effectue en deux versements égaux : 50 % à la signature, 50 % à la livraison. Délai de réalisation : <strong>{{offre_recommandee.delai}}</strong>, à compter de la signature et de la réception de l'acompte.</p>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">09</span><h2 class="ch-title">Gestion de projet</h2></div>
+  <p style="font-size:14px;line-height:1.75;color:#3A3B3C;margin:0 0 22px;">Un seul interlocuteur, des outils accessibles depuis votre téléphone. Notre méthode élimine les mauvaises surprises et vous tient informé à chaque étape.</p>
+
+  <div style="display:flex;gap:14px;flex-wrap:wrap;">
+    <div class="keep card" style="flex:1 1 200px;padding:24px 22px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Plateforme</div>
+      <div class="ar" style="font-weight:700;font-size:18px;color:#232526;margin-bottom:8px;">Webflow</div>
+      <p style="font-size:13px;line-height:1.65;color:#3A3B3C;margin:0;">Tout le développement s'effectue sur Webflow. Vous restez propriétaire du projet et pouvez y accéder à tout moment sans intermédiaire.</p>
+    </div>
+    <div class="keep card" style="flex:1 1 200px;padding:24px 22px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">Espace client</div>
+      <div class="ar" style="font-weight:700;font-size:18px;color:#232526;margin-bottom:8px;">Notion</div>
+      <p style="font-size:13px;line-height:1.65;color:#3A3B3C;margin:0;">Un espace Notion dédié centralise : livrables, échéances, objectifs validés, tâches en cours et historique des rétroactions.</p>
+    </div>
+    <div class="keep card" style="flex:1 1 200px;padding:24px 22px;">
+      <div class="hl" style="color:#C49A2E;margin-bottom:10px;">3 canaux de communication</div>
+      <div class="ar" style="font-weight:700;font-size:18px;color:#232526;margin-bottom:8px;">Clair &amp; direct</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="bull"><span class="bull-dot">—</span><span><strong style="color:#232526;">WhatsApp</strong> — questions rapides et urgences</span></div>
+        <div class="bull"><span class="bull-dot">—</span><span><strong style="color:#232526;">Google Meet</strong> — réunions de suivi et validations</span></div>
+        <div class="bull"><span class="bull-dot">—</span><span><strong style="color:#232526;">Courriel officiel</strong> — {{agence.courriel}}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">10</span><h2 class="ch-title">Modalités &amp; conditions</h2></div>
+
+  <table style="width:100%;border-collapse:collapse;margin-bottom:22px;">
+    <tbody>
+      <tr><td class="ar" style="font-weight:700;font-size:14px;color:#232526;padding:16px 22px 16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;width:28%;">Paiement — Projet</td><td style="font-size:13.5px;line-height:1.72;color:#3A3B3C;padding:16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;"><strong>50 % à la signature</strong> — non remboursable après le début du développement. <strong>50 % à la livraison</strong> — à régler dans les 15 jours. Factures payables sous 15 jours. Modes acceptés : virement bancaire, Interac.</td></tr>
+      <tr><td class="ar" style="font-weight:700;font-size:14px;color:#232526;padding:16px 22px 16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Services récurrents</td><td style="font-size:13.5px;line-height:1.72;color:#3A3B3C;padding:16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Facturation mensuelle. Résiliable avec préavis de 30 jours. Les contenus créés restent la propriété entière du client.</td></tr>
+      <tr><td class="ar" style="font-weight:700;font-size:14px;color:#232526;padding:16px 22px 16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Coûts externes</td><td style="font-size:13.5px;line-height:1.72;color:#3A3B3C;padding:16px 0;border-bottom:1px solid #E8E3E3;vertical-align:top;">Les frais d'hébergement, licences tierces (MemberStack, Acuity, Shopify…), domaines, CRM, photographies et autres coûts externes sont à la charge du client et ne sont pas inclus dans les forfaits.</td></tr>
+      <tr><td class="ar" style="font-weight:700;font-size:14px;color:#232526;padding:16px 22px 16px 0;vertical-align:top;">Nos valeurs</td><td style="font-size:13.5px;line-height:1.72;color:#3A3B3C;padding:16px 0;vertical-align:top;"><strong>Relation · Intégrité · Croissance mutuelle · Innovation.</strong> Nos engagements : transparence totale sur le scope, respect des délais annoncés, transfert de propriété complet.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Bandeau réassurance répété -->
+  <div style="display:flex;background:#232526;border-radius:8px;overflow:hidden;">
+    <div style="flex:1;padding:16px 18px;border-right:1px solid rgba(255,250,250,.1);"><div class="ar" style="font-weight:700;font-size:12px;color:#D0A837;margin-bottom:3px;">Paiement sécurisé en 2 versements</div><div style="font-size:11.5px;color:rgba(255,250,250,.5);">50 % à la signature · 50 % à la livraison.</div></div>
+    <div style="flex:1;padding:16px 18px;border-right:1px solid rgba(255,250,250,.1);"><div class="ar" style="font-weight:700;font-size:12px;color:#D0A837;margin-bottom:3px;">Contrat clair et transparent</div><div style="font-size:11.5px;color:rgba(255,250,250,.5);">Scope, délais et livrables définis dès la signature.</div></div>
+    <div style="flex:1;padding:16px 18px;"><div class="ar" style="font-weight:700;font-size:12px;color:#D0A837;margin-bottom:3px;">Maintenance mensuelle disponible</div><div style="font-size:11.5px;color:rgba(255,250,250,.5);">À partir de 200 $/mois, sans engagement.</div></div>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; SEO</span><span>Offre de service — {{client.nom}}</span></div>
+  <section class="pb sec">
+  <div class="keep ch"><span class="ch-num">11</span><h2 class="ch-title">Accord de projet &amp; signature</h2></div>
+
+  <div class="keep card" style="padding:24px 26px;margin-bottom:18px;">
+    <div class="hl" style="color:#C49A2E;margin-bottom:12px;">Engagements mutuels</div>
+    <p style="font-size:13.5px;line-height:1.72;color:#3A3B3C;margin:0 0 10px;">En acceptant cette offre, les deux parties s'engagent à :</p>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div class="bull"><span class="bull-dot">—</span>Fournir des contenus véridiques, exacts et libres de droits pour le site web.</div>
+      <div class="bull"><span class="bull-dot">—</span>Exclure tout contenu inapproprié, trompeur ou contraire aux lois en vigueur au Québec.</div>
+      <div class="bull"><span class="bull-dot">—</span>Respecter la vie privée des utilisateurs et se conformer aux lois québécoises sur la protection des données (Loi 25).</div>
+      <div class="bull"><span class="bull-dot">—</span>Communiquer de bonne foi et répondre aux demandes dans les délais convenus.</div>
+    </div>
+  </div>
+
+  <div class="keep" style="background:#F5F0F0;border-radius:8px;padding:20px 24px;margin-bottom:18px;">
+    <p style="font-size:13px;line-height:1.72;color:#3A3B3C;margin:0;"><strong>Droit applicable :</strong> La présente entente est régie par les lois de la province de Québec et les lois fédérales du Canada qui s'y appliquent.<br><strong>Clause de langue :</strong> Ce document est rédigé en français conformément à la <em>Charte de la langue française</em> (Loi 96). Les parties conviennent que la version française prévaut en cas de divergence.</p>
+  </div>
+
+  <!-- Tableau de signature -->
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr>
+      <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;padding:0 20px 11px 0;border-bottom:1.5px solid #232526;width:50%;">Fournisseur — {{agence.nom}}</th>
+      <th style="text-align:left;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;padding:0 0 11px;border-bottom:1.5px solid #232526;">Client — {{client.nom}}</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td style="padding:20px 20px 0 0;vertical-align:top;">
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Nom imprimé</div><div class="ar" style="font-weight:600;font-size:14px;color:#232526;">{{agence.representant}}</div></div>
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Titre</div><div style="font-size:13px;color:#232526;">{{agence.representant_titre}}, {{agence.nom}}</div></div>
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Date</div><div style="height:28px;border-bottom:1px solid #C8C3C3;width:160px;"></div></div>
+          <div><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Signature</div><div style="height:52px;border-bottom:1.5px solid #232526;width:200px;"></div></div>
+        </td>
+        <td style="padding:20px 0 0;vertical-align:top;">
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Nom imprimé</div><div style="height:28px;border-bottom:1px solid #C8C3C3;width:220px;"></div></div>
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Titre</div><div style="height:28px;border-bottom:1px solid #C8C3C3;width:220px;"><span style="font-size:11px;color:#C8C3C3;position:relative;top:-2px;">{{client.contact.titre}}</span></div></div>
+          <div style="margin-bottom:12px;"><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Date</div><div style="height:28px;border-bottom:1px solid #C8C3C3;width:160px;"></div></div>
+          <div><div style="font-size:12px;color:#7E7978;margin-bottom:4px;">Signature</div><div style="height:52px;border-bottom:1.5px solid #232526;width:220px;"></div></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:32px;padding-top:22px;border-top:1px solid #E8E3E3;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div><img src="{{agence.logo}}" alt="DigiHunt" style="height:32px;width:auto;display:block;margin-bottom:8px;"><div style="font-size:11.5px;line-height:1.8;color:#9A9594;">{{agence.adresse}}<br>{{agence.telephone}} · {{agence.courriel}}</div></div>
+      <div style="text-align:right;"><div class="hl" style="color:#9A9594;margin-bottom:5px;">Préparé pour</div><div class="ar" style="font-weight:700;font-size:15px;color:#232526;">{{client.nom}}</div><div style="font-size:12px;color:#9A9594;margin-top:2px;">{{client.contact.nom}} · {{client.contact.titre}}</div></div>
+    </div>
+  </div>
+
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+</div>

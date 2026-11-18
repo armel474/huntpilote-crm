@@ -125,6 +125,11 @@ update public.invoice_line set unit_price_cents = 90000
 \echo ''
 \echo '--- Une fois envoyée, elle est gelée ---'
 
+-- Depuis la migration 0024, une facture qui réclame les taxes ne part pas
+-- sans les numéros de TPS et de TVQ de l'agence : on les pose avant l'envoi.
+update public.agency set gst_number = '123456789 RT0001', qst_number = '1234567890 TQ0001'
+ where id = 'aaaaaaaa-0000-0000-0000-000000000001';
+
 update public.invoice set sent_at = now()
  where id = 'f6000000-0000-0000-0000-000000000001';
 

@@ -1,0 +1,496 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap');
+@font-face{font-family:'NS';src:url('/fonts/NotoSans-VariableFont_wdth_wght.ttf') format('truetype-variations');font-weight:100 900;font-stretch:62.5% 100%;font-display:swap;}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'NS','Noto Sans',sans-serif;background:#55585C;}
+.ar{font-family:'Archivo',sans-serif;}
+.tk{display:inline;background:rgba(208,168,55,.17);color:#6B3E00;border:1px solid rgba(208,168,55,.38);border-radius:3px;padding:0 5px;font-family:ui-monospace,monospace;font-size:.87em;font-weight:700;white-space:nowrap;}
+.tki{display:inline;background:rgba(208,168,55,.22);color:#F5D070;border:1px solid rgba(208,168,55,.45);border-radius:3px;padding:0 5px;font-family:ui-monospace,monospace;font-size:.87em;font-weight:700;white-space:nowrap;}
+.opt{display:inline-flex;align-items:center;font-family:'NS',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9A9594;background:#F5F0F0;border:1px dashed #C8C3C3;border-radius:4px;padding:3px 8px;margin-left:10px;vertical-align:middle;}
+h1,h2,h3,h4{text-wrap:balance;}p,li{text-wrap:pretty;}
+.keep{break-inside:avoid;}
+.page section{margin-bottom:0;}
+
+.stack{display:flex;flex-direction:column;align-items:center;gap:22px;padding:30px 12px;}
+.page{position:relative;width:216mm;min-height:279mm;height:auto;background:#FFFAFA;padding:19mm 16mm 15mm;overflow:visible;box-shadow:0 6px 28px rgba(0,0,0,.32);}
+.pg-head{position:absolute;top:9mm;left:16mm;right:16mm;display:flex;justify-content:space-between;align-items:center;font-family:'Archivo',sans-serif;font-size:8px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#9A9594;}
+.pg-foot{position:absolute;bottom:8mm;left:16mm;right:16mm;display:flex;justify-content:space-between;align-items:baseline;font-family:'Archivo',sans-serif;font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#9A9594;border-top:1px solid #E8E3E3;padding-top:5px;}
+
+@page{size:Letter;margin:0;}
+@media print{
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{background:#fff;}
+  .stack{gap:0;padding:0;}
+  .page{box-shadow:none;break-after:page;}
+  .page:last-child{break-after:auto;}
+  .screen-only{display:none!important;}
+}
+</style>
+<div class="stack">
+
+
+
+<div class="page" style="padding:0;">
+  <div style="height:5px;background:#D0A837;"></div>
+  <div style="padding:20mm 17mm 16mm;min-height:calc(279mm - 5px);">
+
+  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:24px; padding-top:34px;">
+    <img src="{{agence.logo}}" alt="DigiHunt" style="height:52px; width:auto; display:block;">
+    <div style="text-align:right; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#C49A2E; padding-top:6px;">Stratégie d'acquisition</div>
+  </div>
+
+  <div style="margin-top:72px;">
+    <div style="font-size:12px; letter-spacing:0.22em; text-transform:uppercase; color:#C49A2E; margin-bottom:20px;">Proposition de service</div>
+    <h1 class="ar" style="font-weight: 800; font-size: 54px; line-height: 1.05; letter-spacing: -0.02em; margin: 0; color: #232526; text-align: center;">Stratégie d'Acquisition Automatisée</h1>
+    <p style="font-size:15px; line-height:1.6; color:#3A3B3C; margin:24px 0 0; max-width:46ch;">Transformer chaque clic publicitaire en réservation ferme — 24 h / 24, 7 j / 7 — pour remplir votre horaire sans effort manuel.</p>
+  </div>
+
+  <div style="height:1px; background:#E8E3E3; margin:48px 0 40px;"></div>
+
+  <div style="display:flex; gap:48px; flex-wrap:wrap;">
+    <div style="flex:1 1 240px;">
+      <div style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#9A9594; margin-bottom:14px;">Préparée pour</div>
+      <div class="ar" style="font-weight:700; font-size:17px; color:#232526;">{{client.contact.nom}}</div>
+      <div style="font-size:13px; line-height:1.7; color:#3A3B3C; margin-top:6px;">{{client.nom}}<br>{{client.adresse}}<br>{{client.ville}}<br><span style="color:#9A9594;">{{client.courriel}} · {{client.telephone}}</span></div>
+    </div>
+    <div style="flex:1 1 240px;">
+      <div style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#9A9594; margin-bottom:14px;">Préparée par</div>
+      <div class="ar" style="font-weight:700; font-size:17px; color:#232526;">{{agence.representant}}</div>
+      <div style="font-size:13px; line-height:1.7; color:#3A3B3C; margin-top:6px;">{{agence.nom}}<br>{{agence.ville}}, QC<br><span style="color: rgb(154, 149, 148);">{{agence.courriel}} · {{agence.telephone}}</span></div>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:48px; margin-top:36px; padding-top:28px; border-top:1px solid #E8E3E3;">
+    <div>
+      <div style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#9A9594; margin-bottom:8px;">Date</div>
+      <div class="ar" style="font-weight:600; font-size:15px; color:#232526;">{{document.date}}</div>
+    </div>
+    <div>
+      <div style="font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#9A9594; margin-bottom:8px;">Validité</div>
+      <div class="ar" style="font-weight:600; font-size:15px; color:#C49A2E;">{{document.echeance}}</div>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">01</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Contexte &amp; Objectifs</h2>
+  </div>
+  <p style="font-size:14.5px; line-height:1.78; color:#3A3B3C; margin:0 0 16px;">Suite à notre rencontre du {{brief.date_appel}} dernier, nous avons identifié que votre objectif principal est {{brief.objectif_principal}}. {{client.nom}} possède un avantage concurrentiel fort grâce à {{brief.atout_concurrentiel}} et son offre spécialisée — <strong style="color:#232526;">{{brief.offre_specialisee}}</strong> — mais votre potentiel de croissance est actuellement freiné par un processus d'acquisition manuel.</p>
+  <p style="font-size:14.5px; line-height:1.78; color:#3A3B3C; margin:0 0 28px;">Actuellement, vos campagnes publicitaires {{brief.canal_publicitaire}} redirigent les prospects vers {{brief.canal_actuel}}. Ce processus crée un goulot d'étranglement majeur : si vous êtes occupé ou indisponible pour répondre immédiatement, le prospect refroidit et la conversion est perdue. Vous investissez donc dans des clics publicitaires qui ne se transforment pas toujours en rendez-vous concrets.</p>
+
+  <div class="keep" style="margin:0 0 24px;">
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:50%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:#9A9594; padding:0 18px 11px 0; border-bottom:1.5px solid #232526;">Problème identifié</th>
+          <th style="width:50%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:#9A9594; padding:0 0 11px 0; border-bottom:1.5px solid #232526;">Impact sur l'entreprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td style="font-size:13px; line-height:1.55; color:#232526; padding:14px 18px 14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Redirection des publicités vers {{brief.canal_actuel}}</td>
+          <td style="font-size:13px; line-height:1.55; color:#3A3B3C; padding:14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Perte de prospects lorsque vous n'êtes pas disponible pour répondre</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.55; color:#232526; padding:14px 18px 14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Absence de système de réservation automatisé</td>
+          <td style="font-size:13px; line-height:1.55; color:#3A3B3C; padding:14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Charge administrative élevée pour {{client.contact.prenom}}</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.55; color:#232526; padding:14px 18px 14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Aucune page de destination dédiée</td>
+          <td style="font-size:13px; line-height:1.55; color:#3A3B3C; padding:14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Budget publicitaire sous-optimisé</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.55; color:#232526; padding:14px 18px 14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Taux d'annulation de {{brief.taux_annulation}}</td>
+          <td style="font-size:13px; line-height:1.55; color:#3A3B3C; padding:14px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Perte de revenus et désorganisation des horaires</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="keep" style="background:#F5F0F0; border-left:3px solid #D0A837; padding:22px 26px; margin:0;">
+    <p style="font-size:15px; line-height:1.7; color:#232526; margin:0;">Notre objectif : mettre en place un système automatisé qui transforme l'intérêt généré par vos publicités en <strong style="color:#232526;">réservations fermes, 24 h / 24 et 7 j / 7</strong> — vous permettant de vous concentrer exclusivement sur votre cœur de métier : {{brief.coeur_metier}}.</p>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">02</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Stratégie &amp; Livrables</h2>
+  </div>
+  <p style="font-size:14.5px; line-height:1.78; color:#3A3B3C; margin:0 0 28px;">La solution proposée repose sur deux phases complémentaires : la mise en place d'une infrastructure de conversion, puis son optimisation continue. L'élément central est la création d'une page de destination (Landing Page) haute conversion qui agira comme votre réceptionniste virtuelle, présentant clairement votre expertise et intégrant un système de réservation automatisé.</p>
+
+  <!-- Phase 1 card -->
+  <div class="keep" style="background:#FFFAFA; border:1px solid #E8E3E3; border-radius:8px; box-shadow:0 2px 12px rgba(35,37,38,0.06); padding:30px 32px; margin-bottom:20px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px;">
+      <h3 class="ar" style="font-weight:700; font-size:19px; color:#232526; margin:0;"><span style="color:#D0A837;">Phase 1</span> — Infrastructure &amp; Lancement</h3>
+      <span style="font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:#232526; background:#F5F0F0; border:1px solid #E8E3E3; border-radius:4px; padding:5px 10px; white-space:nowrap;">Frais unique</span>
+    </div>
+    <p style="font-size:13.5px; line-height:1.7; color:#3A3B3C; margin:0 0 20px;">En éliminant la friction de la prise de contact manuelle, nous maximiserons chaque dollar investi en publicité. Cette phase couvre l'ensemble des fondations d'acquisition :</p>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:34px; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 12px 10px 0; border-bottom:1.5px solid #232526;">#</th>
+          <th style="width:32%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Livrable</th>
+          <th style="text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 0 10px 0; border-bottom:1.5px solid #232526;">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">1</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Landing Page haute conversion</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Conception et développement d'une page dédiée aux campagnes, avec copywriting orienté bénéfices et intégration d'un système de réservation automatisé.</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">2</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Audit du compte Meta Ads</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Analyse de l'état actuel du Business Manager et des campagnes existantes.</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">3</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Configuration du Pixel Meta</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Installation et validation du Pixel sur la Landing Page pour le suivi précis des conversions.</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">4</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Création des audiences cibles</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Mise en place des audiences personnalisées (retargeting) et similaires (Lookalike).</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; vertical-align:top;">5</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; vertical-align:top;">Conception des premières annonces</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; vertical-align:top;">Rédaction des textes publicitaires et création des visuels pour le lancement.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+{{#total.mensuel_ht}}
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;"><span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">02</span><h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Stratégie &amp; Livrables <span style="font-weight:400; font-size:15px; color:#9A9594; letter-spacing:0;">(suite)</span></h2></div>
+  
+  <div class="keep" style="background:#FFFAFA; border:1px solid #E8E3E3; border-radius:8px; box-shadow:0 2px 12px rgba(35,37,38,0.06); padding:30px 32px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px;">
+      <h3 class="ar" style="font-weight:700; font-size:19px; color:#232526; margin:0;"><span style="color:#D0A837;">Phase 2</span> — Gestion Mensuelle &amp; Optimisation</h3>
+      <span style="font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:#232526; background:#F5F0F0; border:1px solid #E8E3E3; border-radius:4px; padding:5px 10px; white-space:nowrap;">Mensualité</span>
+    </div>
+    <p style="font-size:13.5px; line-height:1.7; color:#3A3B3C; margin:0 0 20px;">Une fois l'infrastructure en place, le succès d'une campagne Meta repose sur son optimisation continue. L'algorithme de Facebook nécessite une surveillance constante pour éviter la fatigue publicitaire et la hausse des coûts d'acquisition.</p>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:34px; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 12px 10px 0; border-bottom:1.5px solid #232526;">#</th>
+          <th style="text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Livrable mensuel</th>
+          <th style="width:30%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 0 10px 0; border-bottom:1.5px solid #232526;">Fréquence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">1</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Surveillance et ajustement des campagnes</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Continue</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">2</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Rotation des visuels et des textes publicitaires</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Aux 2-3 semaines</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">3</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Tests A/B sur les audiences et les créatifs</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Continue</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">4</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Rapport de performance détaillé</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Mensuelle</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; vertical-align:top;">5</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; vertical-align:top;">Appel de suivi stratégique</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; vertical-align:top;">Mensuel (30 min)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:12.5px; line-height:1.6; color:#7E7978; margin:18px 0 0; padding-top:14px; border-top:1px solid #E8E3E3;">Un engagement initial de {{document.engagement_mois}} mois est requis pour permettre à l'algorithme d'apprendre et de produire des résultats stables.</p>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+{{/total.mensuel_ht}}
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">03</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Investissement</h2>
+  </div>
+
+  <!-- Two price cards with breakdown -->
+  <div class="keep" style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+    <div style="flex:1 1 240px; background:#232526; color:#FFFAFA; border-radius:8px; padding:30px 28px;">
+      <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#D0A837; margin-bottom:14px;">Phase 1 · Frais unique</div>
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;"><span class="ar" style="font-weight:800; font-size:46px; line-height:1; color:#FFFAFA;">{{total.ponctuel_ht}}</span><span class="ar" style="font-weight:600; font-size:20px; color:#D0A837;">$</span>{{#remise}}<span class="ar" style="font-weight:700; font-size:17px; color:#7E7978; text-decoration:line-through;">{{total.avant_remise}}</span>{{/remise}}</div>
+      {{#remise}}<div style="display:inline-block; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#232526; background:#D0A837; border-radius:4px; padding:4px 9px; margin-bottom:18px;">Escompte de bienvenue −{{remise.pourcentage}} %</div>{{/remise}}
+      {{#lignes_ponctuelles}}<div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid #3A3B3C;"><span style="font-size:12.5px; line-height:1.45; color:#CFCBCA;">{{ligne.description}}</span><span class="ar" style="font-weight:700; font-size:13px; color:#FFFAFA; white-space:nowrap;">{{ligne.montant}}</span></div>{{/lignes_ponctuelles}}
+      {{#remise}}<div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid #3A3B3C;"><span style="font-size:12.5px; line-height:1.45; color:#D0A837;">Escompte de bienvenue (−{{remise.pourcentage}} %)</span><span class="ar" style="font-weight:700; font-size:13px; color:#D0A837; white-space:nowrap;">−{{remise.montant}}</span></div>{{/remise}}
+    </div>
+    {{#total.mensuel_ht}}<div style="flex:1 1 240px; background:#FFFAFA; border:1px solid #E8E3E3; box-shadow:0 2px 12px rgba(35,37,38,0.06); border-radius:8px; padding:30px 28px;">
+      <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#C49A2E; margin-bottom:14px;">Phase 2 · Mensualité </div>
+      <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:18px;"><span class="ar" style="font-weight:800; font-size:46px; line-height:1; color:#232526;">{{total.mensuel_ht}}</span><span class="ar" style="font-weight:600; font-size:20px; color:#D0A837;">$ / mois</span></div>
+      <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid #E8E3E3;"><span style="font-size:12.5px; line-height:1.45; color:#3A3B3C;">Optimisation, créatifs, rapport, appel de suivi</span></div>
+      <div style="display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid #E8E3E3;"><span style="font-size:12.5px; line-height:1.45; color:#3A3B3C;">Engagement initial {{document.engagement_mois}} mois</span><span class="ar" style="font-weight:700; font-size:13px; color:#232526; white-space:nowrap;">{{total.recurrent_engagement}}</span></div>
+    </div>{{/total.mensuel_ht}}
+  </div>
+
+  <!-- Recap table -->
+  <div class="keep" style="background:#FFFAFA; border:1px solid #E8E3E3; border-radius:8px; box-shadow:0 2px 12px rgba(35,37,38,0.06); padding:26px 30px; margin-bottom:20px;">
+    <div style="font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:#9A9594; margin-bottom:16px;">Récapitulatif de l'investissement{{#total.mensuel_ht}} — {{document.engagement_mois}} premiers mois{{/total.mensuel_ht}}</div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tbody>
+        <tr>
+          <td style="font-size:13.5px; line-height:1.5; color:#3A3B3C; padding:11px 0; border-bottom:1px solid #E8E3E3;">Phase 1 — Infrastructure &amp; Lancement (frais unique)</td>
+          <td class="ar" style="font-weight:700; font-size:14px; color:#232526; padding:11px 0; border-bottom:1px solid #E8E3E3; text-align:right; white-space:nowrap;">{{total.avant_remise}}</td>
+        </tr>
+        {{#remise}}<tr>
+          <td style="font-size:13.5px; line-height:1.5; color:#C49A2E; padding:11px 0; border-bottom:1px solid #E8E3E3;">Escompte de bienvenue sur la Phase 1 (−{{remise.pourcentage}} %)</td>
+          <td class="ar" style="font-weight:700; font-size:14px; color:#C49A2E; padding:11px 0; border-bottom:1px solid #E8E3E3; text-align:right; white-space:nowrap;">−{{remise.montant}}</td>
+        </tr>{{/remise}}
+        {{#total.mensuel_ht}}<tr>
+          <td style="font-size:13.5px; line-height:1.5; color:#3A3B3C; padding:11px 0; border-bottom:1px solid #E8E3E3;">Phase 2 — Gestion mensuelle ({{total.mensuel_ht}}) × {{document.engagement_mois}} mois</td>
+          <td class="ar" style="font-weight:700; font-size:14px; color:#232526; padding:11px 0; border-bottom:1px solid #E8E3E3; text-align:right; white-space:nowrap;">{{total.recurrent_engagement}}</td>
+        </tr>{{/total.mensuel_ht}}
+        <tr>
+          <td style="font-size:13.5px; line-height:1.5; color:#232526; font-weight:700; padding:11px 0; border-bottom:1.5px solid #232526;">Total honoraires DigiHunt</td>
+          <td class="ar" style="font-weight:800; font-size:15px; color:#232526; padding:11px 0; border-bottom:1.5px solid #232526; text-align:right; white-space:nowrap;">{{total.ht}}</td>
+        </tr>
+        {{#budget}}<tr>
+          <td style="font-size:13.5px; line-height:1.5; color:#7E7978; padding:11px 0; border-bottom:1px solid #E8E3E3;">Budget publicitaire Meta (estimé, payé à Meta)</td>
+          <td class="ar" style="font-weight:700; font-size:14px; color:#7E7978; padding:11px 0; border-bottom:1px solid #E8E3E3; text-align:right; white-space:nowrap;">{{budget.total}}</td>
+        </tr>{{/budget}}
+      </tbody>
+    </table>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; background:#F5F0F0; border-radius:6px; padding:16px 20px; margin-top:18px;">
+      <span class="ar" style="font-weight:700; font-size:14px; color:#232526;">Investissement total estimé sur {{document.engagement_mois}} mois</span>
+      <span class="ar" style="font-weight:800; font-size:22px; color:#D0A837; white-space:nowrap;">{{total.global_estime}}</span>
+    </div>
+  </div>
+
+  {{#budget}}<div class="keep" style="display:flex; gap:13px; align-items:flex-start; background:#F5F0F0; border-radius:8px; padding:18px 22px;">
+    <span class="ar" style="color:#D0A837; font-weight:800; font-size:14px; line-height:1.5;">!</span>
+    <p style="font-size:13px; line-height:1.7; color:#3A3B3C; margin:0;">Le budget d'achat d'espace publicitaire — l'argent versé directement à Meta, d'environ <strong style="color:#232526;">{{budget.mensuel}} par mois (soit {{budget.quotidien}} par jour)</strong> — est distinct de ces honoraires et sera facturé directement sur votre carte de crédit par Meta. Tous les montants sont en dollars canadiens (CAD), avant taxes applicables (TPS / TVQ).</p>
+  </div>{{/budget}}
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">04</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Modalités &amp; Engagements Mutuels</h2>
+  </div>
+
+  <div class="keep" style="margin-bottom:30px;">
+    <h4 class="ar" style="font-weight:700; font-size:15px; letter-spacing:0.02em; color:#232526; margin:0 0 14px; text-transform:uppercase;">Conditions de paiement</h4>
+    <p style="font-size:14px; line-height:1.75; color:#3A3B3C; margin:0 0 16px;">La facturation de la Phase 1 s'effectue en deux versements égaux afin de sécuriser le projet de part et d'autre.</p>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:24%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Versement</th>
+          <th style="width:20%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Montant</th>
+          <th style="text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 0 10px 0; border-bottom:1.5px solid #232526;">Déclencheur</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Acompte (50 %)</td>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top; white-space:nowrap;">{{acompte.montant_ht}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">À la signature de cette proposition.</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Solde (50 %)</td>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top; white-space:nowrap;">{{solde.montant_ht}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">À la livraison et mise en ligne de la Landing Page.</td>
+        </tr>
+        {{#total.mensuel_ht}}<tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; vertical-align:top;">Mensualité Phase 2</td>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 16px 13px 0; vertical-align:top; white-space:nowrap;">{{total.mensuel_ht}} / mois</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; vertical-align:top;">Facturée au début de chaque mois, dès le lancement.</td>
+        </tr>{{/total.mensuel_ht}}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="keep" style="margin-bottom:30px;">
+    <h4 class="ar" style="font-weight:700; font-size:15px; letter-spacing:0.02em; color:#232526; margin:0 0 12px; text-transform:uppercase;">Propriété &amp; Transfert</h4>
+    <p style="font-size:14px; line-height:1.75; color:#3A3B3C; margin:0;">Le transfert de la Landing Page et des accès administratifs au client est conditionné par le paiement intégral de la balance due. La somme due doit être réglée dans un délai de 14 jours suivant la livraison.</p>
+  </div>
+
+  <div class="keep">
+    <h4 class="ar" style="font-weight:700; font-size:15px; letter-spacing:0.02em; color:#232526; margin:0 0 12px; text-transform:uppercase;">Ce que le client s'engage à fournir</h4>
+    <p style="font-size:14px; line-height:1.75; color:#3A3B3C; margin:0 0 16px;">Pour assurer un lancement rapide et fluide, le client s'engage à fournir les éléments suivants dans les <strong style="color:#232526;">48 heures suivant la signature</strong> :</p>
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:34%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Élément requis</th>
+          <th style="text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 0 10px 0; border-bottom:1.5px solid #232526;">Détail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Accès au Business Manager Meta</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Rôle d'administrateur sur la page Facebook et le compte publicitaire.</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Nom de domaine</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Accès au registraire (ex. : GoDaddy, Namecheap) ou achat d'un nouveau domaine.</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Adresse courriel professionnelle</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">À créer si inexistante.</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Photos et vidéos de l'entreprise</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Réalisations, ambiance, équipe — pour les créatifs publicitaires.</td>
+        </tr>
+        {{#brief.systeme_reservation}}<tr>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; vertical-align:top;">Accès au système de réservation {{brief.systeme_reservation}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; vertical-align:top;">Pour l'intégration ou la migration vers la nouvelle solution.</td>
+        </tr>{{/brief.systeme_reservation}}
+      </tbody>
+    </table>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">05</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Prochaines Étapes</h2>
+  </div>
+  <p style="font-size:14.5px; line-height:1.78; color:#3A3B3C; margin:0 0 24px;">Dès la signature de cette proposition et la réception du premier versement de {{acompte.montant_ht}}, nous planifierons une rencontre de démarrage (Kick-off) pour remplir le cahier des charges détaillé et collecter les éléments visuels nécessaires. Notre objectif est de lancer vos nouvelles campagnes dans un délai de <strong style="color:#232526;">{{offre_recommandee.delai}}</strong> suivant cette rencontre.</p>
+
+  <div class="keep">
+    <table style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="width:34px; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 12px 10px 0; border-bottom:1.5px solid #232526;">#</th>
+          <th style="text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Action</th>
+          <th style="width:22%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 16px 10px 0; border-bottom:1.5px solid #232526;">Responsable</th>
+          <th style="width:24%; text-align:left; font-size:10px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:#9A9594; padding:0 0 10px 0; border-bottom:1.5px solid #232526;">Délai</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">1</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Signature de la proposition &amp; versement de l'acompte ({{acompte.montant_ht}})</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">{{client.contact.prenom}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Dès réception</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">2</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Rencontre Kick-off &amp; cahier des charges</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Les deux parties</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">48 h après la signature</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">3</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Fourniture des éléments (accès, photos, domaine)</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">{{client.contact.prenom}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">48 h après le Kick-off</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">4</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Conception et développement de la Landing Page</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">DigiHunt</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">5 jours ouvrables</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">5</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Configuration Meta Ads &amp; création des annonces</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">DigiHunt</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">3 jours ouvrables</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">6</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Validation client &amp; versement du solde ({{solde.montant_ht}})</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">{{client.contact.prenom}}</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 0; border-bottom:1px solid #E8E3E3; vertical-align:top;">Avant mise en ligne</td>
+        </tr>
+        <tr>
+          <td class="ar" style="font-weight:800; font-size:13px; color:#D0A837; padding:13px 12px 13px 0; vertical-align:top;">7</td>
+          <td style="font-size:13px; line-height:1.5; color:#232526; padding:13px 16px 13px 0; vertical-align:top;">Lancement officiel des campagnes</td>
+          <td style="font-size:13px; line-height:1.5; color:#3A3B3C; padding:13px 16px 13px 0; vertical-align:top;">DigiHunt</td>
+          <td class="ar" style="font-size:13px; line-height:1.5; color:#D0A837; font-weight:700; padding:13px 0; vertical-align:top;">J + 10 après signature</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+
+<div class="page">
+  <div class="pg-head"><span>DigiHunt — Agence Webflow &amp; Acquisition</span><span>Proposition — {{client.nom}}</span></div>
+  <section>
+  <div class="keep" style="display:flex; align-items:baseline; gap:18px; margin-bottom:22px;">
+    <span class="ar" style="font-weight:800; font-size:34px; line-height:1; color:#D0A837;">06</span>
+    <h2 class="ar" style="font-weight:700; font-size:26px; letter-spacing:-0.01em; color:#232526; margin:0;">Acceptation &amp; Signature</h2>
+  </div>
+
+  <div class="keep" style="background:#232526; border-radius:8px; padding:26px 30px; margin:0 0 32px;">
+    <p style="font-size:14px; line-height:1.7; color:#FFFAFA; margin:0;">En signant ci-dessous, les deux parties acceptent les termes, les livrables, la tarification et les modalités de paiement décrits dans cette proposition de service.</p>
+  </div>
+
+  <div class="keep" style="display:flex; gap:40px; flex-wrap:wrap;">
+    <div style="flex:1 1 240px;">
+      <div style="height:44px; border-bottom:1.5px solid #232526;"></div>
+      <div class="ar" style="font-weight:700; font-size:15px; color:#232526; margin-top:10px;">{{client.contact.nom}}</div>
+      <div style="font-size:12px; letter-spacing:0.04em; color:#7E7978; text-transform:uppercase; margin-top:3px;">{{client.nom}}</div>
+      <div style="font-size:13px; color:#9A9594; margin-top:16px;">Date : ___________________</div>
+    </div>
+    <div style="flex:1 1 240px;">
+      <div style="height:44px; border-bottom:1.5px solid #232526;"></div>
+      <div class="ar" style="font-weight:700; font-size:15px; color:#232526; margin-top:10px;">{{agence.representant}}</div>
+      <div style="font-size:12px; letter-spacing:0.04em; color:#7E7978; text-transform:uppercase; margin-top:3px;">{{agence.nom}}</div>
+      <div style="font-size:13px; color:#9A9594; margin-top:16px;">Date : ___________________</div>
+    </div>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:12px; margin-top:48px; padding-top:24px; border-top:1px solid #E8E3E3;">
+    <img src="{{agence.logo}}" alt="DigiHunt" style="height:26px; width:auto; opacity:0.85;">
+    <span style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#9A9594;">DigiHunt — Agence Webflow &amp; Acquisition · Québec</span>
+  </div>
+</section>
+  <div class="pg-foot"><span>{{client.nom}} · Confidentiel</span><span>{{document.reference}}</span></div>
+</div>
+
+</div>
